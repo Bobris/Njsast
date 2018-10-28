@@ -1,0 +1,14 @@
+*~
+bin
+obj
+*.user
+*.suo
+*.bak
+*.sln.cache
+*.pidb
+*.usertasks
+*.userprefs
+*.DotSettings
+/*.sln.ide
+.vs
+.idea
