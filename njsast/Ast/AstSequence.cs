@@ -13,5 +13,11 @@ namespace Njsast.Ast
         {
             Expressions.TransferFrom(ref expressions);
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.WalkList(Expressions);
+        }
     }
 }

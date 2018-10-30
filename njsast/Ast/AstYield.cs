@@ -11,10 +11,17 @@ namespace Njsast.Ast
         /// [Boolean] Whether this is a yield or yield* statement
         public bool IsStar;
 
-        public AstYield(Parser parser, Position startLoc, Position endLoc, AstNode expression, bool isStar) : base(parser, startLoc, endLoc)
+        public AstYield(Parser parser, Position startLoc, Position endLoc, AstNode expression, bool isStar) : base(
+            parser, startLoc, endLoc)
         {
             Expression = expression;
             IsStar = isStar;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Expression);
         }
     }
 }

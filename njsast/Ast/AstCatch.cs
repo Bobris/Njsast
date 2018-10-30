@@ -12,5 +12,11 @@ namespace Njsast.Ast
         {
             Argname = argname;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Argname);
+        }
     }
 }

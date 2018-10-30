@@ -20,13 +20,22 @@ namespace Njsast.Ast
         /// [boolean] is this method async
         public bool Async;
 
-        public AstLambda(Parser parser, Position startPos, Position endPos, AstSymbolDeclaration name, ref StructList<AstNode> argNames, bool isGenerator, bool async, ref StructList<AstNode> body) : base(parser, startPos, endPos)
+        public AstLambda(Parser parser, Position startPos, Position endPos, AstSymbolDeclaration name,
+            ref StructList<AstNode> argNames, bool isGenerator, bool async, ref StructList<AstNode> body) : base(parser,
+            startPos, endPos)
         {
             Name = name;
             ArgNames.TransferFrom(ref argNames);
             IsGenerator = isGenerator;
             Async = async;
             Body.TransferFrom(ref body);
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            w.Walk(Name);
+            w.WalkList(ArgNames);
+            base.Visit(w);
         }
     }
 }

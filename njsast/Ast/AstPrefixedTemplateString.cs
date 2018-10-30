@@ -11,10 +11,18 @@ namespace Njsast.Ast
         /// [AstSymbolRef|AstPropAccess] The prefix, which can be a symbol such as `foo` or a dotted expression such as `String.raw`.
         public AstNode Prefix;
 
-        public AstPrefixedTemplateString(Parser parser, Position startLoc, Position endLoc, AstNode prefix, AstTemplateString templateString) : base(parser, startLoc, endLoc)
+        public AstPrefixedTemplateString(Parser parser, Position startLoc, Position endLoc, AstNode prefix,
+            AstTemplateString templateString) : base(parser, startLoc, endLoc)
         {
             TemplateString = templateString;
             Prefix = prefix;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Prefix);
+            w.Walk(TemplateString);
         }
     }
 }

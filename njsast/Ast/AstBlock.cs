@@ -17,5 +17,11 @@ namespace Njsast.Ast
         public AstBlock(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.WalkList(Body);
+        }
     }
 }

@@ -16,5 +16,12 @@ namespace Njsast.Ast
             Name = name;
             Value = value;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Name);
+            w.Walk(Value);
+        }
     }
 }

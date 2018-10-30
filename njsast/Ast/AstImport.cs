@@ -20,5 +20,13 @@ namespace Njsast.Ast
             ImportedName = importName;
             ImportedNames.TransferFrom(ref specifiers);
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(ModuleName);
+            w.Walk(ImportedName);
+            w.WalkList(ImportedNames);
+        }
     }
 }

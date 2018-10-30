@@ -15,5 +15,13 @@ namespace Njsast.Ast
             Consequent = consequent;
             Alternative = alternative;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Condition);
+            w.Walk(Consequent);
+            w.Walk(Alternative);
+        }
     }
 }

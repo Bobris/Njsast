@@ -12,5 +12,11 @@ namespace Njsast.Ast
         {
             Elements.TransferFrom(ref elements);
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.WalkList(Elements);
+        }
     }
 }

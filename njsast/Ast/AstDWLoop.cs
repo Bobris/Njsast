@@ -13,5 +13,11 @@ namespace Njsast.Ast
         {
             Condition = test;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            w.Walk(Condition);
+            base.Visit(w);
+        }
     }
 }

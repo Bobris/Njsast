@@ -10,10 +10,17 @@ namespace Njsast.Ast
         /// [AstNode] expression that this unary operator applies to
         public AstNode Expression;
 
-        public AstUnary(Parser parser, Position startLoc, Position endLoc, Operator @operator, AstNode expression) : base(parser, startLoc, endLoc)
+        public AstUnary(Parser parser, Position startLoc, Position endLoc, Operator @operator, AstNode expression) :
+            base(parser, startLoc, endLoc)
         {
             Operator = @operator;
             Expression = expression;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Expression);
         }
     }
 }

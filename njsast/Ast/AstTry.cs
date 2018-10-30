@@ -11,10 +11,18 @@ namespace Njsast.Ast
         /// [AstFinally?] the finally block, or null if not present
         public AstFinally Bfinally;
 
-        public AstTry(Parser parser, Position startPos, Position endPos, ref StructList<AstNode> body, AstCatch bcatch, AstFinally bfinally) : base(parser, startPos, endPos, ref body)
+        public AstTry(Parser parser, Position startPos, Position endPos, ref StructList<AstNode> body, AstCatch bcatch,
+            AstFinally bfinally) : base(parser, startPos, endPos, ref body)
         {
             Bcatch = bcatch;
             Bfinally = bfinally;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Bcatch);
+            w.Walk(Bfinally);
         }
     }
 }

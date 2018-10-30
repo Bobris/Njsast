@@ -8,9 +8,16 @@ namespace Njsast.Ast
         /// [AstNode] the thing to be expanded
         public AstNode Expression;
 
-        public AstExpansion(Parser parser, Position startLoc, Position endLoc, AstNode expression) : base(parser, startLoc, endLoc)
+        public AstExpansion(Parser parser, Position startLoc, Position endLoc, AstNode expression) : base(parser,
+            startLoc, endLoc)
         {
             Expression = expression;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Expression);
         }
     }
 }

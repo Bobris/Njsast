@@ -27,5 +27,9 @@ namespace Njsast.Ast
             Start = node.Start;
             End = node.End;
         }
+
+        public virtual void Visit(TreeWalker w)
+        {
+        }
     }
 }

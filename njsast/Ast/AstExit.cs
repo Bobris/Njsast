@@ -8,9 +8,16 @@ namespace Njsast.Ast
         /// [AstNode?] the value returned or thrown by this statement; could be null for AstReturn
         public AstNode Value;
 
-        public AstExit(Parser parser, Position startPos, Position endPos, AstNode value) : base(parser, startPos, endPos)
+        public AstExit(Parser parser, Position startPos, Position endPos, AstNode value) : base(parser, startPos,
+            endPos)
         {
             Value = value;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Value);
         }
     }
 }

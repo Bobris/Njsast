@@ -11,10 +11,18 @@ namespace Njsast.Ast
         /// [AstSymbolExport|AstSymbolImport] The name as it is visible to this module.
         public AstSymbol Name;
 
-        public AstNameMapping(Parser parser, Position startLoc, Position endLoc, AstSymbol foreignName, AstSymbol name) : base(parser, startLoc, endLoc)
+        public AstNameMapping(Parser parser, Position startLoc, Position endLoc, AstSymbol foreignName, AstSymbol name)
+            : base(parser, startLoc, endLoc)
         {
             ForeignName = foreignName;
             Name = name;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Name);
+            w.Walk(ForeignName);
         }
     }
 }

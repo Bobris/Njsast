@@ -8,9 +8,16 @@ namespace Njsast.Ast
         /// [AstLabelRef?] the label, or null if none
         public AstLabelRef Label;
 
-        public AstLoopControl(Parser parser, Position startPos, Position endPos, AstLabelRef label = null) : base(parser, startPos, endPos)
+        public AstLoopControl(Parser parser, Position startPos, Position endPos, AstLabelRef label = null) : base(
+            parser, startPos, endPos)
         {
             Label = label;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Label);
         }
     }
 }

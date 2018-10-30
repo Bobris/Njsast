@@ -16,5 +16,12 @@ namespace Njsast.Ast
             Init = init;
             Object = @object;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            w.Walk(Init);
+            w.Walk(Object);
+            base.Visit(w);
+        }
     }
 }

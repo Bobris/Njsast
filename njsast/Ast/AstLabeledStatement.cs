@@ -12,5 +12,11 @@ namespace Njsast.Ast
         {
             Label = label;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            w.Walk(Label);
+            base.Visit(w);
+        }
     }
 }

@@ -13,5 +13,11 @@ namespace Njsast.Ast
         {
             Expression = expression;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Expression);
+        }
     }
 }

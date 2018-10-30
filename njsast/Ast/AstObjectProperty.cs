@@ -22,5 +22,13 @@ namespace Njsast.Ast
             Key = key;
             Value = value;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            if (Key is AstNode)
+                w.Walk((AstNode)Key);
+            w.Walk(Value);
+        }
     }
 }

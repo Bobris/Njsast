@@ -20,11 +20,8 @@ namespace Njsast.Ast
         /// [AstString?] Name of the file to load exports from
         public AstString ModuleName;
 
-        public AstExport(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
-        {
-        }
-
-        public AstExport(Parser parser, Position startPos, Position endPos, AstString source, AstNode declaration, ref StructList<AstNameMapping> specifiers) : base(parser, startPos, endPos)
+        public AstExport(Parser parser, Position startPos, Position endPos, AstString source, AstNode declaration,
+            ref StructList<AstNameMapping> specifiers) : base(parser, startPos, endPos)
         {
             ModuleName = source;
             if (declaration is AstDefun || declaration is AstDefinitions || declaration is AstDefClass)
@@ -35,10 +32,12 @@ namespace Njsast.Ast
             {
                 ExportedValue = declaration;
             }
+
             ExportedNames.TransferFrom(ref specifiers);
         }
 
-        public AstExport(Parser parser, Position startPos, Position endPos, AstNode declaration, bool isDefault) : base(parser, startPos, endPos)
+        public AstExport(Parser parser, Position startPos, Position endPos, AstNode declaration, bool isDefault) : base(
+            parser, startPos, endPos)
         {
             if (declaration is AstDefun || declaration is AstDefinitions || declaration is AstDefClass)
             {
@@ -48,7 +47,17 @@ namespace Njsast.Ast
             {
                 ExportedValue = declaration;
             }
+
             IsDefault = isDefault;
+        }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(ModuleName);
+            w.Walk(ExportedDefinition);
+            w.Walk(ExportedValue);
+            w.WalkList(ExportedNames);
         }
     }
 }

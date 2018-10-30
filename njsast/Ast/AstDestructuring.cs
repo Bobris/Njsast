@@ -16,5 +16,11 @@ namespace Njsast.Ast
             Names.TransferFrom(ref names);
             IsArray = isArray;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.WalkList(Names);
+        }
     }
 }

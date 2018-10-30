@@ -19,5 +19,12 @@ namespace Njsast.Ast
             Right = right;
             Operator = op;
         }
+
+        public override void Visit(TreeWalker w)
+        {
+            base.Visit(w);
+            w.Walk(Left);
+            w.Walk(Right);
+        }
     }
 }
