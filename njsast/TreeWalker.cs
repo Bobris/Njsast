@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Njsast.Ast;
 
 namespace Njsast
@@ -10,6 +11,34 @@ namespace Njsast
         protected void StopDescending()
         {
             _stopDescending = true;
+        }
+
+        protected AstNode Parent()
+        {
+            if (_stack.Count <= 1)
+                return null;
+            return _stack[_stack.Count - 2];
+        }
+
+        protected AstNode Parent(int generation)
+        {
+            if (_stack.Count <= 1 + generation)
+                return null;
+            return _stack[_stack.Count - 2 - (uint) generation];
+        }
+
+        protected T FindParent<T>() where T : AstNode
+        {
+            uint i = _stack.Count - 2;
+            while (i < _stack.Count)
+            {
+                var p = _stack[i];
+                if (p is T node)
+                    return node;
+                i--;
+            }
+
+            return null;
         }
 
         protected void Descend()
