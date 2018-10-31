@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -58,6 +59,12 @@ namespace Njsast.Ast
             w.Walk(ExportedDefinition);
             w.Walk(ExportedValue);
             w.WalkList(ExportedNames);
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("IsDefault", IsDefault.ToString());
         }
     }
 }

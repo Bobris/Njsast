@@ -9,7 +9,8 @@ namespace Njsast.Ast
         public AstNode Consequent;
         public AstNode Alternative;
 
-        public AstConditional(Parser parser, Position startLoc, Position endLoc, AstNode expr, AstNode consequent, AstNode alternative) : base(parser, startLoc, endLoc)
+        public AstConditional(Parser parser, Position startLoc, Position endLoc, AstNode expr, AstNode consequent,
+            AstNode alternative) : base(parser, startLoc, endLoc)
         {
             Condition = expr;
             Consequent = consequent;

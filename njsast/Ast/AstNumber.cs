@@ -1,4 +1,6 @@
-﻿using Njsast.Reader;
+﻿using System.Globalization;
+using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -11,10 +13,18 @@ namespace Njsast.Ast
         /// [string] numeric value as string (optional)
         public string Literal;
 
-        public AstNumber(Parser parser, Position startLoc, Position endLoc, double value, string literal) : base(parser, startLoc, endLoc)
+        public AstNumber(Parser parser, Position startLoc, Position endLoc, double value, string literal) : base(parser,
+            startLoc, endLoc)
         {
             Value = value;
             Literal = literal;
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("Value", Value.ToString(CultureInfo.InvariantCulture));
+            writer.PrintProp("Literal", Literal);
         }
     }
 }

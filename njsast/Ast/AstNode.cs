@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -29,6 +30,10 @@ namespace Njsast.Ast
         }
 
         public virtual void Visit(TreeWalker w)
+        {
+        }
+
+        public virtual void DumpScalars(IAstDumpWriter writer)
         {
         }
     }

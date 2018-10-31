@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -24,6 +25,13 @@ namespace Njsast.Ast
             if (Property is AstNode)
                 w.Walk((AstNode) Property);
             w.Walk(Expression);
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            if (Property is string)
+                writer.PrintProp("Property", (string) Property);
         }
     }
 }

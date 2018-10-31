@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -14,6 +15,12 @@ namespace Njsast.Ast
         public AstString(Parser parser, Position startLoc, Position endLoc, string value) : base(parser, startLoc, endLoc)
         {
             Value = value;
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("Value", Value);
         }
     }
 }

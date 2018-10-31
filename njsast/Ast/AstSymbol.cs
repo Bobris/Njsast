@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -22,6 +23,12 @@ namespace Njsast.Ast
         protected AstSymbol(AstSymbol symbol) : base(symbol)
         {
             Name = symbol.Name;
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("Name", Name);
         }
     }
 }

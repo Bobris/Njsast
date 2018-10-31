@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -11,6 +12,13 @@ namespace Njsast.Ast
         public AstRegExp(Parser parser, Position startLoc, Position endLoc, RegExp value) : base(parser, startLoc, endLoc)
         {
             Value = value;
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("Pattern", Value.Pattern);
+            writer.PrintProp("Flags", Value.Flags.ToString());
         }
     }
 }

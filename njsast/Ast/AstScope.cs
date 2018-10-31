@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Njsast.AstDump;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -31,6 +32,12 @@ namespace Njsast.Ast
 
         public AstScope(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("HasUseStrictDirective", HasUseStrictDirective.ToString());
         }
     }
 }

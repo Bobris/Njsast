@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -21,6 +22,12 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.WalkList(Names);
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("IsArray", IsArray.ToString());
         }
     }
 }

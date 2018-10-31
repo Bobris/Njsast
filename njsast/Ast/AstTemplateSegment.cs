@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -15,6 +16,13 @@ namespace Njsast.Ast
         {
             Value = value;
             Raw = raw;
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("Value", Value);
+            writer.PrintProp("Raw", Raw);
         }
     }
 }

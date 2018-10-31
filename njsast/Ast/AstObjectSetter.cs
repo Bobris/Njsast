@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -19,6 +20,12 @@ namespace Njsast.Ast
         public AstObjectSetter(Parser parser, Position startLoc, Position endLoc, AstNode key, AstNode value, bool @static) : base(parser, startLoc, endLoc, key, value)
         {
             Static = @static;
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("Static", Static.ToString());
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.AstDump;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -17,18 +18,28 @@ namespace Njsast.Ast
         /// [boolean] is this method async
         public bool Async;
 
-        public AstConciseMethod(Parser parser, Position startLoc, Position endLoc, string key, AstNode value, bool @static, bool isGenerator, bool async) : base(parser, startLoc, endLoc, key, value)
+        public AstConciseMethod(Parser parser, Position startLoc, Position endLoc, string key, AstNode value,
+            bool @static, bool isGenerator, bool async) : base(parser, startLoc, endLoc, key, value)
         {
             Static = @static;
             IsGenerator = isGenerator;
             Async = async;
         }
 
-        public AstConciseMethod(Parser parser, Position startLoc, Position endLoc, AstNode key, AstNode value, bool @static, bool isGenerator, bool async) : base(parser, startLoc, endLoc, key, value)
+        public AstConciseMethod(Parser parser, Position startLoc, Position endLoc, AstNode key, AstNode value,
+            bool @static, bool isGenerator, bool async) : base(parser, startLoc, endLoc, key, value)
         {
             Static = @static;
             IsGenerator = isGenerator;
             Async = async;
+        }
+
+        public override void DumpScalars(IAstDumpWriter writer)
+        {
+            base.DumpScalars(writer);
+            writer.PrintProp("Static", Static.ToString());
+            writer.PrintProp("IsGenerator", IsGenerator.ToString());
+            writer.PrintProp("Async", Async.ToString());
         }
     }
 }
