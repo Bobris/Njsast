@@ -64,7 +64,7 @@ namespace Njsast.Ast
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);
-            writer.PrintProp("IsDefault", IsDefault.ToString());
+            writer.PrintProp("IsDefault", IsDefault);
         }
     }
 }

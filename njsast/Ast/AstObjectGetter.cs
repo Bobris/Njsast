@@ -20,7 +20,7 @@ namespace Njsast.Ast
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);
-            writer.PrintProp("Static", Static.ToString());
+            writer.PrintProp("Static", Static);
         }
     }
 }

@@ -205,12 +205,6 @@ namespace Njsast
             return GetEnumerator();
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public int IndexOf(T value)
-        {
-            return AsSpan().IndexOf<T>(value);
-        }
-
         public void TransferFrom(ref StructList<T> reference)
         {
             _a = reference._a;

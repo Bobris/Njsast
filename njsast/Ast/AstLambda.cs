@@ -42,8 +42,8 @@ namespace Njsast.Ast
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);
-            writer.PrintProp("IsGenerator", IsGenerator.ToString());
-            writer.PrintProp("Async", Async.ToString());
+            writer.PrintProp("IsGenerator", IsGenerator);
+            writer.PrintProp("Async", Async);
         }
     }
 }

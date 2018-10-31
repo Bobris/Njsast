@@ -27,7 +27,7 @@ namespace Njsast.Ast
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);
-            writer.PrintProp("IsArray", IsArray.ToString());
+            writer.PrintProp("IsArray", IsArray);
         }
     }
 }

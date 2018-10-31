@@ -19,7 +19,7 @@ namespace Njsast.Ast
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);
-            writer.PrintProp("IsLoop", IsLoop.ToString());
+            writer.PrintProp("IsLoop", IsLoop);
         }
     }
 }
