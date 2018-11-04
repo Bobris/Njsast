@@ -40,10 +40,6 @@ namespace Njsast.AstDump
         {
             if (value)
                 _main += " [" + name + "]";
-            else
-            {
-                _main += "  " + name + " ";
-            }
         }
 
         public void PrintProp(string name, string value)

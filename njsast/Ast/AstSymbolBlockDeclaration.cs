@@ -1,6 +1,4 @@
-﻿using Njsast.Reader;
-
-namespace Njsast.Ast
+﻿namespace Njsast.Ast
 {
     /// Base class for block-scoped declaration symbols
     public class AstSymbolBlockDeclaration : AstSymbolDeclaration

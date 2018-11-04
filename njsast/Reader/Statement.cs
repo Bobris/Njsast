@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
 using JetBrains.Annotations;
 using Njsast.Ast;
 
@@ -205,13 +204,14 @@ namespace Njsast.Reader
             var i = 0;
             for (; i < _labels.Count; ++i)
             {
-                var lab = _labels[(uint)i];
+                var lab = _labels[(uint) i];
                 if (label == null || lab.Name == label.Name)
                 {
                     if (lab.IsLoop && (isBreak || lab.IsLoop))
                     {
                         break;
                     }
+
                     if (label != null && isBreak) break;
                 }
             }
@@ -507,6 +507,7 @@ namespace Njsast.Reader
                 if (label.Name == maybeName)
                     Raise(expr.Start, "Label '" + maybeName + "' is already declared");
             }
+
             var newlabel = new AstLabel(this, nodeStart, _lastTokEnd, maybeName);
             newlabel.IsLoop = TokenInformation.Types[Type].IsLoop;
             _labels.Add(newlabel);
@@ -517,7 +518,7 @@ namespace Njsast.Reader
                 RaiseRecoverable(body.Start, "Invalid labelled declaration");
             _labels.Pop();
 
-            return new AstLabeledStatement(this, nodeStart, _lastTokEnd,(AstStatement) body, newlabel);
+            return new AstLabeledStatement(this, nodeStart, _lastTokEnd, (AstStatement) body, newlabel);
         }
 
         [NotNull]
@@ -626,6 +627,22 @@ namespace Njsast.Reader
         {
             var id = ParseBindingAtom();
             CheckLVal(id, true, kind);
+            if (id is AstSymbol)
+            {
+                if (kind == VariableKind.Let)
+                {
+                    id = new AstSymbolLet((AstSymbol) id);
+                }
+                else if (kind == VariableKind.Const)
+                {
+                    id = new AstSymbolConst((AstSymbol) id);
+                }
+                else
+                {
+                    id = new AstSymbolVar((AstSymbol) id);
+                }
+            }
+
             return id;
         }
 
@@ -666,7 +683,7 @@ namespace Njsast.Reader
             if (isStatement == false && isNullableId == false)
                 id = Type == TokenType.Name ? ParseIdent() : null;
 
-            if (id!=null)
+            if (id != null)
                 id = new AstSymbolDeclaration(id);
             var parameters = new StructList<AstNode>();
             ParseFunctionParams(ref parameters);
@@ -681,10 +698,12 @@ namespace Njsast.Reader
 
             if (isStatement || isNullableId)
             {
-                return new AstLambda(this, startLoc, _lastTokEnd, (AstSymbolDeclaration) id, ref parameters, generator, isAsync, ref body);
+                return new AstLambda(this, startLoc, _lastTokEnd, (AstSymbolDeclaration) id, ref parameters, generator,
+                    isAsync, ref body);
             }
 
-            return new AstFunction(this, startLoc, _lastTokEnd, (AstSymbolDeclaration) id, ref parameters, generator, isAsync, ref body);
+            return new AstFunction(this, startLoc, _lastTokEnd, (AstSymbolDeclaration) id, ref parameters, generator,
+                isAsync, ref body);
         }
 
         void ParseFunctionParams(ref StructList<AstNode> parameters)
@@ -787,17 +806,19 @@ namespace Njsast.Reader
                 if (kind == PropertyKind.Get)
                 {
                     body.Add(new AstObjectGetter(this, methodStart, _lastTokEnd, key, methodValue, @static));
-                } else if (kind == PropertyKind.Set)
+                }
+                else if (kind == PropertyKind.Set)
                 {
                     body.Add(new AstObjectSetter(this, methodStart, _lastTokEnd, key, methodValue, @static));
                 }
                 else if (kind == PropertyKind.Method || kind == PropertyKind.Constructor)
                 {
-                    body.Add(new AstConciseMethod(this, methodStart, _lastTokEnd, key, methodValue, @static, isGenerator, isAsync));
+                    body.Add(new AstConciseMethod(this, methodStart, _lastTokEnd, key, methodValue, @static,
+                        isGenerator, isAsync));
                 }
                 else
                 {
-                    throw new InvalidOperationException("parseClass unknown kind "+kind);
+                    throw new InvalidOperationException("parseClass unknown kind " + kind);
                 }
             }
 
@@ -837,7 +858,9 @@ namespace Njsast.Reader
             if (Eat(TokenType.Star))
             {
                 var specifiers = new StructList<AstNameMapping>();
-                specifiers.Add(new AstNameMapping(this, _lastTokStart, _lastTokEnd, new AstSymbolExportForeign(this, _lastTokStart, _lastTokEnd, "*"), new AstSymbolExport(this, _lastTokStart, _lastTokEnd, "*")));
+                specifiers.Add(new AstNameMapping(this, _lastTokStart, _lastTokEnd,
+                    new AstSymbolExportForeign(this, _lastTokStart, _lastTokEnd, "*"),
+                    new AstSymbolExport(this, _lastTokStart, _lastTokEnd, "*")));
                 ExpectContextual("from");
                 if (Type != TokenType.String)
                     Raise(Start, "Unexpected token");
@@ -937,6 +960,7 @@ namespace Njsast.Reader
                     {
                         CheckPatternExport(exports, prop);
                     }
+
                     break;
                 case AstDefaultAssign assignmentPattern:
                     CheckPatternExport(exports, assignmentPattern.Left);
@@ -985,7 +1009,8 @@ namespace Njsast.Reader
                 var local = ParseIdent(true);
                 var exported = EatContextual("as") ? ParseIdent(true) : local;
                 CheckExport(exports, exported.Name, exported.Start);
-                nodes.Add(new AstNameMapping(this, startLoc, _lastTokEnd, new AstSymbolExportForeign(local), new AstSymbolExport(exported)));
+                nodes.Add(new AstNameMapping(this, startLoc, _lastTokEnd, new AstSymbolExportForeign(local),
+                    new AstSymbolExport(exported)));
             }
         }
 
@@ -1042,7 +1067,8 @@ namespace Njsast.Reader
                 ExpectContextual("as");
                 var local = ParseIdent();
                 CheckLVal(local, true, VariableKind.Let);
-                importNames.Add(new AstNameMapping(this, startLoc, _lastTokEnd, starSymbol, new AstSymbolImport(local)));
+                importNames.Add(new AstNameMapping(this, startLoc, _lastTokEnd, starSymbol,
+                    new AstSymbolImport(local)));
                 return;
             }
 
@@ -1070,7 +1096,8 @@ namespace Njsast.Reader
                 }
 
                 CheckLVal(local, true, VariableKind.Let);
-                importNames.Add(new AstNameMapping(this, startLoc, _lastTokEnd, new AstSymbolImportForeign(local), new AstSymbolImport(imported)));
+                importNames.Add(new AstNameMapping(this, startLoc, _lastTokEnd, new AstSymbolImportForeign(local),
+                    new AstSymbolImport(imported)));
             }
         }
 

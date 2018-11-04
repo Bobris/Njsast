@@ -1,11 +1,9 @@
-﻿using Njsast.Reader;
-
-namespace Njsast.Ast
+﻿namespace Njsast.Ast
 {
     /// A constant declaration
     public class AstSymbolConst : AstSymbolBlockDeclaration
     {
-        public AstSymbolConst(AstSymbol name, AstNode init) : base(name, init)
+        public AstSymbolConst(AstSymbol name) : base(name, null)
         {
         }
     }

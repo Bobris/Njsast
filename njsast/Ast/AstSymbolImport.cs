@@ -1,6 +1,4 @@
-﻿using Njsast.Reader;
-
-namespace Njsast.Ast
+﻿namespace Njsast.Ast
 {
     /// Symbol referring to an imported name
     public class AstSymbolImport : AstSymbolBlockDeclaration

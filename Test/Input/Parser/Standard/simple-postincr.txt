@@ -1,0 +1,6 @@
+Toplevel 1:1 - 1:4
+  SimpleStatement 1:1 - 1:4
+    UnaryPostfix 1:1 - 1:4
+      Operator: IncrementPostfix
+      Symbol 1:1 - 1:2
+        Name: x

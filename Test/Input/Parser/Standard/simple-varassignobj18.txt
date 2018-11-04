@@ -1,0 +1,13 @@
+Toplevel 1:1 - 1:37
+  SimpleStatement 1:1 - 1:37
+    Assign 1:1 - 1:37
+      Operator: Assignment
+      Symbol 1:1 - 1:2
+        Name: x
+      Object 1:5 - 1:37
+        ObjectSetter 1:7 - 1:35 [Static]
+          Symbol 1:11 - 1:16
+            Name: width
+          Function 1:16 - 1:35
+            Symbol 1:17 - 1:18
+              Name: w

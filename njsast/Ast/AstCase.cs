@@ -1,5 +1,4 @@
-﻿using System.Security.Cryptography;
-using Njsast.Reader;
+﻿using Njsast.Reader;
 
 namespace Njsast.Ast
 {

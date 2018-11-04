@@ -1,6 +1,4 @@
-﻿using Njsast.Reader;
-
-namespace Njsast.Ast
+﻿namespace Njsast.Ast
 {
     /// Symbol naming the exception in catch
     public class AstSymbolCatch : AstSymbolBlockDeclaration

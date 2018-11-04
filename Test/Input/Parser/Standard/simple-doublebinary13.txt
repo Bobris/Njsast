@@ -1,0 +1,12 @@
+Toplevel 1:1 - 1:12
+  SimpleStatement 1:1 - 1:12
+    Binary 1:1 - 1:12
+      Operator: LeftShift
+      Binary 1:1 - 1:7
+        Operator: LeftShift
+        Symbol 1:1 - 1:2
+          Name: x
+        Symbol 1:6 - 1:7
+          Name: y
+      Symbol 1:11 - 1:12
+        Name: z
