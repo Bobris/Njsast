@@ -48,7 +48,7 @@ namespace Njsast.AstDump
 
         public void PrintProp(string name, string value)
         {
-            _propLines.Add(new String(' ', _indent * 2 + 2) + name + ": " + value);
+            _propLines.Add(new String(' ', _indent * 2 + 2) + name + ": " + System.Web.HttpUtility.JavaScriptStringEncode(value));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using JetBrains.Annotations;
 
@@ -575,7 +576,7 @@ namespace Njsast.Reader
             if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
 
             var str = _input.Substring(start.Index, _pos - start);
-            var val = octal ? ParseInt(str, 8) : double.Parse(str);
+            var val = octal ? ParseInt(str, 8) : double.Parse(str, NumberStyles.Any, CultureInfo.InvariantCulture);
             FinishToken(TokenType.Num, val);
         }
 
