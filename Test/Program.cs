@@ -45,14 +45,18 @@ namespace Test
             Environment.ExitCode = errors == 0 ? 0 : 1;
         }
 
-        static void Main(string[] args)
+        static void Debug()
         {
-            RunAllTests();
-            return;
-            var parser = new Parser(new Options(), "6*7");
+            var parser = new Parser(new Options(), "({ set 10(w) { m_null = w } })");
             var toplevel = parser.Parse();
             var dumper = new DumpAst(new AstDumpWriter(new ConsoleLineSink()));
             dumper.Walk(toplevel);
+        }
+
+        static void Main(string[] args)
+        {
+            RunAllTests();
+            //Debug();
         }
     }
 }

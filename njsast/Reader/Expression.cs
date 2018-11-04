@@ -382,7 +382,8 @@ namespace Njsast.Reader
             var startLoc = Start;
             var expr = ParseExpressionAtom(refDestructuringErrors);
             var skipArrowSubscripts = expr is AstArrow &&
-                                      _input.Substring(_lastTokStart.Index, _lastTokEnd.Index - _lastTokStart.Index) != ")";
+                                      _input.Substring(_lastTokStart.Index, _lastTokEnd.Index - _lastTokStart.Index) !=
+                                      ")";
             if (CheckExpressionErrors(refDestructuringErrors) || skipArrowSubscripts)
                 return expr;
             var result = ParseSubscripts(expr, startLoc);
@@ -832,18 +833,19 @@ namespace Njsast.Reader
                 isAsync, startLoc, refDestructuringErrors);
             if (kind == PropertyKind.Get)
             {
-                return new AstObjectGetter(this, nodeStart, _lastTokEnd, key, value, !method);
+                return new AstObjectGetter(this, nodeStart, _lastTokEnd, key, value, false);
             }
 
             if (kind == PropertyKind.Set)
             {
-                return new AstObjectSetter(this, nodeStart, _lastTokEnd, key, value, !method);
+                return new AstObjectSetter(this, nodeStart, _lastTokEnd, key, value, false);
             }
 
             if (kind == PropertyKind.Initialise)
             {
                 return new AstObjectKeyVal(this, nodeStart, _lastTokEnd, key, value);
             }
+
             throw new NotImplementedException("parseProperty");
         }
 
@@ -885,6 +887,7 @@ namespace Njsast.Reader
 
                 var kind = identifierNode.Name == "get" ? PropertyKind.Get : PropertyKind.Set;
                 (computed, key) = ParsePropertyName();
+                key = MakeSymbolMethod(key);
                 var value = ParseMethod(false);
                 var paramCount = kind == PropertyKind.Get ? 0 : 1;
                 if (value.ArgNames.Count != paramCount)
@@ -901,7 +904,9 @@ namespace Njsast.Reader
                         RaiseRecoverable(value.ArgNames[0].Start, "Setter cannot use rest params");
                 }
 
-                return (value, kind, false, false, computed, key);
+                var valueAcc = new AstAccessor(this, value.Start, value.End, ref value.ArgNames, value.IsGenerator,
+                    value.Async, ref value.Body);
+                return (valueAcc, kind, false, false, computed, key);
             }
 
             if (Options.EcmaVersion >= 6 && !computed && key is AstSymbol identifierNode2)
@@ -928,6 +933,26 @@ namespace Njsast.Reader
 
             Raise(Start, "Unexpected token");
             throw new InvalidOperationException();
+        }
+
+        AstNode MakeSymbolMethod(AstNode key)
+        {
+            if (key is AstNumber)
+            {
+                return new AstSymbolMethod(this, key.Start, key.End, ((AstNumber) key).Literal);
+            }
+
+            if (key is AstString)
+            {
+                return new AstSymbolMethod(this, key.Start, key.End, ((AstString) key).Value);
+            }
+
+            if (key is AstSymbol)
+            {
+                return new AstSymbolMethod(this, key.Start, key.End, ((AstSymbol) key).Name);
+            }
+
+            throw new InvalidOperationException(key.ToString());
         }
 
         (bool computed, AstNode key) ParsePropertyName()
@@ -973,6 +998,7 @@ namespace Njsast.Reader
                 Expect(TokenType.ParenL);
                 var parameters = new StructList<AstNode>();
                 ParseBindingList(ref parameters, TokenType.ParenR, false, Options.EcmaVersion >= 8);
+                MakeSymbolFunArg(ref parameters);
                 CheckYieldAwaitInDefaultParams();
                 var body = new StructList<AstNode>();
                 var expression = ParseFunctionBody(parameters, startLoc, null, false, ref body);
@@ -986,6 +1012,19 @@ namespace Njsast.Reader
                 _yieldPos = oldYieldPos;
                 _awaitPos = oldAwaitPos;
                 _inFunction = oldInFunc;
+            }
+        }
+
+        void MakeSymbolFunArg(ref StructList<AstNode> parameters)
+        {
+            for (var i = 0; i < parameters.Count; i++)
+            {
+                var par = parameters[(uint) i];
+                if (par is AstSymbolFunarg) continue;
+                if (par is AstSymbol)
+                {
+                    parameters[(uint) i] = new AstSymbolFunarg((AstSymbol) par);
+                }
             }
         }
 
@@ -1065,8 +1104,9 @@ namespace Njsast.Reader
                 // if a let/const declaration in the function clashes with one of the params.
                 CheckParams(parameters, !oldStrict && !useStrict && !isArrowFunction && IsSimpleParamList(parameters));
                 var block = ParseBlock(false);
+                body.TransferFrom(ref block.Body);
                 expression = false;
-                AdaptDirectivePrologue(ref block.Body, ref _strict);
+                AdaptDirectivePrologue(ref body, ref _strict);
                 _labels.TransferFrom(ref oldLabels);
             }
 

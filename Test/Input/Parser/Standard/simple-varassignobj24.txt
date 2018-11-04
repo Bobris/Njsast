@@ -5,10 +5,16 @@ Toplevel 1:1 - 1:33
       Symbol 1:1 - 1:2
         Name: x
       Object 1:5 - 1:33
-        ObjectSetter 1:7 - 1:31 [Static]
-          Number 1:11 - 1:13
-            Value: 10
-            Literal: 10
-          Function 1:13 - 1:31
-            Symbol 1:14 - 1:15
+        ObjectSetter 1:7 - 1:31
+          SymbolMethod 1:11 - 1:13
+            Name: 10
+          Accessor 1:13 - 1:31
+            SymbolFunarg 1:14 - 1:15
               Name: w
+            SimpleStatement 1:19 - 1:29
+              Assign 1:19 - 1:29
+                Operator: Assignment
+                Symbol 1:19 - 1:25
+                  Name: m_null
+                Symbol 1:28 - 1:29
+                  Name: w

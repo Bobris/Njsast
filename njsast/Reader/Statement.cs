@@ -569,7 +569,6 @@ namespace Njsast.Reader
             Expect(TokenType.ParenR);
             ExitLexicalScope();
             var body = ParseStatement(false) as AstStatement;
-            _labels.Pop();
             return new AstFor(this, nodeStart, _lastTokEnd, body, init, test, update);
         }
 
@@ -584,13 +583,10 @@ namespace Njsast.Reader
             Expect(TokenType.ParenR);
             ExitLexicalScope();
             var body = ParseStatement(false) as AstStatement;
-            _labels.Pop();
-
             if (isIn)
             {
                 return new AstForIn(this, nodeStart, _lastTokEnd, body, init, right);
             }
-
             return new AstForOf(this, nodeStart, _lastTokEnd, body, init, right);
         }
 
@@ -683,8 +679,6 @@ namespace Njsast.Reader
             if (isStatement == false && isNullableId == false)
                 id = Type == TokenType.Name ? ParseIdent() : null;
 
-            if (id != null)
-                id = new AstSymbolDeclaration(id);
             var parameters = new StructList<AstNode>();
             ParseFunctionParams(ref parameters);
             var body = new StructList<AstNode>();
@@ -698,11 +692,15 @@ namespace Njsast.Reader
 
             if (isStatement || isNullableId)
             {
-                return new AstLambda(this, startLoc, _lastTokEnd, (AstSymbolDeclaration) id, ref parameters, generator,
+                if (id != null)
+                    id = new AstSymbolDefun(id);
+                return new AstDefun(this, startLoc, _lastTokEnd, (AstSymbolDefun) id, ref parameters, generator,
                     isAsync, ref body);
             }
 
-            return new AstFunction(this, startLoc, _lastTokEnd, (AstSymbolDeclaration) id, ref parameters, generator,
+            if (id != null)
+                id = new AstSymbolLambda(id);
+            return new AstFunction(this, startLoc, _lastTokEnd, (AstSymbolLambda) id, ref parameters, generator,
                 isAsync, ref body);
         }
 

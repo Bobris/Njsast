@@ -5,8 +5,7 @@ Toplevel 1:1 - 1:20
       Symbol 1:1 - 1:2
         Name: x
       Object 1:5 - 1:20
-        ObjectGetter 1:7 - 1:18 [Static]
-          Number 1:11 - 1:13
-            Value: 10
-            Literal: 10
-          Function 1:13 - 1:18
+        ObjectGetter 1:7 - 1:18
+          SymbolMethod 1:11 - 1:13
+            Name: 10
+          Accessor 1:13 - 1:18
