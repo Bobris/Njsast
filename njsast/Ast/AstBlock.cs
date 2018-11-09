@@ -18,6 +18,10 @@ namespace Njsast.Ast
         {
         }
 
+        protected AstBlock(AstNode from) : base(from)
+        {
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);

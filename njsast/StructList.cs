@@ -31,6 +31,33 @@ namespace Njsast
             _a[_count++] = value;
         }
 
+        /// <summary>
+        /// Adds value to a collection only if it is not already contained in collection
+        /// </summary>
+        /// <param name="value"></param>
+        public void AddUnique(in T value)
+        {
+            if (_a == null || _a.Length == 0)
+            {
+                Add(value);
+            }
+
+            var isUnique = true;
+            for (var i = 0; i < _a.Length; i++)
+            {
+                if (ReferenceEquals(_a[i], value))
+                {
+                    isUnique = false;
+                    break;
+                }
+            }
+
+            if (isUnique)
+            {
+                Add(value);
+            }
+        }
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ref T AddRef()
         {

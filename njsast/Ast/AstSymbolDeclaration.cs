@@ -7,7 +7,8 @@ namespace Njsast.Ast
     {
         public AstNode Init;
 
-        public AstSymbolDeclaration(Parser parser, Position startLoc, Position endLoc, string name, AstNode init) : base(parser, startLoc, endLoc, name)
+        public AstSymbolDeclaration(Parser parser, Position startLoc, Position endLoc, string name, AstNode init) :
+            base(parser, startLoc, endLoc, name)
         {
             Init = init;
         }
@@ -15,6 +16,10 @@ namespace Njsast.Ast
         public AstSymbolDeclaration(AstSymbol symbol, AstNode init = null) : base(symbol)
         {
             Init = init;
+        }
+
+        public AstSymbolDeclaration(Position start, Position end, string name) : base(start, end, name)
+        {
         }
     }
 }

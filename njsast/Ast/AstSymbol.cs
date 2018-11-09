@@ -1,5 +1,6 @@
 ﻿using Njsast.AstDump;
 using Njsast.Reader;
+using Njsast.Scope;
 
 namespace Njsast.Ast
 {
@@ -15,7 +16,8 @@ namespace Njsast.Ast
         /// [SymbolDef/S] the definition of this symbol
         public SymbolDef Thedef;
 
-        public AstSymbol(Parser parser, Position startLoc, Position endLoc, string name) : base(parser, startLoc, endLoc)
+        public AstSymbol(Parser parser, Position startLoc, Position endLoc, string name) : base(parser, startLoc,
+            endLoc)
         {
             Name = name;
         }
@@ -25,10 +27,38 @@ namespace Njsast.Ast
             Name = symbol.Name;
         }
 
+        protected AstSymbol(Position startLoc, Position endLoc, string name) : base(startLoc, endLoc)
+        {
+            Name = name;
+        }
+
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);
             writer.PrintProp("Name", Name);
+        }
+
+        public void MarkEnclosed(ScopeOptions options)
+        {
+            for (var s = Scope; s != null; s = s.ParentScope)
+            {
+                s.Enclosed.AddUnique(Thedef);
+                if (options.KeepFunctionNames)
+                {
+                    foreach (var keyValuePair in s.Functions)
+                    {
+                        Thedef.Scope.Enclosed.AddUnique(keyValuePair.Value);
+                    }
+                }
+
+                if (s == Thedef.Scope) break;
+            }
+        }
+
+        public void Reference(ScopeOptions options)
+        {
+            Thedef.References.Add(this);
+            MarkEnclosed(options);
         }
     }
 }

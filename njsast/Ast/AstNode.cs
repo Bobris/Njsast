@@ -29,6 +29,12 @@ namespace Njsast.Ast
             End = node.End;
         }
 
+        protected AstNode(Position startLoc, Position endLoc)
+        {
+            Start = startLoc;
+            End = endLoc;
+        }
+
         public virtual void Visit(TreeWalker w)
         {
         }
