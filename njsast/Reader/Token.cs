@@ -8,8 +8,8 @@
         public Token(TokenType type, object value, SourceLocation location)
         {
             Type = type;
-            this._value = value;
-            this._location = location;
+            _value = value;
+            _location = location;
         }
 
         public TokenType Type { get; }

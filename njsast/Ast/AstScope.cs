@@ -34,6 +34,12 @@ namespace Njsast.Ast
         {
         }
 
+        public AstScope SetUseStrict(bool useStrict)
+        {
+            HasUseStrictDirective = useStrict;
+            return this;
+        }
+
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);

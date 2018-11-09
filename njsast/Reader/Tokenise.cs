@@ -49,7 +49,7 @@ namespace Njsast.Reader
         // properties.
         internal void NextToken()
         {
-            var curContext = this.CurContext();
+            var curContext = CurContext();
             if (curContext == null || curContext.PreserveSpace != true) SkipSpace();
 
             Start = CurPosition();
@@ -174,8 +174,8 @@ namespace Njsast.Reader
         void FinishToken(TokenType type, [CanBeNull] object val = null)
         {
             End = CurPosition();
-            var prevType = this.Type;
-            this.Type = type;
+            var prevType = Type;
+            Type = type;
             Value = val;
 
             UpdateContext(prevType);

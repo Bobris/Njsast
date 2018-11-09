@@ -15,13 +15,30 @@ namespace Njsast.Reader
         void ParseTopLevel([NotNull] AstToplevel node)
         {
             var exports = new Dictionary<string, bool>();
+            _canBeDirective = true;
             while (Type != TokenType.Eof)
             {
                 var stmt = ParseStatement(true, true, exports);
+
+                if (_canBeDirective)
+                {
+                    if (IsDirectiveCandidate(stmt))
+                    {
+                        if (IsUseStrictDirective(stmt))
+                        {
+                            node.HasUseStrictDirective = true;
+                            _strict = true;
+                            continue;
+                        }
+                    }
+                    else
+                    {
+                        _canBeDirective = false;
+                    }
+                }
                 node.Body.Add(stmt);
             }
 
-            AdaptDirectivePrologue(ref node.Body, ref node.HasUseStrictDirective);
             Next();
             node.End = _lastTokEnd;
         }
@@ -30,7 +47,7 @@ namespace Njsast.Reader
         {
             if (Type != TokenType.Name || Options.EcmaVersion < 6 || (string) Value != "let") return false;
             var skip = SkipWhiteSpace.Match(_input, _pos.Index);
-            var next = this._pos.Index + skip.Groups[0].Length;
+            var next = _pos.Index + skip.Groups[0].Length;
             var nextCh = _input[next];
             if (nextCh == 91 || nextCh == 123) return true; // '{' and '['
             if (IsIdentifierStart(nextCh, true))
@@ -201,22 +218,31 @@ namespace Njsast.Reader
 
             // Verify that there is an actual destination to break or
             // continue to.
-            var i = 0;
-            for (; i < _labels.Count; ++i)
+
+            if (label == null)
             {
-                var lab = _labels[(uint) i];
-                if (label == null || lab.Name == label.Name)
-                {
-                    if (lab.IsLoop && (isBreak || lab.IsLoop))
-                    {
-                        break;
-                    }
-
-                    if (label != null && isBreak) break;
-                }
+                if (isBreak && !_allowBreak || !isBreak && !_allowContinue)
+                    Raise(nodeStart, "Unsyntactic " + keyword);
             }
+            else
+            {
+                var i = 0;
+                for (; i < _labels.Count; ++i)
+                {
+                    var lab = _labels[(uint) i];
+                    if (lab.Name == label.Name)
+                    {
+                        if (lab.IsLoop && (isBreak || lab.IsLoop))
+                        {
+                            break;
+                        }
 
-            if (i == _labels.Count) Raise(nodeStart, "Unsyntactic " + keyword);
+                        if (isBreak) break;
+                    }
+                }
+
+                if (i == _labels.Count) Raise(nodeStart, "Unsyntactic " + keyword);
+            }
 
             if (isBreak)
             {
@@ -238,8 +264,14 @@ namespace Njsast.Reader
         AstDo ParseDoStatement(Position nodeStart)
         {
             Next();
+            var backupAllowBreak = _allowBreak;
+            var backupAllowContinue = _allowContinue;
+            _allowBreak = true;
+            _allowContinue = true;
             var body = (AstStatement) ParseStatement(false);
             Expect(TokenType.While);
+            _allowBreak = backupAllowBreak;
+            _allowContinue = backupAllowContinue;
             var test = ParseParenExpression();
             if (Options.EcmaVersion >= 6)
                 Eat(TokenType.Semi);
@@ -263,7 +295,7 @@ namespace Njsast.Reader
             EnterLexicalScope();
             Expect(TokenType.ParenL);
             if (Type == TokenType.Semi) return ParseFor(nodeStart, null);
-            var isLet = this.IsLet();
+            var isLet = IsLet();
             if (Type == TokenType.Var || Type == TokenType.Const || isLet)
             {
                 var startLoc = Start;
@@ -363,6 +395,7 @@ namespace Njsast.Reader
 
             var startLoc = Start;
             AstSwitchBranch consequent = null;
+            var backupAllowBreak = _allowBreak;
             for (var sawDefault = false; Type != TokenType.BraceR;)
             {
                 if (Type == TokenType.Case || Type == TokenType.Default)
@@ -375,6 +408,7 @@ namespace Njsast.Reader
 
                     startLoc = Start;
                     Next();
+                    _allowBreak = true;
                     if (isCase)
                     {
                         var test = ParseExpression();
@@ -408,6 +442,7 @@ namespace Njsast.Reader
             }
 
             Next(); // Closing brace
+            _allowBreak = backupAllowBreak;
             return new AstSwitch(this, nodeStart, _lastTokEnd, discriminant, ref cases);
         }
 
@@ -436,6 +471,7 @@ namespace Njsast.Reader
                 var param = ParseBindingAtom();
                 EnterLexicalScope();
                 CheckLVal(param, true, VariableKind.Let);
+                param = new AstSymbolCatch((AstSymbol)param);
                 Expect(TokenType.ParenR);
                 var body = ParseBlock(false);
                 ExitLexicalScope();
@@ -478,7 +514,13 @@ namespace Njsast.Reader
         {
             Next();
             var test = ParseParenExpression();
+            var backupAllowBreak = _allowBreak;
+            var backupAllowContinue = _allowContinue;
+            _allowBreak = true;
+            _allowContinue = true;
             var body = ParseStatement(false) as AstStatement;
+            _allowBreak = backupAllowBreak;
+            _allowContinue = backupAllowContinue;
             return new AstWhile(this, nodeStart, _lastTokEnd, test, body);
         }
 
@@ -524,6 +566,10 @@ namespace Njsast.Reader
         [NotNull]
         AstSimpleStatement ParseExpressionStatement(Position nodeStart, AstNode expr)
         {
+            if (_canBeDirective && expr is AstString directive && directive.Value == "use strict")
+            {
+                _strict = true;
+            }
             Semicolon();
             return new AstSimpleStatement(this, nodeStart, _lastTokEnd, expr);
         }
@@ -568,7 +614,13 @@ namespace Njsast.Reader
             var update = Type == TokenType.ParenR ? null : ParseExpression();
             Expect(TokenType.ParenR);
             ExitLexicalScope();
+            var backupAllowBreak = _allowBreak;
+            var backupAllowContinue = _allowContinue;
+            _allowBreak = true;
+            _allowContinue = true;
             var body = ParseStatement(false) as AstStatement;
+            _allowBreak = backupAllowBreak;
+            _allowContinue = backupAllowContinue;
             return new AstFor(this, nodeStart, _lastTokEnd, body, init, test, update);
         }
 
@@ -582,11 +634,18 @@ namespace Njsast.Reader
             var right = ParseExpression();
             Expect(TokenType.ParenR);
             ExitLexicalScope();
+            var backupAllowBreak = _allowBreak;
+            var backupAllowContinue = _allowContinue;
+            _allowBreak = true;
+            _allowContinue = true;
             var body = ParseStatement(false) as AstStatement;
+            _allowBreak = backupAllowBreak;
+            _allowContinue = backupAllowContinue;
             if (isIn)
             {
                 return new AstForIn(this, nodeStart, _lastTokEnd, body, init, right);
             }
+
             return new AstForOf(this, nodeStart, _lastTokEnd, body, init, right);
         }
 
@@ -681,8 +740,10 @@ namespace Njsast.Reader
 
             var parameters = new StructList<AstNode>();
             ParseFunctionParams(ref parameters);
+            MakeSymbolFunArg(ref parameters);
             var body = new StructList<AstNode>();
-            var expression = ParseFunctionBody(parameters, startLoc, id, allowExpressionBody, ref body);
+            var useStrict = false;
+            var expression = ParseFunctionBody(parameters, startLoc, id, allowExpressionBody, ref body, ref useStrict);
 
             _inGenerator = oldInGen;
             _inAsync = oldInAsync;
@@ -695,13 +756,13 @@ namespace Njsast.Reader
                 if (id != null)
                     id = new AstSymbolDefun(id);
                 return new AstDefun(this, startLoc, _lastTokEnd, (AstSymbolDefun) id, ref parameters, generator,
-                    isAsync, ref body);
+                    isAsync, ref body).SetUseStrict(useStrict);
             }
 
             if (id != null)
                 id = new AstSymbolLambda(id);
             return new AstFunction(this, startLoc, _lastTokEnd, (AstSymbolLambda) id, ref parameters, generator,
-                isAsync, ref body);
+                isAsync, ref body).SetUseStrict(useStrict);
         }
 
         void ParseFunctionParams(ref StructList<AstNode> parameters)
@@ -1099,20 +1160,10 @@ namespace Njsast.Reader
             }
         }
 
-        // Set `ExpressionStatement#directive` property for directive prologues.
-        void AdaptDirectivePrologue(ref StructList<AstNode> statements, ref bool useStrict)
+        bool IsUseStrictDirective([NotNull] AstNode statement)
         {
-            for (var i = 0; i < statements.Count && IsDirectiveCandidate(statements[(uint) i]); ++i)
-            {
-                var expressionStatement = (AstSimpleStatement) statements[(uint) i];
-                var literal2 = (AstString) expressionStatement.Body;
-                if (literal2.Value == "use strict")
-                {
-                    useStrict = true;
-                    statements.RemoveAt((uint) i);
-                    i--;
-                }
-            }
+            var literal2 = (AstString) ((AstSimpleStatement)statement).Body;
+            return literal2.Value == "use strict";
         }
 
         bool IsDirectiveCandidate([NotNull] AstNode statement)

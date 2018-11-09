@@ -12,7 +12,7 @@ namespace Njsast.Reader
         [ContractAnnotation("=> halt")]
         static void Raise(Position position, string message)
         {
-            message += " (" + position.Line + ":" + position.Column + ")";
+            message += " (" + position.Line + ":" + (position.Column + 1) + ")";
             var err = new SyntaxError(message, position);
             throw err;
         }

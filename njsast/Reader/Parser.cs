@@ -34,6 +34,9 @@ namespace Njsast.Reader
         readonly bool _inModule;
         bool _strict;
         bool _inTemplateElement;
+        bool _allowBreak;
+        bool _allowContinue;
+        bool _canBeDirective;
 
         public Parser(Options options, string input, int? startPos = null)
         {
@@ -58,7 +61,7 @@ namespace Njsast.Reader
                 (_reservedWords, _reservedWordsStrict, _reservedWordsStrictBind) = EcmascriptNoReservedRegex;
             }
 
-            this._input = input;
+            _input = input;
 
             // Used to signal to callers of `readWord1` whether the word
             // contained any escape sequences. This is needed because words with
@@ -98,7 +101,7 @@ namespace Njsast.Reader
 
             // Figure out if it's a module code.
             _inModule = options.SourceType == SourceType.Module;
-            _strict = _inModule || StrictDirective(_pos.Index);
+            _strict = _inModule;
 
             // Used to signify the start of a potential arrow function
             _potentialArrowAt = default;
@@ -109,9 +112,11 @@ namespace Njsast.Reader
             _yieldPos = _awaitPos = default;
             // Labels in scope.
             _labels = new StructList<AstLabel>();
+            _allowBreak = false;
+            _allowContinue = false;
 
             // If enabled, skip leading hashbang line.
-            if (_pos.Index == 0 && options.AllowHashBang && this._input.Substring(0, 2) == "#!")
+            if (_pos.Index == 0 && options.AllowHashBang && _input.Substring(0, 2) == "#!")
                 SkipLineComment(2);
 
             // Scope tracking for duplicate variable names (see scope.js)

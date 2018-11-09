@@ -1001,9 +1001,10 @@ namespace Njsast.Reader
                 MakeSymbolFunArg(ref parameters);
                 CheckYieldAwaitInDefaultParams();
                 var body = new StructList<AstNode>();
-                var expression = ParseFunctionBody(parameters, startLoc, null, false, ref body);
+                var useStrict = false;
+                var expression = ParseFunctionBody(parameters, startLoc, null, false, ref body, ref useStrict);
                 return new AstFunction(this, startLoc, _lastTokEnd, null, ref parameters, isGenerator, isAsync,
-                    ref body);
+                    ref body).SetUseStrict(useStrict) as AstFunction;
             }
             finally
             {
@@ -1015,17 +1016,29 @@ namespace Njsast.Reader
             }
         }
 
-        void MakeSymbolFunArg(ref StructList<AstNode> parameters)
+        static void MakeSymbolFunArg(ref StructList<AstNode> parameters)
         {
             for (var i = 0; i < parameters.Count; i++)
             {
-                var par = parameters[(uint) i];
-                if (par is AstSymbolFunarg) continue;
-                if (par is AstSymbol)
-                {
-                    parameters[(uint) i] = new AstSymbolFunarg((AstSymbol) par);
-                }
+                parameters[(uint) i] = MakeSymbolFunArg(parameters[(uint) i]);
             }
+        }
+
+        static AstNode MakeSymbolFunArg(AstNode par)
+        {
+            if (par is AstSymbolFunarg) return par;
+            if (par is AstSymbol)
+            {
+                return new AstSymbolFunarg((AstSymbol) par);
+            }
+
+            if (par is AstExpansion expansion)
+            {
+                expansion.Expression = MakeSymbolFunArg(expansion.Expression);
+                return par;
+            }
+
+            return par;
         }
 
         // Parse arrow function expression with given parameters.
@@ -1051,8 +1064,10 @@ namespace Njsast.Reader
             {
                 ToAssignableList(ref parameters, true);
                 var body = new StructList<AstNode>();
-                var expression = ParseFunctionBody(parameters, startLoc, null, true, ref body);
-                return new AstArrow(this, startLoc, _lastTokEnd, null, ref parameters, _inGenerator, isAsync, ref body);
+                var useStrict = false;
+                var expression = ParseFunctionBody(parameters, startLoc, null, true, ref body, ref useStrict);
+                return new AstArrow(this, startLoc, _lastTokEnd, null, ref parameters, _inGenerator, isAsync, ref body)
+                    .SetUseStrict(useStrict);
             }
             finally
             {
@@ -1066,11 +1081,10 @@ namespace Njsast.Reader
 
         // Parse function body and check parameters.
         bool ParseFunctionBody(in StructList<AstNode> parameters, Position startLoc, [CanBeNull] AstNode id,
-            bool isArrowFunction, ref StructList<AstNode> body)
+            bool isArrowFunction, ref StructList<AstNode> body, ref bool useStrict)
         {
             var isExpression = isArrowFunction && Type != TokenType.BraceL;
             var oldStrict = _strict;
-            var useStrict = false;
 
             bool expression;
             if (isExpression)
@@ -1083,31 +1097,56 @@ namespace Njsast.Reader
             else
             {
                 var nonSimple = Options.EcmaVersion >= 7 && !IsSimpleParamList(parameters);
-                if (!oldStrict || nonSimple)
-                {
-                    useStrict = StrictDirective(End.Index);
-                    // If this is a strict mode function, verify that argument names
-                    // are not repeated, and it does not try to bind the words `eval`
-                    // or `arguments`.
-                    if (useStrict && nonSimple)
-                        RaiseRecoverable(startLoc,
-                            "Illegal 'use strict' directive in function with non-simple parameter list");
-                }
 
                 // Start a new scope with regard to labels and the `inFunction`
                 // flag (restore them to their old value afterwards).
                 var oldLabels = new StructList<AstLabel>();
                 oldLabels.TransferFrom(ref _labels);
-                if (useStrict) _strict = true;
+                var backupAllowBreak = _allowBreak;
+                var backupAllowContinue = _allowContinue;
+                _allowBreak = false;
+                _allowContinue = false;
 
-                // Add the params to varDeclaredNames to ensure that an error is thrown
-                // if a let/const declaration in the function clashes with one of the params.
-                CheckParams(parameters, !oldStrict && !useStrict && !isArrowFunction && IsSimpleParamList(parameters));
-                var block = ParseBlock(false);
-                body.TransferFrom(ref block.Body);
+                _canBeDirective = true;
+                Expect(TokenType.BraceL);
+
+                while (!Eat(TokenType.BraceR))
+                {
+                    var stmt = ParseStatement(true);
+                    if (_canBeDirective)
+                    {
+                        if (IsDirectiveCandidate(stmt))
+                        {
+                            if (IsUseStrictDirective(stmt))
+                            {
+                                useStrict = true;
+                                _strict = true;
+                                // If this is a strict mode function, verify that argument names
+                                // are not repeated, and it does not try to bind the words `eval`
+                                // or `arguments`.
+                                if (nonSimple)
+                                    RaiseRecoverable(startLoc,
+                                        "Illegal 'use strict' directive in function with non-simple parameter list");
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            _canBeDirective = false;
+                            // Add the params to varDeclaredNames to ensure that an error is thrown
+                            // if a let/const declaration in the function clashes with one of the params.
+                            CheckParams(parameters,
+                                !oldStrict && !useStrict && !isArrowFunction && IsSimpleParamList(parameters));
+                        }
+                    }
+
+                    body.Add(stmt);
+                }
+
                 expression = false;
-                AdaptDirectivePrologue(ref body, ref _strict);
                 _labels.TransferFrom(ref oldLabels);
+                _allowBreak = backupAllowBreak;
+                _allowContinue = backupAllowContinue;
             }
 
             ExitFunctionScope();

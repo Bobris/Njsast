@@ -6,28 +6,11 @@ namespace Njsast.Reader
 {
     public sealed partial class Parser
     {
-        static readonly Regex Literal = new Regex(@"^(?:'((?:\\.|[^'])*?)'|""((?:\\.|[^""])*?)""|;)");
-
-        public bool StrictDirective(int start)
-        {
-            while (true)
-            {
-                start += SkipWhiteSpace.Match(_input, start).Length;
-                var match = Literal.Match(_input.Substring(start));
-                if (!match.Success) return false;
-                if (match.Groups[1].Value == "use strict")
-                    return true;
-                if (match.Groups[2].Value == "use strict")
-                    return true;
-                start += match.Groups[0].Length;
-            }
-        }
-
         // Predicate that tests whether the next token is of the given
         // type, and if yes, consumes it as a side effect.
         bool Eat(TokenType type)
         {
-            if (this.Type == type)
+            if (Type == type)
             {
                 Next();
                 return true;

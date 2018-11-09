@@ -23,16 +23,26 @@ namespace Test
                 {
                     intxt = File.ReadAllText(infile);
                 }
-                var parser = new Parser(new Options(), input);
-                var toplevel = parser.Parse();
-                var strSink = new StringLineSink();
-                var dumper = new DumpAst(new AstDumpWriter(strSink));
-                dumper.Walk(toplevel);
-                var outast = strSink.ToString();
+
+                string outast;
+                try
+                {
+                    var parser = new Parser(new Options(), input);
+                    var toplevel = parser.Parse();
+                    var strSink = new StringLineSink();
+                    var dumper = new DumpAst(new AstDumpWriter(strSink));
+                    dumper.Walk(toplevel);
+                    outast = strSink.ToString();
+                }
+                catch (SyntaxError e)
+                {
+                    outast = e.Message;
+                }
+
                 if (intxt != outast)
                 {
                     errors++;
-                    Console.WriteLine("Difference in "+file);
+                    Console.WriteLine("Difference in " + file);
                     var outfile = "Wrong/" + file.Substring(6, file.Length - 6 - 3) + ".txt";
                     Directory.CreateDirectory(Path.GetDirectoryName(outfile));
                     File.WriteAllText(outfile, outast);
@@ -47,7 +57,7 @@ namespace Test
 
         static void Debug()
         {
-            var parser = new Parser(new Options(), "({ set 10(w) { m_null = w } })");
+            var parser = new Parser(new Options(), "function hello() { 'use strict'; \"\\00\"; }");
             var toplevel = parser.Parse();
             var dumper = new DumpAst(new AstDumpWriter(new ConsoleLineSink()));
             dumper.Walk(toplevel);

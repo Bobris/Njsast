@@ -3,7 +3,7 @@
     /// Symbol naming the exception in catch
     public class AstSymbolCatch : AstSymbolBlockDeclaration
     {
-        public AstSymbolCatch(AstSymbol name, AstNode init) : base(name, init)
+        public AstSymbolCatch(AstSymbol name) : base(name)
         {
         }
     }
