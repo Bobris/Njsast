@@ -45,5 +45,17 @@ namespace Njsast.Ast
             writer.PrintProp("IsGenerator", IsGenerator);
             writer.PrintProp("Async", Async);
         }
+
+        public override void InitScopeVars(AstScope parentScope)
+        {
+            base.InitScopeVars(parentScope);
+            UsesArguments = false;
+            DefVariable(new AstSymbolFunarg(Start, End, "arguments"), null);
+        }
+
+        public override AstScope Resolve()
+        {
+            return this;
+        }
     }
 }

@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using Njsast.AstDump;
 using Njsast.Reader;
+using Njsast.Scope;
 
 namespace Test
 {
@@ -57,10 +57,13 @@ namespace Test
 
         static void Debug()
         {
-            var parser = new Parser(new Options(), "function hello() { 'use strict'; \"\\00\"; }");
+            var parser = new Parser(new Options(),
+                "var a = 10; var b = 20; function foo() { var a = 20; console.log(a+b);} function bar(a) {var b = 30; console.log(a+b);} foo(); bar(20);");
             var toplevel = parser.Parse();
             var dumper = new DumpAst(new AstDumpWriter(new ConsoleLineSink()));
             dumper.Walk(toplevel);
+            var scopeParser = new ScopeParser(new ScopeOptions());
+            scopeParser.FigureOutScope(toplevel);
         }
 
         static void Main(string[] args)

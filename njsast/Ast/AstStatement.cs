@@ -8,5 +8,9 @@ namespace Njsast.Ast
         public AstStatement(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
         }
+
+        protected AstStatement(AstNode from) : base(from)
+        {
+        }
     }
 }
