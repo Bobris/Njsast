@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -9,5 +10,9 @@ namespace Njsast.Ast
         {
         }
 
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("super");
+        }
     }
 }

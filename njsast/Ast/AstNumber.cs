@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -25,6 +26,11 @@ namespace Njsast.Ast
             base.DumpScalars(writer);
             writer.PrintProp("Value", Value.ToString(CultureInfo.InvariantCulture));
             writer.PrintProp("Literal", Literal);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.PrintNumber(Value);
         }
     }
 }

@@ -417,7 +417,7 @@ namespace Njsast.Reader
                     }
                     else
                     {
-                        @base = new AstDot(this, startLoc, _lastTokEnd, @base, property);
+                        @base = new AstDot(this, startLoc, _lastTokEnd, @base, ((AstSymbol) property).Name);
                     }
                 }
                 else if (!noCalls && Eat(TokenType.ParenL))
@@ -843,6 +843,8 @@ namespace Njsast.Reader
 
             if (kind == PropertyKind.Initialise)
             {
+                if (key is AstSymbol symbol)
+                    return new AstObjectKeyVal(this, nodeStart, _lastTokEnd, symbol.Name, value);
                 return new AstObjectKeyVal(this, nodeStart, _lastTokEnd, key, value);
             }
 

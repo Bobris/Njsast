@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -23,6 +24,26 @@ namespace Njsast.Ast
             base.Visit(w);
             w.Walk(Expression);
             w.WalkList(Args);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            Expression.Print(output);
+            if (this is AstNew && !output.NeedConstructorParens(this))
+                return;
+            if (Expression is AstCall || Expression is AstLambda)
+            {
+                output.AddMapping(Start);
+            }
+
+            output.Print("(");
+            for (var i = 0u; i < Args.Count; i++)
+            {
+                if (i > 0) output.Comma();
+                Args[i].Print(output);
+            }
+
+            output.Print(")");
         }
     }
 }

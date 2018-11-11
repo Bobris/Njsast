@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -8,8 +9,8 @@ namespace Njsast.Ast
         /// [AstNode] the mandatory expression being awaited
         public AstNode Expression;
 
-        public AstAwait(Parser parser, Position startLoc, Position endLoc, AstNode expression):
-        base(parser, startLoc, endLoc)
+        public AstAwait(Parser parser, Position startLoc, Position endLoc, AstNode expression) :
+            base(parser, startLoc, endLoc)
         {
             Expression = expression;
         }
@@ -18,6 +19,20 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.Walk(Expression);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("await");
+            output.Space();
+            var parens = !(
+                Expression is AstCall
+                || Expression is AstSymbolRef
+                || Expression is AstPropAccess
+                || Expression is AstUnary
+                || Expression is AstConstant
+            );
+            Expression.Print(output, parens);
         }
     }
 }

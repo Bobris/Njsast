@@ -1,4 +1,6 @@
-﻿using Njsast.AstDump;
+﻿using System;
+using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -23,6 +25,11 @@ namespace Njsast.Ast
             base.DumpScalars(writer);
             writer.PrintProp("Value", Value);
             writer.PrintProp("Raw", Raw);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            throw new InvalidOperationException();
         }
     }
 }

@@ -6,14 +6,12 @@ Toplevel 1:1 - 1:19
         Name: x
       Object 1:5 - 1:19
         ObjectKeyVal 1:7 - 1:11
-          Symbol 1:7 - 1:8
-            Name: x
+          Key: x
           Number 1:10 - 1:11
             Value: 1
             Literal: 1
         ObjectKeyVal 1:13 - 1:17
-          Symbol 1:13 - 1:14
-            Name: x
+          Key: x
           Number 1:16 - 1:17
             Value: 2
             Literal: 2

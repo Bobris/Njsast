@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Scope;
 
@@ -36,6 +37,11 @@ namespace Njsast.Ast
         {
             base.DumpScalars(writer);
             writer.PrintProp("Name", Name);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.PrintName(Thedef?.MangledName ?? Thedef?.Name ?? Name);
         }
 
         public void MarkEnclosed(ScopeOptions options)

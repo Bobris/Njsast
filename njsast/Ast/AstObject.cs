@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -8,7 +9,8 @@ namespace Njsast.Ast
         /// [AstObjectProperty*] array of properties
         public StructList<AstObjectProperty> Properties;
 
-        public AstObject(Parser parser, Position startLoc, Position endLoc, ref StructList<AstObjectProperty> properties) : base(parser, startLoc, endLoc)
+        public AstObject(Parser parser, Position startLoc, Position endLoc,
+            ref StructList<AstObjectProperty> properties) : base(parser, startLoc, endLoc)
         {
             Properties.TransferFrom(ref properties);
         }
@@ -17,6 +19,37 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.WalkList(Properties);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            if (Properties.Count > 0)
+            {
+                output.Print("{");
+                output.Newline();
+                output._indentation += output.Options.indent_level;
+                output.Indent();
+                for (var i = 0u; i < Properties.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        output.Print(",");
+                        output.Newline();
+                    }
+
+                    output.Indent();
+                    Properties[i].Print(output);
+                }
+
+                output.Newline();
+                output._indentation -= output.Options.indent_level;
+                output.Indent();
+                output.Print("}");
+            }
+            else
+            {
+                output.Print("{}");
+            }
         }
     }
 }

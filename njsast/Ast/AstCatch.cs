@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -8,7 +9,8 @@ namespace Njsast.Ast
         /// [AstSymbolCatch|AstDestructuring|AstExpansion|AstDefaultAssign] symbol for the exception
         public AstNode Argname;
 
-        public AstCatch(Parser parser, Position startPos, Position endPos, AstNode argname, ref StructList<AstNode> body) : base(parser, startPos, endPos, ref body)
+        public AstCatch(Parser parser, Position startPos, Position endPos, AstNode argname,
+            ref StructList<AstNode> body) : base(parser, startPos, endPos, ref body)
         {
             Argname = argname;
         }
@@ -17,6 +19,19 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.Walk(Argname);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("catch");
+            if (Argname != null)
+            {
+                output.Space();
+                Argname.Print(output, true);
+            }
+
+            output.Space();
+            output.PrintBraced(this, false);
         }
     }
 }

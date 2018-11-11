@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -7,6 +8,11 @@ namespace Njsast.Ast
     {
         public AstTrue(Parser parser, Position startLoc, Position endLoc) : base(parser, startLoc, endLoc)
         {
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("true");
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Scope;
 
@@ -64,6 +65,8 @@ namespace Test
             dumper.Walk(toplevel);
             var scopeParser = new ScopeParser(new ScopeOptions());
             scopeParser.FigureOutScope(toplevel);
+            var outputOptions = new OutputOptions();
+            Console.WriteLine(toplevel.PrintToString(outputOptions));
         }
 
         static void Main(string[] args)

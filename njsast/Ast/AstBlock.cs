@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -26,6 +27,11 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.WalkList(Body);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.PrintBraced(this, false);
         }
     }
 }

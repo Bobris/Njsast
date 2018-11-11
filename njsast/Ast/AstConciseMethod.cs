@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -40,6 +41,25 @@ namespace Njsast.Ast
             writer.PrintProp("Static", Static);
             writer.PrintProp("IsGenerator", IsGenerator);
             writer.PrintProp("Async", Async);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            string type = null;
+            if (IsGenerator && Async)
+            {
+                type = "async*";
+            }
+            else if (IsGenerator)
+            {
+                type = "*";
+            }
+            else if (Async)
+            {
+                type = "async";
+            }
+
+            PrintGetterSetter(output, type, Static);
         }
     }
 }

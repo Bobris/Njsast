@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -8,6 +9,11 @@ namespace Njsast.Ast
         public AstConst(Parser parser, Position startPos, Position endPos, ref StructList<AstVarDef> definitions) :
             base(parser, startPos, endPos, ref definitions)
         {
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            DoPrint(output, "const");
         }
     }
 }

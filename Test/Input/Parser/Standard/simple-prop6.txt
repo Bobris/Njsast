@@ -1,8 +1,7 @@
 Toplevel 1:1 - 1:22
   SimpleStatement 1:1 - 1:22
     Dot 1:1 - 1:22
-      Symbol 1:14 - 1:22
-        Name: galaxies
+      Property: galaxies
       Sub 1:1 - 1:13
         Number 1:10 - 1:12
           Value: 42

@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -11,7 +12,8 @@ namespace Njsast.Ast
         /// [AstNode?] initializer, or null of there's no initializer
         public AstNode Value;
 
-        public AstVarDef(Parser parser, Position startLoc, Position endLoc, AstNode name, AstNode value = null) : base(parser, startLoc, endLoc)
+        public AstVarDef(Parser parser, Position startLoc, Position endLoc, AstNode name, AstNode value = null) : base(
+            parser, startLoc, endLoc)
         {
             Name = name;
             Value = value;
@@ -22,6 +24,20 @@ namespace Njsast.Ast
             base.Visit(w);
             w.Walk(Name);
             w.Walk(Value);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            Name.Print(output);
+            if (Value != null)
+            {
+                output.Space();
+                output.Print("=");
+                output.Space();
+                var p = output.Parent(1);
+                var noin = p is AstFor || p is AstForIn;
+                output.ParenthesizeForNoin(Value, noin);
+            }
         }
     }
 }

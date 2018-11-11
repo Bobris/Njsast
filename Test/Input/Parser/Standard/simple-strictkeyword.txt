@@ -2,7 +2,6 @@ Toplevel 1:1 - 2:17 [HasUseStrictDirective]
   SimpleStatement 2:1 - 2:17
     Call 2:1 - 2:16
       Dot 2:1 - 2:14
-        Symbol 2:8 - 2:14
-          Name: static
+        Property: static
         Symbol 2:1 - 2:7
           Name: object

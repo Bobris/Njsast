@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -8,7 +9,8 @@ namespace Njsast.Ast
         /// [AstNode] the `case` expression
         public AstNode Expression;
 
-        public AstCase(Parser parser, Position startPos, Position endPos, AstNode expression) : base(parser, startPos, endPos)
+        public AstCase(Parser parser, Position startPos, Position endPos, AstNode expression) : base(parser, startPos,
+            endPos)
         {
             Expression = expression;
         }
@@ -17,6 +19,21 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.Walk(Expression);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("case");
+            output.Space();
+            Expression.Print(output);
+            output.Print(":");
+            output.Newline();
+            for (var i = 0u; i < Body.Count; i++)
+            {
+                output.Indent();
+                Body[i].Print(output);
+                output.Newline();
+            }
         }
     }
 }

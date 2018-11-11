@@ -114,6 +114,11 @@ namespace Njsast
             Array.Resize(ref _a, (int) Math.Min(int.MaxValue, Math.Max(2u, _count * 2)));
         }
 
+        void Expand(uint count)
+        {
+            Array.Resize(ref _a, (int) Math.Min(int.MaxValue, Math.Max(count, _count * 2)));
+        }
+
         public ref T this[uint index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -237,6 +242,16 @@ namespace Njsast
             _count = reference._count;
             reference._a = null;
             reference._count = 0;
+        }
+
+        public void AddRange(in ReadOnlySpan<T> range)
+        {
+            if (range.IsEmpty)
+                return;
+            var count = _count + (uint) range.Length;
+            Expand(count);
+            range.CopyTo(_a.AsSpan((int) _count));
+            _count = count;
         }
     }
 }

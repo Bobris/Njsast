@@ -2,8 +2,7 @@ Toplevel 1:1 - 1:16
   SimpleStatement 1:1 - 1:16
     Call 1:1 - 1:16
       Dot 1:1 - 1:14
-        Symbol 1:11 - 1:14
-          Name: bar
+        Property: bar
         New 1:1 - 1:10
           Symbol 1:5 - 1:8
             Name: foo

@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -17,6 +18,13 @@ namespace Njsast.Ast
         {
             w.Walk(Label);
             base.Visit(w);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            Label.Print(output);
+            output.Colon();
+            Body.Print(output);
         }
     }
 }

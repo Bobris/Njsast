@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -18,6 +19,24 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.WalkList(Expressions);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            for (var i = 0u; i < Expressions.Count; i++)
+            {
+                if (i > 0)
+                {
+                    output.Comma();
+                    if (output.ShouldBreak())
+                    {
+                        output.Newline();
+                        output.Indent();
+                    }
+                }
+
+                Expressions[i].Print(output);
+            }
         }
     }
 }

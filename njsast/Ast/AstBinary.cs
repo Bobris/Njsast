@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -33,6 +34,42 @@ namespace Njsast.Ast
         {
             base.DumpScalars(writer);
             writer.PrintProp("Operator", Operator.ToString());
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            var op = Operator;
+            Left.Print(output);
+            if (OutputContext.OperatorToString(op)[0] == '>' /* ">>" ">>>" ">" ">=" */
+                && Left is AstUnaryPostfix leftPostfix
+                && leftPostfix.Operator == Operator.DecrementPostfix)
+            {
+                // space is mandatory to avoid outputting -->
+                output.Print(" ");
+            }
+            else
+            {
+                // the space is optional depending on "beautify"
+                output.Space();
+            }
+
+            output.Print(op);
+            if ((op == Operator.LessThan || op == Operator.LeftShift)
+                && Right is AstUnaryPrefix rightPrefix
+                && rightPrefix.Operator == Operator.LogicalNot
+                && rightPrefix.Expression is AstUnaryPrefix rightPrefixPrefix
+                && rightPrefixPrefix.Operator == Operator.Decrement)
+            {
+                // space is mandatory to avoid outputting <!--
+                output.Print(" ");
+            }
+            else
+            {
+                // the space is optional depending on "beautify"
+                output.Space();
+            }
+
+            Right.Print(output);
         }
     }
 }

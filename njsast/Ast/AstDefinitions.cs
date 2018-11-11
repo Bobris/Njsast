@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -8,7 +9,8 @@ namespace Njsast.Ast
         /// [AstVarDef*] array of variable definitions
         public StructList<AstVarDef> Definitions;
 
-        public AstDefinitions(Parser parser, Position startPos, Position endPos, ref StructList<AstVarDef> definitions) : base(parser, startPos, endPos)
+        public AstDefinitions(Parser parser, Position startPos, Position endPos, ref StructList<AstVarDef> definitions)
+            : base(parser, startPos, endPos)
         {
             Definitions.TransferFrom(ref definitions);
         }
@@ -17,6 +19,24 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.WalkList(Definitions);
+        }
+
+        protected void DoPrint(OutputContext output, string kind)
+        {
+            output.Print(kind);
+            output.Space();
+            for (var i = 0u; i < Definitions.Count; i++)
+            {
+                if (i > 0)
+                    output.Comma();
+                Definitions[i].Print(output);
+            }
+
+            var p = output.Parent();
+            if (p is AstFor astFor && astFor.Init == this) return;
+            if (p is AstForIn astForIn && astForIn.Init == this) return;
+            if (p == null) return;
+            output.Semicolon();
         }
     }
 }

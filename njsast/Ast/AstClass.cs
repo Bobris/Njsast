@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -30,6 +31,63 @@ namespace Njsast.Ast
             w.Walk(Name);
             w.Walk(Extends);
             w.WalkList(Properties);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("class");
+            output.Space();
+            if (Name != null)
+            {
+                Name.Print(output);
+                output.Space();
+            }
+
+            if (Extends != null)
+            {
+                var parens = !(Extends is AstSymbolRef)
+                             && !(Extends is AstPropAccess)
+                             && !(Extends is AstClassExpression)
+                             && !(Extends is AstFunction);
+                output.Print("extends");
+                if (!parens)
+                {
+                    output.Space();
+                }
+
+                Extends.Print(output, parens);
+                if (!parens)
+                {
+                    output.Space();
+                }
+            }
+
+            if (Properties.Count > 0)
+            {
+                output.Print("{");
+                output.Newline();
+                output._indentation += output.Options.indent_level;
+                output.Indent();
+                for (var i = 0u; i < Properties.Count; i++)
+                {
+                    if (i > 0)
+                    {
+                        output.Newline();
+                    }
+
+                    output.Indent();
+                    Properties[i].Print(output);
+                }
+
+                output.Newline();
+                output._indentation -= output.Options.indent_level;
+                output.Indent();
+                output.Print("}");
+            }
+            else
+            {
+                output.Print("{}");
+            }
         }
     }
 }

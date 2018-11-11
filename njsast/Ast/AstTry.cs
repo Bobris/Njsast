@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -23,6 +24,24 @@ namespace Njsast.Ast
             base.Visit(w);
             w.Walk(Bcatch);
             w.Walk(Bfinally);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("try");
+            output.Space();
+            output.PrintBraced(Body, false);
+            if (Bcatch != null)
+            {
+                output.Space();
+                Bcatch.Print(output);
+            }
+
+            if (Bfinally != null)
+            {
+                output.Space();
+                Bfinally.Print(output);
+            }
         }
     }
 }

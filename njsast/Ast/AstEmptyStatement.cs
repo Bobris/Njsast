@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -7,6 +8,11 @@ namespace Njsast.Ast
     {
         public AstEmptyStatement(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Semicolon();
         }
     }
 }

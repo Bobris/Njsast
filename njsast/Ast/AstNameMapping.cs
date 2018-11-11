@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -23,6 +24,42 @@ namespace Njsast.Ast
             base.Visit(w);
             w.Walk(Name);
             w.Walk(ForeignName);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            var isImport = output.Parent() is AstImport;
+            var definition = Name.Thedef;
+            var namesAreDifferent =
+                (definition?.MangledName ?? Name.Name) !=
+                ForeignName.Name;
+            if (namesAreDifferent)
+            {
+                if (isImport)
+                {
+                    output.Print(ForeignName.Name);
+                }
+                else
+                {
+                    Name.Print(output);
+                }
+
+                output.Space();
+                output.Print("as");
+                output.Space();
+                if (isImport)
+                {
+                    Name.Print(output);
+                }
+                else
+                {
+                    output.Print(ForeignName.Name);
+                }
+            }
+            else
+            {
+                Name.Print(output);
+            }
         }
     }
 }

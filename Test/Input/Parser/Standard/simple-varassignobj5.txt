@@ -6,8 +6,7 @@ Toplevel 1:1 - 1:17
         Name: x
       Object 1:5 - 1:17
         ObjectKeyVal 1:7 - 1:15
-          Symbol 1:7 - 1:11
-            Name: true
+          Key: true
           Number 1:13 - 1:15
             Value: 42
             Literal: 42

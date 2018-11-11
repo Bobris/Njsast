@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -65,6 +66,66 @@ namespace Njsast.Ast
         {
             base.DumpScalars(writer);
             writer.PrintProp("IsDefault", IsDefault);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("export");
+            output.Space();
+            if (IsDefault)
+            {
+                output.Print("default");
+                output.Space();
+            }
+
+            if (ExportedNames.Count > 0)
+            {
+                if (ExportedNames.Count == 1 && ExportedNames[0].Name.Name == "*")
+                {
+                    ExportedNames[0].Print(output);
+                }
+                else
+                {
+                    output.Print("{");
+                    for (var i = 0u; i < ExportedNames.Count; i++)
+                    {
+                        if (i > 0) output.Comma();
+                        else output.Space();
+                        ExportedNames[i].Print(output);
+                    }
+
+                    output.Space();
+                    output.Print("}");
+                }
+            }
+            else if (ExportedValue != null)
+            {
+                ExportedValue.Print(output);
+            }
+            else if (ExportedDefinition != null)
+            {
+                ExportedDefinition.Print(output);
+                if (ExportedDefinition is AstDefinitions) return;
+            }
+
+            if (ModuleName != null)
+            {
+                output.Space();
+                output.Print("from");
+                output.Space();
+                ModuleName.Print(output);
+            }
+
+            if (ExportedValue != null
+                && !(ExportedValue is AstDefun ||
+                     ExportedValue is AstFunction ||
+                     ExportedValue is AstClass)
+                || ModuleName != null
+                || ExportedNames.Count > 0
+            )
+            {
+                output.Semicolon();
+            }
         }
     }
 }

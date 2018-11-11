@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -56,6 +57,56 @@ namespace Njsast.Ast
         public override AstScope Resolve()
         {
             return this;
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            DoPrint(output);
+        }
+
+        public virtual void DoPrint(OutputContext output, bool nokeyword = false)
+        {
+            if (!nokeyword)
+            {
+                if (Async)
+                {
+                    output.Print("async");
+                    output.Space();
+                }
+
+                output.Print("function");
+                if (IsGenerator)
+                {
+                    output.Print("*");
+                }
+
+                if (Name != null)
+                {
+                    output.Space();
+                }
+            }
+
+            if (Name is AstSymbol)
+            {
+                Name.Print(output);
+            }
+            else if (nokeyword && Name != null)
+            {
+                output.Print("[");
+                Name.Print(output); // Computed method name
+                output.Print("]");
+            }
+
+            output.Print("(");
+            for (var i = 0; i < ArgNames.Count; i++)
+            {
+                if (i > 0) output.Comma();
+                ArgNames[(uint) i].Print(output);
+            }
+
+            output.Print(")");
+            output.Space();
+            output.PrintBraced(this, HasUseStrictDirective);
         }
     }
 }

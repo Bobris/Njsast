@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -18,5 +19,25 @@ namespace Njsast.Ast
             base.Visit(w);
             w.WalkList(Segments);
         }
+
+        public override void CodeGen(OutputContext output)
+        {
+            var isTagged = output.Parent() is AstPrefixedTemplateString;
+
+            output.Print("`");
+            for (var i = 0u; i < Segments.Count; i++) {
+                if (!(Segments[i] is AstTemplateSegment seg)) {
+                    output.Print("${");
+                    Segments[i].Print(output);
+                    output.Print("}");
+                } else if (isTagged) {
+                    output.Print(seg.Raw);
+                } else {
+                    output.PrintStringChars(seg.Value, QuoteType.Template);
+                }
+            }
+            output.Print("`");
+        }
     }
+
 }

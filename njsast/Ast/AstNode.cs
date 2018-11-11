@@ -1,10 +1,12 @@
-﻿using Njsast.AstDump;
+﻿using System;
+using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
 {
     /// Base class of all AST nodes
-    public class AstNode
+    public abstract class AstNode
     {
         /// Start position in Source
         public Position Start;
@@ -41,6 +43,37 @@ namespace Njsast.Ast
 
         public virtual void DumpScalars(IAstDumpWriter writer)
         {
+        }
+
+        public abstract void CodeGen(OutputContext output);
+
+        public virtual bool NeedParens(OutputContext output)
+        {
+            return false;
+        }
+
+        public void Print(OutputContext output, bool forceParens = false)
+        {
+            output.PushNode(this);
+            if (forceParens || NeedParens(output))
+            {
+                output.Print("(");
+                CodeGen(output);
+                output.Print(")");
+            }
+            else
+            {
+                CodeGen(output);
+            }
+
+            output.PopNode();
+        }
+
+        public string PrintToString(OutputOptions options = null)
+        {
+            var o = new OutputContext(options);
+            Print(o);
+            return o.ToString();
         }
     }
 }

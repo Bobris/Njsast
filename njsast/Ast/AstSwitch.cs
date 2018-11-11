@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -18,6 +19,33 @@ namespace Njsast.Ast
         {
             w.Walk(Expression);
             base.Visit(w);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("switch");
+            output.Space();
+            Expression.Print(output, true);
+            output.Space();
+            if (Body.Count == 0)
+                output.Print("{}");
+            else
+            {
+                output.Print("{");
+                output.Newline();
+                output._indentation += output.Options.indent_level;
+                for (var i = 0u; i < Body.Count; i++)
+                {
+                    var branch = (AstSwitchBranch)Body[i];
+                    output.Indent(true);
+                    branch.Print(output);
+                    if (i < Body.Count-1 && branch.Body.Count > 0)
+                        output.Newline();
+                }
+                output._indentation -= output.Options.indent_level;
+                output.Indent();
+                output.Print("}");
+            };
         }
     }
 }

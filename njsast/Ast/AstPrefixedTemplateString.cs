@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -23,6 +24,19 @@ namespace Njsast.Ast
             base.Visit(w);
             w.Walk(Prefix);
             w.Walk(TemplateString);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            var parenthesizeTag = Prefix is AstArrow
+                                  || Prefix is AstBinary
+                                  || Prefix is AstConditional
+                                  || Prefix is AstSequence
+                                  || Prefix is AstUnary;
+            if (parenthesizeTag) output.Print("(");
+            Prefix.Print(output);
+            if (parenthesizeTag) output.Print(")");
+            TemplateString.Print(output);
         }
     }
 }

@@ -4,7 +4,7 @@ using Njsast.Reader;
 namespace Njsast.Ast
 {
     /// Base class for unary expressions
-    public class AstUnary : AstNode
+    public abstract class AstUnary : AstNode
     {
         public Operator Operator;
 

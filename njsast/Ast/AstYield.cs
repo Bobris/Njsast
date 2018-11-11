@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -29,6 +30,16 @@ namespace Njsast.Ast
         {
             base.DumpScalars(writer);
             writer.PrintProp("IsStar", IsStar);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print(IsStar ? "yield*" : "yield");
+            if (Expression != null)
+            {
+                output.Space();
+                Expression.Print(output);
+            }
         }
     }
 }

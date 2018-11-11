@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -14,7 +15,8 @@ namespace Njsast.Ast
         /// [AstString] String literal describing where this module came from
         public AstString ModuleName;
 
-        public AstImport(Parser parser, Position startLoc, Position endLoc, AstString moduleName, AstSymbolImport importName, ref StructList<AstNameMapping> specifiers) : base(parser, startLoc, endLoc)
+        public AstImport(Parser parser, Position startLoc, Position endLoc, AstString moduleName,
+            AstSymbolImport importName, ref StructList<AstNameMapping> specifiers) : base(parser, startLoc, endLoc)
         {
             ModuleName = moduleName;
             ImportedName = importName;
@@ -27,6 +29,50 @@ namespace Njsast.Ast
             w.Walk(ModuleName);
             w.Walk(ImportedName);
             w.WalkList(ImportedNames);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("import");
+            output.Space();
+            ImportedName?.Print(output);
+            if (ImportedName != null && ImportedNames.Count > 0)
+            {
+                output.Print(",");
+                output.Space();
+            }
+
+            if (ImportedNames.Count > 0)
+            {
+                if (ImportedNames.Count == 1 && ImportedNames[0].ForeignName.Name == "*")
+                {
+                    ImportedNames[0].Print(output);
+                }
+                else
+                {
+                    output.Print("{");
+                    for (var i = 0u; i < ImportedNames.Count; i++)
+                    {
+                        if (i > 0) output.Comma();
+                        else
+                            output.Space();
+                        ImportedNames[i].Print(output);
+                    }
+
+                    output.Space();
+                    output.Print("}");
+                }
+            }
+
+            if (ImportedName != null || ImportedNames.Count > 0)
+            {
+                output.Space();
+                output.Print("from");
+                output.Space();
+            }
+
+            ModuleName.Print(output);
+            output.Semicolon();
         }
     }
 }

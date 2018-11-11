@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -18,6 +19,18 @@ namespace Njsast.Ast
         {
             base.Visit(w);
             w.Walk(Label);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print(this is AstBreak ? "break" : "continue");
+            if (Label != null)
+            {
+                output.Space();
+                Label.Print(output);
+            }
+
+            output.Semicolon();
         }
     }
 }

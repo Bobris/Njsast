@@ -4,7 +4,7 @@ using Njsast.Reader;
 namespace Njsast.Ast
 {
     /// Base class for property access expressions, i.e. `a.foo` or `a["foo"]`
-    public class AstPropAccess : AstNode
+    public abstract class AstPropAccess : AstNode
     {
         /// [AstNode] the “container” expression
         public AstNode Expression;

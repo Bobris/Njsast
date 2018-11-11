@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -11,6 +12,11 @@ namespace Njsast.Ast
 
         protected AstThis(Parser parser, Position startLoc, Position endLoc, string super) : base(parser, startLoc, endLoc, super)
         {
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print("this");
         }
     }
 }

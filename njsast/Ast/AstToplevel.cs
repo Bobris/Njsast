@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -31,6 +32,22 @@ namespace Njsast.Ast
         public override AstScope Resolve()
         {
             return this;
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            var last = Body.Count - 1;
+            for (var i = 0; i <= last; i++)
+            {
+                var stmt = Body[(uint) i];
+                if (!(stmt is AstEmptyStatement))
+                {
+                    output.Indent();
+                    stmt.Print(output);
+                    output.Newline();
+                    output.Newline();
+                }
+            }
         }
     }
 }

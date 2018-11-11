@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -11,6 +12,11 @@ namespace Njsast.Ast
 
         protected AstStatement(AstNode from) : base(from)
         {
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            throw new System.InvalidOperationException();
         }
     }
 }

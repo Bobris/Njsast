@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -6,6 +7,10 @@ namespace Njsast.Ast
     public class AstHole : AstAtom
     {
         public AstHole(Parser parser, Position startLoc, Position endLoc) : base(parser, startLoc, endLoc)
+        {
+        }
+
+        public override void CodeGen(OutputContext output)
         {
         }
     }

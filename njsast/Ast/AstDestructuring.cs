@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -12,7 +13,8 @@ namespace Njsast.Ast
         /// [Boolean] Whether the destructuring represents an object or array
         public bool IsArray;
 
-        public AstDestructuring(Parser parser, Position startLoc, Position endLoc, ref StructList<AstNode> names, bool isArray) : base(parser, startLoc, endLoc)
+        public AstDestructuring(Parser parser, Position startLoc, Position endLoc, ref StructList<AstNode> names,
+            bool isArray) : base(parser, startLoc, endLoc)
         {
             Names.TransferFrom(ref names);
             IsArray = isArray;
@@ -28,6 +30,24 @@ namespace Njsast.Ast
         {
             base.DumpScalars(writer);
             writer.PrintProp("IsArray", IsArray);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.Print(IsArray ? "[" : "{");
+            var len = Names.Count;
+            for (var i = 0; i < len; i++)
+            {
+                var name = Names[(uint) i];
+                if (i > 0) output.Comma();
+                name.Print(output);
+                // If the final element is a hole, we need to make sure it
+                // doesn't look like a trailing comma, by inserting an actual
+                // trailing comma.
+                if (i == len - 1 && name is AstHole) output.Comma();
+            }
+
+            output.Print(IsArray ? "]" : "}");
         }
     }
 }
