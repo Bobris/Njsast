@@ -4,7 +4,7 @@ using Njsast.Reader;
 namespace Njsast.Ast
 {
     /// Base class for all statements that contain one nested body: `For`, `ForIn`, `Do`, `While`, `With`
-    public class AstStatementWithBody : AstStatement
+    public class AstStatementWithBody : AstStatement, IAstStatementWithBody
     {
         /// [AstStatement] the body; this should always be present, even if it's an AstEmptyStatement
         public AstStatement Body;
@@ -24,6 +24,11 @@ namespace Njsast.Ast
         {
             Body.Print(output);
             output.Semicolon();
+        }
+
+        public AstNode GetBody()
+        {
+            return Body;
         }
     }
 }

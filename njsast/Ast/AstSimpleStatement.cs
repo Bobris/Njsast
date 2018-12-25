@@ -4,7 +4,7 @@ using Njsast.Reader;
 namespace Njsast.Ast
 {
     /// A statement consisting of an expression, i.e. a = 1 + 2
-    public class AstSimpleStatement : AstStatement
+    public class AstSimpleStatement : AstStatement, IAstStatementWithBody
     {
         /// [AstNode] an expression node (should not be instanceof AstStatement)
         public AstNode Body;
@@ -24,6 +24,11 @@ namespace Njsast.Ast
         {
             Body.Print(output);
             output.Semicolon();
+        }
+
+        public AstNode GetBody()
+        {
+            return Body;
         }
     }
 }

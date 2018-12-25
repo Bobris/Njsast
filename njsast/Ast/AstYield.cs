@@ -41,5 +41,29 @@ namespace Njsast.Ast
                 Expression.Print(output);
             }
         }
+
+        public override bool NeedParens(OutputContext output)
+        {
+            var p = output.Parent();
+            // (yield 1) + (yield 2)
+            // a = yield 3
+            if (p is AstBinary binary && binary.Operator != Operator.Assignment)
+                return true;
+            // (yield 1)()
+            // new (yield 1)()
+            if (p is AstCall call && call.Expression == this)
+                return true;
+            // (yield 1) ? yield 2 : yield 3
+            if (p is AstConditional conditional && conditional.Condition == this)
+                return true;
+            // -(yield 4)
+            if (p is AstUnary)
+                return true;
+            // (yield x).foo
+            // (yield x)['foo']
+            if (p is AstPropAccess propAccess && propAccess.Expression == this)
+                return true;
+            return false;
+        }
     }
 }

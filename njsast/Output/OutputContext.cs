@@ -290,14 +290,14 @@ namespace Njsast.Output
         public static bool OperatorStartsWithPlusOrMinus(Operator op)
         {
             var ch = OperatorToString(op)[0];
-            return (ch == '+' || ch == '-');
+            return ch == '+' || ch == '-';
         }
 
         public static bool OperatorEndsWithPlusOrMinus(Operator op)
         {
             var str = OperatorToString(op);
             var ch = str[str.Length - 1];
-            return (ch == '+' || ch == '-');
+            return ch == '+' || ch == '-';
         }
 
         public static bool OperatorStartsWithLetter(Operator op)
@@ -501,6 +501,78 @@ namespace Njsast.Output
         {
             // TODO
             Print(s);
+        }
+
+        public bool HasParens()
+        {
+            // TODO
+            return false;
+        }
+
+        public bool FirstInStatement()
+        {
+            var node = Parent(-1); // Current Node
+            AstNode p;
+            for (var i = 0; (p = Parent(i)) != null; i++)
+            {
+                if (p is IAstStatementWithBody statementWithBody && statementWithBody.GetBody() == node)
+                    return true;
+                if (p is AstSequence sequence && sequence.Expressions[0] == node ||
+                    p.GetType() == typeof(AstCall) && ((AstCall) p).Expression == node ||
+                    p is AstDot dot && dot.Expression == node ||
+                    p is AstSub sub && sub.Expression == node ||
+                    p is AstConditional conditional && conditional.Condition == node ||
+                    p is AstBinary binary && binary.Left == node ||
+                    p is AstUnaryPostfix unaryPostfix && unaryPostfix.Expression == node
+                )
+                {
+                    node = p;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        public static int Precedence(Operator op)
+        {
+            switch (op)
+            {
+                case Operator.LogicalOr: return 1;
+                case Operator.LogicalAnd: return 2;
+                case Operator.BitwiseOr: return 3;
+                case Operator.BitwiseXOr: return 4;
+                case Operator.BitwiseAnd: return 5;
+                case Operator.Equals:
+                case Operator.NotEquals:
+                case Operator.StrictEquals:
+                case Operator.StrictNotEquals:
+                    return 6;
+                case Operator.LessThan:
+                case Operator.GreaterThan:
+                case Operator.LessEquals:
+                case Operator.GreaterEquals:
+                case Operator.In:
+                case Operator.InstanceOf:
+                    return 7;
+                case Operator.RightShift:
+                case Operator.LeftShift:
+                case Operator.RightShiftUnsigned:
+                    return 8;
+                case Operator.Addition:
+                case Operator.Subtraction:
+                    return 9;
+                case Operator.Multiplication:
+                case Operator.Division:
+                case Operator.Modulus:
+                    return 10;
+                case Operator.Power: return 11;
+                default:
+                    throw new ArgumentOutOfRangeException("operator", "Must be binary operator: "+op);
+            }
         }
     }
 }

@@ -51,5 +51,16 @@ namespace Njsast.Ast
                 output.Print("{}");
             }
         }
+
+        public override bool NeedParens(OutputContext output)
+        {
+            // object literal could need parens, because it would be interpreted as a block of code.
+            if (!output.HasParens() && output.FirstInStatement())
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

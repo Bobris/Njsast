@@ -1,4 +1,5 @@
-﻿using Njsast.Reader;
+﻿using Njsast.Output;
+using Njsast.Reader;
 
 namespace Njsast.Ast
 {
@@ -7,8 +8,35 @@ namespace Njsast.Ast
     {
         public bool Inlined;
 
-        public AstFunction(Parser parser, Position startPos, Position endPos, AstSymbolDeclaration name, ref StructList<AstNode> argNames, bool isGenerator, bool async, ref StructList<AstNode> body) : base(parser, startPos, endPos, name, ref argNames, isGenerator, async, ref body)
+        public AstFunction(Parser parser, Position startPos, Position endPos, AstSymbolDeclaration name,
+            ref StructList<AstNode> argNames, bool isGenerator, bool async, ref StructList<AstNode> body) : base(parser,
+            startPos, endPos, name, ref argNames, isGenerator, async, ref body)
         {
+        }
+
+        public override bool NeedParens(OutputContext output)
+        {
+            if (!output.HasParens() && output.FirstInStatement())
+            {
+                return true;
+            }
+
+            if (output.Options.webkit)
+            {
+                var p = output.Parent();
+                if (p is AstPropAccess propAccess && propAccess.Expression == this)
+                {
+                    return true;
+                }
+            }
+
+            if (output.Options.wrap_iife)
+            {
+                var p = output.Parent();
+                return p is AstCall call && call.Expression == this;
+            }
+
+            return false;
         }
     }
 }

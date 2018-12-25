@@ -34,5 +34,13 @@ namespace Njsast.Ast
             );
             Expression.Print(output, parens);
         }
+
+        public override bool NeedParens(OutputContext output)
+        {
+            var p = output.Parent();
+            return p is AstPropAccess propAccess && propAccess.Expression == this
+                   || p is AstCall call && call.Expression == this
+                   || output.Options.safari10 && p is AstUnaryPrefix;
+        }
     }
 }

@@ -32,5 +32,19 @@ namespace Njsast.Ast
         {
             output.PrintNumber(Value);
         }
+
+        public override bool NeedParens(OutputContext output)
+        {
+            var p = output.Parent();
+            if (p is AstPropAccess propAccess && propAccess.Expression == this)
+            {
+                if (Value < 0)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

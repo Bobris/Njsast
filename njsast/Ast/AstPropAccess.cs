@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -32,6 +33,42 @@ namespace Njsast.Ast
             base.DumpScalars(writer);
             if (Property is string)
                 writer.PrintProp("Property", (string) Property);
+        }
+
+        class WalkForParens : TreeWalker
+        {
+            internal bool Parens;
+            protected override void Visit(AstNode node)
+            {
+                if (Parens || node is AstScope)
+                {
+                    StopDescending();
+                }
+
+                if (node is AstCall)
+                {
+                    Parens = true;
+                    StopDescending();
+                }
+            }
+        }
+
+        public override bool NeedParens(OutputContext output)
+        {
+            var p = output.Parent();
+            if (p is AstNew aNew && aNew.Expression == this) {
+                // i.e. new (foo.bar().baz)
+                //
+                // if there's one call into this subtree, then we need
+                // parens around it too, otherwise the call will be
+                // interpreted as passing the arguments to the upper New
+                // expression.
+                var walker = new WalkForParens();
+                walker.Walk(this);
+                return walker.Parens;
+            }
+
+            return false;
         }
     }
 }

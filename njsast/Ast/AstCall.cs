@@ -45,5 +45,20 @@ namespace Njsast.Ast
 
             output.Print(")");
         }
+
+        public override bool NeedParens(OutputContext output)
+        {
+            var p = output.Parent();
+            if (p is AstNew aNew && aNew.Expression == this
+                || p is AstExport export && export.IsDefault && Expression is AstFunction)
+                return true;
+
+            // workaround for Safari bug https://bugs.webkit.org/show_bug.cgi?id=123506
+            return Expression is AstFunction
+                   && p is AstPropAccess propAccess
+                   && propAccess.Expression == this
+                   && output.Parent(1) is AstAssign assign
+                   && assign.Left == p;
+        }
     }
 }

@@ -71,5 +71,31 @@ namespace Njsast.Ast
 
             Right.Print(output);
         }
+
+        public override bool NeedParens(OutputContext output)
+        {
+            var p = output.Parent();
+            // (foo && bar)()
+            if (p is AstCall call && call.Expression == this) return true;
+            // typeof (foo && bar)
+            if (p is AstUnary) return true;
+            // (foo && bar)["prop"], (foo && bar).prop
+            if (p is AstPropAccess propAccess && propAccess.Expression == this) return true;
+            // this deals with precedence: 3 * (2 + 1)
+            if (p is AstBinary binary)
+            {
+                var po = binary.Operator;
+                var pp = OutputContext.Precedence(po);
+                var sp = OutputContext.Precedence(Operator);
+                if (pp > sp
+                    || (pp == sp
+                        && (this == binary.Right || po == Operator.Power)))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
