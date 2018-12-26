@@ -24,7 +24,7 @@ namespace Njsast.Ast
                 return symbol.Thedef?.MangledName ?? symbol.Thedef?.Name ?? symbol.Name;
             }
 
-            var allowShortHand = output.Options.shorthand;
+            var allowShortHand = output.Options.Shorthand;
             if (allowShortHand &&
                 Value is AstSymbol &&
                 OutputContext.IsIdentifierString(Key) &&

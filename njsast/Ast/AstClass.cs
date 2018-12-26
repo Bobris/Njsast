@@ -66,7 +66,7 @@ namespace Njsast.Ast
             {
                 output.Print("{");
                 output.Newline();
-                output._indentation += output.Options.indent_level;
+                output._indentation += output.Options.IndentLevel;
                 output.Indent();
                 for (var i = 0u; i < Properties.Count; i++)
                 {
@@ -80,7 +80,7 @@ namespace Njsast.Ast
                 }
 
                 output.Newline();
-                output._indentation -= output.Options.indent_level;
+                output._indentation -= output.Options.IndentLevel;
                 output.Indent();
                 output.Print("}");
             }

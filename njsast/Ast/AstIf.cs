@@ -41,7 +41,7 @@ namespace Njsast.Ast
                 // IF *without* an ELSE block (then the outer ELSE would refer
                 // to the inner IF).  This function checks for this case and
                 // adds the block braces if needed.
-                if (output.Options.braces)
+                if (output.Options.Braces)
                 {
                     output.MakeBlock(this);
                 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection.Metadata.Ecma335;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Xml;
 using Njsast.Ast;
@@ -16,7 +17,6 @@ namespace Njsast.Output
         StructList<AstNode> _stack = new StructList<AstNode>();
         bool _mightNeedSpace = false;
         bool _mightNeedSemicolon = false;
-        bool _mightAddNewline;
         int _currentPos;
         int _currentCol;
         int _currentLine;
@@ -60,7 +60,8 @@ namespace Njsast.Output
                 _mightNeedSemicolon = false;
                 if (_lastChar == ':' && ch == '}' || _lastChar != ';' && ch != ';' && ch != '}')
                 {
-                    if ("([+*/-,.`".Contains(ch)) // these characters cannot be on start of new line without semicolon
+                    if (_currentCol < Options.MaxLineLen && "([+*/-,.`".Contains(ch)
+                    ) // these characters cannot be on start of new line without semicolon
                     {
                         TruePrint(";");
                     }
@@ -107,7 +108,7 @@ namespace Njsast.Output
 
         public void Space()
         {
-            if (Options.beautify)
+            if (Options.Beautify)
             {
                 Print(" ");
             }
@@ -119,7 +120,7 @@ namespace Njsast.Output
 
         public void Semicolon()
         {
-            if (Options.beautify)
+            if (Options.Beautify)
             {
                 Print(";");
             }
@@ -137,29 +138,25 @@ namespace Njsast.Output
 
         public void Newline()
         {
-            if (Options.beautify)
+            if (Options.Beautify)
             {
                 Print("\n");
             }
             else
             {
-                if (_currentCol > Options.max_line_len)
+                if (_currentCol > Options.MaxLineLen)
                 {
                     Print("\n");
-                }
-                else
-                {
-                    _mightAddNewline = true;
                 }
             }
         }
 
         public void Indent(bool half = false)
         {
-            if (Options.beautify)
+            if (Options.Beautify)
             {
-                var c = Options.indent_start + _indentation;
-                if (half) c -= Options.indent_level / 2;
+                var c = Options.IndentStart + _indentation;
+                if (half) c -= Options.IndentLevel / 2;
                 while (c >= _spaces.Length)
                 {
                     Print(_spaces);
@@ -185,7 +182,7 @@ namespace Njsast.Output
             {
                 Print("{");
                 Newline();
-                _indentation += Options.indent_level;
+                _indentation += Options.IndentLevel;
                 if (hasUseStrictDirective)
                 {
                     Indent();
@@ -204,7 +201,7 @@ namespace Njsast.Output
                     Newline();
                 }
 
-                _indentation -= Options.indent_level;
+                _indentation -= Options.IndentLevel;
                 Indent();
                 Print("}");
             }
@@ -229,11 +226,11 @@ namespace Njsast.Output
             {
                 Print("{");
                 Newline();
-                _indentation += Options.indent_level;
+                _indentation += Options.IndentLevel;
                 Indent();
                 stmt.Print(this);
                 Newline();
-                _indentation -= Options.indent_level;
+                _indentation -= Options.IndentLevel;
                 Indent();
                 Print("}");
             }
@@ -246,7 +243,7 @@ namespace Njsast.Output
 
         public void ForceStatement(AstStatement body)
         {
-            if (Options.braces)
+            if (Options.Braces)
             {
                 MakeBlock(body);
             }
@@ -315,7 +312,7 @@ namespace Njsast.Output
             // Always print parentheses with arguments
             if (call.Args.Count > 0) return true;
 
-            return Options.beautify;
+            return Options.Beautify;
         }
 
         public bool ShouldBreak()
@@ -544,10 +541,108 @@ namespace Njsast.Output
             return !ReservedWords.Contains(str);
         }
 
+
+        static readonly string[] SpecialChars =
+        {
+            "\\x00", "\\x01", "\\x02", "\\x03", "\\x04", "\\x05", "\\x06", "\\x07",
+            "\\b", "\\t", "\\n", "\\v", "\\f", "\\r", "\\x0e", "\\x0f",
+            "\\x10", "\\x11", "\\x12", "\\x13", "\\x14", "\\x15", "\\x16", "\\x17",
+            "\\x18", "\\x19", "\\x1a", "\\x1b", "\\x1c", "\\x1d", "\\x1e", "\\x1f",
+        };
+
+        static readonly Regex EndOfScriptRegex = new Regex("^</script[>\\/\t\n\f\r ]",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+        static readonly Regex HtmlStartCommentRegex =
+            new Regex("^<!--", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
+        static readonly Regex HtmlEndCommentRegex =
+            new Regex("^-->", RegexOptions.CultureInvariant | RegexOptions.Compiled);
+
         public void PrintStringChars(string s, QuoteType quoteType)
         {
-            // TODO
-            TruePrint(s);
+            var lastOk = 0;
+            var quoteChar = quoteType == QuoteType.Single ? '\'' : quoteType == QuoteType.Double ? '"' : '`';
+            for (var i = 0; i < s.Length; i++)
+            {
+                var ch = s[i];
+                if (ch == quoteChar)
+                {
+                    TruePrint(s.AsSpan(lastOk, i - lastOk));
+                    lastOk = i;
+                    TruePrint("\\");
+                }
+                else if (ch == 0)
+                {
+                    var followedByNumber = false;
+                    if (i + 1 < s.Length)
+                    {
+                        var next = s[i + 1];
+                        if (next >= '0' && next <= '9')
+                        {
+                            followedByNumber = true;
+                        }
+                    }
+
+                    TruePrint(s.AsSpan(lastOk, i - lastOk));
+                    lastOk = i + 1;
+                    TruePrint(followedByNumber ? "\\x00" : "\\0");
+                }
+                else if (ch < 32)
+                {
+                    TruePrint(s.AsSpan(lastOk, i - lastOk));
+                    lastOk = i + 1;
+                    TruePrint(SpecialChars[ch]);
+                }
+                else if (ch == '\\')
+                {
+                    TruePrint(s.AsSpan(lastOk, i + 1 - lastOk));
+                    lastOk = i;
+                }
+                else if (ch == 0x2028)
+                {
+                    TruePrint(s.AsSpan(lastOk, i - lastOk));
+                    lastOk = i + 1;
+                    TruePrint("\\u2028");
+                }
+                else if (ch == 0x2029)
+                {
+                    TruePrint(s.AsSpan(lastOk, i - lastOk));
+                    lastOk = i + 1;
+                    TruePrint("\\u2029");
+                }
+                else if (ch == 0xfeff)
+                {
+                    TruePrint(s.AsSpan(lastOk, i - lastOk));
+                    lastOk = i + 1;
+                    TruePrint("\\ufeff");
+                }
+                else if (Options.InlineScript)
+                {
+                    if (EndOfScriptRegex.IsMatch(s, i))
+                    {
+                        i++;
+                        TruePrint(s.AsSpan(lastOk, i - lastOk));
+                        lastOk = i + 1;
+                        TruePrint("\\/");
+                    }
+                    else if (HtmlStartCommentRegex.IsMatch(s, i))
+                    {
+                        TruePrint(s.AsSpan(lastOk, i - lastOk));
+                        lastOk = i + 1;
+                        TruePrint("\\x3c");
+                    }
+                    else if (HtmlEndCommentRegex.IsMatch(s, i))
+                    {
+                        i += 2;
+                        TruePrint(s.AsSpan(lastOk, i - lastOk));
+                        lastOk = i + 1;
+                        TruePrint("\\x3e");
+                    }
+                }
+            }
+
+            TruePrint(s.AsSpan(lastOk));
         }
 
         public bool HasParens()

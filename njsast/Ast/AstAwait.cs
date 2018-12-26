@@ -40,7 +40,7 @@ namespace Njsast.Ast
             var p = output.Parent();
             return p is AstPropAccess propAccess && propAccess.Expression == this
                    || p is AstCall call && call.Expression == this
-                   || output.Options.safari10 && p is AstUnaryPrefix;
+                   || output.Options.Safari10 && p is AstUnaryPrefix;
         }
     }
 }

@@ -21,7 +21,7 @@ namespace Njsast.Ast
                 return true;
             }
 
-            if (output.Options.webkit)
+            if (output.Options.Webkit)
             {
                 var p = output.Parent();
                 if (p is AstPropAccess propAccess && propAccess.Expression == this)
@@ -30,7 +30,7 @@ namespace Njsast.Ast
                 }
             }
 
-            if (output.Options.wrap_iife)
+            if (output.Options.WrapIife)
             {
                 var p = output.Parent();
                 return p is AstCall call && call.Expression == this;

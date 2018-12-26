@@ -33,7 +33,7 @@ namespace Njsast.Ast
             {
                 output.Print("{");
                 output.Newline();
-                output._indentation += output.Options.indent_level;
+                output._indentation += output.Options.IndentLevel;
                 for (var i = 0u; i < Body.Count; i++)
                 {
                     var branch = (AstSwitchBranch)Body[i];
@@ -42,7 +42,7 @@ namespace Njsast.Ast
                     if (i < Body.Count-1 && branch.Body.Count > 0)
                         output.Newline();
                 }
-                output._indentation -= output.Options.indent_level;
+                output._indentation -= output.Options.IndentLevel;
                 output.Indent();
                 output.Print("}");
             };
