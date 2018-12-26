@@ -66,10 +66,11 @@ namespace Test
             var scopeParser = new ScopeParser(new ScopeOptions());
             scopeParser.FigureOutScope(toplevel);
             var outputOptions = new OutputOptions();
+            //outputOptions.beautify = true;
             Console.WriteLine(toplevel.PrintToString(outputOptions));
         }
 
-        static void Main(string[] args)
+        static void Main()
         {
             RunAllTests();
             //Debug();

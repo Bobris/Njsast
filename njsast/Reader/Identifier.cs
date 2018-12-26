@@ -119,7 +119,7 @@ namespace Njsast.Reader
         }
 
         // Test whether a given character is part of an identifier.
-        static bool IsIdentifierChar(int code, bool astral = false)
+        public static bool IsIdentifierChar(int code, bool astral = false)
         {
             if (code < 48) return code == 36;
             if (code < 58) return true;

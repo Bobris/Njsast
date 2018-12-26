@@ -17,9 +17,12 @@ namespace Njsast.Output
         bool _mightNeedSpace = false;
         bool _mightNeedSemicolon = false;
         bool _mightAddNewline;
+        int _currentPos;
         int _currentCol;
+        int _currentLine;
         public int _indentation;
         static string _spaces = "                ";
+        char _lastChar = Char.MinValue;
 
         public OutputContext(OutputOptions options = null)
         {
@@ -33,11 +36,56 @@ namespace Njsast.Output
 
         public void TruePrint(ReadOnlySpan<Char> text)
         {
+            if (text.Length == 0) return;
             _storage.AddRange(text);
+            _currentPos += text.Length;
+            _lastChar = text[text.Length - 1];
+            _currentCol += text.Length;
+            var pos = text.IndexOf('\n');
+            while (pos >= 0)
+            {
+                text = text.Slice(pos + 1);
+                _currentLine++;
+                _currentCol = text.Length;
+                pos = text.IndexOf('\n');
+            }
         }
 
         public void Print(ReadOnlySpan<Char> text)
         {
+            if (text.Length == 0) return;
+            var ch = text[0];
+            if (_mightNeedSemicolon)
+            {
+                _mightNeedSemicolon = false;
+                if (_lastChar == ':' && ch == '}' || _lastChar != ';' && ch != ';' && ch != '}')
+                {
+                    if ("([+*/-,.`".Contains(ch)) // these characters cannot be on start of new line without semicolon
+                    {
+                        TruePrint(";");
+                    }
+                    else
+                    {
+                        TruePrint("\n");
+                    }
+
+                    _mightNeedSpace = false;
+                }
+            }
+
+            if (_mightNeedSpace)
+            {
+                _mightNeedSpace = false;
+                if (Parser.IsIdentifierChar(_lastChar)
+                    && (Parser.IsIdentifierChar(ch) || ch == '\\')
+                    || ch == '/' && ch == _lastChar
+                    || (ch == '+' || ch == '-') && ch == _lastChar
+                )
+                {
+                    TruePrint(" ");
+                }
+            }
+
             TruePrint(text);
         }
 
@@ -153,8 +201,7 @@ namespace Njsast.Output
                     if (stmt is AstEmptyStatement) continue;
                     Indent();
                     stmt.Print(this);
-                    if (i != last)
-                        Newline();
+                    Newline();
                 }
 
                 _indentation -= Options.indent_level;
@@ -500,7 +547,7 @@ namespace Njsast.Output
         public void PrintStringChars(string s, QuoteType quoteType)
         {
             // TODO
-            Print(s);
+            TruePrint(s);
         }
 
         public bool HasParens()
@@ -571,7 +618,7 @@ namespace Njsast.Output
                     return 10;
                 case Operator.Power: return 11;
                 default:
-                    throw new ArgumentOutOfRangeException("operator", "Must be binary operator: "+op);
+                    throw new ArgumentOutOfRangeException("operator", "Must be binary operator: " + op);
             }
         }
     }
