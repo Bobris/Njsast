@@ -1206,7 +1206,7 @@ namespace Njsast.Reader
 
                 AstNode element;
                 if (allowEmpty && Type == TokenType.Comma)
-                    element = null;
+                    element = new AstHole(this, _lastTokEnd, _lastTokEnd);
                 else if (Type == TokenType.Ellipsis)
                 {
                     element = ParseSpread(refDestructuringErrors);

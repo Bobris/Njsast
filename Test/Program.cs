@@ -22,8 +22,8 @@ namespace Test
                 var inminjs = ReadIn(file, "minjs");
                 var innicejs = ReadIn(file, "nicejs");
 
-                Console.WriteLine(file);
-                Console.WriteLine(input);
+                //Console.WriteLine(file);
+                //Console.WriteLine(input);
                 var outast = "";
                 var outminjs = "";
                 var outnicejs = "";

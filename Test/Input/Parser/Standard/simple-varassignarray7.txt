@@ -11,6 +11,7 @@ Toplevel 1:1 - 1:18
         Number 1:10 - 1:11
           Value: 2
           Literal: 2
+        Hole 1:12 - 1:12
         Number 1:14 - 1:15
           Value: 3
           Literal: 3
