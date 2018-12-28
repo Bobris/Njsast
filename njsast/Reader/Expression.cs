@@ -79,8 +79,8 @@ namespace Njsast.Reader
                 return;
             var key = prop.Key;
             string name;
-            if (key is string)
-                name = (string) key;
+            if (key is AstSymbol)
+                name = ((AstSymbol) key).Name;
             else
             {
                 return;
@@ -843,8 +843,6 @@ namespace Njsast.Reader
 
             if (kind == PropertyKind.Initialise)
             {
-                if (key is AstSymbol symbol)
-                    return new AstObjectKeyVal(this, nodeStart, _lastTokEnd, symbol.Name, value);
                 return new AstObjectKeyVal(this, nodeStart, _lastTokEnd, key, value);
             }
 

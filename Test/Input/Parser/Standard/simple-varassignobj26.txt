@@ -6,7 +6,8 @@ Toplevel 1:1 - 1:16
         Name: x
       Object 1:5 - 1:16
         ObjectKeyVal 1:7 - 1:14
-          Key: set
+          Symbol 1:7 - 1:10
+            Name: set
           Number 1:12 - 1:14
             Value: 43
             Literal: 43

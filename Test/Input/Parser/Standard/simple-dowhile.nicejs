@@ -1,0 +1,4 @@
+do {
+    keep();
+} while (true);
+

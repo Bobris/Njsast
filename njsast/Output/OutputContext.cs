@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Reflection.Metadata.Ecma335;
-using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
-using System.Xml;
 using Njsast.Ast;
 using Njsast.Reader;
 
@@ -54,6 +51,7 @@ namespace Njsast.Output
         public void Print(ReadOnlySpan<Char> text)
         {
             if (text.Length == 0) return;
+            _needDotAfterNumber = false;
             var ch = text[0];
             _hasParens = ch == '(' && text.Length == 1;
 
@@ -222,7 +220,7 @@ namespace Njsast.Output
         {
             if (stmt is AstEmptyStatement)
                 Print("{}");
-            else if (stmt is AstBlockStatement)
+            else if (stmt is AstBlock)
                 stmt.Print(this);
             else
             {
@@ -324,8 +322,7 @@ namespace Njsast.Output
 
         public bool NeedDotAfterNumber()
         {
-            // TODO
-            return false;
+            return _needDotAfterNumber;
         }
 
         public void PrintName(string name)
@@ -492,12 +489,18 @@ namespace Njsast.Output
 
         public void PrintNumber(double value)
         {
-            Print(value.ToString("R", CultureInfo.InvariantCulture));
+            var str = value.ToString("R", CultureInfo.InvariantCulture);
+            Print(str);
+            _needDotAfterNumber = !(str.Contains('.',StringComparison.Ordinal) || str.Contains('e',StringComparison.OrdinalIgnoreCase));
         }
 
         public void PrintPropertyName(string name)
         {
-            if (IsIdentifierString(name))
+            if (uint.TryParse(name, out var _))
+            {
+                Print(name);
+            }
+            else if (IsIdentifierString(name))
             {
                 PrintName(name);
             }
@@ -510,11 +513,9 @@ namespace Njsast.Output
         static readonly Regex SimpleIdentifierRegex = new Regex("^[a-zA-Z_$][a-zA-Z0-9_$]*$",
             RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
-        public static bool IsIdentifierString(object key)
+        public static bool IsIdentifierString(string key)
         {
-            if (!(key is string str))
-                return false;
-            return SimpleIdentifierRegex.IsMatch(str);
+            return SimpleIdentifierRegex.IsMatch(key);
         }
 
         const string KeywordsStr =
@@ -536,11 +537,9 @@ namespace Njsast.Output
             }
         }
 
-        public static bool IsIdentifier(object key)
+        public static bool IsIdentifier(string key)
         {
-            if (!(key is string str))
-                return false;
-            return !ReservedWords.Contains(str);
+            return !ReservedWords.Contains(key);
         }
 
 
@@ -562,6 +561,7 @@ namespace Njsast.Output
             new Regex("^-->", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
         bool _hasParens;
+        bool _needDotAfterNumber;
 
         public void PrintStringChars(string s, QuoteType quoteType)
         {

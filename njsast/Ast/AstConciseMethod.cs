@@ -19,14 +19,6 @@ namespace Njsast.Ast
         /// [boolean] is this method async
         public bool Async;
 
-        public AstConciseMethod(Parser parser, Position startLoc, Position endLoc, string key, AstNode value,
-            bool @static, bool isGenerator, bool async) : base(parser, startLoc, endLoc, key, value)
-        {
-            Static = @static;
-            IsGenerator = isGenerator;
-            Async = async;
-        }
-
         public AstConciseMethod(Parser parser, Position startLoc, Position endLoc, AstNode key, AstNode value,
             bool @static, bool isGenerator, bool async) : base(parser, startLoc, endLoc, key, value)
         {

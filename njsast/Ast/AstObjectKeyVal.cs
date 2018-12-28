@@ -1,5 +1,4 @@
-﻿using Njsast.AstDump;
-using Njsast.Output;
+﻿using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -7,11 +6,6 @@ namespace Njsast.Ast
     /// A key: value object property
     public class AstObjectKeyVal : AstObjectProperty
     {
-        public AstObjectKeyVal(Parser parser, Position startLoc, Position endLoc, string key, AstNode value) : base(
-            parser, startLoc, endLoc, key, value)
-        {
-        }
-
         public AstObjectKeyVal(Parser parser, Position startLoc, Position endLoc, AstNode key, AstNode value) : base(
             parser, startLoc, endLoc, key, value)
         {
@@ -25,23 +19,30 @@ namespace Njsast.Ast
             }
 
             var allowShortHand = output.Options.Shorthand;
+            string keyString = null;
+            if (Key is AstSymbol)
+            {
+                keyString = GetName((AstSymbol)Key);
+            }
+            else if (Key is AstString str)
+                keyString = str.Value;
             if (allowShortHand &&
-                Value is AstSymbol &&
-                OutputContext.IsIdentifierString(Key) &&
-                GetName((AstSymbol) Value) == (string) Key &&
-                OutputContext.IsIdentifier(Key)
+                Value is AstSymbol && keyString != null &&
+                GetName((AstSymbol)Value) == keyString &&
+                OutputContext.IsIdentifierString(keyString) &&
+                OutputContext.IsIdentifier(keyString)
             )
             {
-                output.PrintPropertyName((string) Key);
+                output.PrintPropertyName(keyString);
             }
             else if (allowShortHand &&
-                     Value is AstDefaultAssign defAssign &&
+                     Value is AstDefaultAssign defAssign && keyString!=null &&
                      defAssign.Left is AstSymbol &&
-                     OutputContext.IsIdentifierString(Key) &&
-                     GetName((AstSymbol) defAssign.Left) == (string) Key
+                     OutputContext.IsIdentifierString(keyString) &&
+                     GetName((AstSymbol) defAssign.Left) == keyString
             )
             {
-                output.PrintPropertyName((string) Key);
+                output.PrintPropertyName(keyString);
                 output.Space();
                 output.Print("=");
                 output.Space();
@@ -49,14 +50,14 @@ namespace Njsast.Ast
             }
             else
             {
-                if (!(Key is AstNode))
+                if (keyString != null)
                 {
-                    output.PrintPropertyName(Key as string);
+                    output.PrintPropertyName(keyString);
                 }
                 else
                 {
                     output.Print("[");
-                    ((AstNode) Key).Print(output);
+                    Key.Print(output);
                     output.Print("]");
                 }
 

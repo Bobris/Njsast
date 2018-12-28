@@ -7,18 +7,11 @@ namespace Njsast.Ast
     /// Base class for literal object properties
     public abstract class AstObjectProperty : AstNode
     {
-        /// [string|AstNode] property name. For ObjectKeyVal this is a string. For getters, setters and computed property this is an AstNode.
-        public object Key;
+        /// [AstNode] property name.
+        public AstNode Key;
 
-        /// [AstNode] property value.  For getters and setters this is an AstAccessor.
+        /// [AstNode] property value. For getters and setters this is an AstAccessor.
         public AstNode Value;
-
-        public AstObjectProperty(Parser parser, Position startLoc, Position endLoc, string key, AstNode value) : base(
-            parser, startLoc, endLoc)
-        {
-            Key = key;
-            Value = value;
-        }
 
         public AstObjectProperty(Parser parser, Position startLoc, Position endLoc, AstNode key, AstNode value) : base(
             parser, startLoc, endLoc)
@@ -33,13 +26,6 @@ namespace Njsast.Ast
             if (Key is AstNode)
                 w.Walk((AstNode) Key);
             w.Walk(Value);
-        }
-
-        public override void DumpScalars(IAstDumpWriter writer)
-        {
-            base.DumpScalars(writer);
-            if (Key is string)
-                writer.PrintProp("Key", (string) Key);
         }
 
         protected void PrintGetterSetter(OutputContext output, string type, bool @static)

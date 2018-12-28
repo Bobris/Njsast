@@ -36,6 +36,14 @@ namespace Njsast.Ast
 
         public override void CodeGen(OutputContext output)
         {
+            if (HasUseStrictDirective)
+            {
+                output.Indent();
+                output.PrintString("use strict");
+                output.Print(";");
+                output.Newline();
+            }
+
             for (var i = 0u; i < Body.Count; i++)
             {
                 var stmt = Body[i];

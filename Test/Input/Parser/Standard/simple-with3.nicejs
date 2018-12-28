@@ -1,0 +1,4 @@
+with (x) {
+    foo = bar;
+}
+

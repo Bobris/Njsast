@@ -1,0 +1,4 @@
+throw {
+    message: "Error"
+};
+
