@@ -14,12 +14,7 @@ namespace Njsast.Ast
 
         public override bool NeedParens(OutputContext output)
         {
-            if (!output.HasParens() && output.FirstInStatement())
-            {
-                return true;
-            }
-
-            return false;
+            return output.FirstInStatement();
         }
     }
 }

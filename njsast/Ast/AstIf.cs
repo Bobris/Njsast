@@ -43,7 +43,7 @@ namespace Njsast.Ast
                 // adds the block braces if needed.
                 if (output.Options.Braces)
                 {
-                    output.MakeBlock(this);
+                    output.MakeBlock(Body);
                 }
                 else if (Body == null)
                 {
@@ -86,7 +86,7 @@ namespace Njsast.Ast
             }
             else
             {
-                output.PrintBody(this);
+                output.PrintBody(Body);
             }
         }
     }

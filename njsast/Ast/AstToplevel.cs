@@ -36,10 +36,9 @@ namespace Njsast.Ast
 
         public override void CodeGen(OutputContext output)
         {
-            var last = Body.Count - 1;
-            for (var i = 0; i <= last; i++)
+            for (var i = 0u; i < Body.Count; i++)
             {
-                var stmt = Body[(uint) i];
+                var stmt = Body[i];
                 if (!(stmt is AstEmptyStatement))
                 {
                     output.Indent();

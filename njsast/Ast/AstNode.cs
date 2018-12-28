@@ -55,7 +55,7 @@ namespace Njsast.Ast
         public void Print(OutputContext output, bool forceParens = false)
         {
             output.PushNode(this);
-            if (forceParens || NeedParens(output))
+            if (forceParens || !output.HasParens() && NeedParens(output))
             {
                 output.Print("(");
                 CodeGen(output);

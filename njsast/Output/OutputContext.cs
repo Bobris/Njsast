@@ -55,12 +55,14 @@ namespace Njsast.Output
         {
             if (text.Length == 0) return;
             var ch = text[0];
+            _hasParens = ch == '(' && text.Length == 1;
+
             if (_mightNeedSemicolon)
             {
                 _mightNeedSemicolon = false;
                 if (_lastChar == ':' && ch == '}' || _lastChar != ';' && ch != ';' && ch != '}')
                 {
-                    if (_currentCol < Options.MaxLineLen && "([+*/-,.`".Contains(ch)
+                    if (_currentCol < Options.MaxLineLen || "([+*/-,.`".Contains(ch)
                     ) // these characters cannot be on start of new line without semicolon
                     {
                         TruePrint(";");
@@ -317,7 +319,7 @@ namespace Njsast.Output
 
         public bool ShouldBreak()
         {
-            throw new NotImplementedException();
+            return _currentCol > Options.MaxLineLen;
         }
 
         public bool NeedDotAfterNumber()
@@ -559,6 +561,8 @@ namespace Njsast.Output
         static readonly Regex HtmlEndCommentRegex =
             new Regex("^-->", RegexOptions.CultureInvariant | RegexOptions.Compiled);
 
+        bool _hasParens;
+
         public void PrintStringChars(string s, QuoteType quoteType)
         {
             var lastOk = 0;
@@ -647,8 +651,7 @@ namespace Njsast.Output
 
         public bool HasParens()
         {
-            // TODO
-            return false;
+            return _hasParens;
         }
 
         public bool FirstInStatement()
@@ -683,6 +686,20 @@ namespace Njsast.Output
         {
             switch (op)
             {
+                case Operator.Assignment:
+                case Operator.PowerAssignment:
+                case Operator.ModulusAssignment:
+                case Operator.AdditionAssignment:
+                case Operator.DivisionAssignment:
+                case Operator.SubtractionAssignment:
+                case Operator.MultiplicationAssignment:
+                case Operator.BitwiseOrAssignment:
+                case Operator.LeftShiftAssignment:
+                case Operator.BitwiseAndAssignment:
+                case Operator.RightShiftAssignment:
+                case Operator.BitwiseXOrAssignment:
+                case Operator.RightShiftUnsignedAssignment:
+                    return 0;
                 case Operator.LogicalOr: return 1;
                 case Operator.LogicalAnd: return 2;
                 case Operator.BitwiseOr: return 3;
