@@ -4,9 +4,6 @@ namespace Njsast
 {
     public class SymbolDef
     {
-        private static int NextId = 1;
-
-        public int Id;
         public string Name;
         public string MangledName;
         public StructList<AstSymbol> Orig;
@@ -34,7 +31,6 @@ namespace Njsast
             MangledName = null;
             Undeclared = false;
             Defun = null;
-            Id = NextId++;
         }
 
         public SymbolDef Redefined()

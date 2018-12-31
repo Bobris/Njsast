@@ -4,9 +4,9 @@ namespace Njsast.Scope
 {
     public class SetupScopeChainingAndHandleDefinitionsTreeWalker : TreeWalker
     {
-        private readonly ScopeOptions _options;
-        private AstScope _currentScope;
-        private AstScope _defun;
+        readonly ScopeOptions _options;
+        AstScope _currentScope;
+        AstScope _defun;
 
         public SetupScopeChainingAndHandleDefinitionsTreeWalker(ScopeOptions options, AstToplevel astToplevel)
         {
@@ -43,7 +43,7 @@ namespace Njsast.Scope
 
             if (node is AstWith)
             {
-                for (var s = _currentScope; _currentScope != null; s = s.ParentScope)
+                for (var s = _currentScope; s != null; s = s.ParentScope)
                 {
                     s.UsesWith = true;
                 }
@@ -73,7 +73,6 @@ namespace Njsast.Scope
             else if (node is AstSymbolLambda astSymbolLambda)
             {
                 var def = _defun.DefFunction(astSymbolLambda, astSymbolLambda.Name == "arguments" ? null : _defun);
-                if (_options.Ie8) def.Defun = _defun.ParentScope.Resolve();
             }
             else if (node is AstSymbolVar astSymbolVar)
             {

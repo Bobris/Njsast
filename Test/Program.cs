@@ -35,6 +35,8 @@ namespace Test
                     var dumper = new DumpAst(new AstDumpWriter(strSink));
                     dumper.Walk(toplevel);
                     outast = strSink.ToString();
+                    var scopeParser = new ScopeParser(new ScopeOptions());
+                    scopeParser.FigureOutScope(toplevel);
                     var outputOptions = new OutputOptions();
                     outminjs = toplevel.PrintToString(outputOptions);
                     outputOptions = new OutputOptions();

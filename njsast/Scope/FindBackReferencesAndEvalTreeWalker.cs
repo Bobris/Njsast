@@ -5,8 +5,8 @@ namespace Njsast.Scope
 {
     public class FindBackReferencesAndEvalTreeWalker : TreeWalker
     {
-        private readonly ScopeOptions _options;
-        private readonly AstToplevel _astToplevel;
+        readonly ScopeOptions _options;
+        readonly AstToplevel _astToplevel;
 
         public FindBackReferencesAndEvalTreeWalker(ScopeOptions options, AstToplevel astToplevel)
         {

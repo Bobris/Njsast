@@ -4,7 +4,7 @@ namespace Njsast.Scope
 {
     public class ScopeParser
     {
-        private readonly ScopeOptions _options;
+        readonly ScopeOptions _options;
 
         public ScopeParser(ScopeOptions options)
         {
@@ -17,11 +17,6 @@ namespace Njsast.Scope
             treeWalker.Walk(toplevel);
             treeWalker = new FindBackReferencesAndEvalTreeWalker(_options, toplevel);
             treeWalker.Walk(toplevel);
-            if (_options.Ie8)
-            {
-                treeWalker = new FixUpScopingIssuesWithInternetExplorerTreeWalker(_options, toplevel);
-                treeWalker.Walk(toplevel);
-            }
         }
     }
 }
