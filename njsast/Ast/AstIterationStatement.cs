@@ -9,5 +9,10 @@ namespace Njsast.Ast
             : base(parser, startPos, endPos, body)
         {
         }
+
+        public override bool IsBlockScope()
+        {
+            return true;
+        }
     }
 }

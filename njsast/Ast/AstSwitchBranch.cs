@@ -8,5 +8,10 @@ namespace Njsast.Ast
         public AstSwitchBranch(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
         }
+
+        public override bool IsBlockScope()
+        {
+            return false;
+        }
     }
 }

@@ -33,5 +33,10 @@ namespace Njsast.Ast
         {
             output.PrintBraced(this, false);
         }
+
+        public override bool IsBlockScope()
+        {
+            return true;
+        }
     }
 }
