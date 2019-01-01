@@ -1,4 +1,5 @@
 ﻿using Njsast.Ast;
+using Njsast.Scope;
 
 namespace Njsast
 {
@@ -35,7 +36,31 @@ namespace Njsast
 
         public SymbolDef Redefined()
         {
-            return Defun.Variables.GetOrDefault(Name);
+            return Defun?.Variables.GetOrDefault(Name);
+        }
+
+        public bool Unmangleable(ScopeOptions options)
+        {
+            var orig = Orig[0];
+            return Global && !options.TopLevel
+                   || Export
+                   || Undeclared
+                   || !options.IgnoreEval && Scope.Pinned()
+                   || (orig is AstSymbolLambda || orig is AstSymbolDefun) && options.KeepFunctionNames
+                   || orig is AstSymbolMethod
+                   || (orig is AstSymbolClass || orig is AstSymbolDefClass) && options.KeepClassNames;
+        }
+
+        public void Mangle(ScopeOptions options)
+        {
+            if (MangledName==null && !Unmangleable(options))
+            {
+                var def= Redefined();
+                if (def!=null)
+                    MangledName = def.MangledName ?? def.Name;
+                else
+                    MangledName = Scope.NextMangled(options, this);
+            }
         }
     }
 }

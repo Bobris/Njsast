@@ -66,5 +66,15 @@ namespace Njsast.Ast
             Thedef.References.Add(this);
             MarkEnclosed(options);
         }
+
+        public bool Unreferenced()
+        {
+            return Thedef.References.Count == 0 && !Thedef.Scope.Pinned();
+        }
+
+        public bool Global()
+        {
+            return Thedef.Global;
+        }
     }
 }

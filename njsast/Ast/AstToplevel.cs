@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Njsast.Output;
 using Njsast.Reader;
+using Njsast.Scope;
 
 namespace Njsast.Ast
 {

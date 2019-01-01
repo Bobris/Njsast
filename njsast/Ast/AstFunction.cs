@@ -1,5 +1,6 @@
 ﻿using Njsast.Output;
 using Njsast.Reader;
+using Njsast.Scope;
 
 namespace Njsast.Ast
 {
@@ -37,6 +38,24 @@ namespace Njsast.Ast
             }
 
             return false;
+        }
+
+        public override string NextMangled(ScopeOptions options, SymbolDef symbolDef)
+        {
+            // in Safari strict mode, something like (function x(x){...}) is a syntax error;
+            // a function expression's argument cannot shadow the function expression's name
+
+            var trickyDef = symbolDef.Orig[0] is AstSymbolFunarg && Name != null ? Name.Thedef : null;
+
+            // the function's MangledName is null when KeepFucntionNames is true
+            var trickyName = trickyDef != null ? (trickyDef.MangledName ?? trickyDef.Name) : null;
+
+            while (true)
+            {
+                var name = base.NextMangled(options, symbolDef);
+                if (trickyName != name)
+                    return name;
+            }
         }
     }
 }

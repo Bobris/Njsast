@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
+using Njsast.Scope;
 
 namespace Njsast.Ast
 {
@@ -28,7 +30,7 @@ namespace Njsast.Ast
         public StructList<SymbolDef> Enclosed;
 
         /// [integer/S] current index for mangling variables (used internally by the mangler)
-        public int Cname;
+        public uint Cname;
 
         public AstScope(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
@@ -63,7 +65,7 @@ namespace Njsast.Ast
             UsesEval = false;
             ParentScope = parentScope;
             Enclosed = new StructList<SymbolDef>();
-            Cname = -1;
+            Cname = 0;
         }
 
         public SymbolDef DefVariable(AstSymbol symbol, AstNode init)
@@ -110,6 +112,50 @@ namespace Njsast.Ast
         public virtual AstScope Resolve()
         {
             return ParentScope;
+        }
+
+        public AstScope DefunScope()
+        {
+            var self = this;
+            while (self.IsBlockScope())
+            {
+                self = self.ParentScope;
+            }
+
+            return self;
+        }
+
+        public bool Pinned()
+        {
+            // It is not possible to mangle variables when there is eval or with.
+            return UsesEval || UsesWith;
+        }
+
+        public virtual string NextMangled(ScopeOptions options, SymbolDef symbolDef)
+        {
+            var ext = Enclosed;
+            while (true)
+            {
+                again:
+                var m = options.Base54(Cname++);
+                if (!OutputContext.IsIdentifier(m)) continue; // skip over "do"
+
+                // https://github.com/mishoo/UglifyJS2/issues/242 -- do not
+                // shadow a name reserved from mangling.
+                if (options.Reserved.Contains(m)) continue;
+
+                // we must ensure that the mangled name does not shadow a name
+                // from some parent scope that is referenced in this or in
+                // inner scopes.
+                for (var i = 0u; i < ext.Count; i++)
+                {
+                    var sym = ext[i];
+                    var name = sym.MangledName ?? (sym.Unmangleable(options) ? sym.Name : null);
+                    if (m == name) goto again;
+                }
+
+                return m;
+            }
         }
     }
 }
