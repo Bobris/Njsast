@@ -22,7 +22,8 @@ namespace Njsast.Ast
 
         public override void CodeGen(OutputContext output)
         {
-            Label.Print(output);
+            var name = Label.MangledName ?? Label.Name;
+            output.PrintName(name);
             output.Colon();
             Body.Print(output);
         }

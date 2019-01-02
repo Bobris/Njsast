@@ -51,7 +51,9 @@ namespace Njsast.Ast
         {
             base.InitScopeVars(parentScope);
             UsesArguments = false;
-            DefVariable(new AstSymbolFunarg(Start, End, "arguments"), null);
+            // Arrow functions cannot use arguments
+            if (!(this is AstArrow))
+                DefVariable(new AstSymbolFunarg(Start, End, "arguments"), null);
         }
 
         public override AstScope Resolve()
@@ -108,5 +110,7 @@ namespace Njsast.Ast
             output.Space();
             output.PrintBraced(this, HasUseStrictDirective);
         }
+
+        public override bool IsBlockScope => false;
     }
 }

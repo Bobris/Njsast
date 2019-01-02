@@ -17,6 +17,7 @@ namespace Njsast
         public bool Export;
         public bool Undeclared;
         public AstScope Defun;
+        public AstDestructuring Destructuring;
 
         public SymbolDef(AstScope scope, AstSymbol orig, AstNode init)
         {

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Njsast.AstDump;
 using Njsast.Output;
 using Njsast.Reader;
@@ -117,7 +118,7 @@ namespace Njsast.Ast
         public AstScope DefunScope()
         {
             var self = this;
-            while (self.IsBlockScope())
+            while (self.IsBlockScope)
             {
                 self = self.ParentScope;
             }
@@ -131,13 +132,30 @@ namespace Njsast.Ast
             return UsesEval || UsesWith;
         }
 
+        public static string Base54(ReadOnlySpan<char> chars, uint idx)
+        {
+            Span<char> buf = stackalloc char[8];
+            buf[0] = chars[(int) (idx % 54)];
+            idx = idx / 54;
+            var resIdx = 1;
+
+            while (idx > 0)
+            {
+                idx--;
+                buf[resIdx++] = chars[(int) (idx % 64)];
+                idx = idx / 64;
+            }
+
+            return new string(buf.Slice(0, resIdx));
+        }
+
         public virtual string NextMangled(ScopeOptions options, SymbolDef symbolDef)
         {
             var ext = Enclosed;
             while (true)
             {
                 again:
-                var m = options.Base54(Cname++);
+                var m = Base54(options.Chars, Cname++);
                 if (!OutputContext.IsIdentifier(m)) continue; // skip over "do"
 
                 // https://github.com/mishoo/UglifyJS2/issues/242 -- do not

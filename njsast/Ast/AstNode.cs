@@ -47,11 +47,6 @@ namespace Njsast.Ast
 
         public abstract void CodeGen(OutputContext output);
 
-        public virtual bool IsBlockScope()
-        {
-            return false;
-        }
-
         public virtual bool NeedParens(OutputContext output)
         {
             return false;

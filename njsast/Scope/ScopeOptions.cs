@@ -16,24 +16,7 @@ namespace Njsast.Scope
             Reserved.Add("arguments");
         }
 
+        // More like context
         public char[] Chars;
-
-        public string Base54(uint idx)
-        {
-            Span<char> buf = stackalloc char[8];
-            var chars = Chars;
-            buf[0] = chars[idx % 54];
-            idx = idx / 54;
-            var resIdx = 1;
-
-            while (idx > 0)
-            {
-                idx--;
-                buf[resIdx++] = chars[idx % 64];
-                idx = idx / 64;
-            }
-
-            return new string(buf.Slice(0, resIdx));
-        }
     }
 }

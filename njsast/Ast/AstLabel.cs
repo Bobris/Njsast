@@ -1,4 +1,5 @@
 ﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -11,6 +12,8 @@ namespace Njsast.Ast
 
         public bool IsLoop;
 
+        public string MangledName;
+
         public AstLabel(Parser parser, Position startLoc, Position endLoc, string name) : base(parser, startLoc, endLoc,
             name)
         {
@@ -20,6 +23,11 @@ namespace Njsast.Ast
         {
             base.DumpScalars(writer);
             writer.PrintProp("IsLoop", IsLoop);
+        }
+
+        public override void CodeGen(OutputContext output)
+        {
+            output.PrintName(MangledName ?? Name);
         }
     }
 }

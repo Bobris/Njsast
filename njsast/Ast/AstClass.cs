@@ -89,5 +89,7 @@ namespace Njsast.Ast
                 output.Print("{}");
             }
         }
+
+        public override bool IsBlockScope => false;
     }
 }

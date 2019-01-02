@@ -4,7 +4,7 @@ using Njsast.Reader;
 namespace Njsast.Ast
 {
     /// A body of statements (usually bracketed)
-    public class AstBlock : AstStatement
+    public class AstBlock : AstStatement, IMayBeBlockScope
     {
         /// [AstStatement*] an array of statements
         public StructList<AstNode> Body;
@@ -34,9 +34,7 @@ namespace Njsast.Ast
             output.PrintBraced(this, false);
         }
 
-        public override bool IsBlockScope()
-        {
-            return true;
-        }
+        public virtual bool IsBlockScope => true;
+        public AstScope BlockScope { get; set; }
     }
 }

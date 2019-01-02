@@ -27,7 +27,8 @@ namespace Njsast.Ast
             if (Label != null)
             {
                 output.Space();
-                Label.Print(output);
+                var name = Label.Thedef.MangledName ?? Label.Thedef.Name;
+                output.PrintName(name);
             }
 
             output.Semicolon();

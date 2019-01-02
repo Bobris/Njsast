@@ -46,6 +46,11 @@ namespace Njsast
             top.Visit(this);
         }
 
+        protected void DescendOnce()
+        {
+            Descend(); StopDescending();
+        }
+
         protected abstract void Visit(AstNode node);
 
         public void Walk(AstNode start)

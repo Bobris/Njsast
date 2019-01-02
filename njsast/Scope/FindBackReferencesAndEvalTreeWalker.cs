@@ -17,16 +17,12 @@ namespace Njsast.Scope
 
         protected override void Visit(AstNode node)
         {
-//            if (node is AstLoopControl astLoopControl)
-//            {
-//                if (astLoopControl.Label != null)
-//                {
-//                    // TODO astLoopControl is not astSymbol => so it cant be added to References collections 
-//                    astLoopControl.Label.Thedef.References.Add(astLoopControl);
-//                }
-//
-//                return;
-//            }
+            if (node is AstLoopControl loopControl && loopControl.Label != null)
+            {
+                loopControl.Label.Thedef.References.Add(loopControl);
+                StopDescending();
+                return;
+            }
 
             if (node is AstSymbolRef astSymbolRef)
             {
@@ -39,8 +35,9 @@ namespace Njsast.Scope
                     }
                 }
 
+
                 var sym = astSymbolRef.Scope.FindVariable(name);
-                if (sym == null)
+                if (sym == null || Parent() is AstNameMapping && (Parent(1) as AstImport)?.ModuleName != null)
                 {
                     sym = _astToplevel.DefGlobal(astSymbolRef);
                 }
@@ -51,6 +48,12 @@ namespace Njsast.Scope
 
                 astSymbolRef.Thedef = sym;
                 astSymbolRef.Reference(_options);
+                if (astSymbolRef.Scope.IsBlockScope && !(sym.Orig[0] is AstSymbolBlockDeclaration))
+                {
+                    astSymbolRef.Scope = astSymbolRef.Scope.DefunScope();
+                }
+
+                StopDescending();
                 return;
             }
 

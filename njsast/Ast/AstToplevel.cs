@@ -57,5 +57,7 @@ namespace Njsast.Ast
                 }
             }
         }
+
+        public override bool IsBlockScope => false;
     }
 }

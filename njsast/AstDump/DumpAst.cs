@@ -15,9 +15,8 @@ namespace Njsast.AstDump
         {
             _writer.Print(node);
             node.DumpScalars(_writer);
-            StopDescending();
             _writer.Indent();
-            Descend();
+            DescendOnce();
             _writer.Dedent();
         }
     }

@@ -9,9 +9,6 @@ namespace Njsast.Ast
         {
         }
 
-        public override bool IsBlockScope()
-        {
-            return false;
-        }
+        public override bool IsBlockScope => false;
     }
 }

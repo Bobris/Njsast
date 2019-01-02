@@ -37,25 +37,15 @@ namespace Njsast
         /// <param name="value"></param>
         public void AddUnique(in T value)
         {
-            if (_a == null || _a.Length == 0)
+            for (var i = 0u; i < _count; i++)
             {
-                Add(value);
-            }
-
-            var isUnique = true;
-            for (var i = 0; i < _a.Length; i++)
-            {
-                if (ReferenceEquals(_a[i], value))
+                if (value.Equals(_a[i]))
                 {
-                    isUnique = false;
-                    break;
+                    return;
                 }
             }
 
-            if (isUnique)
-            {
-                Add(value);
-            }
+            Add(value);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -252,6 +242,17 @@ namespace Njsast
             Expand(count);
             range.CopyTo(_a.AsSpan((int) _count));
             _count = count;
+        }
+
+        public bool All(Predicate<T> predicate)
+        {
+            for (uint i = 0; i < _count; i++)
+            {
+                if (!predicate(_a[i]))
+                    return false;
+            }
+
+            return true;
         }
     }
 }
