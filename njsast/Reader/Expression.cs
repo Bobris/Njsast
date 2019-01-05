@@ -1271,7 +1271,7 @@ namespace Njsast.Reader
             }
 
             Next();
-            var node = new AstSymbol(this, startLocation, _lastTokEnd, name);
+            var node = new AstSymbolRef(this, startLocation, _lastTokEnd, name);
             if (!liberal) CheckUnreserved(node.Start, node.Start, node.Name);
             return node;
         }

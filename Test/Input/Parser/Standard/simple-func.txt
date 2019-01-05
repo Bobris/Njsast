@@ -4,5 +4,5 @@ Toplevel 1:1 - 1:30
       Name: hello
     SimpleStatement 1:20 - 1:28
       Call 1:20 - 1:27
-        Symbol 1:20 - 1:25
+        SymbolRef 1:20 - 1:25
           Name: sayHi

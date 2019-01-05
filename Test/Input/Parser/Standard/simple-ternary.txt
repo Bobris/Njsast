@@ -1,7 +1,7 @@
 Toplevel 1:1 - 1:10
   SimpleStatement 1:1 - 1:10
     Conditional 1:1 - 1:10
-      Symbol 1:1 - 1:2
+      SymbolRef 1:1 - 1:2
         Name: y
       Number 1:5 - 1:6
         Value: 1

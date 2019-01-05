@@ -9,21 +9,55 @@ namespace Njsast.Output
 {
     public class OutputContext
     {
-        public OutputOptions Options;
+        public readonly OutputOptions Options;
         StructList<char> _storage = new StructList<char>();
         StructList<AstNode> _stack = new StructList<AstNode>();
         bool _mightNeedSpace = false;
         bool _mightNeedSemicolon = false;
+        bool _frequencyCounting;
+        uint[] _frequency;
         int _currentPos;
         int _currentCol;
         int _currentLine;
-        public int _indentation;
-        static string _spaces = "                ";
-        char _lastChar = Char.MinValue;
+        public int Indentation;
+        const string _spaces = "                ";
+        char _lastChar = char.MinValue;
 
         public OutputContext(OutputOptions options = null)
         {
             Options = options ?? new OutputOptions();
+        }
+
+        public void InitializeForFrequencyCounting()
+        {
+            _frequencyCounting = true;
+            _frequency = new uint[128];
+        }
+
+        public char[] FinishFrequencyCounting()
+        {
+            var letters = CountAndSort("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_");
+            var numbers = CountAndSort("0123456789");
+            letters.AddRange(numbers);
+            return letters.ToArray();
+        }
+
+        List<char> CountAndSort(string chars)
+        {
+            var list = new List<(uint, char)>(chars.Length);
+            for (var i = 0; i < chars.Length; i++)
+            {
+                list.Add((_frequency[chars[i]], chars[i]));
+            }
+
+            list.Sort();
+            var res = new List<char>(chars.Length);
+            for (var i = 0; i < list.Count; i++)
+            {
+                res.Add(list[list.Count - 1 - i].Item2);
+            }
+
+            return res;
         }
 
         public override string ToString()
@@ -34,6 +68,16 @@ namespace Njsast.Output
         public void TruePrint(ReadOnlySpan<Char> text)
         {
             if (text.Length == 0) return;
+            if (_frequencyCounting)
+            {
+                for (int i = 0; i < text.Length; i++)
+                {
+                    var ch = text[i];
+                    if (ch<128) _frequency[ch]++;
+                }
+                _lastChar = text[text.Length - 1];
+                return;
+            }
             _storage.AddRange(text);
             _currentPos += text.Length;
             _lastChar = text[text.Length - 1];
@@ -155,7 +199,7 @@ namespace Njsast.Output
         {
             if (Options.Beautify)
             {
-                var c = Options.IndentStart + _indentation;
+                var c = Options.IndentStart + Indentation;
                 if (half) c -= Options.IndentLevel / 2;
                 while (c >= _spaces.Length)
                 {
@@ -182,7 +226,7 @@ namespace Njsast.Output
             {
                 Print("{");
                 Newline();
-                _indentation += Options.IndentLevel;
+                Indentation += Options.IndentLevel;
                 if (hasUseStrictDirective)
                 {
                     Indent();
@@ -201,7 +245,7 @@ namespace Njsast.Output
                     Newline();
                 }
 
-                _indentation -= Options.IndentLevel;
+                Indentation -= Options.IndentLevel;
                 Indent();
                 Print("}");
             }
@@ -226,11 +270,11 @@ namespace Njsast.Output
             {
                 Print("{");
                 Newline();
-                _indentation += Options.IndentLevel;
+                Indentation += Options.IndentLevel;
                 Indent();
                 stmt.Print(this);
                 Newline();
-                _indentation -= Options.IndentLevel;
+                Indentation -= Options.IndentLevel;
                 Indent();
                 Print("}");
             }
@@ -304,6 +348,8 @@ namespace Njsast.Output
 
         public void AddMapping(Position position)
         {
+            if (_frequencyCounting)
+                return;
             // TODO
         }
 
@@ -327,6 +373,11 @@ namespace Njsast.Output
 
         public void PrintName(string name)
         {
+            if (_frequencyCounting)
+            {
+                Print("a");
+                _frequency['a']--;
+            }
             Print(name);
         }
 
@@ -502,7 +553,7 @@ namespace Njsast.Output
             }
             else if (IsIdentifierString(name))
             {
-                PrintName(name);
+                Print(name);
             }
             else
             {

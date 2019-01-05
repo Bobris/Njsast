@@ -2,7 +2,7 @@ Toplevel 1:1 - 1:35
   SimpleStatement 1:1 - 1:35
     Assign 1:1 - 1:35
       Operator: Assignment
-      Symbol 1:1 - 1:2
+      SymbolRef 1:1 - 1:2
         Name: x
       Object 1:5 - 1:35
         ObjectSetter 1:7 - 1:33
@@ -14,7 +14,7 @@ Toplevel 1:1 - 1:35
             SimpleStatement 1:21 - 1:31
               Assign 1:21 - 1:31
                 Operator: Assignment
-                Symbol 1:21 - 1:27
+                SymbolRef 1:21 - 1:27
                   Name: m_null
-                Symbol 1:30 - 1:31
+                SymbolRef 1:30 - 1:31
                   Name: w

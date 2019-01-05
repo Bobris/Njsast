@@ -35,13 +35,12 @@ namespace Test
                     var dumper = new DumpAst(new AstDumpWriter(strSink));
                     dumper.Walk(toplevel);
                     outast = strSink.ToString();
-                    var scopeParser = new ScopeParser(new ScopeOptions());
-                    scopeParser.FigureOutScope(toplevel);
                     var outputOptions = new OutputOptions();
                     outminjs = toplevel.PrintToString(outputOptions);
                     outputOptions = new OutputOptions();
                     outputOptions.Beautify = true;
                     outnicejs = toplevel.PrintToString(outputOptions);
+                    toplevel.Mangle();
                 }
                 catch (SyntaxError e)
                 {
@@ -90,8 +89,7 @@ namespace Test
             var toplevel = parser.Parse();
             var dumper = new DumpAst(new AstDumpWriter(new ConsoleLineSink()));
             dumper.Walk(toplevel);
-            var scopeParser = new ScopeParser(new ScopeOptions());
-            scopeParser.FigureOutScope(toplevel);
+            toplevel.Mangle(new ScopeOptions { TopLevel = true });
             var outputOptions = new OutputOptions();
             //outputOptions.Beautify = true;
             Console.WriteLine(toplevel.PrintToString(outputOptions));

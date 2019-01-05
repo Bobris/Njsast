@@ -6,5 +6,5 @@ Toplevel 1:1 - 1:31
       Name: a
     SimpleStatement 1:21 - 1:29
       Call 1:21 - 1:28
-        Symbol 1:21 - 1:26
+        SymbolRef 1:21 - 1:26
           Name: sayHi

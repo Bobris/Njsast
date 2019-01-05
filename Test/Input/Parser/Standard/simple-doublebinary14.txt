@@ -4,9 +4,9 @@ Toplevel 1:1 - 1:10
       Operator: BitwiseOr
       Binary 1:1 - 1:6
         Operator: BitwiseOr
-        Symbol 1:1 - 1:2
+        SymbolRef 1:1 - 1:2
           Name: x
-        Symbol 1:5 - 1:6
+        SymbolRef 1:5 - 1:6
           Name: y
-      Symbol 1:9 - 1:10
+      SymbolRef 1:9 - 1:10
         Name: z

@@ -17,7 +17,7 @@ namespace Njsast.Ast
         /// [SymbolDef/S] the definition of this symbol
         public SymbolDef Thedef;
 
-        public AstSymbol(Parser parser, Position startLoc, Position endLoc, string name) : base(parser, startLoc,
+        protected AstSymbol(Parser parser, Position startLoc, Position endLoc, string name) : base(parser, startLoc,
             endLoc)
         {
             Name = name;

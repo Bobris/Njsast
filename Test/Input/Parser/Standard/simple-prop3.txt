@@ -6,5 +6,5 @@ Toplevel 1:1 - 1:36
         Property: solarsystem
         Dot 1:1 - 1:18
           Property: milkyway
-          Symbol 1:1 - 1:9
+          SymbolRef 1:1 - 1:9
             Name: universe

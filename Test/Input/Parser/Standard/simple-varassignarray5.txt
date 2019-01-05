@@ -2,7 +2,7 @@ Toplevel 1:1 - 1:14
   SimpleStatement 1:1 - 1:14
     Assign 1:1 - 1:14
       Operator: Assignment
-      Symbol 1:1 - 1:2
+      SymbolRef 1:1 - 1:2
         Name: x
       Array 1:5 - 1:14
         Hole 1:6 - 1:6

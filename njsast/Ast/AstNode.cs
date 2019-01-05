@@ -2,6 +2,7 @@
 using Njsast.AstDump;
 using Njsast.Output;
 using Njsast.Reader;
+using Njsast.Scope;
 
 namespace Njsast.Ast
 {

@@ -6,5 +6,5 @@ Toplevel 1:1 - 1:22
         Number 1:10 - 1:12
           Value: 42
           Literal: 42
-        Symbol 1:1 - 1:9
+        SymbolRef 1:1 - 1:9
           Name: universe

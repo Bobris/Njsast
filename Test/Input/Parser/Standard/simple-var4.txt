@@ -14,5 +14,5 @@ Toplevel 1:1 - 2:5
           Value: 3
           Literal: 3
     SimpleStatement 2:1 - 2:3
-      Symbol 2:1 - 2:2
+      SymbolRef 2:1 - 2:2
         Name: z

@@ -1,11 +1,11 @@
 Toplevel 1:1 - 1:20
   With 1:1 - 1:20
-    Symbol 1:7 - 1:8
+    SymbolRef 1:7 - 1:8
       Name: x
     SimpleStatement 1:10 - 1:20
       Assign 1:10 - 1:19
         Operator: Assignment
-        Symbol 1:10 - 1:13
+        SymbolRef 1:10 - 1:13
           Name: foo
-        Symbol 1:16 - 1:19
+        SymbolRef 1:16 - 1:19
           Name: bar

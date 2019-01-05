@@ -1,8 +1,8 @@
 Toplevel 1:1 - 1:27
   If 1:1 - 1:27
-    Symbol 1:5 - 1:12
+    SymbolRef 1:5 - 1:12
       Name: morning
     SimpleStatement 1:14 - 1:27
       Call 1:14 - 1:27
-        Symbol 1:14 - 1:25
+        SymbolRef 1:14 - 1:25
           Name: goodMorning

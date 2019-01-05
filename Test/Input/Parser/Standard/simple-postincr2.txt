@@ -2,5 +2,5 @@ Toplevel 1:1 - 1:7
   SimpleStatement 1:1 - 1:7
     UnaryPostfix 1:1 - 1:7
       Operator: IncrementPostfix
-      Symbol 1:1 - 1:5
+      SymbolRef 1:1 - 1:5
         Name: eval

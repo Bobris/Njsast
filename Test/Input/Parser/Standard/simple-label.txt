@@ -7,5 +7,5 @@ Toplevel 1:1 - 1:23
         Label 1:6 - 1:8
           Name: b
         Switch 1:9 - 1:21
-          Symbol 1:16 - 1:17
+          SymbolRef 1:16 - 1:17
             Name: x

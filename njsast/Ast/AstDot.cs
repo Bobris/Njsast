@@ -23,7 +23,7 @@ namespace Njsast.Ast
             output.Print(".");
             // the name after dot would be mapped about here.
             output.AddMapping(End);
-            output.PrintName((string) Property);
+            output.Print((string) Property);
         }
     }
 }

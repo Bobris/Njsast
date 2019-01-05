@@ -1,6 +1,6 @@
 Toplevel 1:1 - 1:24
   If 1:1 - 1:24
-    Symbol 1:5 - 1:12
+    SymbolRef 1:5 - 1:12
       Name: morning
     Var 1:14 - 1:24
       VarDef 1:18 - 1:23

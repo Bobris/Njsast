@@ -2,6 +2,6 @@ Toplevel 1:1 - 1:7
   SimpleStatement 1:1 - 1:7
     Assign 1:1 - 1:7
       Operator: Assignment
-      Symbol 1:1 - 1:2
+      SymbolRef 1:1 - 1:2
         Name: x
       Object 1:5 - 1:7

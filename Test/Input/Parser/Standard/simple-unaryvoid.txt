@@ -2,5 +2,5 @@ Toplevel 1:1 - 1:7
   SimpleStatement 1:1 - 1:7
     UnaryPrefix 1:1 - 1:7
       Operator: Void
-      Symbol 1:6 - 1:7
+      SymbolRef 1:6 - 1:7
         Name: x

@@ -2,20 +2,20 @@ Toplevel 1:1 - 1:25
   For 1:1 - 1:25
     Assign 1:5 - 1:10
       Operator: Assignment
-      Symbol 1:5 - 1:6
+      SymbolRef 1:5 - 1:6
         Name: x
       Number 1:9 - 1:10
         Value: 0
         Literal: 0
     Binary 1:12 - 1:18
       Operator: LessThan
-      Symbol 1:12 - 1:13
+      SymbolRef 1:12 - 1:13
         Name: x
       Number 1:16 - 1:18
         Value: 42
         Literal: 42
     UnaryPostfix 1:20 - 1:23
       Operator: IncrementPostfix
-      Symbol 1:20 - 1:21
+      SymbolRef 1:20 - 1:21
         Name: x
     EmptyStatement 1:24 - 1:25

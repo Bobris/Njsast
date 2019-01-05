@@ -9,7 +9,7 @@ namespace Njsast.Ast
         {
         }
 
-        protected AstSymbolRef(Parser parser, Position startPos, Position endPos, string name) : base(parser, startPos, endPos, name)
+        public AstSymbolRef(Parser parser, Position startPos, Position endPos, string name) : base(parser, startPos, endPos, name)
         {
         }
     }

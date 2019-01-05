@@ -3,7 +3,7 @@ Toplevel 1:1 - 1:35
     Finally 1:16 - 1:35
       SimpleStatement 1:19 - 1:33
         Call 1:19 - 1:33
-          Symbol 1:19 - 1:26
+          SymbolRef 1:19 - 1:26
             Name: cleanup
-          Symbol 1:27 - 1:32
+          SymbolRef 1:27 - 1:32
             Name: stuff
