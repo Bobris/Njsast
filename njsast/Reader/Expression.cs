@@ -968,7 +968,7 @@ namespace Njsast.Reader
             }
 
             return (false,
-                Type == TokenType.Num || Type == TokenType.String ? ParseExpressionAtom() : ParseIdent(true));
+                Type == TokenType.Num || Type == TokenType.String ? ParseExpressionAtom() : new AstSymbolProperty(ParseIdent(true)));
         }
 
         // Parse object or class method.
