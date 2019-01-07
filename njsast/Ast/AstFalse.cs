@@ -14,5 +14,14 @@ namespace Njsast.Ast
         {
             output.Print("false");
         }
+
+        public static AstFalse Instance = new AstFalse(null, new Position(), new Position());
+
+        static readonly object BoxedFalse = false;
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            return BoxedFalse;
+        }
     }
 }

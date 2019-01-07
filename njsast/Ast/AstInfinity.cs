@@ -10,6 +10,9 @@ namespace Njsast.Ast
         {
         }
 
+        public static readonly AstInfinity Instance = new AstInfinity(null, new Position(), new Position());
+        public static AstNode NegativeInstance = new AstUnaryPrefix(Operator.Subtraction, Instance);
+
         public override void CodeGen(OutputContext output)
         {
             output.Print("Infinity");

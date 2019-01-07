@@ -1,4 +1,5 @@
-﻿using Njsast.Output;
+﻿using Microsoft.VisualBasic.CompilerServices;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -13,6 +14,15 @@ namespace Njsast.Ast
         public override void CodeGen(OutputContext output)
         {
             output.Print("true");
+        }
+
+        public static AstTrue Instance = new AstTrue(null, new Position(), new Position());
+        
+        static readonly object BoxedTrue = true;
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            return BoxedTrue;
         }
     }
 }

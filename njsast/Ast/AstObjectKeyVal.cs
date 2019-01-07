@@ -11,6 +11,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstObjectKeyVal(AstNode key, AstNode value) : base(key, value)
+        {
+        }
+
         public override void CodeGen(OutputContext output)
         {
             string GetName(AstSymbol symbol)
@@ -22,13 +26,14 @@ namespace Njsast.Ast
             string keyString = null;
             if (Key is AstSymbol)
             {
-                keyString = GetName((AstSymbol)Key);
+                keyString = GetName((AstSymbol) Key);
             }
             else if (Key is AstString str)
                 keyString = str.Value;
+
             if (allowShortHand &&
                 Value is AstSymbol && keyString != null &&
-                GetName((AstSymbol)Value) == keyString &&
+                GetName((AstSymbol) Value) == keyString &&
                 OutputContext.IsIdentifierString(keyString) &&
                 OutputContext.IsIdentifier(keyString)
             )
@@ -36,7 +41,7 @@ namespace Njsast.Ast
                 output.PrintPropertyName(keyString);
             }
             else if (allowShortHand &&
-                     Value is AstDefaultAssign defAssign && keyString!=null &&
+                     Value is AstDefaultAssign defAssign && keyString != null &&
                      defAssign.Left is AstSymbol &&
                      OutputContext.IsIdentifierString(keyString) &&
                      GetName((AstSymbol) defAssign.Left) == keyString

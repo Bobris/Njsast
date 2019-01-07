@@ -11,6 +11,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstUnaryPrefix(Operator @operator, AstNode expression) : base(@operator, expression)
+        {
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Print(Operator);

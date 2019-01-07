@@ -9,8 +9,14 @@ namespace Njsast.Ast
         {
         }
 
-        public AstSymbolProperty(Parser parser, Position startPos, Position endPos, string name) : base(parser, startPos, endPos, name)
+        public override bool IsConstValue(IConstEvalCtx ctx = null)
         {
+            return true;
+        }
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            return Name;
         }
     }
 }

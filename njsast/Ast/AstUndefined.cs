@@ -14,5 +14,12 @@ namespace Njsast.Ast
         {
             output.Print("undefined");
         }
+
+        static readonly AstUndefined Instance = new AstUndefined(null, new Position(), new Position());
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            return Instance;
+        }
     }
 }

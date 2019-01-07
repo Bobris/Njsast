@@ -10,6 +10,8 @@ namespace Njsast.Ast
         {
         }
 
+        public static readonly AstNaN Instance = new AstNaN(null, new Position(), new Position());
+
         public override void CodeGen(OutputContext output)
         {
             output.Print("NaN");

@@ -14,5 +14,12 @@ namespace Njsast.Ast
         {
             output.Print("null");
         }
+
+        static readonly AstNull Instance = new AstNull(null, new Position(), new Position());
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            return Instance;
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using Njsast.Output;
+﻿using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -13,6 +15,11 @@ namespace Njsast.Ast
             ref StructList<AstObjectProperty> properties) : base(parser, startLoc, endLoc)
         {
             Properties.TransferFrom(ref properties);
+        }
+
+        public AstObject()
+        {
+            Properties = new StructList<AstObjectProperty>();
         }
 
         public override void Visit(TreeWalker w)
@@ -55,6 +62,38 @@ namespace Njsast.Ast
         {
             // object literal could need parens, because it would be interpreted as a block of code.
             return output.FirstInStatement();
+        }
+
+        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        {
+            for (var i = 0u; i < Properties.Count; i++)
+            {
+                var prop = Properties[i];
+                if (!(prop is AstObjectKeyVal keyVal))
+                    return false;
+                if (!keyVal.Key.IsConstValue(ctx)) return false;
+                if (!keyVal.Value.IsConstValue(ctx)) return false;
+            }
+
+            return true;
+        }
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            var res = new Dictionary<object, object>();
+            for (var i = 0u; i < Properties.Count; i++)
+            {
+                var prop = Properties[i];
+                if (!(prop is AstObjectKeyVal keyVal))
+                    return null;
+                var key = keyVal.Key.ConstValue(ctx);
+                if (key == null) return null;
+                var val = keyVal.Value.ConstValue(ctx);
+                if (val == null) return null;
+                res.Add(key, val);
+            }
+
+            return res;
         }
     }
 }

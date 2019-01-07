@@ -13,13 +13,19 @@ namespace Njsast.Ast
         /// [AstNode] property value. For getters and setters this is an AstAccessor.
         public AstNode Value;
 
-        public AstObjectProperty(Parser parser, Position startLoc, Position endLoc, AstNode key, AstNode value) : base(
+        protected AstObjectProperty(Parser parser, Position startLoc, Position endLoc, AstNode key, AstNode value) : base(
             parser, startLoc, endLoc)
         {
             Key = key;
             Value = value;
         }
 
+        protected AstObjectProperty(AstNode key, AstNode value)
+        {
+            Key = key;
+            Value = value;
+        }
+        
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);

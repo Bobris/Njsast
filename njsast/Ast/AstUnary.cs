@@ -12,8 +12,14 @@ namespace Njsast.Ast
         /// [AstNode] expression that this unary operator applies to
         public AstNode Expression;
 
-        public AstUnary(Parser parser, Position startLoc, Position endLoc, Operator @operator, AstNode expression) :
+        protected AstUnary(Parser parser, Position startLoc, Position endLoc, Operator @operator, AstNode expression) :
             base(parser, startLoc, endLoc)
+        {
+            Operator = @operator;
+            Expression = expression;
+        }
+
+        protected AstUnary(Operator @operator, AstNode expression)
         {
             Operator = @operator;
             Expression = expression;

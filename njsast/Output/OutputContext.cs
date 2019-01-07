@@ -341,7 +341,7 @@ namespace Njsast.Output
 
         public AstNode Parent(int distance = 0)
         {
-            if (distance > _stack.Count - 2)
+            if (distance > (int)_stack.Count - 2)
                 return null;
             return _stack[(uint) (_stack.Count - 2 - distance)];
         }

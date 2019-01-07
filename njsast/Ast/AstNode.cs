@@ -20,7 +20,7 @@ namespace Njsast.Ast
 
         protected AstNode(Parser parser, Position startLoc, Position endLoc)
         {
-            Source = parser.SourceFile;
+            Source = parser?.SourceFile;
             Start = startLoc;
             End = endLoc;
         }
@@ -30,6 +30,13 @@ namespace Njsast.Ast
             Source = node.Source;
             Start = node.Start;
             End = node.End;
+        }
+
+        protected AstNode()
+        {
+            Source = null;
+            Start = new Position();
+            End = new Position();
         }
 
         protected AstNode(Position startLoc, Position endLoc)
@@ -75,6 +82,16 @@ namespace Njsast.Ast
             var o = new OutputContext(options);
             Print(o);
             return o.ToString();
+        }
+
+        public virtual bool IsConstValue(IConstEvalCtx ctx = null)
+        {
+            return false;
+        }
+
+        public virtual object ConstValue(IConstEvalCtx ctx = null)
+        {
+            return null;
         }
     }
 }
