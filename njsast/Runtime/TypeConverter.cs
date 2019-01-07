@@ -74,12 +74,18 @@ namespace Njsast.Runtime
             {
                 case double d:
                     return d;
+                case bool b:
+                    return b ? 1 : 0;
+                case int i:
+                    return i;
+                case uint u:
+                    return u;
+                case AstInfinity _:
+                    return double.PositiveInfinity;
                 case AstUndefined _:
                     return double.NaN;
                 case AstNull _:
                     return 0;
-                case bool b:
-                    return b ? 1 : 0;
                 case string s:
                     return ToNumber(s);
                 default:
@@ -189,6 +195,12 @@ namespace Njsast.Runtime
         internal static bool IsWhiteSpaceEx(char c)
         {
             return char.IsWhiteSpace(c) || c == BOM;
+        }
+
+        /// http://www.ecma-international.org/ecma-262/5.1/#sec-9.5
+        public static int ToInt32(object o)
+        {
+            return (int) (uint) ToNumber(o);
         }
     }
 }

@@ -46,6 +46,7 @@ namespace Test
             {
                 var parser = new Parser(new Options(), input);
                 var toplevel = parser.Parse();
+                new ScopeParser().FigureOutScope(toplevel);
                 var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
                 var isConst = lastStatement.IsConstValue();
                 var val = lastStatement.ConstValue();

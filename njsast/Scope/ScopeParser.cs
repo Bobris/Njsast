@@ -6,9 +6,9 @@ namespace Njsast.Scope
     {
         readonly ScopeOptions _options;
 
-        public ScopeParser(ScopeOptions options)
+        public ScopeParser(ScopeOptions options = null)
         {
-            _options = options;
+            _options = options ?? new ScopeOptions();
         }
 
         public void FigureOutScope(AstToplevel toplevel)

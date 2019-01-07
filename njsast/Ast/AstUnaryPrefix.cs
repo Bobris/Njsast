@@ -1,5 +1,6 @@
 ﻿using Njsast.Output;
 using Njsast.Reader;
+using Njsast.Runtime;
 
 namespace Njsast.Ast
 {
@@ -27,6 +28,31 @@ namespace Njsast.Ast
             }
 
             Expression.Print(output);
+        }
+
+        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        {
+            if (!Expression.IsConstValue(ctx)) return false;
+            if (Operator == Operator.Void) return true;
+            if (Operator == Operator.Addition) return true;
+            if (Operator == Operator.Subtraction) return true;
+            if (Operator == Operator.LogicalNot) return true;
+            if (Operator == Operator.BitwiseNot) return true;
+            return false;
+        }
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            var v = Expression.ConstValue(ctx);
+            if (v == null) return null;
+            if (Operator == Operator.Void) return AstUndefined.Instance;
+            if (Operator == Operator.Addition) return v is double?v:TypeConverter.ToNumber(v);
+            if (Operator == Operator.Subtraction) return v is double d?-d:-TypeConverter.ToNumber(v);
+            if (Operator == Operator.LogicalNot)
+                return TypeConverter.ToBoolean(v) ? (AstNode)AstFalse.Instance : AstTrue.Instance;
+            if (Operator == Operator.BitwiseNot)
+                return ~TypeConverter.ToInt32(v);
+            return null;
         }
     }
 }
