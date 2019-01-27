@@ -1,6 +1,9 @@
-﻿using Njsast.AstDump;
+﻿using System;
+using System.Transactions;
+using Njsast.AstDump;
 using Njsast.Output;
 using Njsast.Reader;
+using Njsast.Runtime;
 
 namespace Njsast.Ast
 {
@@ -96,6 +99,168 @@ namespace Njsast.Ast
             }
 
             return false;
+        }
+
+        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        {
+            if (!Left.IsConstValue(ctx)) return false;
+            if (!Right.IsConstValue(ctx)) return false;
+            if (Operator == Operator.Addition) return true;
+            if (Operator == Operator.Subtraction) return true;
+            if (Operator == Operator.Multiplication) return true;
+            if (Operator == Operator.Division) return true;
+            if (Operator == Operator.Modulus) return true;
+            if (Operator == Operator.Power) return true;
+            if (Operator == Operator.Equals) return true;
+            if (Operator == Operator.NotEquals) return true;
+            if (Operator == Operator.StrictEquals) return true;
+            if (Operator == Operator.StrictNotEquals) return true;
+            return false;
+        }
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            var left = Left.ConstValue(ctx);
+            if (left == null) return null;
+            var right = Right.ConstValue(ctx);
+            if (right == null) return null;
+            switch (Operator)
+            {
+                case Operator.Equals:
+                    return JsEquals(left, right) ? AstTrue.BoxedTrue : AstFalse.BoxedFalse;
+                case Operator.NotEquals:
+                    return JsEquals(left, right) ? AstFalse.BoxedFalse : AstTrue.BoxedTrue;
+                case Operator.StrictEquals:
+                    return JsStrictEquals(left, right) ? AstTrue.BoxedTrue : AstFalse.BoxedFalse;
+                case Operator.StrictNotEquals:
+                    return JsStrictEquals(left, right) ? AstFalse.BoxedFalse : AstTrue.BoxedTrue;
+                case Operator.Addition:
+                    left = TypeConverter.ToPrimitive(left);
+                    right = TypeConverter.ToPrimitive(right);
+                    if (left is string || right is string)
+                    {
+                        return TypeConverter.ToString(left) + TypeConverter.ToString(right);
+                    }
+
+                    return TypeConverter.ToNumber(left) + TypeConverter.ToNumber(right);
+                case Operator.Subtraction:
+                    return TypeConverter.ToNumber(left) - TypeConverter.ToNumber(right);
+                case Operator.Multiplication:
+                    return TypeConverter.ToNumber(left) * TypeConverter.ToNumber(right);
+                case Operator.Division:
+                    try
+                    {
+                        return TypeConverter.ToNumber(left) / TypeConverter.ToNumber(right);
+                    }
+                    catch
+                    {
+                        return AstNaN.Instance;
+                    }
+                case Operator.Modulus:
+                    try
+                    {
+                        return TypeConverter.ToNumber(left) % TypeConverter.ToNumber(right);
+                    }
+                    catch
+                    {
+                        return AstNaN.Instance;
+                    }
+                case Operator.Power:
+                    return Math.Pow(TypeConverter.ToNumber(left), TypeConverter.ToNumber(right));
+            }
+
+            return null;
+        }
+
+        static bool JsStrictEquals(object left, object right)
+        {
+            var leftType = TypeConverter.GetJsType(left);
+            var rightType = TypeConverter.GetJsType(right);
+            if (leftType != rightType)
+                return false;
+            if (leftType == JsType.Undefined || leftType == JsType.Null)
+                return true;
+            if (leftType == JsType.Number)
+            {
+                var leftN = TypeConverter.ToNumber(left);
+                var rightN = TypeConverter.ToNumber(right);
+                return JsEquals(leftN, rightN);
+            }
+
+            if (leftType == JsType.String)
+            {
+                return TypeConverter.ToString(left) == TypeConverter.ToString(right);
+            }
+
+            if (leftType == JsType.Boolean)
+            {
+                return TypeConverter.ToBoolean(left) == TypeConverter.ToBoolean(right);
+            }
+
+            // Return true if x and y refer to the same object. Otherwise, return false. We cannot compare references for now
+            return false;
+        }
+
+        static bool JsEquals(object left, object right)
+        {
+            var leftType = TypeConverter.GetJsType(left);
+            var rightType = TypeConverter.GetJsType(right);
+            if (leftType == rightType)
+            {
+                if (leftType == JsType.Undefined || leftType == JsType.Null)
+                    return true;
+                if (leftType == JsType.Number)
+                {
+                    var leftN = TypeConverter.ToNumber(left);
+                    var rightN = TypeConverter.ToNumber(right);
+                    return JsEquals(leftN, rightN);
+                }
+
+                if (leftType == JsType.String)
+                {
+                    return TypeConverter.ToString(left) == TypeConverter.ToString(right);
+                }
+
+                if (leftType == JsType.Boolean)
+                {
+                    return TypeConverter.ToBoolean(left) == TypeConverter.ToBoolean(right);
+                }
+
+                // Return true if x and y refer to the same object. Otherwise, return false. We cannot compare references for now
+                return false;
+            }
+
+            if (leftType == JsType.Null && rightType == JsType.Undefined) return true;
+            if (leftType == JsType.Undefined && rightType == JsType.Null) return true;
+            if (leftType == JsType.Number && rightType == JsType.String ||
+                leftType == JsType.String && rightType == JsType.Number)
+            {
+                return JsEquals(TypeConverter.ToNumber(left), TypeConverter.ToNumber(right));
+            }
+
+            if (leftType == JsType.Boolean)
+            {
+                return JsEquals(TypeConverter.ToNumber(left), right);
+            }
+
+            if (rightType == JsType.Boolean)
+            {
+                return JsEquals(left, TypeConverter.ToNumber(right));
+            }
+
+            // If Type(x) is either String or Number and Type(y) is Object,
+            //   return the result of the comparison x == ToPrimitive(y).
+            // If Type(x) is Object and Type(y) is either String or Number,
+            //   return the result of the comparison ToPrimitive(x) == y.
+            return false;
+        }
+
+        static bool JsEquals(double leftN, double rightN)
+        {
+            if (double.IsNaN(leftN) || double.IsNaN(rightN))
+                return false;
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            return leftN == rightN;
         }
     }
 }

@@ -84,6 +84,8 @@ namespace Njsast.Runtime
                     return double.PositiveInfinity;
                 case AstUndefined _:
                     return double.NaN;
+                case AstNaN _:
+                    return double.NaN;
                 case AstNull _:
                     return 0;
                 case string s:
@@ -201,6 +203,138 @@ namespace Njsast.Runtime
         public static int ToInt32(object o)
         {
             return (int) (uint) ToNumber(o);
+        }
+
+        /// http://www.ecma-international.org/ecma-262/5.1/#sec-9.6
+        public static uint ToUint32(object o)
+        {
+            return (uint) ToNumber(o);
+        }
+
+        public static string ToString(double d)
+        {
+            if (double.IsNaN(d)) return "NaN";
+            if (double.IsInfinity(d)) return double.IsPositiveInfinity(d) ? "Infinity" : "-Infinity";
+            // ReSharper disable once CompareOfFloatsByEqualityOperator
+            if (d == 0) return "0";
+            return d.ToString("R", CultureInfo.InvariantCulture);
+        }
+
+        /// http://www.ecma-international.org/ecma-262/6.0/#sec-tostring
+        public static string ToString(object o)
+        {
+            switch (o)
+            {
+                case string s:
+                    return s;
+                case AstString astString:
+                    return astString.Value;
+                case bool b:
+                    return b ? "true" : "false";
+                case AstTrue _:
+                    return "true";
+                case AstFalse _:
+                    return "false";
+                case double d:
+                    return ToString(d);
+                case AstNumber astNumber:
+                    return ToString(astNumber.Value);
+                case int i:
+                    return i.ToString();
+                case uint u:
+                    return u.ToString();
+                case AstUndefined _:
+                    return "undefined";
+                case AstNull _:
+                    return "null";
+                case Dictionary<object, object> _:
+                    return "[object Object]";
+                case AstNaN _:
+                    return "NaN";
+                case AstInfinity _:
+                    return "Infinity";
+                default:
+                    return ToString(ToPrimitiveString(o));
+            }
+        }
+
+        public static object ToPrimitiveString(object o)
+        {
+            return ToPrimitive(o);
+        }
+
+        public static object ToPrimitive(object o)
+        {
+            switch (o)
+            {
+                case string s:
+                    return s;
+                case AstString astString:
+                    return astString.Value;
+                case bool _:
+                    return o;
+                case AstTrue _:
+                    return AstTrue.BoxedTrue;
+                case AstFalse _:
+                    return AstFalse.BoxedFalse;
+                case double _:
+                    return o;
+                case AstNumber astNumber:
+                    return astNumber.Value;
+                case int i:
+                    return (double)i;
+                case uint u:
+                    return (double)u;
+                case AstUndefined _:
+                    return o;
+                case AstNull _:
+                    return o;
+                case Dictionary<object, object> _:
+                    return "[object Object]";
+                case AstNaN _:
+                    return AstNaN.BoxedNaN;
+                case AstInfinity _:
+                    return AstInfinity.BoxedInfinity;
+                default:
+                    return null;
+            }
+        }
+
+        public static JsType GetJsType(object o)
+        {
+            switch (o)
+            {
+                case string s:
+                    return JsType.String;
+                case AstString _:
+                    return JsType.String;
+                case bool _:
+                    return JsType.Boolean;
+                case AstTrue _:
+                    return JsType.Boolean;
+                case AstFalse _:
+                    return JsType.Boolean;
+                case double _:
+                    return JsType.Number;
+                case AstNumber astNumber:
+                    return JsType.Number;
+                case int i:
+                    return JsType.Number;
+                case uint u:
+                    return JsType.Number;
+                case AstUndefined _:
+                    return JsType.Undefined;
+                case AstNull _:
+                    return JsType.Null;
+                case Dictionary<object, object> _:
+                    return JsType.Object;
+                case AstNaN _:
+                    return JsType.Number;
+                case AstInfinity _:
+                    return JsType.Number;
+                default:
+                    return JsType.Object;
+            }
         }
     }
 }

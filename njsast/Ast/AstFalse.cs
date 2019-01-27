@@ -17,7 +17,7 @@ namespace Njsast.Ast
 
         public static AstFalse Instance = new AstFalse(null, new Position(), new Position());
 
-        static readonly object BoxedFalse = false;
+        public static readonly object BoxedFalse = false;
 
         public override object ConstValue(IConstEvalCtx ctx = null)
         {

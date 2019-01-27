@@ -20,6 +20,7 @@ namespace Njsast.Ast
             {
                 if (Name == "Infinity") return true;
                 if (Name == "NaN") return true;
+                if (Name == "undefined") return true;
             }
             return false;
         }
@@ -31,8 +32,9 @@ namespace Njsast.Ast
             {
                 if (Name == "Infinity") return AstInfinity.Instance;
                 if (Name == "NaN") return AstNaN.Instance;
+                if (Name == "undefined") return AstUndefined.Instance;
             }
-            return false;
+            return null;
         }
     }
 }
