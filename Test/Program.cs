@@ -83,6 +83,7 @@ namespace Test
                 var parser = new Parser(new Options(), input);
                 var toplevel = parser.Parse();
                 var strSink = new StringLineSink();
+                toplevel.FigureOutScope();
                 var dumper = new DumpAst(new AstDumpWriter(strSink));
                 dumper.Walk(toplevel);
                 outast = strSink.ToString();
@@ -129,14 +130,15 @@ namespace Test
         static void Debug()
         {
             var parser = new Parser(new Options(),
-                "var a = 10; var b = 20; function foo() { var a = 20; console.log(a+b);} function bar(a) {var b = 30; console.log(a+b);} foo(); bar(20);"
+                "var a = 10; a++; a+3; a+=4;"
             );
             var toplevel = parser.Parse();
+            toplevel.FigureOutScope();
             var dumper = new DumpAst(new AstDumpWriter(new ConsoleLineSink()));
             dumper.Walk(toplevel);
-            toplevel.Mangle(new ScopeOptions {TopLevel = true});
+            //toplevel.Mangle(new ScopeOptions {TopLevel = true});
             var outputOptions = new OutputOptions();
-            //outputOptions.Beautify = true;
+            outputOptions.Beautify = true;
             Console.WriteLine(toplevel.PrintToString(outputOptions));
         }
 

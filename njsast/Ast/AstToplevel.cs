@@ -60,6 +60,12 @@ namespace Njsast.Ast
 
         public override bool IsBlockScope => false;
 
+        public void FigureOutScope(ScopeOptions options = null)
+        {
+            if (options == null) options = new ScopeOptions();
+            new ScopeParser(options).FigureOutScope(this);
+        }
+
         public void Mangle(ScopeOptions options = null)
         {
             if (options == null) options = new ScopeOptions();

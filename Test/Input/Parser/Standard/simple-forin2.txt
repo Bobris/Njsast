@@ -4,11 +4,11 @@ Toplevel 1:1 - 1:32
       VarDef 1:10 - 1:11
         SymbolVar 1:10 - 1:11
           Name: x
-    SymbolRef 1:15 - 1:19
+    SymbolRef 1:15 - 1:19 [Read]
       Name: list
     SimpleStatement 1:21 - 1:32
       Call 1:21 - 1:31
-        SymbolRef 1:21 - 1:28
+        SymbolRef 1:21 - 1:28 [Read]
           Name: process
-        SymbolRef 1:29 - 1:30
+        SymbolRef 1:29 - 1:30 [Read]
           Name: x

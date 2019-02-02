@@ -17,6 +17,8 @@ namespace Njsast.Ast
         /// [SymbolDef/S] the definition of this symbol
         public SymbolDef Thedef;
 
+        public SymbolUsage Usage;
+
         protected AstSymbol(Parser parser, Position startLoc, Position endLoc, string name) : base(parser, startLoc,
             endLoc)
         {
@@ -37,6 +39,8 @@ namespace Njsast.Ast
         {
             base.DumpScalars(writer);
             writer.PrintProp("Name", Name);
+            writer.PrintProp("Read", Usage.HasFlag(SymbolUsage.Read));
+            writer.PrintProp("Write", Usage.HasFlag(SymbolUsage.Write));
         }
 
         public override void CodeGen(OutputContext output)

@@ -84,11 +84,13 @@ namespace Njsast.Ast
             return o.ToString();
         }
 
+        /// Optimistic test if this AST Tree is constant expression
         public virtual bool IsConstValue(IConstEvalCtx ctx = null)
         {
             return false;
         }
 
+        /// Returns null if not constant
         public virtual object ConstValue(IConstEvalCtx ctx = null)
         {
             return null;
