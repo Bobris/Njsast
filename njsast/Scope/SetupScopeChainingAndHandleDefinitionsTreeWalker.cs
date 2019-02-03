@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Njsast.Ast;
 
 namespace Njsast.Scope
@@ -133,10 +134,6 @@ namespace Njsast.Scope
                     def = _defun.DefVariable((AstSymbol) node, null);
                 }
 
-                if (Parent() is AstVarDef astVarDef && def.Orig.Count==1)
-                {
-                    def.VarInit = astVarDef.Value;
-                }
                 if (!def.Orig.All(sym =>
                 {
                     if (sym == node) return true;

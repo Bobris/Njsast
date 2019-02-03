@@ -130,7 +130,7 @@ namespace Test
         static void Debug()
         {
             var parser = new Parser(new Options(),
-                "var a = 10; a+2;"
+                "var a = 10; a;"
             );
             var toplevel = parser.Parse();
             toplevel.FigureOutScope();

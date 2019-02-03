@@ -32,7 +32,8 @@ namespace Njsast.Scope
                 if (node is AstLabel)
                 {
                 }
-                else if (node is AstSymbolFunarg || node is AstSymbolDefun || node is AstSymbolLambda || node is AstSymbolCatch || node is AstSymbolMethod || node is AstSymbolProperty)
+                else if (node is AstSymbolFunarg || node is AstSymbolDefun || node is AstSymbolLambda ||
+                         node is AstSymbolCatch || node is AstSymbolMethod || node is AstSymbolProperty)
                 {
                     usage |= SymbolUsage.Write;
                 }
@@ -41,7 +42,19 @@ namespace Njsast.Scope
                     {
                         case AstVarDef astVarDef:
                             if (astVarDef.Name == node && astVarDef.Value != null)
+                            {
                                 usage |= SymbolUsage.Write;
+                                var def = astSymbol.Thedef;
+                                if (def.Orig[0] == astSymbol && def.References.Count == 0 && Parent(2) == def.Scope)
+                                {
+                                    def.VarInit = astVarDef.Value;
+                                }
+                                else
+                                {
+                                    def.References.Add(astSymbol);
+                                }
+                            }
+
                             if (astVarDef.Value == node)
                                 usage |= SymbolUsage.Read;
                             break;
