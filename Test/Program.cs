@@ -130,10 +130,13 @@ namespace Test
         static void Debug()
         {
             var parser = new Parser(new Options(),
-                "var a = 10; a++; a+3; a+=4;"
+                "var a = 10; a+2;"
             );
             var toplevel = parser.Parse();
             toplevel.FigureOutScope();
+            var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
+            var isConst = lastStatement.IsConstValue();
+            var val = lastStatement.ConstValue();
             var dumper = new DumpAst(new AstDumpWriter(new ConsoleLineSink()));
             dumper.Walk(toplevel);
             //toplevel.Mangle(new ScopeOptions {TopLevel = true});

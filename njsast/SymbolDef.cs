@@ -18,6 +18,8 @@ namespace Njsast
         public bool Undeclared;
         public AstScope Defun;
         public AstDestructuring Destructuring;
+        // let/const/var Name = VarInit. for var it is only for first declaration of var
+        public AstNode VarInit;
 
         public SymbolDef(AstScope scope, AstSymbol orig, AstNode init)
         {
@@ -33,6 +35,15 @@ namespace Njsast
             MangledName = null;
             Undeclared = false;
             Defun = null;
+        }
+
+        public bool IsSingleInit
+        {
+            get
+            {
+                if (Orig.Count != 1) return false;
+                return References.All(sym => !sym.Usage.HasFlag(SymbolUsage.Write));
+            }
         }
 
         public SymbolDef Redefined()
