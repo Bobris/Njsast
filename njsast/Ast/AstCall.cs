@@ -1,4 +1,5 @@
-﻿using Njsast.Output;
+﻿using Njsast.ConstEval;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -59,6 +60,38 @@ namespace Njsast.Ast
                    && propAccess.Expression == this
                    && output.Parent(1) is AstAssign assign
                    && assign.Left == p;
+        }
+
+        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        {
+            if (Expression is AstSymbolRef symb)
+            {
+                var def = symb.Thedef;
+                if (def == null || ctx == null || Args.Count != 1) return false;
+                if (def.Undeclared && def.Global && def.Name == "require")
+                {
+                    return Args[0].IsConstValue(ctx);
+                }
+            }
+
+            return false;
+        }
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            if (Expression is AstSymbolRef symb)
+            {
+                var def = symb.Thedef;
+                if (def == null || ctx == null || Args.Count != 1) return null;
+                if (def.Undeclared && def.Global && def.Name == "require")
+                {
+                    var param = Args[0].ConstValue(ctx);
+                    if (!(param is string)) return null;
+                    return ctx.ResolveRequire((string) param);
+                }
+            }
+
+            return null;
         }
     }
 }

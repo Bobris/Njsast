@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Njsast.Ast;
 using Njsast.AstDump;
+using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Runtime;
@@ -129,14 +130,20 @@ namespace Test
 
         static void Debug()
         {
+            var files = new InMemoryImportResolver();
+            files.Add("/b", @"""use strict"";
+Object.defineProperty(exports, ""__esModule"", { value: true });
+exports.exp = 42;
+");
             var parser = new Parser(new Options(),
-                "var a = 10; a;"
+                "var b = require(\"./b\"); b.exp;"
             );
             var toplevel = parser.Parse();
             toplevel.FigureOutScope();
             var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
-            var isConst = lastStatement.IsConstValue();
-            var val = lastStatement.ConstValue();
+            var ctx = new ResolvingConstEvalCtx("/a", files);
+            var isConst = lastStatement.IsConstValue(ctx);
+            var val = lastStatement.ConstValue(ctx);
             var dumper = new DumpAst(new AstDumpWriter(new ConsoleLineSink()));
             dumper.Walk(toplevel);
             //toplevel.Mangle(new ScopeOptions {TopLevel = true});
@@ -147,8 +154,8 @@ namespace Test
 
         static void Main()
         {
-            RunAllTests();
-            //Debug();
+            //RunAllTests();
+            Debug();
         }
     }
 }

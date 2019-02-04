@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using Njsast.AstDump;
+using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
 

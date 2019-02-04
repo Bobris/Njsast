@@ -1,6 +1,9 @@
-﻿using Njsast.AstDump;
+﻿using System.Collections.Generic;
+using Njsast.AstDump;
+using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
+using Njsast.Runtime;
 
 namespace Njsast.Ast
 {
@@ -38,6 +41,7 @@ namespace Njsast.Ast
         class WalkForParens : TreeWalker
         {
             internal bool Parens;
+
             protected override void Visit(AstNode node)
             {
                 if (Parens || node is AstScope)
@@ -56,7 +60,8 @@ namespace Njsast.Ast
         public override bool NeedParens(OutputContext output)
         {
             var p = output.Parent();
-            if (p is AstNew aNew && aNew.Expression == this) {
+            if (p is AstNew aNew && aNew.Expression == this)
+            {
                 // i.e. new (foo.bar().baz)
                 //
                 // if there's one call into this subtree, then we need
@@ -70,5 +75,37 @@ namespace Njsast.Ast
 
             return false;
         }
+
+        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        {
+            return Expression.IsConstValue(ctx) && (Property is string || ((AstNode) Property).IsConstValue(ctx));
+        }
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            var expr = Expression.ConstValue(ctx);
+            var prop = Property;
+            if (prop is AstNode node) prop = node.ConstValue(ctx);
+            prop = TypeConverter.ToString(prop);
+            if (expr is IReadOnlyDictionary<object, object> dict)
+            {
+                if (dict.TryGetValue(prop, out var res))
+                    return res;
+                return AstUndefined.Instance;
+            }
+
+            if (expr is JsModule module && ctx != null)
+            {
+                return ctx.ConstValue(module, prop);
+            }
+
+            return null;
+        }
+    }
+
+    public class JsModule
+    {
+        public string ImportedFrom;
+        public string Name;
     }
 }
