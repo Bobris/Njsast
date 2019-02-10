@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Reflection.Metadata.Ecma335;
 using Njsast.Ast;
 using Njsast.Reader;
 
@@ -29,12 +31,26 @@ namespace Njsast.ConstEval
                 var parser = new Parser(new Options(), content);
                 var toplevel = parser.Parse();
                 toplevel.FigureOutScope();
-                var treeWalker = new ExportFinder((string)export);
+                var treeWalker = new ExportFinder((string) export);
                 treeWalker.Walk(toplevel);
                 if (treeWalker.Result == null)
                     return null;
                 var ctx = new ResolvingConstEvalCtx(fileName, _resolver);
-                return treeWalker.Result.ConstValue(ctx);
+                var result = treeWalker.Result.ConstValue(ctx);
+                if (result == null) return null;
+                if (treeWalker.CompleteResult)
+                {
+                    if (result is IReadOnlyDictionary<object, object> dict)
+                    {
+                        if (dict.TryGetValue((string) export, out result))
+                            return result;
+                        return AstUndefined.Instance;
+                    }
+
+                    return null;
+                }
+
+                return result;
             }
             catch
             {
