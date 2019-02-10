@@ -125,6 +125,9 @@ namespace Njsast.Ast
             if (Operator == Operator.LessEquals) return true;
             if (Operator == Operator.GreaterThan) return true;
             if (Operator == Operator.GreaterEquals) return true;
+            if (Operator == Operator.LeftShift) return true;
+            if (Operator == Operator.RightShift) return true;
+            if (Operator == Operator.RightShiftUnsigned) return true;
             return false;
         }
 
@@ -225,6 +228,24 @@ namespace Njsast.Ast
                     right = TypeConverter.ToPrimitive(right);
                     var res = LessThan(left, right);
                     return res == AstFalse.BoxedFalse ? AstTrue.BoxedTrue : AstFalse.BoxedFalse;
+                }
+                case Operator.LeftShift:
+                {
+                    var leftNum = TypeConverter.ToInt32(left);
+                    var rightNum = TypeConverter.ToUint32(right);
+                    return leftNum << (int)(rightNum & 0x1f);
+                }
+                case Operator.RightShift:
+                {
+                    var leftNum = TypeConverter.ToInt32(left);
+                    var rightNum = TypeConverter.ToUint32(right);
+                    return leftNum >> (int)(rightNum & 0x1f);
+                }
+                case Operator.RightShiftUnsigned:
+                {
+                    var leftNum = TypeConverter.ToUint32(left);
+                    var rightNum = TypeConverter.ToUint32(right);
+                    return leftNum >> (int)(rightNum & 0x1f);
                 }
             }
 
