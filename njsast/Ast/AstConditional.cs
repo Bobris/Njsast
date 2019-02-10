@@ -1,5 +1,7 @@
-﻿using Njsast.Output;
+﻿using Njsast.ConstEval;
+using Njsast.Output;
 using Njsast.Reader;
+using Njsast.Runtime;
 
 namespace Njsast.Ast
 {
@@ -57,6 +59,20 @@ namespace Njsast.Ast
             if (p is AstPropAccess propAccess && propAccess.Expression == this)
                 return true;
             return false;
+        }
+
+        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        {
+            return Condition.IsConstValue(ctx);
+        }
+
+        public override object ConstValue(IConstEvalCtx ctx = null)
+        {
+            var cond = Condition.ConstValue(ctx);
+            if (cond == null) return null;
+            if (TypeConverter.ToBoolean(cond))
+                return Consequent.ConstValue(ctx);
+            return Alternative.ConstValue(ctx);
         }
     }
 }
