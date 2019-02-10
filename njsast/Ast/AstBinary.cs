@@ -121,6 +121,10 @@ namespace Njsast.Ast
             if (Operator == Operator.NotEquals) return true;
             if (Operator == Operator.StrictEquals) return true;
             if (Operator == Operator.StrictNotEquals) return true;
+            if (Operator == Operator.LessThan) return true;
+            if (Operator == Operator.LessEquals) return true;
+            if (Operator == Operator.GreaterThan) return true;
+            if (Operator == Operator.GreaterEquals) return true;
             return false;
         }
 
@@ -192,9 +196,60 @@ namespace Njsast.Ast
                     }
                 case Operator.Power:
                     return Math.Pow(TypeConverter.ToNumber(left), TypeConverter.ToNumber(right));
+                case Operator.LessThan:
+                {
+                    left = TypeConverter.ToPrimitive(left);
+                    right = TypeConverter.ToPrimitive(right);
+                    var res = LessThan(left, right);
+                    if (res == AstUndefined.Instance) res = AstFalse.BoxedFalse;
+                    return res;
+                }
+                case Operator.GreaterThan:
+                {
+                    left = TypeConverter.ToPrimitive(left);
+                    right = TypeConverter.ToPrimitive(right);
+                    var res = LessThan(right, left);
+                    if (res == AstUndefined.Instance) res = AstFalse.BoxedFalse;
+                    return res;
+                }
+                case Operator.LessEquals:
+                {
+                    left = TypeConverter.ToPrimitive(left);
+                    right = TypeConverter.ToPrimitive(right);
+                    var res = LessThan(right, left);
+                    return res == AstFalse.BoxedFalse ? AstTrue.BoxedTrue : AstFalse.BoxedFalse;
+                }
+                case Operator.GreaterEquals:
+                {
+                    left = TypeConverter.ToPrimitive(left);
+                    right = TypeConverter.ToPrimitive(right);
+                    var res = LessThan(left, right);
+                    return res == AstFalse.BoxedFalse ? AstTrue.BoxedTrue : AstFalse.BoxedFalse;
+                }
             }
 
             return null;
+        }
+
+        static object LessThan(object left, object right)
+        {
+            if (left is string leftStr && right is string rightStr)
+            {
+                return (string.Compare(leftStr, rightStr, StringComparison.Ordinal) < 0)
+                    ? AstTrue.BoxedTrue
+                    : AstFalse.BoxedFalse;
+            }
+
+            var leftNumber = TypeConverter.ToNumber(left);
+            var rightNumber = TypeConverter.ToNumber(right);
+            if (double.IsNaN(leftNumber)) return AstUndefined.Instance;
+            if (double.IsNaN(rightNumber)) return AstUndefined.Instance;
+            //if (leftNumber == rightNumber) return AstFalse.BoxedFalse;
+            //if (double.IsPositiveInfinity(leftNumber)) return AstFalse.BoxedFalse;
+            //if (double.IsPositiveInfinity(rightNumber)) return AstTrue.BoxedTrue;
+            //if (double.IsNegativeInfinity(rightNumber)) return AstFalse.BoxedFalse;
+            //if (double.IsNegativeInfinity(leftNumber)) return AstTrue.BoxedTrue;
+            return leftNumber < rightNumber ? AstTrue.BoxedTrue : AstFalse.BoxedFalse;
         }
 
         static bool JsStrictEquals(object left, object right)
