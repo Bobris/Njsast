@@ -19,7 +19,18 @@ namespace Njsast.Runtime
                 if (double.IsNegativeInfinity(num)) return AstInfinity.NegativeInstance;
                 return new AstNumber(num);
             }
-            if (o is bool b) return b ? (AstNode) AstTrue.Instance : (AstNode) AstFalse.Instance;
+
+            if (o is int i)
+            {
+                return new AstNumber(i);
+            }
+
+            if (o is uint u)
+            {
+                return new AstNumber(u);
+            }
+
+            if (o is bool b) return b ? AstTrue.Instance : (AstNode) AstFalse.Instance;
             if (o is Dictionary<object, object> dict)
             {
                 var res = new AstObject();
@@ -30,6 +41,7 @@ namespace Njsast.Runtime
 
                 return res;
             }
+
             throw new NotImplementedException();
         }
 
@@ -282,9 +294,9 @@ namespace Njsast.Runtime
                 case AstNumber astNumber:
                     return astNumber.Value;
                 case int i:
-                    return (double)i;
+                    return (double) i;
                 case uint u:
-                    return (double)u;
+                    return (double) u;
                 case AstUndefined _:
                     return o;
                 case AstNull _:

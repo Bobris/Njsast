@@ -108,6 +108,9 @@ namespace Njsast.Ast
             if (Operator == Operator.LogicalOr) return true;
             if (Operator == Operator.LogicalAnd) return true;
             if (!Right.IsConstValue(ctx)) return false;
+            if (Operator == Operator.BitwiseOr) return true;
+            if (Operator == Operator.BitwiseAnd) return true;
+            if (Operator == Operator.BitwiseXOr) return true;
             if (Operator == Operator.Addition) return true;
             if (Operator == Operator.Subtraction) return true;
             if (Operator == Operator.Multiplication) return true;
@@ -142,6 +145,12 @@ namespace Njsast.Ast
                 case Operator.LogicalOr: // we know that left is false
                 case Operator.LogicalAnd: // we know that left is true
                     return right;
+                case Operator.BitwiseOr:
+                    return TypeConverter.ToInt32(left) | TypeConverter.ToInt32(right);
+                case Operator.BitwiseAnd:
+                    return TypeConverter.ToInt32(left) & TypeConverter.ToInt32(right);
+                case Operator.BitwiseXOr:
+                    return TypeConverter.ToInt32(left) ^ TypeConverter.ToInt32(right);
                 case Operator.Equals:
                     return JsEquals(left, right) ? AstTrue.BoxedTrue : AstFalse.BoxedFalse;
                 case Operator.NotEquals:
