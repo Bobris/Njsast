@@ -47,10 +47,10 @@ namespace Njsast.Ast
             var v = Expression.ConstValue(ctx);
             if (v == null) return null;
             if (Operator == Operator.Void) return AstUndefined.Instance;
-            if (Operator == Operator.Addition) return v is double?v:TypeConverter.ToNumber(v);
-            if (Operator == Operator.Subtraction) return v is double d?-d:-TypeConverter.ToNumber(v);
+            if (Operator == Operator.Addition) return v is double ? v : TypeConverter.ToNumber(v);
+            if (Operator == Operator.Subtraction) return v is double d ? -d : -TypeConverter.ToNumber(v);
             if (Operator == Operator.LogicalNot)
-                return TypeConverter.ToBoolean(v) ? (AstNode)AstFalse.Instance : AstTrue.Instance;
+                return TypeConverter.ToBoolean(v) ? AstFalse.BoxedFalse : AstTrue.BoxedTrue;
             if (Operator == Operator.BitwiseNot)
                 return ~TypeConverter.ToInt32(v);
             return null;
