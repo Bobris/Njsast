@@ -8,11 +8,31 @@ using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Runtime;
 using Njsast.Scope;
+using Njsast.Utils;
 
 namespace Test
 {
     class Program
     {
+        public class TestImportResolver : IImportResolver
+        {
+            public string ResolveName(JsModule module)
+            {
+                if (module.Name.StartsWith("./", StringComparison.Ordinal))
+                {
+                    return PathUtils.Join(PathUtils.Parent(module.ImportedFrom), module.Name);
+                }
+
+                throw new NotSupportedException("TestImportResolver supports only relative paths " +
+                                                module.ImportedFrom + " " + module.Name);
+            }
+
+            public string LoadContent(string fileName)
+            {
+                return File.ReadAllText(fileName + ".js");
+            }
+        }
+
         static void RunAllTests()
         {
             var tests = 0;
@@ -21,6 +41,8 @@ namespace Test
                 new EnumerationOptions {RecurseSubdirectories = true}))
             {
                 var file = fileDep.Replace('\\', '/');
+                if (file.StartsWith("Input/ConstEval/dep-"))
+                    continue;
                 var input = File.ReadAllText(file);
                 tests++;
                 if (file.StartsWith("Input/Parser"))
@@ -45,12 +67,14 @@ namespace Test
             var outnicejs = "";
             try
             {
+                var files = new TestImportResolver();
+                var ctx = new ResolvingConstEvalCtx(file, files);
                 var parser = new Parser(new Options(), input);
                 var toplevel = parser.Parse();
                 new ScopeParser().FigureOutScope(toplevel);
-                var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
-                var isConst = lastStatement.IsConstValue();
-                var val = lastStatement.ConstValue();
+                var lastStatement = ((AstSimpleStatement) toplevel.Body[toplevel.Body.Count - 1]).Body;
+                var isConst = lastStatement.IsConstValue(ctx);
+                var val = lastStatement.ConstValue(ctx);
                 outnicejs = isConst ? "Const\n" : "Not const\n";
                 if (val != null)
                 {
@@ -140,7 +164,7 @@ exports.exp = 42;
             );
             var toplevel = parser.Parse();
             toplevel.FigureOutScope();
-            var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
+            var lastStatement = ((AstSimpleStatement) toplevel.Body[toplevel.Body.Count - 1]).Body;
             var ctx = new ResolvingConstEvalCtx("/a", files);
             var isConst = lastStatement.IsConstValue(ctx);
             var val = lastStatement.ConstValue(ctx);
@@ -154,8 +178,8 @@ exports.exp = 42;
 
         static void Main()
         {
-            //RunAllTests();
-            Debug();
+            RunAllTests();
+            //Debug();
         }
     }
 }

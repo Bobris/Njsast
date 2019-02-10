@@ -40,8 +40,6 @@ namespace Njsast.ConstEval
             {
                 return null;
             }
-
-            return null;
         }
     }
 }
