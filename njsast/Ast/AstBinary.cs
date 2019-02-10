@@ -105,6 +105,8 @@ namespace Njsast.Ast
         public override bool IsConstValue(IConstEvalCtx ctx = null)
         {
             if (!Left.IsConstValue(ctx)) return false;
+            if (Operator == Operator.LogicalOr) return true;
+            if (Operator == Operator.LogicalAnd) return true;
             if (!Right.IsConstValue(ctx)) return false;
             if (Operator == Operator.Addition) return true;
             if (Operator == Operator.Subtraction) return true;
@@ -123,10 +125,23 @@ namespace Njsast.Ast
         {
             var left = Left.ConstValue(ctx);
             if (left == null) return null;
+            if (Operator == Operator.LogicalOr) // Short circuit ||
+            {
+                if (TypeConverter.ToBoolean(left)) return left;
+            }
+
+            if (Operator == Operator.LogicalAnd) // Short circuit &&
+            {
+                if (!TypeConverter.ToBoolean(left)) return left;
+            }
+
             var right = Right.ConstValue(ctx);
             if (right == null) return null;
             switch (Operator)
             {
+                case Operator.LogicalOr: // we know that left is false
+                case Operator.LogicalAnd: // we know that left is true
+                    return right;
                 case Operator.Equals:
                     return JsEquals(left, right) ? AstTrue.BoxedTrue : AstFalse.BoxedFalse;
                 case Operator.NotEquals:
