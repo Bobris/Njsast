@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Transactions;
 
 namespace Njsast
 {
@@ -234,6 +235,15 @@ namespace Njsast
             reference._count = 0;
         }
 
+        public void RepeatAdd(in T value, uint count)
+        {
+            if (count == 0) return;
+            var totalCount = _count + count;
+            Expand(totalCount);
+            _a.AsSpan((int) _count, (int) count).Fill(value);
+            _count = totalCount;
+        }
+
         public void AddRange(in ReadOnlySpan<T> range)
         {
             if (range.IsEmpty)
@@ -253,6 +263,18 @@ namespace Njsast
             }
 
             return true;
+        }
+
+        public int IndexOf(in T value)
+        {
+            var comparer = EqualityComparer<T>.Default;
+            for (uint i = 0; i < _count; i++)
+            {
+                if (comparer.Equals(_a[i], value))
+                    return (int) i;
+            }
+
+            return -1;
         }
     }
 }
