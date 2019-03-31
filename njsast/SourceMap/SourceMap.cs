@@ -385,16 +385,24 @@ namespace Njsast.SourceMap
                 _inOutputCol = 0;
                 _lastOutputCol = 0;
                 _line++;
+                if (_content[_index] == '\r') _index++;
                 _index++;
+                _lastNoSource = true;
                 _inNoSource = true;
             }
 
-            if (_ip == _mappings.Length || _mappings[_ip] == ';')
+            if (_ip >= _mappings.Length || _mappings[_ip] == ';')
             {
                 _nextIsNewLine = true;
                 var newLineIndex = _index;
                 while (newLineIndex < _content.Length && _content[newLineIndex] != '\n') newLineIndex++;
                 _inOutputCol = _lastOutputCol + newLineIndex - _index;
+                if (_index < _content.Length && ContentSpan.SequenceEqual("\r"))
+                {
+                    _inOutputCol--;
+                }
+
+                _ip++;
                 return;
             }
 
@@ -466,6 +474,7 @@ namespace Njsast.SourceMap
 
             while (line > _line)
             {
+                if (EndOfContent) break;
                 Next();
             }
 
@@ -473,11 +482,13 @@ namespace Njsast.SourceMap
             {
                 while ((col > _inOutputCol || _inOutputCol == _lastOutputCol) && !_nextIsNewLine)
                 {
+                    if (EndOfContent) break;
                     Next();
                 }
             }
         }
 
+        public bool EndOfContent => _index >= _content.Length;
         public int ColStart => _lastOutputCol;
         public int ColEnd => _inOutputCol;
         public int Line => _line;

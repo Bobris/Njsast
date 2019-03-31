@@ -8,6 +8,7 @@ using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Runtime;
 using Njsast.Scope;
+using Njsast.SourceMap;
 using Njsast.Utils;
 
 namespace Test
@@ -176,10 +177,24 @@ exports.exp = 42;
             Console.WriteLine(toplevel.PrintToString(outputOptions));
         }
 
+        static void SourceMapEmitDebug()
+        {
+            var builder = new SourceMapBuilder();
+            //builder.AddText("// first comment");
+            var adder = builder.CreateSourceAdder(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")),
+                SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
+            adder.Add(0,0,int.MaxValue,0);
+            //builder.AddSource(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")), SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
+            Directory.CreateDirectory("Output");
+            File.WriteAllText("Output/out.js", builder.Content()+"//# sourceMappingURL=out.js.map");
+            File.WriteAllText("Output/out.js.map", builder.Build("..", "..").ToString());
+        }
+
         static void Main()
         {
-            RunAllTests();
+            //RunAllTests();
             //Debug();
+            SourceMapEmitDebug();
         }
     }
 }

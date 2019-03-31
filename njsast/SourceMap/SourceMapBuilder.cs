@@ -6,12 +6,6 @@ using Njsast.Utils;
 
 namespace Njsast.SourceMap
 {
-    public interface ISourceAdder
-    {
-        void Add(int fromLine, int fromCol, int toLine, int toCol);
-        void Add(ReadOnlySpan<char> text);
-    }
-
     public class SourceMapBuilder
     {
         StructList<char> _content;
@@ -180,7 +174,7 @@ namespace Njsast.SourceMap
                 if (b == ';')
                 {
                     Commit();
-                    _mappings.Append(';');
+                    _mappings.Add(';');
                     inOutputCol = 0;
                     lastOutputCol = 0;
                     outputLine++;
@@ -188,7 +182,7 @@ namespace Njsast.SourceMap
                 else if (b == ',')
                 {
                     Commit();
-                    _mappings.Append(',');
+                    _mappings.Add(',');
                 }
                 else
                 {
@@ -359,6 +353,7 @@ namespace Njsast.SourceMap
                 while (_iterator.Line < toLine ||
                        _iterator.Line == toLine && (_iterator.ColEnd < toCol || !_iterator.TillEndOfLine))
                 {
+                    if (_iterator.EndOfContent) break;
                     _owner._content.AddRange(_iterator.ContentSpan);
                     Commit(_iterator.ColStart, _iterator.ColEnd, Remap(_iterator.SourceIndex), _iterator.SourceLine,
                         _iterator.SourceCol);
@@ -371,14 +366,17 @@ namespace Njsast.SourceMap
                     _iterator.Next();
                 }
 
-                _owner._content.AddRange(_iterator.ContentSpan.Slice(0, toCol - _iterator.ColStart));
-                Commit(_iterator.ColStart, toCol, Remap(_iterator.SourceIndex), _iterator.SourceLine,
-                    _iterator.SourceCol);
+                if (!_iterator.EndOfContent)
+                {
+                    _owner._content.AddRange(_iterator.ContentSpan.Slice(0, toCol - _iterator.ColStart));
+                    Commit(_iterator.ColStart, toCol, Remap(_iterator.SourceIndex), _iterator.SourceLine,
+                        _iterator.SourceCol);
+                }
             }
 
             void CommitNewLine()
             {
-                if (_lastOutputColEnd > _lastOutputCol)
+                if (_lastOutputColEnd > _lastOutputCol && _lastSourceIndex >= 0)
                 {
                     CommitLast();
                 }
@@ -395,7 +393,15 @@ namespace Njsast.SourceMap
                 {
                     _owner._mappings.Add(',');
                 }
-                addVLQ(ref _owner._mappings, _lastOutputColEnd - _lastOutputCol);
+                else
+                {
+                    if (_lastOutputCol == 0 && _lastSourceIndex == -1)
+                    {
+                        _lastOutputCol = _lastOutputColEnd;
+                        return;
+                    }
+                }
+                addVLQ(ref _owner._mappings, _lastOutputCol);
                 _lastOutputCol = _lastOutputColEnd;
 
                 if (_lastSourceIndex != -1)
@@ -413,10 +419,9 @@ namespace Njsast.SourceMap
 
             void Commit(int fromCol, int toCol, int sourceIndex, int sourceLine, int sourceCol)
             {
-                if (toCol == fromCol) return;
                 if (_lastOutputColEnd == _lastOutputCol)
                 {
-                    _lastOutputColEnd = toCol - fromCol;
+                    _lastOutputColEnd += toCol - fromCol;
                     _lastSourceIndex = sourceIndex;
                     _lastSourceLine = sourceLine;
                     _lastSourceCol = sourceCol;
@@ -437,7 +442,7 @@ namespace Njsast.SourceMap
                 }
 
                 CommitLast();
-                _lastOutputColEnd = toCol - fromCol;
+                _lastOutputColEnd += toCol - fromCol;
                 _lastSourceIndex = sourceIndex;
                 _lastSourceLine = sourceLine;
                 _lastSourceCol = sourceCol;
@@ -459,6 +464,7 @@ namespace Njsast.SourceMap
                     {
                         _owner._content.AddRange(text);
                         Commit(0, text.Length, -1, -1, -1);
+                        return;
                     }
 
                     _owner._content.AddRange(text.Slice(0, nl + 1));
