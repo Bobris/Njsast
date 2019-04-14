@@ -67,13 +67,14 @@ namespace Njsast.Ast
 
         public override bool IsConstValue(IConstEvalCtx ctx = null)
         {
+            var allowEvalObjectWithJustConstKeys = ctx?.AllowEvalObjectWithJustConstKeys ?? false;
             for (var i = 0u; i < Properties.Count; i++)
             {
                 var prop = Properties[i];
                 if (!(prop is AstObjectKeyVal keyVal))
                     return false;
                 if (!keyVal.Key.IsConstValue(ctx)) return false;
-                if (!keyVal.Value.IsConstValue(ctx)) return false;
+                if (!allowEvalObjectWithJustConstKeys && !keyVal.Value.IsConstValue(ctx)) return false;
             }
 
             return true;
@@ -81,6 +82,7 @@ namespace Njsast.Ast
 
         public override object ConstValue(IConstEvalCtx ctx = null)
         {
+            var allowEvalObjectWithJustConstKeys = ctx?.AllowEvalObjectWithJustConstKeys ?? false;
             var res = new Dictionary<object, object>();
             for (var i = 0u; i < Properties.Count; i++)
             {
@@ -90,7 +92,7 @@ namespace Njsast.Ast
                 var key = keyVal.Key.ConstValue(ctx);
                 if (key == null) return null;
                 var val = keyVal.Value.ConstValue(ctx);
-                if (val == null) return null;
+                if (val == null && !allowEvalObjectWithJustConstKeys) return null;
                 res.Add(key, val);
             }
 

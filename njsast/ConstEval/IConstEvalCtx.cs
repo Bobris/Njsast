@@ -8,5 +8,7 @@ namespace Njsast.ConstEval
 
         /// export will be usually string, could be JsSymbol in ES6
         object ConstValue(JsModule module, object export);
+
+        bool AllowEvalObjectWithJustConstKeys { get; }
     }
 }

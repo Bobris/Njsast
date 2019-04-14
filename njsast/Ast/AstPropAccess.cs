@@ -102,10 +102,4 @@ namespace Njsast.Ast
             return null;
         }
     }
-
-    public class JsModule
-    {
-        public string ImportedFrom;
-        public string Name;
-    }
 }

@@ -22,9 +22,9 @@ namespace Njsast.ConstEval
             {
                 return PathUtils.Join(PathUtils.Parent(module.ImportedFrom), module.Name);
             }
-
-            throw new NotSupportedException("InMemoryImportResolver supports only relative paths " +
-                                            module.ImportedFrom + " " + module.Name);
+            return null;
+            //throw new NotSupportedException("InMemoryImportResolver supports only relative paths " +
+            //                                module.ImportedFrom + " " + module.Name);
         }
 
         public string LoadContent(string fileName)

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Njsast.Ast;
 using Njsast.AstDump;
+using Njsast.Bobril;
 using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
@@ -179,9 +180,18 @@ exports.exp = 42;
 
         static void SourceMapEmitDebug()
         {
+            var source = SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js"));
+            var parser = new Parser(new Options(),
+                source
+            );
+            var toplevel = parser.Parse();
+            toplevel.FigureOutScope();
+            var files = new InMemoryImportResolver();
+            var ctx = new ResolvingConstEvalCtx("/a", files);
+            var sourceInfo = GatherBobrilSourceInfo.Gather(toplevel, ctx);
             var builder = new SourceMapBuilder();
             //builder.AddText("// first comment");
-            var adder = builder.CreateSourceAdder(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")),
+            var adder = builder.CreateSourceAdder(source,
                 SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
             adder.Add(0,0,int.MaxValue,0);
             //builder.AddSource(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")), SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));

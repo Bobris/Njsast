@@ -24,6 +24,7 @@ namespace Njsast.ConstEval
         public object ConstValue(JsModule module, object export)
         {
             var fileName = _resolver.ResolveName(module);
+            if (fileName == null) return null;
             var content = _resolver.LoadContent(fileName);
             if (content == null || !(export is string)) return null;
             try
@@ -57,5 +58,6 @@ namespace Njsast.ConstEval
                 return null;
             }
         }
+        public bool AllowEvalObjectWithJustConstKeys => false;
     }
 }

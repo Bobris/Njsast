@@ -132,7 +132,7 @@ namespace Njsast.Reader
                         _pos = _pos.Increment(1);
                         break;
                     case 13:
-                        if (_input[_pos.Index + 1] == 10)
+                        if (_pos.Index + 1 < _input.Length && _input[_pos.Index + 1] == 10)
                             _pos = _pos.Increment(1);
                         goto case 10;
                     case 10:
@@ -212,7 +212,8 @@ namespace Njsast.Reader
             }
         }
 
-        void readToken_slash() { // '/'
+        void readToken_slash()
+        { // '/'
             var next = _input.Get(_pos.Index + 1);
             if (_exprAllowed)
             {
@@ -387,11 +388,13 @@ namespace Njsast.Reader
                     }
                     if (Options.EcmaVersion >= 6)
                     {
-                        if (next == 111 || next == 79) {
+                        if (next == 111 || next == 79)
+                        {
                             ReadRadixNumber(8); // '0o', '0O' - octal number
                             return;
                         }
-                        if (next == 98 || next == 66) {
+                        if (next == 98 || next == 66)
+                        {
                             ReadRadixNumber(2); // '0b', '0B' - binary number
                             return;
                         }
@@ -751,7 +754,7 @@ namespace Njsast.Reader
                         FinishToken(TokenType.InvalidTemplate, _input.Substring(Start.Index, _pos - Start));
                         return;
 
-                    // no default
+                        // no default
                 }
             }
             Raise(Start, "Unterminated template");

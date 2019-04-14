@@ -1,4 +1,5 @@
 using Njsast.Ast;
+using Njsast.Bobril;
 
 namespace Njsast
 {
