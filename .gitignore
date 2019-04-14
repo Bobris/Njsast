@@ -13,3 +13,5 @@ obj
 .vs
 .idea
 launchSettings.json
+/Test/Sample/node_modules
+/Test/Sample/tsconfig.json
