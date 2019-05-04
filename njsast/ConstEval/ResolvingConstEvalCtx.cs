@@ -58,6 +58,14 @@ namespace Njsast.ConstEval
                 return null;
             }
         }
+
+        public IConstEvalCtx StripPathResolver()
+        {
+            return this;
+        }
+
         public bool AllowEvalObjectWithJustConstKeys => false;
+
+        public bool UseStringPathResolver => false;
     }
 }

@@ -1,5 +1,6 @@
 using Njsast.Ast;
 using Njsast.ConstEval;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +10,7 @@ namespace Njsast.Bobril
     {
         public static SourceInfo Gather(AstNode toplevel, IConstEvalCtx ctx)
         {
-            var evalCtx = new BobrilSpecialEval(ctx);
+            var evalCtx = new BobrilSpecialEvalWithPath(ctx);
             var gatherer = new GatherTreeWalker(evalCtx);
             gatherer.Walk(toplevel);
             return gatherer.SourceInfo;
@@ -44,17 +45,43 @@ namespace Njsast.Bobril
                 return _ctx.ConstValue(module, export);
             }
 
+            virtual public IConstEvalCtx StripPathResolver()
+            {
+                return this;
+            }
+
             public bool AllowEvalObjectWithJustConstKeys => true;
+
+            virtual public bool UseStringPathResolver => false;
+        }
+
+        class BobrilSpecialEvalWithPath : BobrilSpecialEval
+        {
+            BobrilSpecialEval _stripped;
+
+            public BobrilSpecialEvalWithPath(IConstEvalCtx ctx) : base(ctx)
+            {
+                _stripped = new BobrilSpecialEval(ctx);
+            }
+
+            public override IConstEvalCtx StripPathResolver()
+            {
+                return _stripped;
+            }
+
+            public override bool UseStringPathResolver => true;
         }
 
         class GatherTreeWalker : TreeWalker
         {
-            IConstEvalCtx _evalCtx;
+            readonly IConstEvalCtx _evalCtxWithPath;
+            readonly IConstEvalCtx _evalCtx;
             internal SourceInfo SourceInfo;
 
             public GatherTreeWalker(IConstEvalCtx evalCtx)
             {
-                _evalCtx = evalCtx;
+                _evalCtxWithPath = evalCtx;
+                _evalCtx = evalCtx.StripPathResolver();
                 SourceInfo = new SourceInfo();
             }
 
@@ -62,45 +89,200 @@ namespace Njsast.Bobril
             {
                 if (node is AstCall call)
                 {
+                    if (call.Expression is AstSymbol expSymbol && call.Args.Count == 1)
+                    {
+                        var def = expSymbol.Thedef;
+                        if (def.Global && def.Name == "require")
+                        {
+                            var arg = call.Args[0];
+                            if (arg is AstString str)
+                            {
+                                if (str.Value == "bobril" && SourceInfo.BobrilImport == null)
+                                {
+                                    SourceInfo.BobrilImport = ExpressionName();
+                                }
+                                else if (str.Value == "bobril-g11n" && SourceInfo.BobrilG11nImport == null)
+                                {
+                                    SourceInfo.BobrilG11nImport = ExpressionName();
+                                }
+                            }
+                        }
+                        return;
+                    }
                     if (call.Expression.IsConstValue(_evalCtx))
                     {
                         var fn = call.Expression.ConstValue(_evalCtx);
                         if (fn is JsModuleExport exp)
                         {
-                            if (exp.ModuleName == "bobril-g11n")
+                            if (exp.ModuleName == "bobril")
                             {
-                                if (exp.ExportName == "t" && call.Args.Count >= 1 && call.Args.Count <= 3)
+                                if (exp.ExportName == "asset" && call.Args.Count >= 1)
                                 {
-                                    var tr = new SourceInfo.Translation();
+                                    var nameArg = call.Args[0];
+                                    var asset = new SourceInfo.Asset
+                                    {
+                                        StartLine = nameArg.Start.Line,
+                                        StartCol = nameArg.Start.Column,
+                                        EndLine = nameArg.End.Line,
+                                        EndCol = nameArg.End.Column,
+                                        Name = nameArg.ConstValue(_evalCtxWithPath) as string
+                                    };
+                                    if (SourceInfo.Assets == null)
+                                    {
+                                        SourceInfo.Assets = new List<SourceInfo.Asset>();
+                                    }
+                                    SourceInfo.Assets.Add(asset);
+                                }
+                                else if (exp.ExportName == "styleDef" || exp.ExportName == "styleDefEx")
+                                {
+                                    var styleDef = new SourceInfo.StyleDef
+                                    {
+                                        IsEx = exp.ExportName == "styleDefEx"
+                                    };
+                                    var argBeforeName = call.Args[Math.Min(1u + (styleDef.IsEx ? 1u : 0), call.Args.Count - 1)];
+                                    styleDef.BeforeNameLine = argBeforeName.End.Line;
+                                    styleDef.BeforeNameCol = argBeforeName.End.Column;
+                                    if (call.Args.Count == 3 + (styleDef.IsEx ? 1 : 0))
+                                    {
+                                        styleDef.UserNamed = true;
+                                        var nameArg = call.Args[call.Args.Count - 1];
+                                        styleDef.StartLine = nameArg.Start.Line;
+                                        styleDef.StartCol = nameArg.Start.Column;
+                                        styleDef.EndLine = nameArg.End.Line;
+                                        styleDef.EndCol = nameArg.End.Column;
+                                        styleDef.Name = nameArg.ConstValue(_evalCtx) as string;
+                                    }
+                                    else
+                                    {
+                                        styleDef.Name = ExpressionName();
+                                    }
+                                    if (SourceInfo.StyleDefs == null)
+                                    {
+                                        SourceInfo.StyleDefs = new List<SourceInfo.StyleDef>();
+                                    }
+                                    SourceInfo.StyleDefs.Add(styleDef);
+                                }
+                                else if (exp.ExportName == "sprite")
+                                {
+                                    var sprite = new SourceInfo.Sprite
+                                    {
+                                        Width = -1,
+                                        Height = -1,
+                                        X = -1,
+                                        Y = -1,
+                                        HasColor = call.Args.Count >= 2,
+                                        StartLine = call.Start.Line,
+                                        StartCol = call.Start.Column,
+                                        EndLine = call.End.Line,
+                                        EndCol = call.End.Column
+                                    };
+                                    for (var i = 0u; i < call.Args.Count; i++)
+                                    {
+                                        var arg = call.Args[i];
+                                        var res = arg.ConstValue(i == 0 ? _evalCtxWithPath : _evalCtx);
+                                        if (res != null)
+                                            switch (i)
+                                            {
+                                                case 0:
+                                                    sprite.Name = res as string;
+                                                    sprite.NameStartLine = arg.Start.Line;
+                                                    sprite.NameStartCol = arg.Start.Column;
+                                                    sprite.NameEndLine = arg.End.Line;
+                                                    sprite.NameEndCol = arg.End.Column;
+                                                    break;
+                                                case 1:
+                                                    sprite.Color = res as string;
+                                                    sprite.ColorStartLine = arg.Start.Line;
+                                                    sprite.ColorStartCol = arg.Start.Column;
+                                                    sprite.ColorEndLine = arg.End.Line;
+                                                    sprite.ColorEndCol = arg.End.Column;
+                                                    break;
+                                                case 2:
+                                                    if (Runtime.TypeConverter.GetJsType(res) == Runtime.JsType.Number) sprite.Width = Runtime.TypeConverter.ToInt32(res);
+                                                    break;
+                                                case 3:
+                                                    if (Runtime.TypeConverter.GetJsType(res) == Runtime.JsType.Number) sprite.Height = Runtime.TypeConverter.ToInt32(res);
+                                                    break;
+                                                case 4:
+                                                    if (Runtime.TypeConverter.GetJsType(res) == Runtime.JsType.Number) sprite.X = Runtime.TypeConverter.ToInt32(res);
+                                                    break;
+                                                case 5:
+                                                    if (Runtime.TypeConverter.GetJsType(res) == Runtime.JsType.Number) sprite.Y = Runtime.TypeConverter.ToInt32(res);
+                                                    break;
+                                                default:
+                                                    ReportErrorInJSNode(SourceInfo, call, -6, "b.sprite cannot have more than 6 parameters");
+                                                    break;
+                                            }
+                                    }
+                                    if (SourceInfo.Sprites == null)
+                                    {
+                                        SourceInfo.Sprites = new List<SourceInfo.Sprite>();
+                                    }
+                                    SourceInfo.Sprites.Add(sprite);
+                                }
+                            }
+                            else if (exp.ModuleName == "bobril-g11n")
+                            {
+                                if (exp.ExportName == "f" && call.Args.Count == 2)
+                                {
                                     var messageArg = call.Args[0];
-                                    tr.StartLine = messageArg.Start.Line;
-                                    tr.StartCol = messageArg.Start.Column;
-                                    tr.EndLine = messageArg.End.Line;
-                                    tr.EndCol = messageArg.End.Column;
-                                    tr.Message = messageArg.ConstValue(_evalCtx) as string;
+                                    var tr = new SourceInfo.Translation
+                                    {
+                                        JustFormat = true,
+                                        StartLine = messageArg.Start.Line,
+                                        StartCol = messageArg.Start.Column,
+                                        EndLine = messageArg.End.Line,
+                                        EndCol = messageArg.End.Column,
+                                        Message = messageArg.ConstValue(_evalCtx) as string
+                                    };
+                                    var paramsArg = call.Args[1].ConstValue(_evalCtx);
+                                    if (!(paramsArg is AstNull) && !(paramsArg is AstUndefined))
+                                    {
+                                        tr.WithParams = true;
+                                        var pars = paramsArg as IDictionary<object, object>;
+                                        if (pars != null)
+                                        {
+                                            tr.KnownParams = pars.Keys.Select(a => a as string).Where(a => a != null).ToList();
+                                        }
+                                    }
+                                    if (SourceInfo.Translations == null)
+                                        SourceInfo.Translations = new List<SourceInfo.Translation>();
+                                    SourceInfo.Translations.Add(tr);
+                                }
+                                else if ((exp.ExportName == "t" || exp.ExportName == "dt") && call.Args.Count >= 1 && call.Args.Count <= 3)
+                                {
+                                    var messageArg = call.Args[0];
+                                    var tr = new SourceInfo.Translation
+                                    {
+                                        StartLine = messageArg.Start.Line,
+                                        StartCol = messageArg.Start.Column,
+                                        EndLine = messageArg.End.Line,
+                                        EndCol = messageArg.End.Column,
+                                        Message = messageArg.ConstValue(_evalCtx) as string
+                                    };
                                     if (call.Args.Count >= 2)
                                     {
-                                        var paramsArg = call.Args[1].ConstValue(_evalCtx);
-                                        if (!(paramsArg is AstNull) && !(paramsArg is AstUndefined))
+                                        var paramsArg = call.Args[1];
+                                        var paramsValue = paramsArg.ConstValue(_evalCtx);
+                                        if (!(paramsValue is AstNull) && !(paramsValue is AstUndefined))
                                         {
                                             tr.WithParams = true;
-                                            var pars = paramsArg as IDictionary<object, object>;
+                                            var pars = paramsValue as IDictionary<object, object>;
                                             if (pars != null)
                                             {
                                                 tr.KnownParams = pars.Keys.Select(a => a as string).Where(a => a != null).ToList();
                                             }
                                         }
-                                    }
-                                    tr.WithParams = call.Args.Count >= 2;
-                                    if (call.Args.Count >= 3)
-                                    {
-                                        var hintArg = call.Args[2];
-                                        tr.StartHintLine = hintArg.Start.Line;
-                                        tr.StartHintCol = hintArg.Start.Column;
-                                        tr.EndHintLine = hintArg.End.Line;
-                                        tr.EndHintCol = hintArg.End.Column;
-                                        var hintStr = hintArg.ConstValue(_evalCtx) as string;
-                                        tr.Hint = hintStr;
+                                        if (call.Args.Count >= 3)
+                                        {
+                                            var hintArg = call.Args[2];
+                                            tr.StartHintLine = paramsArg.End.Line;
+                                            tr.StartHintCol = paramsArg.End.Column;
+                                            tr.EndHintLine = hintArg.End.Line;
+                                            tr.EndHintCol = hintArg.End.Column;
+                                            var hintStr = hintArg.ConstValue(_evalCtx) as string;
+                                            tr.Hint = hintStr;
+                                        }
                                     }
                                     if (SourceInfo.Translations == null)
                                         SourceInfo.Translations = new List<SourceInfo.Translation>();
@@ -110,6 +292,37 @@ namespace Njsast.Bobril
                         }
                     }
                 }
+            }
+
+            string ExpressionName()
+            {
+                if (Parent() is AstVarDef varDef)
+                {
+                    if (varDef.Name is AstSymbol astSymbol)
+                    {
+                        return astSymbol.Name;
+                    }
+                }
+                return null;
+            }
+
+            void ReportErrorInJSNode(SourceInfo sourceInfo, AstNode node, int code, string message)
+            {
+                if (sourceInfo.Diagnostics == null)
+                {
+                    sourceInfo.Diagnostics = new List<SourceInfo.Diagnostic>();
+                }
+                var d = new SourceInfo.Diagnostic
+                {
+                    Code = code,
+                    Text = message,
+                    IsError = true,
+                    StartLine = node.Start.Line,
+                    StartCol = node.Start.Column,
+                    EndLine = node.End.Line,
+                    EndCol = node.End.Column
+                };
+                sourceInfo.Diagnostics.Add(d);
             }
         }
     }

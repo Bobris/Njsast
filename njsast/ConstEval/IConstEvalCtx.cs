@@ -10,5 +10,9 @@ namespace Njsast.ConstEval
         object ConstValue(JsModule module, object export);
 
         bool AllowEvalObjectWithJustConstKeys { get; }
+
+        bool UseStringPathResolver { get; }
+
+        IConstEvalCtx StripPathResolver();
     }
 }

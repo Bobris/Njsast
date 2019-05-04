@@ -4,6 +4,22 @@ namespace Njsast.Bobril
 {
     public class SourceInfo
     {
+        public string BobrilImport { get; set; }
+        public string BobrilG11nImport { get; set; }
+
+        public class Diagnostic
+        {
+            public int StartCol { get; set; }
+            public int StartLine { get; set; }
+            public int EndCol { get; set; }
+            public int EndLine { get; set; }
+            public bool IsError { get; set; }
+            public int Code { get; set; }
+            public string Text { get; set; }
+        }
+
+        public List<Diagnostic> Diagnostics { get; set; }
+
         public class Asset
         {
             public int StartCol { get; set; }
@@ -22,8 +38,16 @@ namespace Njsast.Bobril
             public int EndCol { get; set; }
             public int EndLine { get; set; }
             public string Name { get; set; }
+            public int NameStartCol { get; set; }
+            public int NameStartLine { get; set; }
+            public int NameEndCol { get; set; }
+            public int NameEndLine { get; set; }
             public string Color { get; set; }
             public bool HasColor { get; set; }
+            public int ColorStartCol { get; set; }
+            public int ColorStartLine { get; set; }
+            public int ColorEndCol { get; set; }
+            public int ColorEndLine { get; set; }
             public int Width { get; set; }
             public int Height { get; set; }
             public int X { get; set; }
@@ -53,6 +77,8 @@ namespace Njsast.Bobril
 
         public class StyleDef
         {
+            public int BeforeNameLine { get; set; }
+            public int BeforeNameCol { get; set; }
             public int StartCol { get; set; }
             public int StartLine { get; set; }
             public int EndCol { get; set; }
