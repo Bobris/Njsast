@@ -85,7 +85,7 @@ namespace Njsast.Ast
         {
             var expr = Expression.ConstValue(ctx);
             var prop = Property;
-            if (prop is AstNode node) prop = node.ConstValue(ctx);
+            if (prop is AstNode node) prop = node.ConstValue(ctx?.StripPathResolver());
             prop = TypeConverter.ToString(prop);
             if (expr is IReadOnlyDictionary<object, object> dict)
             {

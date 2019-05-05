@@ -8,9 +8,9 @@ namespace Njsast.Bobril
 {
     public class GatherBobrilSourceInfo
     {
-        public static SourceInfo Gather(AstNode toplevel, IConstEvalCtx ctx)
+        public static SourceInfo Gather(AstNode toplevel, IConstEvalCtx ctx, Func<IConstEvalCtx, string, string> stringResolver)
         {
-            var evalCtx = new BobrilSpecialEvalWithPath(ctx);
+            var evalCtx = new BobrilSpecialEvalWithPath(ctx, stringResolver);
             var gatherer = new GatherTreeWalker(evalCtx);
             gatherer.Walk(toplevel);
             return gatherer.SourceInfo;
@@ -50,18 +50,30 @@ namespace Njsast.Bobril
                 return this;
             }
 
+            virtual public string ConstStringResolver(string str)
+            {
+                return str;
+            }
+
+            virtual public IConstEvalCtx CreateForSourceName(string sourceName)
+            {
+                return new BobrilSpecialEval(_ctx.CreateForSourceName(sourceName));
+            }
+
             public bool AllowEvalObjectWithJustConstKeys => true;
 
-            virtual public bool UseStringPathResolver => false;
+            public string SourceName => _ctx.SourceName;
         }
 
         class BobrilSpecialEvalWithPath : BobrilSpecialEval
         {
             BobrilSpecialEval _stripped;
+            Func<IConstEvalCtx, string, string> _stringResolver;
 
-            public BobrilSpecialEvalWithPath(IConstEvalCtx ctx) : base(ctx)
+            public BobrilSpecialEvalWithPath(IConstEvalCtx ctx, Func<IConstEvalCtx, string, string> stringResolver) : base(ctx)
             {
                 _stripped = new BobrilSpecialEval(ctx);
+                _stringResolver = stringResolver;
             }
 
             public override IConstEvalCtx StripPathResolver()
@@ -69,7 +81,15 @@ namespace Njsast.Bobril
                 return _stripped;
             }
 
-            public override bool UseStringPathResolver => true;
+            public override string ConstStringResolver(string str)
+            {
+                return _stringResolver(_stripped, str);
+            }
+
+            public override IConstEvalCtx CreateForSourceName(string sourceName)
+            {
+                return new BobrilSpecialEvalWithPath(_stripped.CreateForSourceName(sourceName), _stringResolver);
+            }
         }
 
         class GatherTreeWalker : TreeWalker

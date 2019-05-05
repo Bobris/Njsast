@@ -68,7 +68,7 @@ namespace Njsast.Ast
 
         public override object ConstValue(IConstEvalCtx ctx = null)
         {
-            var cond = Condition.ConstValue(ctx);
+            var cond = Condition.ConstValue(ctx?.StripPathResolver());
             if (cond == null) return null;
             if (TypeConverter.ToBoolean(cond))
                 return Consequent.ConstValue(ctx);

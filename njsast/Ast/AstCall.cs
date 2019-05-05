@@ -85,7 +85,7 @@ namespace Njsast.Ast
                 if (def == null || ctx == null || Args.Count != 1) return null;
                 if (def.Undeclared && def.Global && def.Name == "require")
                 {
-                    var param = Args[0].ConstValue(ctx);
+                    var param = Args[0].ConstValue(ctx?.StripPathResolver());
                     if (!(param is string)) return null;
                     return ctx.ResolveRequire((string) param);
                 }

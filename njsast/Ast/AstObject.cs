@@ -89,7 +89,7 @@ namespace Njsast.Ast
                 var prop = Properties[i];
                 if (!(prop is AstObjectKeyVal keyVal))
                     return null;
-                var key = keyVal.Key.ConstValue(ctx);
+                var key = keyVal.Key.ConstValue(ctx?.StripPathResolver());
                 if (key == null) return null;
                 var val = keyVal.Value.ConstValue(ctx);
                 if (val == null && !allowEvalObjectWithJustConstKeys) return null;

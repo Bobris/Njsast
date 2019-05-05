@@ -37,6 +37,7 @@ namespace Njsast.Ast
 
         public override object ConstValue(IConstEvalCtx ctx = null)
         {
+            if (ctx != null) return ctx.ConstStringResolver(Value);
             return Value;
         }
     }

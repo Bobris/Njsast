@@ -187,8 +187,11 @@ exports.exp = 42;
             var toplevel = parser.Parse();
             toplevel.FigureOutScope();
             var files = new InMemoryImportResolver();
-            var ctx = new ResolvingConstEvalCtx("/a", files);
-            var sourceInfo = GatherBobrilSourceInfo.Gather(toplevel, ctx);
+            var ctx = new ResolvingConstEvalCtx("src/a.js", files);
+            var sourceInfo = GatherBobrilSourceInfo.Gather(toplevel, ctx, (IConstEvalCtx myctx, string text)=>
+            {
+                return PathUtils.Join(PathUtils.Parent(myctx.SourceName), text);
+            });
             var builder = new SourceMapBuilder();
             //builder.AddText("// first comment");
             var adder = builder.CreateSourceAdder(source,

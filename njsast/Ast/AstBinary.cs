@@ -107,7 +107,7 @@ namespace Njsast.Ast
             if (!Left.IsConstValue(ctx)) return false;
             if (Operator == Operator.LogicalOr) return true;
             if (Operator == Operator.LogicalAnd) return true;
-            if (!Right.IsConstValue(ctx)) return false;
+            if (!Right.IsConstValue(ctx?.StripPathResolver())) return false;
             if (Operator == Operator.BitwiseOr) return true;
             if (Operator == Operator.BitwiseAnd) return true;
             if (Operator == Operator.BitwiseXOr) return true;
@@ -145,7 +145,7 @@ namespace Njsast.Ast
                 if (!TypeConverter.ToBoolean(left)) return left;
             }
 
-            var right = Right.ConstValue(ctx);
+            var right = Right.ConstValue(ctx?.StripPathResolver());
             if (right == null) return null;
             switch (Operator)
             {

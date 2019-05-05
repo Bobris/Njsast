@@ -44,7 +44,7 @@ namespace Njsast.Ast
 
         public override object ConstValue(IConstEvalCtx ctx = null)
         {
-            var v = Expression.ConstValue(ctx);
+            var v = Expression.ConstValue(ctx?.StripPathResolver());
             if (v == null) return null;
             if (Operator == Operator.Void) return AstUndefined.Instance;
             if (Operator == Operator.Addition) return v is double ? v : TypeConverter.ToNumber(v);

@@ -4,6 +4,7 @@ namespace Njsast.ConstEval
 {
     public interface IConstEvalCtx
     {
+        string SourceName { get; }
         JsModule ResolveRequire(string name);
 
         /// export will be usually string, could be JsSymbol in ES6
@@ -11,8 +12,10 @@ namespace Njsast.ConstEval
 
         bool AllowEvalObjectWithJustConstKeys { get; }
 
-        bool UseStringPathResolver { get; }
+        string ConstStringResolver(string str);
 
         IConstEvalCtx StripPathResolver();
+
+        IConstEvalCtx CreateForSourceName(string sourceName);
     }
 }
