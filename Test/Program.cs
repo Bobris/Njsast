@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using Njsast.Ast;
 using Njsast.AstDump;
@@ -40,7 +39,7 @@ namespace Test
             var tests = 0;
             var errors = 0;
             foreach (var fileDep in Directory.EnumerateFiles("Input", "*.js",
-                new EnumerationOptions {RecurseSubdirectories = true}))
+                new EnumerationOptions { RecurseSubdirectories = true }))
             {
                 var file = fileDep.Replace('\\', '/');
                 if (file.StartsWith("Input/ConstEval/dep-"))
@@ -74,7 +73,7 @@ namespace Test
                 var parser = new Parser(new Options(), input);
                 var toplevel = parser.Parse();
                 new ScopeParser().FigureOutScope(toplevel);
-                var lastStatement = ((AstSimpleStatement) toplevel.Body[toplevel.Body.Count - 1]).Body;
+                var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
                 var isConst = lastStatement.IsConstValue(ctx);
                 var val = lastStatement.ConstValue(ctx);
                 outnicejs = isConst ? "Const\n" : "Not const\n";
@@ -166,7 +165,7 @@ exports.exp = 42;
             );
             var toplevel = parser.Parse();
             toplevel.FigureOutScope();
-            var lastStatement = ((AstSimpleStatement) toplevel.Body[toplevel.Body.Count - 1]).Body;
+            var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
             var ctx = new ResolvingConstEvalCtx("/a", files);
             var isConst = lastStatement.IsConstValue(ctx);
             var val = lastStatement.ConstValue(ctx);
@@ -188,18 +187,22 @@ exports.exp = 42;
             toplevel.FigureOutScope();
             var files = new InMemoryImportResolver();
             var ctx = new ResolvingConstEvalCtx("src/a.js", files);
-            var sourceInfo = GatherBobrilSourceInfo.Gather(toplevel, ctx, (IConstEvalCtx myctx, string text)=>
+            var sourceInfo = GatherBobrilSourceInfo.Gather(toplevel, ctx, (IConstEvalCtx myctx, string text) =>
             {
                 return PathUtils.Join(PathUtils.Parent(myctx.SourceName), text);
             });
+
             var builder = new SourceMapBuilder();
             //builder.AddText("// first comment");
             var adder = builder.CreateSourceAdder(source,
                 SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
-            adder.Add(0,0,int.MaxValue,0);
+            var sourceReplacer = new SourceReplacer();
+            var m1 = sourceInfo.Assets[0];
+            sourceReplacer.Replace(m1.StartLine, m1.StartCol, m1.EndLine, m1.EndCol, "\""+m1.Name+"\"");
+            sourceReplacer.Apply(adder);
             //builder.AddSource(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")), SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
             Directory.CreateDirectory("Output");
-            File.WriteAllText("Output/out.js", builder.Content()+"//# sourceMappingURL=out.js.map");
+            File.WriteAllText("Output/out.js", builder.Content() + "//# sourceMappingURL=out.js.map");
             File.WriteAllText("Output/out.js.map", builder.Build("..", "..").ToString());
         }
 

@@ -32,8 +32,8 @@ namespace Njsast.AstDump
 
         public void Print(AstNode node)
         {
-            _main = new String(' ', _indent * 2) + node.GetType().Name.Substring(3) + " " + node.Start.Line +
-                    ":" + (node.Start.Column + 1) + " - " + node.End.Line + ":" + (node.End.Column + 1);
+            _main = new String(' ', _indent * 2) + node.GetType().Name.Substring(3) + " " + (node.Start.Line + 1) +
+                    ":" + (node.Start.Column + 1) + " - " + (node.End.Line + 1) + ":" + (node.End.Column + 1);
         }
 
         public void PrintProp(string name, bool value)

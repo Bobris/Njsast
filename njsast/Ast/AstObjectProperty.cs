@@ -1,5 +1,4 @@
-﻿using Njsast.AstDump;
-using Njsast.Output;
+﻿using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Transactions;
 using Njsast.Utils;
 
 namespace Njsast.SourceMap
@@ -298,6 +296,7 @@ namespace Njsast.SourceMap
             readonly SourceMapBuilder _owner;
             readonly SourceMapIterator _iterator;
             StructList<int> _sourceRemap;
+            int _lastOutputLastCol;
             int _lastOutputCol;
             int _lastOutputColEnd;
             int _lastSourceIndex;
@@ -351,7 +350,7 @@ namespace Njsast.SourceMap
 
                 _iterator.Next();
                 while (_iterator.Line < toLine ||
-                       _iterator.Line == toLine && (_iterator.ColEnd < toCol || !_iterator.TillEndOfLine))
+                       _iterator.Line == toLine && _iterator.ColEnd < toCol)
                 {
                     if (_iterator.EndOfContent) break;
                     _owner._content.AddRange(_iterator.ContentSpan);
@@ -381,6 +380,7 @@ namespace Njsast.SourceMap
                     CommitLast();
                 }
                 _owner._mappings.Add(';');
+                _lastOutputLastCol = 0;
                 _lastOutputCol = 0;
                 _lastOutputColEnd = 0;
                 _lastSourceIndex = -1;
@@ -401,7 +401,8 @@ namespace Njsast.SourceMap
                         return;
                     }
                 }
-                addVLQ(ref _owner._mappings, _lastOutputCol);
+                addVLQ(ref _owner._mappings, _lastOutputCol - _lastOutputLastCol);
+                _lastOutputLastCol = _lastOutputCol;
                 _lastOutputCol = _lastOutputColEnd;
 
                 if (_lastSourceIndex != -1)

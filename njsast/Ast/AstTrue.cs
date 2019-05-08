@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic.CompilerServices;
-using Njsast.ConstEval;
+﻿using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
 

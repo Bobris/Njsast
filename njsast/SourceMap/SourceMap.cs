@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection.PortableExecutable;
-using System.Resources;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using Newtonsoft.Json;
 using Njsast.Utils;
@@ -50,7 +47,7 @@ namespace Njsast.SourceMap
         public override string ToString()
         {
             return JsonConvert.SerializeObject(this,
-                new JsonSerializerSettings() {NullValueHandling = NullValueHandling.Ignore});
+                new JsonSerializerSettings() { NullValueHandling = NullValueHandling.Ignore });
         }
 
         public static SourceMap Empty()
@@ -75,7 +72,7 @@ namespace Njsast.SourceMap
                 sb.Append(";");
             return new SourceMap
             {
-                sources = new List<string> {fileName},
+                sources = new List<string> { fileName },
                 mappings = sb.ToString()
             };
         }
@@ -152,7 +149,7 @@ namespace Njsast.SourceMap
                 }
                 else
                 {
-                    var b = (int) SourceMapBuilder.Char2Int[ch];
+                    var b = (int)SourceMapBuilder.Char2Int[ch];
                     if (b == 255)
                         throw new Exception("Invalid sourceMap");
                     value += (b & 31) << shift;
@@ -210,9 +207,9 @@ namespace Njsast.SourceMap
             var res = new SourceCodePosition();
             if (line > CacheLineSkip)
             {
-                var pos = (uint) (line - 1) / CacheLineSkip;
+                var pos = (uint)(line - 1) / CacheLineSkip;
                 ref var entry = ref _searchCache[pos - 1];
-                outputLine = (int) (pos * CacheLineSkip);
+                outputLine = (int)(pos * CacheLineSkip);
                 ip = entry.Pos;
                 inSourceIndex = entry.Index;
                 inSourceLine = entry.Line;
@@ -282,7 +279,7 @@ namespace Njsast.SourceMap
                 }
                 else
                 {
-                    var b = (int) SourceMapBuilder.Char2Int[ch];
+                    var b = (int)SourceMapBuilder.Char2Int[ch];
                     if (b == 255)
                         throw new Exception("Invalid sourceMap");
                     value += (b & 31) << shift;
@@ -373,6 +370,7 @@ namespace Njsast.SourceMap
         public void Next()
         {
             _index += _inOutputCol - _lastOutputCol;
+        again:
             _lastOutputCol = _inOutputCol;
             _lastSourceIndex = _inSourceIndex;
             _lastSourceLine = _inSourceLine;
@@ -397,7 +395,7 @@ namespace Njsast.SourceMap
                 var newLineIndex = _index;
                 while (newLineIndex < _content.Length && _content[newLineIndex] != '\n') newLineIndex++;
                 _inOutputCol = _lastOutputCol + newLineIndex - _index;
-                if (_index < _content.Length && ContentSpan.SequenceEqual("\r"))
+                if (_index < _content.Length && _inOutputCol > _lastOutputCol && _content[_index + _inOutputCol - _lastOutputCol - 1] == '\r')
                 {
                     _inOutputCol--;
                 }
@@ -416,6 +414,7 @@ namespace Njsast.SourceMap
                 {
                     _ip--;
                     _inNoSource = valPos <= 1;
+                    if (_inOutputCol == _lastOutputCol) goto again;
                     return;
                 }
 
@@ -424,10 +423,11 @@ namespace Njsast.SourceMap
                     if (valPos == 0)
                         continue;
                     _inNoSource = valPos <= 1;
+                    if (_inOutputCol == _lastOutputCol) goto again;
                     return;
                 }
 
-                var b = (int) SourceMapBuilder.Char2Int[ch];
+                var b = (int)SourceMapBuilder.Char2Int[ch];
                 if (b == 255)
                     throw new Exception("Invalid sourceMap");
                 value += (b & 31) << shift;
@@ -463,6 +463,7 @@ namespace Njsast.SourceMap
             }
 
             _inNoSource = valPos <= 1;
+            if (_inOutputCol == _lastOutputCol) goto again;
         }
 
         public void SeekTo(int line, int col)
@@ -480,7 +481,7 @@ namespace Njsast.SourceMap
 
             if (line == _line)
             {
-                while ((col > _inOutputCol || _inOutputCol == _lastOutputCol) && !_nextIsNewLine)
+                while ((col > _inOutputCol) && !_nextIsNewLine)
                 {
                     if (EndOfContent) break;
                     Next();

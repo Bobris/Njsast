@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Transactions;
 
 namespace Njsast
 {
@@ -68,7 +67,11 @@ namespace Njsast
                 Expand();
             }
 
-            AsSpan((int) index).CopyTo(AsSpan((int) index + 1, (int) (_count - index)));
+            if (index < _count)
+            {
+                AsSpan((int)index).CopyTo(AsSpan((int)index + 1, (int)(_count - index)));
+            }
+            _count++;
             _a[index] = default;
             return ref _a[index];
         }
@@ -76,7 +79,7 @@ namespace Njsast
         public void RemoveAt(uint index)
         {
             if (index >= _count) throw new ArgumentOutOfRangeException(nameof(index), index, "RemoveAt out of range");
-            AsSpan((int) index + 1).CopyTo(AsSpan((int) index));
+            AsSpan((int)index + 1).CopyTo(AsSpan((int)index));
             _count--;
             _a[_count] = default;
         }
@@ -85,7 +88,7 @@ namespace Njsast
         {
             if (count > int.MaxValue) throw new ArgumentOutOfRangeException(nameof(count));
             if (count <= _count) return;
-            Array.Resize(ref _a, (int) count);
+            Array.Resize(ref _a, (int)count);
         }
 
         public void Truncate()
@@ -96,18 +99,18 @@ namespace Njsast
             }
             else
             {
-                Array.Resize(ref _a, (int) _count);
+                Array.Resize(ref _a, (int)_count);
             }
         }
 
         void Expand()
         {
-            Array.Resize(ref _a, (int) Math.Min(int.MaxValue, Math.Max(2u, _count * 2)));
+            Array.Resize(ref _a, (int)Math.Min(int.MaxValue, Math.Max(2u, _count * 2)));
         }
 
         void Expand(uint count)
         {
-            Array.Resize(ref _a, (int) Math.Min(int.MaxValue, Math.Max(count, _count * 2)));
+            Array.Resize(ref _a, (int)Math.Min(int.MaxValue, Math.Max(count, _count * 2)));
         }
 
         public ref T this[uint index]
@@ -165,7 +168,7 @@ namespace Njsast
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<T> AsSpan()
         {
-            return _a.AsSpan(0, (int) _count);
+            return _a.AsSpan(0, (int)_count);
         }
 
         public Span<T> AsSpan(int start)
@@ -214,12 +217,12 @@ namespace Njsast
 
         public Enumerator GetEnumerator()
         {
-            return new Enumerator((int) _count, _a);
+            return new Enumerator((int)_count, _a);
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            return new Enumerator((int) _count, _a);
+            return new Enumerator((int)_count, _a);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -240,7 +243,7 @@ namespace Njsast
             if (count == 0) return;
             var totalCount = _count + count;
             Expand(totalCount);
-            _a.AsSpan((int) _count, (int) count).Fill(value);
+            _a.AsSpan((int)_count, (int)count).Fill(value);
             _count = totalCount;
         }
 
@@ -248,9 +251,9 @@ namespace Njsast
         {
             if (range.IsEmpty)
                 return;
-            var count = _count + (uint) range.Length;
+            var count = _count + (uint)range.Length;
             Expand(count);
-            range.CopyTo(_a.AsSpan((int) _count));
+            range.CopyTo(_a.AsSpan((int)_count));
             _count = count;
         }
 
@@ -271,7 +274,7 @@ namespace Njsast
             for (uint i = 0; i < _count; i++)
             {
                 if (comparer.Equals(_a[i], value))
-                    return (int) i;
+                    return (int)i;
             }
 
             return -1;

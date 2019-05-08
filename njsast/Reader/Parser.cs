@@ -79,7 +79,7 @@ namespace Njsast.Reader
             }
             else
             {
-                _pos = new Position(1, 0, 0);
+                _pos = new Position(0, 0, 0);
             }
 
             // Properties of the current token:

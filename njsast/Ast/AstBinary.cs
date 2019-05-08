@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Transactions;
 using Njsast.AstDump;
 using Njsast.ConstEval;
 using Njsast.Output;
