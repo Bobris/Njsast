@@ -117,6 +117,19 @@ namespace Njsast.Bobril
                             var arg = call.Args[0];
                             if (arg is AstString str)
                             {
+                                var imp = new SourceInfo.Import
+                                {
+                                    Name = str.Value,
+                                    StartLine = str.Start.Line,
+                                    StartCol = str.Start.Column,
+                                    EndLine = str.End.Line,
+                                    EndCol = str.End.Column
+                                };
+                                if (SourceInfo.Imports == null)
+                                {
+                                    SourceInfo.Imports = new List<SourceInfo.Import>();
+                                }
+                                SourceInfo.Imports.Add(imp);
                                 if (str.Value == "bobril" && SourceInfo.BobrilImport == null)
                                 {
                                     SourceInfo.BobrilImport = ExpressionName();
@@ -330,9 +343,9 @@ namespace Njsast.Bobril
             {
                 if (sourceInfo.Diagnostics == null)
                 {
-                    sourceInfo.Diagnostics = new List<SourceInfo.Diagnostic>();
+                    sourceInfo.Diagnostics = new List<Diagnostic>();
                 }
-                var d = new SourceInfo.Diagnostic
+                var d = new Diagnostic
                 {
                     Code = code,
                     Text = message,

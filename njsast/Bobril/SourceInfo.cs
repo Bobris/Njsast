@@ -2,23 +2,34 @@ using System.Collections.Generic;
 
 namespace Njsast.Bobril
 {
+    public class Diagnostic
+    {
+        public int StartCol { get; set; }
+        public int StartLine { get; set; }
+        public int EndCol { get; set; }
+        public int EndLine { get; set; }
+        public bool IsError { get; set; }
+        public int Code { get; set; }
+        public string Text { get; set; }
+    }
+
     public class SourceInfo
     {
         public string BobrilImport { get; set; }
         public string BobrilG11nImport { get; set; }
 
-        public class Diagnostic
+        public List<Diagnostic> Diagnostics { get; set; }
+
+        public class Import
         {
             public int StartCol { get; set; }
             public int StartLine { get; set; }
             public int EndCol { get; set; }
             public int EndLine { get; set; }
-            public bool IsError { get; set; }
-            public int Code { get; set; }
-            public string Text { get; set; }
+            public string Name { get; set; }
         }
 
-        public List<Diagnostic> Diagnostics { get; set; }
+        public List<Import> Imports { get; set; }
 
         public class Asset
         {
