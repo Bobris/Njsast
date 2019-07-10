@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Njsast.SourceMap;
 
 namespace Njsast.Bobril
 {
@@ -94,6 +96,7 @@ namespace Njsast.Bobril
             public int StartLine { get; set; }
             public int EndCol { get; set; }
             public int EndLine { get; set; }
+            public uint ArgCount { get; set; }
             public string Name { get; set; }
             public bool UserNamed { get; set; }
             public bool IsEx { get; set; }

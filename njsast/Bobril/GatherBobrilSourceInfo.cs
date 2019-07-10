@@ -30,7 +30,7 @@ namespace Njsast.Bobril
                 return _ctx.ResolveRequire(name);
             }
 
-            public object ConstValue(JsModule module, object export)
+            public object ConstValue(IConstEvalCtx ctx, JsModule module, object export)
             {
                 if (module.Name == "bobril" && export is string expName)
                 {
@@ -42,7 +42,7 @@ namespace Njsast.Bobril
                     if (expName2 == "t" || expName2 == "f" || expName2 == "dt")
                         return new JsModuleExport(module.Name, expName2);
                 }
-                return _ctx.ConstValue(module, export);
+                return _ctx.ConstValue(ctx, module, export);
             }
 
             virtual public IConstEvalCtx StripPathResolver()
@@ -63,6 +63,8 @@ namespace Njsast.Bobril
             public bool AllowEvalObjectWithJustConstKeys => true;
 
             public string SourceName => _ctx.SourceName;
+
+            public bool JustModuleExports { get => _ctx.JustModuleExports; set => _ctx.JustModuleExports = value; }
         }
 
         class BobrilSpecialEvalWithPath : BobrilSpecialEval
@@ -142,9 +144,11 @@ namespace Njsast.Bobril
                         }
                         return;
                     }
+                    _evalCtx.JustModuleExports = true;
                     if (call.Expression.IsConstValue(_evalCtx))
                     {
                         var fn = call.Expression.ConstValue(_evalCtx);
+                        _evalCtx.JustModuleExports = false;
                         if (fn is JsModuleExport exp)
                         {
                             if (exp.ModuleName == "bobril")
@@ -173,6 +177,7 @@ namespace Njsast.Bobril
                                         IsEx = exp.ExportName == "styleDefEx"
                                     };
                                     var argBeforeName = call.Args[Math.Min(1u + (styleDef.IsEx ? 1u : 0), call.Args.Count - 1)];
+                                    styleDef.ArgCount = call.Args.Count;
                                     styleDef.BeforeNameLine = argBeforeName.End.Line;
                                     styleDef.BeforeNameCol = argBeforeName.End.Column;
                                     if (call.Args.Count == 3 + (styleDef.IsEx ? 1 : 0))
@@ -212,23 +217,30 @@ namespace Njsast.Bobril
                                     for (var i = 0u; i < call.Args.Count; i++)
                                     {
                                         var arg = call.Args[i];
+                                        switch(i)
+                                        {
+                                            case 0:
+                                                sprite.NameStartLine = arg.Start.Line;
+                                                sprite.NameStartCol = arg.Start.Column;
+                                                sprite.NameEndLine = arg.End.Line;
+                                                sprite.NameEndCol = arg.End.Column;
+                                                break;
+                                            case 1:
+                                                sprite.ColorStartLine = arg.Start.Line;
+                                                sprite.ColorStartCol = arg.Start.Column;
+                                                sprite.ColorEndLine = arg.End.Line;
+                                                sprite.ColorEndCol = arg.End.Column;
+                                                break;
+                                        }
                                         var res = arg.ConstValue(i == 0 ? _evalCtxWithPath : _evalCtx);
                                         if (res != null)
                                             switch (i)
                                             {
                                                 case 0:
                                                     sprite.Name = res as string;
-                                                    sprite.NameStartLine = arg.Start.Line;
-                                                    sprite.NameStartCol = arg.Start.Column;
-                                                    sprite.NameEndLine = arg.End.Line;
-                                                    sprite.NameEndCol = arg.End.Column;
                                                     break;
                                                 case 1:
                                                     sprite.Color = res as string;
-                                                    sprite.ColorStartLine = arg.Start.Line;
-                                                    sprite.ColorStartCol = arg.Start.Column;
-                                                    sprite.ColorEndLine = arg.End.Line;
-                                                    sprite.ColorEndCol = arg.End.Column;
                                                     break;
                                                 case 2:
                                                     if (Runtime.TypeConverter.GetJsType(res) == Runtime.JsType.Number) sprite.Width = Runtime.TypeConverter.ToInt32(res);
@@ -323,6 +335,10 @@ namespace Njsast.Bobril
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        _evalCtx.JustModuleExports = false;
                     }
                 }
             }

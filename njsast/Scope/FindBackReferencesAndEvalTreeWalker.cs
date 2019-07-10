@@ -113,6 +113,10 @@ namespace Njsast.Scope
                         case AstConditional _:
                         case AstThrow _:
                         case AstWith _:
+                        case AstArray _:
+                        case AstWhile _:
+                        case AstCase _:
+                        case AstFor _:
                             usage |= SymbolUsage.Read;
                             break;
                         case AstNode parent:

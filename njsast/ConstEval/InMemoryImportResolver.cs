@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Njsast.Ast;
+using Njsast.Reader;
 using Njsast.Utils;
 
 namespace Njsast.ConstEval
@@ -15,22 +16,19 @@ namespace Njsast.ConstEval
             return this;
         }
 
-        public string ResolveName(JsModule module)
+        public (string fileName, AstToplevel content) ResolveAndLoad(JsModule module)
         {
             if (module.Name.StartsWith("./", StringComparison.Ordinal) ||
                 module.Name.StartsWith("../", StringComparison.Ordinal))
             {
-                return PathUtils.Join(PathUtils.Parent(module.ImportedFrom), module.Name);
+                var fileName = PathUtils.Join(PathUtils.Parent(module.ImportedFrom), module.Name);
+                _content.TryGetValue(fileName, out var res);
+                var parser = new Parser(new Options(), res);
+                var toplevel = parser.Parse();
+                toplevel.FigureOutScope();
+                return (fileName, toplevel);
             }
-            return null;
-            //throw new NotSupportedException("InMemoryImportResolver supports only relative paths " +
-            //                                module.ImportedFrom + " " + module.Name);
-        }
-
-        public string LoadContent(string fileName)
-        {
-            _content.TryGetValue(fileName, out var res);
-            return res;
+            return (null, null);
         }
     }
 }

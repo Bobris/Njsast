@@ -35,17 +35,18 @@ namespace Njsast
         /// Adds value to a collection only if it is not already contained in collection
         /// </summary>
         /// <param name="value"></param>
-        public void AddUnique(in T value)
+        public bool AddUnique(in T value)
         {
             for (var i = 0u; i < _count; i++)
             {
                 if (value.Equals(_a[i]))
                 {
-                    return;
+                    return false;
                 }
             }
 
             Add(value);
+            return true;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -67,11 +68,11 @@ namespace Njsast
                 Expand();
             }
 
-            if (index < _count)
-            {
-                AsSpan((int)index).CopyTo(AsSpan((int)index + 1, (int)(_count - index)));
-            }
             _count++;
+            if (index + 1 < _count)
+            {
+                AsSpan((int)index, (int)_count - (int)index - 1).CopyTo(AsSpan((int)index + 1, (int)(_count - index - 1)));
+            }
             _a[index] = default;
             return ref _a[index];
         }
@@ -242,7 +243,8 @@ namespace Njsast
         {
             if (count == 0) return;
             var totalCount = _count + count;
-            Expand(totalCount);
+            if (_a == null || totalCount > _a.Length)
+                Expand(totalCount);
             _a.AsSpan((int)_count, (int)count).Fill(value);
             _count = totalCount;
         }
@@ -252,7 +254,8 @@ namespace Njsast
             if (range.IsEmpty)
                 return;
             var count = _count + (uint)range.Length;
-            Expand(count);
+            if (_a == null || count > _a.Length)
+                Expand(count);
             range.CopyTo(_a.AsSpan((int)_count));
             _count = count;
         }

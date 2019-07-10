@@ -23,7 +23,7 @@ namespace Njsast.SourceMap
             for (var i = 0u; i < _modifications.Count; i++)
             {
                 ref var m = ref _modifications[i];
-                if (curLine != m.FromLine && curCol != m.FromCol)
+                if (curLine != m.FromLine || curCol != m.FromCol)
                 {
                     sourceAdder.Add(curLine, curCol, m.FromLine, m.FromCol);
                 }
@@ -38,10 +38,12 @@ namespace Njsast.SourceMap
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static ulong MakeOne(int line, int col) => (ulong)line << 32 + col;
+        static ulong MakeOne(int line, int col) => ((ulong)line << 32) + (ulong)col;
 
         public void Replace(int fromLine, int fromCol, int toLine, int toCol, string content)
         {
+            if (fromLine == toLine && fromCol == toCol && string.IsNullOrEmpty(content))
+                return;
             var l = 0u;
             var r = _modifications.Count;
             while (l < r)
@@ -55,7 +57,7 @@ namespace Njsast.SourceMap
                 else
                 {
                     Debug.Assert(MakeOne(fromLine, fromCol) != MakeOne(mid.FromLine, mid.FromCol));
-                    l = m;
+                    l = m + 1;
                 }
             }
             ref var inserted = ref _modifications.Insert(l);

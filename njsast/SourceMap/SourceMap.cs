@@ -383,8 +383,11 @@ namespace Njsast.SourceMap
                 _inOutputCol = 0;
                 _lastOutputCol = 0;
                 _line++;
-                if (_content[_index] == '\r') _index++;
-                _index++;
+                if (_index < _content.Length)
+                {
+                    if (_content[_index] == '\r') _index++;
+                    _index++;
+                }
                 _lastNoSource = true;
                 _inNoSource = true;
             }
