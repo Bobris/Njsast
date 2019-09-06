@@ -17,20 +17,20 @@ namespace Test
     {
         public class TestImportResolver : IImportResolver
         {
-            public string ResolveName(JsModule module)
+            public (string fileName, AstToplevel content) ResolveAndLoad(JsModule module)
             {
                 if (module.Name.StartsWith("./", StringComparison.Ordinal))
                 {
-                    return PathUtils.Join(PathUtils.Parent(module.ImportedFrom), module.Name);
+                    var fileName = PathUtils.Join(PathUtils.Parent(module.ImportedFrom), module.Name);
+                    var input = File.ReadAllText(fileName + ".js");
+                    var parser = new Parser(new Options(), input);
+                    var toplevel = parser.Parse();
+                    toplevel.FigureOutScope();
+                    return (fileName, toplevel);
                 }
 
                 throw new NotSupportedException("TestImportResolver supports only relative paths " +
                                                 module.ImportedFrom + " " + module.Name);
-            }
-
-            public string LoadContent(string fileName)
-            {
-                return File.ReadAllText(fileName + ".js");
             }
         }
 
@@ -208,9 +208,9 @@ exports.exp = 42;
 
         static void Main()
         {
-            //RunAllTests();
+            RunAllTests();
             //Debug();
-            SourceMapEmitDebug();
+            //SourceMapEmitDebug();
         }
     }
 }
