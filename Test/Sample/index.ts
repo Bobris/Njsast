@@ -1,5 +1,6 @@
 import * as b from "bobril";
 import * as g from "bobril-g11n";
+import { icon_png } from "./icons";
 
 b.init(() => {
   b.asset("logo.png");
@@ -18,7 +19,7 @@ b.init(() => {
     "class4"
   );
   b.styleDef({ color: "red" }, undefined, "" + Date.now());
-  b.sprite("logo.png");
+  b.sprite(icon_png);
   b.sprite("logo.png", "#123456");
   b.sprite("logo.png", () => "#" + Date.now());
   b.sprite("logo.png", undefined, 10, 20);

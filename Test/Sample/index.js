@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var b = require("bobril");
 var g = require("bobril-g11n");
+var icons_1 = require("./icons");
 b.init(function () {
     b.asset("logo.png");
     b.asset("" + Date.now());
@@ -14,7 +15,7 @@ b.init(function () {
     b.styleDef({ color: "red" }, { hover: { color: "pink" } }, "class3");
     b.styleDefEx("parent", { color: "blue" }, { hover: { color: "pink" } }, "class4");
     b.styleDef({ color: "red" }, undefined, "" + Date.now());
-    b.sprite("logo.png");
+    b.sprite(icons_1.icon_png);
     b.sprite("logo.png", "#123456");
     b.sprite("logo.png", function () { return "#" + Date.now(); });
     b.sprite("logo.png", undefined, 10, 20);
