@@ -44,7 +44,7 @@ namespace Njsast.Ast
                 }
                 else
                 {
-                    output.ParenthesizeForNoin(Init, true);
+                    output.ParenthesizeForNoIn(Init, true);
                 }
 
                 output.Print(";");

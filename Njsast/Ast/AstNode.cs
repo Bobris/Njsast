@@ -62,6 +62,7 @@ namespace Njsast.Ast
         public void Print(OutputContext output, bool forceParens = false)
         {
             output.PushNode(this);
+            output.AddMapping(Source, Start, true);
             if (forceParens || !output.HasParens() && NeedParens(output))
             {
                 output.Print("(");

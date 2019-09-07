@@ -34,7 +34,7 @@ namespace Njsast.Ast
                 return;
             if (Expression is AstCall || Expression is AstLambda)
             {
-                output.AddMapping(Start);
+                output.AddMapping(Expression.Source, Start, false);
             }
 
             output.Print("(");

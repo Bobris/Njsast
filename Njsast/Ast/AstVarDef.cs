@@ -36,7 +36,7 @@ namespace Njsast.Ast
                 output.Space();
                 var p = output.Parent(1);
                 var noin = p is AstFor || p is AstForIn;
-                output.ParenthesizeForNoin(Value, noin);
+                output.ParenthesizeForNoIn(Value, noin);
             }
         }
     }

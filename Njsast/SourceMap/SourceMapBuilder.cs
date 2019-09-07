@@ -40,7 +40,7 @@ namespace Njsast.SourceMap
 
         public SourceMap Build(string subtractDir, string srcRoot)
         {
-            var sources = new List<string>((int)_sources.Count);
+            var sources = new List<string>((int) _sources.Count);
             foreach (var s in _sources) sources.Add(PathUtils.Subtract(s, subtractDir));
 
             return new SourceMap
@@ -78,7 +78,7 @@ namespace Njsast.SourceMap
                 _content.Add('\n');
             }
 
-            _mappings.RepeatAdd(';', (uint)lines);
+            _mappings.RepeatAdd(';', (uint) lines);
         }
 
         static void addVLQ(ref StructList<char> that, int num)
@@ -127,7 +127,7 @@ namespace Njsast.SourceMap
                 var pos = _sources.IndexOf(v);
                 if (pos < 0)
                 {
-                    pos = (int)_sources.Count;
+                    pos = (int) _sources.Count;
                     _sources.Add(v);
                 }
 
@@ -156,7 +156,7 @@ namespace Njsast.SourceMap
                     return;
                 }
 
-                var outSourceIndex = sourceRemap[(uint)inSourceIndex];
+                var outSourceIndex = sourceRemap[(uint) inSourceIndex];
                 addVLQ(ref _mappings, outSourceIndex - _lastSourceIndex);
                 _lastSourceIndex = outSourceIndex;
                 addVLQ(ref _mappings, inSourceLine - _lastSourceLine);
@@ -166,7 +166,7 @@ namespace Njsast.SourceMap
                 valPos = 0;
             }
 
-            while ((uint)ip < inputMappings.Length)
+            while ((uint) ip < inputMappings.Length)
             {
                 var b = inputMappings[ip++];
                 if (b == ';')
@@ -222,7 +222,7 @@ namespace Njsast.SourceMap
             Commit();
             if (outputLine < sourceLines)
             {
-                _mappings.RepeatAdd(';', (uint)(sourceLines - outputLine));
+                _mappings.RepeatAdd(';', (uint) (sourceLines - outputLine));
             }
         }
 
@@ -263,7 +263,7 @@ namespace Njsast.SourceMap
                 _owner._content.AddRange(text);
                 var lines = CountNL(text);
                 _needNewLine = !EndsWithNL(text);
-                _owner._mappings.RepeatAdd(';', (uint)lines);
+                _owner._mappings.RepeatAdd(';', (uint) lines);
             }
 
             void SeekTo(int line, int col)
@@ -315,7 +315,7 @@ namespace Njsast.SourceMap
                     var pos = ownerSources.IndexOf(v);
                     if (pos < 0)
                     {
-                        pos = (int)ownerSources.Count;
+                        pos = (int) ownerSources.Count;
                         ownerSources.Add(v);
                     }
 
@@ -340,6 +340,7 @@ namespace Njsast.SourceMap
                             toCol - fromCol));
                     }
                     else allowMerge = true;
+
                     Commit(fromCol, toCol, Remap(_iterator.SourceIndex), _iterator.SourceLine,
                         _iterator.SourceCol + fromCol - _iterator.ColStart, allowMerge);
                     return;
@@ -351,6 +352,7 @@ namespace Njsast.SourceMap
                     _owner._content.AddRange(_iterator.ContentSpan.Slice(fromCol - _iterator.ColStart));
                 }
                 else allowMerge = true;
+
                 Commit(fromCol, _iterator.ColEnd, Remap(_iterator.SourceIndex), _iterator.SourceLine,
                     _iterator.SourceCol + fromCol - _iterator.ColStart, allowMerge);
                 if (_iterator.TillEndOfLine)
@@ -370,6 +372,7 @@ namespace Njsast.SourceMap
                         _owner._content.AddRange(_iterator.ContentSpan);
                     }
                     else allowMerge = true;
+
                     Commit(_iterator.ColStart, _iterator.ColEnd, Remap(_iterator.SourceIndex), _iterator.SourceLine,
                         _iterator.SourceCol, allowMerge);
                     if (_iterator.TillEndOfLine)
@@ -389,6 +392,7 @@ namespace Njsast.SourceMap
                         _owner._content.AddRange(_iterator.ContentSpan.Slice(0, toCol - _iterator.ColStart));
                     }
                     else allowMerge = true;
+
                     Commit(_iterator.ColStart, toCol, Remap(_iterator.SourceIndex), _iterator.SourceLine,
                         _iterator.SourceCol, allowMerge);
                 }
@@ -400,6 +404,7 @@ namespace Njsast.SourceMap
                 {
                     CommitLast();
                 }
+
                 _owner._mappings.Add(';');
                 _lastOutputLastCol = 0;
                 _lastOutputCol = 0;
@@ -422,6 +427,7 @@ namespace Njsast.SourceMap
                         return;
                     }
                 }
+
                 addVLQ(ref _owner._mappings, _lastOutputCol - _lastOutputLastCol);
                 _lastOutputLastCol = _lastOutputCol;
                 _lastOutputCol = _lastOutputColEnd;
@@ -434,8 +440,8 @@ namespace Njsast.SourceMap
                     _owner._lastSourceLine = _lastSourceLine;
                     addVLQ(ref _owner._mappings, _lastSourceCol - _owner._lastSourceCol);
                     _owner._lastSourceCol = _lastSourceCol;
-
                 }
+
                 _needComma = true;
             }
 
@@ -474,7 +480,7 @@ namespace Njsast.SourceMap
             {
                 if (sourceIndex < 0)
                     return -1;
-                return _sourceRemap[(uint)sourceIndex];
+                return _sourceRemap[(uint) sourceIndex];
             }
 
             public void Add(ReadOnlySpan<char> text)
@@ -495,6 +501,137 @@ namespace Njsast.SourceMap
                     text = text.Slice(nl + 1);
                 }
             }
+        }
+
+        public void AddTextWithMapping(ReadOnlySpan<char> text)
+        {
+            while (text.Length > 0)
+            {
+                var nl = text.IndexOf('\n');
+                if (nl == -1)
+                {
+                    _content.AddRange(text);
+                    _newOutputColEnd += text.Length;
+                    return;
+                }
+
+                _content.AddRange(text.Slice(0, nl + 1));
+                _newOutputColEnd += nl;
+                CommitNewLine();
+                text = text.Slice(nl + 1);
+            }
+        }
+
+        bool _needComma;
+        int _newSourceIndex;
+        int _newSourceLine;
+        int _newSourceCol;
+        int _newOutputCol;
+        int _newOutputColEnd;
+        int _lastOutputCol;
+
+        void CommitNewLine()
+        {
+            if (_newOutputColEnd > _newOutputCol && _newSourceIndex >= 0)
+            {
+                CommitLast();
+            }
+
+            _mappings.Add(';');
+            _lastOutputCol = 0;
+            _newOutputCol = 0;
+            _newOutputColEnd = 0;
+            _newSourceIndex = -1;
+            _needComma = false;
+        }
+
+        void CommitLast()
+        {
+            if (_needComma)
+            {
+                _mappings.Add(',');
+            }
+            else
+            {
+                if (_newOutputCol == 0 && _newSourceIndex == -1)
+                {
+                    _newOutputCol = _newOutputColEnd;
+                    return;
+                }
+            }
+
+            addVLQ(ref _mappings, _newOutputCol - _lastOutputCol);
+            _lastOutputCol = _newOutputCol;
+            _newOutputCol = _newOutputColEnd;
+
+            if (_newSourceIndex != -1)
+            {
+                addVLQ(ref _mappings, _newSourceIndex - _lastSourceIndex);
+                _lastSourceIndex = _newSourceIndex;
+                addVLQ(ref _mappings, _newSourceLine - _lastSourceLine);
+                _lastSourceLine = _newSourceLine;
+                addVLQ(ref _mappings, _newSourceCol - _lastSourceCol);
+                _lastSourceCol = _newSourceCol;
+            }
+
+            _needComma = true;
+        }
+
+        void Commit(int colCount, int sourceIndex, int sourceLine, int sourceCol, bool allowMerge)
+        {
+            if (_newOutputColEnd == _newOutputCol)
+            {
+                _newOutputColEnd += colCount;
+                _newSourceIndex = sourceIndex;
+                _newSourceLine = sourceLine;
+                _newSourceCol = sourceCol;
+                return;
+            }
+
+            if (_newSourceIndex == sourceIndex && sourceIndex == -1)
+            {
+                _newOutputColEnd += colCount;
+                return;
+            }
+
+            if (allowMerge && _newSourceIndex == sourceIndex && _newSourceLine == sourceLine &&
+                _newSourceCol + _newOutputColEnd - _newOutputCol == sourceCol)
+            {
+                _newOutputColEnd += colCount;
+                return;
+            }
+
+            CommitLast();
+            _newOutputColEnd += colCount;
+            _newSourceIndex = sourceIndex;
+            _newSourceLine = sourceLine;
+            _newSourceCol = sourceCol;
+        }
+
+        string _sourceFileCache;
+        int _sourceIndexCache;
+
+        public void AddMapping(string sourceFile, int line, int col, bool allowMerge)
+        {
+            if (!ReferenceEquals(_sourceFileCache, sourceFile))
+            {
+                if (sourceFile == null)
+                {
+                    _sourceIndexCache = -1;
+                }
+                else
+                {
+                    _sourceIndexCache = _sources.IndexOf(sourceFile);
+                    if (_sourceIndexCache == -1)
+                    {
+                        _sources.Add(sourceFile);
+                        _sourceIndexCache = (int)_sources.Count - 1;
+                    }
+                }
+                _sourceFileCache = sourceFile;
+            }
+
+            Commit(0, _sourceIndexCache, line, col, allowMerge);
         }
     }
 }
