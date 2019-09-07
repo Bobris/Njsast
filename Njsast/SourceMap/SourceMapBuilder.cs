@@ -70,6 +70,8 @@ namespace Njsast.SourceMap
 
         public void AddText(ReadOnlySpan<char> content)
         {
+            if (_newOutputColEnd > 0)
+                AddTextWithMapping("\n");
             _content.AddRange(content);
             var lines = CountNL(content);
             if (!EndsWithNL(content))
@@ -625,9 +627,10 @@ namespace Njsast.SourceMap
                     if (_sourceIndexCache == -1)
                     {
                         _sources.Add(sourceFile);
-                        _sourceIndexCache = (int)_sources.Count - 1;
+                        _sourceIndexCache = (int) _sources.Count - 1;
                     }
                 }
+
                 _sourceFileCache = sourceFile;
             }
 

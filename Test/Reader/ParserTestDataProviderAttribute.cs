@@ -9,16 +9,16 @@ namespace Test.Reader
 {
     public class ParserTestDataProviderAttribute : DataAttribute
     {
-        private const string InputFileExtension = ".js";
-        private const string OutputFileExtension = ".txt";
-        private const string NiceJsFileExtension = ".nicejs";
-        private const string MinJsFileExtension = ".minjs";
+        const string InputFileExtension = ".js";
+        const string OutputFileExtension = ".txt";
+        const string NiceJsFileExtension = ".nicejs";
+        const string MinJsFileExtension = ".minjs";
 
-        private readonly string _testFileDirectory;
-        private readonly string _searchPattern;
-        private readonly bool _searchSubDirectories;
+        readonly string _testFileDirectory;
+        readonly string _searchPattern;
+        readonly bool _searchSubDirectories;
 
-        private IEnumerable<string> InputFiles =>
+        IEnumerable<string> InputFiles =>
             Directory
                 .EnumerateFiles(_testFileDirectory, _searchPattern,
                     _searchSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)

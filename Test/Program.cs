@@ -23,7 +23,7 @@ namespace Test
             foreach (var fileDep in Directory.EnumerateFiles("Input", "*.js",
                 new EnumerationOptions { RecurseSubdirectories = true }))
             {
-                var file = fileDep.Replace('\\', '/');
+                var file = PathUtils.Normalize(fileDep);
                 if (file.StartsWith("Input/ConstEval/dep-"))
                     continue;
                 var input = File.ReadAllText(file);
@@ -79,27 +79,40 @@ namespace Test
         {
             var inast = ReadIn(file, "txt");
             var inminjs = ReadIn(file, "minjs");
+            var inminjsmap = ReadIn(file, "minjs.map");
             var innicejs = ReadIn(file, "nicejs");
+            var innicejsmap = ReadIn(file, "nicejs.map");
 
             //Console.WriteLine(file);
             //Console.WriteLine(input);
             var outast = "";
             var outminjs = "";
+            var outminjsmap = "";
             var outnicejs = "";
+            var outnicejsmap = "";
             try
             {
-                var parser = new Parser(new Options(), input);
+                var sourceFile = PathUtils.SplitDirAndFile(file).Item2;
+                var parser = new Parser(new Options { SourceFile = sourceFile }, input);
                 var toplevel = parser.Parse();
                 var strSink = new StringLineSink();
                 toplevel.FigureOutScope();
                 var dumper = new DumpAst(new AstDumpWriter(strSink));
                 dumper.Walk(toplevel);
                 outast = strSink.ToString();
+                var outminjsBuilder = new SourceMapBuilder();
                 var outputOptions = new OutputOptions();
-                outminjs = toplevel.PrintToString(outputOptions);
+                toplevel.PrintToBuilder(outminjsBuilder, outputOptions);
+                outminjsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(sourceFile, "minjs.map")}");
+                outminjs = outminjsBuilder.Content();
+                outminjsmap = outminjsBuilder.Build(".", ".").ToString();
+                var outnicejsBuilder = new SourceMapBuilder();
                 outputOptions = new OutputOptions();
                 outputOptions.Beautify = true;
-                outnicejs = toplevel.PrintToString(outputOptions);
+                toplevel.PrintToBuilder(outnicejsBuilder, outputOptions);
+                outminjsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(sourceFile, "nicejs.map")}");
+                outnicejs = outnicejsBuilder.Content();
+                outnicejsmap = outnicejsBuilder.Build(".", ".").ToString();
                 toplevel.Mangle();
             }
             catch (SyntaxError e)
@@ -109,7 +122,9 @@ namespace Test
 
             CheckError(inast, outast, ref errors, "AST", file, "txt");
             CheckError(inminjs, outminjs, ref errors, "minified js", file, "minjs");
+            CheckError(inminjsmap, outminjsmap, ref errors, "minified js map", file, "minjs.map");
             CheckError(innicejs, outnicejs, ref errors, "beautified js", file, "nicejs");
+            CheckError(innicejsmap, outnicejsmap, ref errors, "beautified js map", file, "nicejs.map");
         }
 
         static void CheckError(string intext, string outtext, ref int errors, string whatText, string file, string ext)

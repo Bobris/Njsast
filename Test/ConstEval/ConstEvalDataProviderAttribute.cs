@@ -9,13 +9,13 @@ namespace Test.ConstEval
 {
     public class ConstEvalDataProviderAttribute : DataAttribute
     {
-        private const string NiceJsFileExtension = ".nicejs";
+        const string NiceJsFileExtension = ".nicejs";
 
-        private readonly string _testFileDirectory;
-        private readonly string _searchPattern;
-        private readonly bool _searchSubDirectories;
+        readonly string _testFileDirectory;
+        readonly string _searchPattern;
+        readonly bool _searchSubDirectories;
 
-        private IEnumerable<string> InputFiles => Directory.EnumerateFiles(_testFileDirectory, _searchPattern,
+        IEnumerable<string> InputFiles => Directory.EnumerateFiles(_testFileDirectory, _searchPattern,
                 _searchSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
             .Where(x => !Path.GetFileNameWithoutExtension(x).StartsWith("dep-"));
 

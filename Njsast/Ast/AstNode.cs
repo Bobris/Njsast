@@ -2,6 +2,7 @@
 using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
+using Njsast.SourceMap;
 
 namespace Njsast.Ast
 {
@@ -82,6 +83,13 @@ namespace Njsast.Ast
             var o = new OutputContext(options);
             Print(o);
             return o.ToString();
+        }
+
+        public void PrintToBuilder(SourceMapBuilder builder, OutputOptions options = null)
+        {
+            var o = new OutputContext(options, builder);
+            Print(o);
+            builder.AddMapping(null, 0, 0, false);
         }
 
         /// Optimistic test if this AST Tree is constant expression

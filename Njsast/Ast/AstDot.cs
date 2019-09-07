@@ -19,9 +19,8 @@ namespace Njsast.Ast
                 output.Print(".");
             }
 
+            output.AddMapping(Expression.Source, Expression.End, false);
             output.Print(".");
-            // the name after dot would be mapped about here.
-            output.AddMapping(Source, End, false);
             output.Print((string) Property);
         }
     }

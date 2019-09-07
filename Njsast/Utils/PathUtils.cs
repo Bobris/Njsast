@@ -12,7 +12,7 @@ namespace Njsast.Utils
         {
             if (path.Length >= 2 && path[1] == ':' && char.IsLower(path[0]))
             {
-                path = char.ToUpperInvariant(path[0]) + path.Substring(1);
+                path = $"{char.ToUpperInvariant(path[0])}{path.Substring(1)}";
             }
 
             path = path.Replace('\\', '/').Replace("/./", "/");
@@ -81,6 +81,7 @@ namespace Njsast.Utils
 
         public static string Subtract(string pathA, string pathB)
         {
+            if (pathB == ".") return pathA;
             if (pathB.EndsWith("/")) pathB = pathB.Substring(0, pathB.Length - 1);
             if (pathA.Length > pathB.Length + 1 && pathA.StartsWith(pathB) && pathA[pathB.Length] == '/')
             {

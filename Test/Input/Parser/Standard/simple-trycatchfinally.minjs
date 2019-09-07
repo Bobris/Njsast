@@ -1,1 +1,2 @@
 try{doThat()}catch(e){say(e)}finally{cleanup(stuff)}
+//# sourceMappingURL=simple-trycatchfinally.minjs.map
