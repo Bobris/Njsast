@@ -14,6 +14,7 @@ namespace Njsast.Utils
             {
                 path = char.ToUpperInvariant(path[0]) + path.Substring(1);
             }
+
             path = path.Replace('\\', '/').Replace("/./", "/");
             int idx;
             while ((idx = path.IndexOf("/../", StringComparison.Ordinal)) > 0)
@@ -28,11 +29,13 @@ namespace Njsast.Utils
                     path = path.Remove(0, idx + 4);
                 }
             }
+
             return path;
         }
 
         public static string Parent(string path)
         {
+            path = Normalize(path);
             if (path.Length == 0)
                 return null;
             var p = path.Length - 1;
@@ -50,6 +53,7 @@ namespace Njsast.Utils
                         return null;
                     return path.Substring(0, p);
                 }
+
                 if (path[p] == '/')
                     p--;
                 while (path[p] != '/')
@@ -58,6 +62,7 @@ namespace Njsast.Utils
                     return "/";
                 return path.Substring(0, p);
             }
+
             if (p <= 2)
                 return null;
             if (path[p] == '/')
@@ -70,6 +75,7 @@ namespace Njsast.Utils
             {
                 return path.Substring(0, 3);
             }
+
             return path.Substring(0, p);
         }
 
@@ -80,18 +86,22 @@ namespace Njsast.Utils
             {
                 return pathA.Substring(pathB.Length + 1);
             }
+
             var commonStart = 0;
             while (true)
             {
                 var slash = pathA.IndexOf('/', commonStart);
                 if (slash < 0 || pathB.Length <= slash)
                     break;
-                if (pathB.Substring(commonStart, slash - commonStart + 1) != pathA.Substring(commonStart, slash - commonStart + 1))
+                if (pathB.Substring(commonStart, slash - commonStart + 1) !=
+                    pathA.Substring(commonStart, slash - commonStart + 1))
                 {
                     break;
                 }
+
                 commonStart = slash + 1;
             }
+
             var upCount = pathB.Skip(commonStart).Count(ch => ch == '/');
             var sb = new StringBuilder();
             while (upCount >= 0)
@@ -99,6 +109,7 @@ namespace Njsast.Utils
                 sb.Append("../");
                 upCount--;
             }
+
             sb.Append(pathA.Substring(commonStart));
             return sb.ToString();
         }
@@ -136,10 +147,16 @@ namespace Njsast.Utils
         {
             var slashPos = fileName.LastIndexOf('/');
             var dotPos = fileName.LastIndexOf('.');
+            if (newExtension.StartsWith('.'))
+            {
+                newExtension = newExtension.Substring(1);
+            }
+
             if (dotPos <= slashPos + 1)
             {
                 return $"{fileName}.{newExtension}";
             }
+
             return fileName.Substring(0, dotPos + 1) + newExtension;
         }
 
@@ -151,6 +168,7 @@ namespace Njsast.Utils
             {
                 return fileName;
             }
+
             return fileName.Substring(0, dotPos);
         }
 
@@ -168,9 +186,11 @@ namespace Njsast.Utils
                     yield return (path, true);
                     yield break;
                 }
+
                 yield return (path.Substring(0, pos2), true);
                 pos = pos2 + 1;
             }
+
             while (pos < len)
             {
                 int pos2 = path.IndexOf('/', pos + 1);
@@ -179,6 +199,7 @@ namespace Njsast.Utils
                     yield return (path.Substring(pos), false);
                     yield break;
                 }
+
                 yield return (path.Substring(pos, pos2 - pos), true);
                 pos = pos2 + 1;
             }
@@ -207,6 +228,7 @@ namespace Njsast.Utils
                     return p1.Substring(0, pos);
                 pos = pos1;
             }
+
             return p1.Substring(0, pos);
         }
     }
