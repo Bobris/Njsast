@@ -2,3 +2,4 @@ function eval() {
     function inner() {}
 }
 
+//# sourceMappingURL=simple-func6.nicejs.map

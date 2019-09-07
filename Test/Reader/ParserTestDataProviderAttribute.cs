@@ -12,7 +12,9 @@ namespace Test.Reader
         const string InputFileExtension = ".js";
         const string OutputFileExtension = ".txt";
         const string NiceJsFileExtension = ".nicejs";
+        const string NiceJsMapFileExtension = ".nicejs.map";
         const string MinJsFileExtension = ".minjs";
+        const string MinJsMapFileExtension = ".minjs.map";
 
         readonly string _testFileDirectory;
         readonly string _searchPattern;
@@ -38,7 +40,9 @@ namespace Test.Reader
             {
                 var outputFile = PathUtils.ChangeExtension(inputFile, OutputFileExtension);
                 var niceJsFile = PathUtils.ChangeExtension(inputFile, NiceJsFileExtension);
+                var niceJsMapFile = PathUtils.ChangeExtension(inputFile, NiceJsMapFileExtension);
                 var minJsFile = PathUtils.ChangeExtension(inputFile, MinJsFileExtension);
+                var minJsMapFile = PathUtils.ChangeExtension(inputFile, MinJsMapFileExtension);
                 var isInvalid = !File.Exists(niceJsFile) || !File.Exists(minJsFile);
                 if (!File.Exists(outputFile))
                 {
@@ -54,7 +58,9 @@ namespace Test.Reader
                 };
                 if (isInvalid) return new object[] {testData};
                 testData.ExpectedMinJs = File.ReadAllText(minJsFile);
+                testData.ExpectedMinJsMap = File.ReadAllText(minJsMapFile);
                 testData.ExpectedNiceJs = File.ReadAllText(niceJsFile);
+                testData.ExpectedNiceJsMap = File.ReadAllText(niceJsMapFile);
 
                 return new object[] {testData};
             });

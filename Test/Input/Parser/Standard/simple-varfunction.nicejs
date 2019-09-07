@@ -2,3 +2,4 @@ var hi = function() {
     sayHi();
 };
 
+//# sourceMappingURL=simple-varfunction.nicejs.map

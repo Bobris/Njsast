@@ -110,3 +110,4 @@ b.init(function() {
     return page({});
 });
 
+//# sourceMappingURL=app.nicejs.map

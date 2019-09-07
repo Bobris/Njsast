@@ -2,3 +2,4 @@ try {} finally {
     cleanup(stuff);
 }
 
+//# sourceMappingURL=simple-tryfinally.nicejs.map

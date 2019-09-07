@@ -2,3 +2,4 @@ with (x) {
     foo = bar;
 }
 
+//# sourceMappingURL=simple-with3.nicejs.map

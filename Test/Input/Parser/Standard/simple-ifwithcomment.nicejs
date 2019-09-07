@@ -2,3 +2,4 @@ if (x) {
     doThat();
 }
 
+//# sourceMappingURL=simple-ifwithcomment.nicejs.map

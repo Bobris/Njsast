@@ -107,10 +107,9 @@ namespace Test
                 outminjs = outminjsBuilder.Content();
                 outminjsmap = outminjsBuilder.Build(".", ".").ToString();
                 var outnicejsBuilder = new SourceMapBuilder();
-                outputOptions = new OutputOptions();
-                outputOptions.Beautify = true;
+                outputOptions = new OutputOptions {Beautify = true};
                 toplevel.PrintToBuilder(outnicejsBuilder, outputOptions);
-                outminjsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(sourceFile, "nicejs.map")}");
+                outnicejsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(sourceFile, "nicejs.map")}");
                 outnicejs = outnicejsBuilder.Content();
                 outnicejsmap = outnicejsBuilder.Build(".", ".").ToString();
                 toplevel.Mangle();

@@ -2,3 +2,4 @@ a: {
     b: switch (x) {}
 }
 
+//# sourceMappingURL=simple-label.nicejs.map

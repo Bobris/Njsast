@@ -2,3 +2,4 @@ function hello(a, b) {
     sayHi();
 }
 
+//# sourceMappingURL=simple-func8.nicejs.map
