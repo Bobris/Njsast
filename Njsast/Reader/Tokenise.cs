@@ -67,7 +67,7 @@ namespace Njsast.Reader
         {
             // Identifier or keyword. '\uXXXX' sequences are allowed in
             // identifiers, so '\' also dispatches to that.
-            if (IsIdentifierStart(code, Options.EcmaVersion >= 6) || code == 92 /* '\' */)
+            if (IsIdentifierStart(code, Options.EcmaVersion >= 6) || code == CharCode.BackSlash /* '\' */)
             {
                 ReadWord();
                 return;
@@ -127,26 +127,26 @@ namespace Njsast.Reader
                 var ch = (int)_input[_pos.Index];
                 switch (ch)
                 {
-                    case 32:
-                    case 160: // ' '
+                    case CharCode.Space:
+                    case CharCode.NoBreakSpace:
                         _pos = _pos.Increment(1);
                         break;
-                    case 13:
+                    case CharCode.CarriageReturn:
                         if (_pos.Index + 1 < _input.Length && _input[_pos.Index + 1] == 10)
                             _pos = _pos.Increment(1);
-                        goto case 10;
-                    case 10:
-                    case 8232:
-                    case 8233:
+                        goto case CharCode.LineFeed;
+                    case CharCode.LineFeed:
+                    case CharCode.LineSeparator:
+                    case CharCode.ParagraphSeparator:
                         _pos = new Position(_pos.Line + 1, 0, _pos.Index + 1);
                         break;
-                    case 47: // '/'
+                    case CharCode.Slash:
                         switch ((int)_input.Get(_pos.Index + 1))
                         {
-                            case 42: // '*'
+                            case CharCode.Asterisk:
                                 SkipBlockComment();
                                 break;
-                            case 47:
+                            case CharCode.Slash:
                                 SkipLineComment(2);
                                 break;
                             default:
@@ -154,7 +154,7 @@ namespace Njsast.Reader
                         }
                         break;
                     default:
-                        if (ch > 8 && ch < 14 || ch >= 5760 && NonAsciIwhitespace.IsMatch(((char)ch).ToString()))
+                        if (ch > CharCode.BackSpace && ch < CharCode.ShiftOut || ch >= CharCode.OghamSpaceMark && NonAsciIwhitespace.IsMatch(((char)ch).ToString()))
                         {
                             _pos = _pos.Increment(1);
                             break;
