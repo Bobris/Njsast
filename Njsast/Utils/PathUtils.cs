@@ -33,9 +33,14 @@ namespace Njsast.Utils
             return path;
         }
 
+        /// <summary>
+        /// Return parent directory from path. Path string can contain only slashes as file separator.
+        /// If you are unsure if your path is normalized it is better to use <see cref="ParentSafe"/> method instead
+        /// </summary>
+        /// <param name="path">Normalized path string</param>
+        /// <returns>Normalized path to parent directory</returns>
         public static string Parent(string path)
         {
-            path = Normalize(path);
             if (path.Length == 0)
                 return null;
             var p = path.Length - 1;
@@ -77,6 +82,18 @@ namespace Njsast.Utils
             }
 
             return path.Substring(0, p);
+        }
+        
+        /// <summary>
+        /// Return parent directory from path. Path string can contain slashes, backslashes or both as file separator.
+        /// If you are sure that your path is normalized and contains only slashes you can safely use <see cref="Parent"/> method
+        /// instead of this
+        /// </summary>
+        /// <param name="path">Non normalized path string</param>
+        /// <returns>Normalized path to parent directory</returns>
+        public static string ParentSafe(string path)
+        {
+            return Parent(Normalize(path));
         }
 
         public static string Subtract(string pathA, string pathB)

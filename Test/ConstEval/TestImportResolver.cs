@@ -13,7 +13,7 @@ namespace Test.ConstEval
         {
             if (module.Name.StartsWith("./", StringComparison.Ordinal))
             {
-                var fileName = PathUtils.Join(PathUtils.Parent(module.ImportedFrom), module.Name);
+                var fileName = PathUtils.Join(PathUtils.ParentSafe(module.ImportedFrom), module.Name);
                 var input = File.ReadAllText(fileName + ".js");
                 var parser = new Parser(new Options(), input);
                 var toplevel = parser.Parse();

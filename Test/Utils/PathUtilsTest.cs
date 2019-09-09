@@ -23,11 +23,28 @@ namespace Test.Utils
 
         [Theory]
         [InlineData("Input/ConstEval/import1.js", "Input/ConstEval")]
-        [InlineData("Input/ConstEval\\import1.js", "Input/ConstEval")]
-        [InlineData("Input\\ConstEval\\import1.js", "Input/ConstEval")]
-        public void Method_Parent_ShouldReturnNormalizedParentPath(string path, string expectedResult)
+        [InlineData("Input/import1.js", "Input")]
+        public void Method_Parent_ShouldReturnParentPath(string path, string expectedResult)
         {
             Assert.Equal(expectedResult, PathUtils.Parent(path));
+        }
+
+        [Theory]
+        [InlineData("Input/ConstEval\\import1.js", "Input")]
+        [InlineData("Input\\ConstEval\\import1.js", null)]
+        public void Method_Parent_ShouldNotWorkCorrectlyWithNonNormalizedPaths(string path, string expectedResult)
+        {
+            Assert.Equal(expectedResult, PathUtils.Parent(path));
+        }
+
+        [Theory]
+        [InlineData("Input/ConstEval/import1.js", "Input/ConstEval")]
+        [InlineData("Input/ConstEval\\import1.js", "Input/ConstEval")]
+        [InlineData("Input\\ConstEval\\import1.js", "Input/ConstEval")]
+        public void Method_ParentSafe_ShouldWorkWithAnyKindOfPathAndReturnParentPath(string path,
+            string expectedResult)
+        {
+            Assert.Equal(expectedResult, PathUtils.ParentSafe(path));
         }
     }
 }
