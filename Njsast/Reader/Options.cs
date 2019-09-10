@@ -5,6 +5,7 @@ namespace Njsast.Reader
 {
     public sealed class Options
     {
+        public const int DefaultEcmaVersion = 7;
         // `ecmaVersion` indicates the ECMAScript version to parse. Must
         // be either 3, 5, 6 (2015), 7 (2016), or 8 (2017). This influences support
         // for strict mode, the set of reserved words, and support for
@@ -46,7 +47,7 @@ namespace Njsast.Reader
                 options = new Options();
 
             if (options.EcmaVersion == 0)
-                options.EcmaVersion = 7;
+                options.EcmaVersion = DefaultEcmaVersion;
 
             if (options.EcmaVersion >= 2015)
                 options.EcmaVersion -= 2009;

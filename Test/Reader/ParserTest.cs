@@ -26,7 +26,7 @@ namespace Test.Reader
             var outNiceJsMap = string.Empty;
             try
             {
-                var parser = new Parser(new Options { SourceFile = sourceFile }, testData.Input);
+                var parser = new Parser(new Options { SourceFile = sourceFile, EcmaVersion = testData.EcmaScriptVersion }, testData.Input);
                 var toplevel = parser.Parse();
                 var strSink = new StringLineSink();
                 toplevel.FigureOutScope();

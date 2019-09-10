@@ -1,3 +1,5 @@
+using Njsast.Reader;
+
 namespace Test.Reader
 {
     public class ParserTestData
@@ -10,6 +12,7 @@ namespace Test.Reader
         public string ExpectedNiceJsMap { get; set; } = string.Empty;
         public string ExpectedMinJs { get; set; } = string.Empty;
         public string ExpectedMinJsMap { get; set; } = string.Empty;
+        public int EcmaScriptVersion { get; set; } = Options.DefaultEcmaVersion;
 
         public override string ToString()
         {
