@@ -15,7 +15,7 @@ namespace Njsast.Reader
         const string StrictBindReservedWords = "eval|arguments";
 
         static readonly Regex Ecmascript5KeywordsRegex = new Regex("^(?:break|case|catch|continue|debugger|default|do|else|finally|for|function|if|return|switch|throw|try|var|while|with|null|true|false|instanceof|typeof|void|delete|new|in|this)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
-        static readonly Regex Ecmascript6KeywordsRegex = new Regex("^(?:break|case|catch|continue|debugger|default|do|else|finally|for|function|if|return|switch|throw|try|var|while|with|null|true|false|instanceof|typeof|void|delete|new|in|this|const|class|extends|export|import|super)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+        static readonly Regex Ecmascript6KeywordsRegex = new Regex("^(?:break|case|catch|continue|debugger|default|do|else|finally|for|function|if|return|switch|throw|try|var|while|with|null|true|false|instanceof|typeof|void|delete|new|in|this|const|class|extends|export|import|super|yield)$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
 
         static readonly Regex KeywordRelationalOperator = new Regex("^in(stanceof)?$");
 

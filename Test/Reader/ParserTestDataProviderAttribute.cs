@@ -23,7 +23,7 @@ namespace Test.Reader
         readonly string _searchPattern;
         readonly bool _searchSubDirectories;
 
-        IEnumerable<string> InputFiles =>
+        private IEnumerable<string> InputFiles =>
             Directory
                 .EnumerateFiles(_testFileDirectory, _searchPattern,
                     _searchSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)

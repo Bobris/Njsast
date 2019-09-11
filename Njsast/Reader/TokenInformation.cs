@@ -44,7 +44,8 @@ namespace Njsast.Reader
             {"instanceof", TokenType.Instanceof},
             {"typeof", TokenType.Typeof},
             {"void", TokenType.Void},
-            {"delete", TokenType.Delete}
+            {"delete", TokenType.Delete},
+            {"yield", TokenType.Name} // TODO refactor TokenType.Yield used to ensure Yield keyword does not contains unicode sequence and preserve current functionality
         };
 
         static TokenInformation()

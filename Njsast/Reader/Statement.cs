@@ -49,7 +49,7 @@ namespace Njsast.Reader
             var skip = SkipWhiteSpace.Match(_input, _pos.Index);
             var next = _pos.Index + skip.Groups[0].Length;
             var nextCh = _input[next];
-            if (nextCh == 91 || nextCh == 123) return true; // '{' and '['
+            if (nextCh == CharCode.LeftSquareBracket || nextCh == CharCode.LeftCurlyBracket) return true; // '{' and '['
             if (IsIdentifierStart(nextCh, true))
             {
                 var pos = next + 1;
