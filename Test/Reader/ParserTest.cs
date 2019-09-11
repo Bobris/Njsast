@@ -9,23 +9,40 @@ namespace Test.Reader
 {
     public class ParserTest
     {
-        private const string SimpleVarStatement = "var a = 1";
-        private const string SimpleVarStatementAst = "Toplevel 1:1 - 1:10\n  Var 1:1 - 1:10\n    VarDef 1:5 - 1:10\n      SymbolVar 1:5 - 1:6\n        Name: a\n      Number 1:9 - 1:10\n        Value: 1\n        Literal: 1\n";
-        private const string SimpleVarStatementMultilineAst = "Toplevel 1:1 - 4:2\n  Var 1:1 - 4:2\n    VarDef 2:1 - 4:2\n      SymbolVar 2:1 - 2:2\n        Name: a\n      Number 4:1 - 4:2\n        Value: 1\n        Literal: 1\n";
+        const string SimpleVarStatement = "var a = 1";
+
+        const string SimpleVarStatementAst =
+            "Toplevel 1:1 - 1:10\n  Var 1:1 - 1:10\n    VarDef 1:5 - 1:10\n      SymbolVar 1:5 - 1:6\n        Name: a\n      Number 1:9 - 1:10\n        Value: 1\n        Literal: 1\n";
+
+        const string SimpleVarStatementMultilineAst =
+            "Toplevel 1:1 - 4:2\n  Var 1:1 - 4:2\n    VarDef 2:1 - 4:2\n      SymbolVar 2:1 - 2:2\n        Name: a\n      Number 4:1 - 4:2\n        Value: 1\n        Literal: 1\n";
 
         [Theory]
         [ParserTestDataProvider("Input/Parser")]
         public void ParserShouldProduceExpectedResultOrSyntaxError(ParserTestData testData)
         {
+            var (outAst, outMinJs, outMinJsMap, outNiceJs, outNiceJsMap) = ParseTestCore(testData);
+
+            Assert.Equal(testData.ExpectedAst, outAst);
+            Assert.Equal(testData.ExpectedMinJs, outMinJs);
+            Assert.Equal(testData.ExpectedMinJsMap, outMinJsMap);
+            Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
+            Assert.Equal(testData.ExpectedNiceJsMap, outNiceJsMap);
+        }
+
+        public static (string outAst, string outMinJs, string outMinJsMap, string outNiceJs, string outNiceJsMap) ParseTestCore(
+            ParserTestData testData)
+        {
             string outAst;
-            var sourceFile = PathUtils.SplitDirAndFile(testData.Name+".js").Item2;
             var outMinJs = string.Empty;
             var outMinJsMap = string.Empty;
             var outNiceJs = string.Empty;
             var outNiceJsMap = string.Empty;
             try
             {
-                var parser = new Parser(new Options { SourceFile = sourceFile, EcmaVersion = testData.EcmaScriptVersion }, testData.Input);
+                var parser = new Parser(
+                    new Options {SourceFile = testData.SourceName, EcmaVersion = testData.EcmaScriptVersion},
+                    testData.Input);
                 var toplevel = parser.Parse();
                 var strSink = new StringLineSink();
                 toplevel.FigureOutScope();
@@ -35,13 +52,14 @@ namespace Test.Reader
                 var outMinJsBuilder = new SourceMapBuilder();
                 var outputOptions = new OutputOptions();
                 toplevel.PrintToBuilder(outMinJsBuilder, outputOptions);
-                outMinJsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(sourceFile, "minjs.map")}");
+                outMinJsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "minjs.map")}");
                 outMinJs = outMinJsBuilder.Content();
                 outMinJsMap = outMinJsBuilder.Build(".", ".").ToString();
                 var outNiceJsBuilder = new SourceMapBuilder();
                 outputOptions = new OutputOptions {Beautify = true};
                 toplevel.PrintToBuilder(outNiceJsBuilder, outputOptions);
-                outNiceJsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(sourceFile, "nicejs.map")}");
+                outNiceJsBuilder.AddText(
+                    $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "nicejs.map")}");
                 outNiceJs = outNiceJsBuilder.Content();
                 outNiceJsMap = outNiceJsBuilder.Build(".", ".").ToString();
                 toplevel.Mangle();
@@ -51,13 +69,9 @@ namespace Test.Reader
                 outAst = e.Message;
             }
 
-            Assert.Equal(testData.ExpectedAst, outAst);
-            Assert.Equal(testData.ExpectedMinJs, outMinJs);
-            Assert.Equal(testData.ExpectedMinJsMap, outMinJsMap);
-            Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
-            Assert.Equal(testData.ExpectedNiceJsMap, outNiceJsMap);
+            return (outAst, outMinJs, outMinJsMap, outNiceJs, outNiceJsMap);
         }
-        
+
         [Theory]
         // More info about white space characters https://en.wikipedia.org/wiki/Whitespace_character
         [InlineData('\u0009' /*CHARACTER TABULATION*/, SimpleVarStatementAst)]
@@ -91,7 +105,8 @@ namespace Test.Reader
         [InlineData('\u000d' /*CARRIAGE RETURN*/, SimpleVarStatementMultilineAst)]
         [InlineData('\u2028' /*LINE SEPARATOR*/, SimpleVarStatementMultilineAst)]
         [InlineData('\u2029' /*PARAGRAPH SEPARATOR*/, SimpleVarStatementMultilineAst)]
-        public void ParserShouldSkipAllowedUnicodeWhiteSpaceCharactersOrProduceSyntaxError(char whiteSpaceChar, string expectedAst)
+        public void ParserShouldSkipAllowedUnicodeWhiteSpaceCharactersOrProduceSyntaxError(char whiteSpaceChar,
+            string expectedAst)
         {
             var input = SimpleVarStatement.Replace(' ', whiteSpaceChar);
             string outAst;
@@ -108,7 +123,7 @@ namespace Test.Reader
             {
                 outAst = e.Message;
             }
-            
+
             Assert.Equal(expectedAst, outAst);
         }
     }

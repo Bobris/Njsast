@@ -23,11 +23,11 @@ namespace Test.Reader
         readonly string _searchPattern;
         readonly bool _searchSubDirectories;
 
-        private IEnumerable<string> InputFiles =>
+        IEnumerable<string> InputFiles =>
             Directory
                 .EnumerateFiles(_testFileDirectory, _searchPattern,
                     _searchSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
-                .Where(x => x.EndsWith(InputFileExtension));
+                .Where(x => x.EndsWith(InputFileExtension)).Select(PathUtils.Normalize);
 
         public ParserTestDataProviderAttribute(string testFileDirectory, string searchPattern = "*",
             bool searchSubDirectories = true)
@@ -37,7 +37,7 @@ namespace Test.Reader
             _searchSubDirectories = searchSubDirectories;
         }
 
-        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+        public IEnumerable<ParserTestData> GetParserData()
         {
             return InputFiles.Select(inputFile =>
             {
@@ -54,23 +54,29 @@ namespace Test.Reader
 
                 var testData = new ParserTestData
                 {
-                    Name = Path.GetFileNameWithoutExtension(inputFile),
+                    Name = PathUtils.WithoutExtension(inputFile),
                     Input = File.ReadAllText(inputFile),
+                    SourceName = PathUtils.Name(inputFile),
                     ExpectedAst = File.ReadAllText(outputFile),
                     IsInvalid = isInvalid,
                     EcmaScriptVersion = GetEcmaVersion(inputFile)
                 };
-                if (isInvalid) return new object[] {testData};
+                if (isInvalid) return testData;
                 testData.ExpectedMinJs = File.ReadAllText(minJsFile);
                 testData.ExpectedMinJsMap = File.ReadAllText(minJsMapFile);
                 testData.ExpectedNiceJs = File.ReadAllText(niceJsFile);
                 testData.ExpectedNiceJsMap = File.ReadAllText(niceJsMapFile);
 
-                return new object[] {testData};
+                return testData;
             });
         }
 
-        private int GetEcmaVersion(string fileName)
+        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+        {
+            return GetParserData().Select(x => new object[] {x});
+        }
+
+        int GetEcmaVersion(string fileName)
         {
             var match = EcmaScriptVersion.Match(fileName);
             if (!match.Success)

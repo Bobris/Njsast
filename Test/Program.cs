@@ -11,6 +11,7 @@ using Njsast.Scope;
 using Njsast.SourceMap;
 using Njsast.Utils;
 using Test.ConstEval;
+using Test.Reader;
 
 namespace Test
 {
@@ -20,7 +21,18 @@ namespace Test
         {
             var tests = 0;
             var errors = 0;
-            foreach (var fileDep in Directory.EnumerateFiles("Input", "*.js",
+            foreach (var parserData in new ParserTestDataProviderAttribute("Input/Parser").GetParserData())
+            {
+                tests++;
+                var (outAst, outMinJs, outMinJsMap, outNiceJs, outNiceJsMap) = ParserTest.ParseTestCore(parserData);
+                var file = parserData.Name;
+                CheckError(parserData.ExpectedAst, outAst, ref errors, "AST", file, "txt");
+                CheckError(parserData.ExpectedMinJs, outMinJs, ref errors, "minified js", file, "minjs");
+                CheckError(parserData.ExpectedMinJsMap, outMinJsMap, ref errors, "minified js map", file, "minjs.map");
+                CheckError(parserData.ExpectedNiceJs, outNiceJs, ref errors, "beautified js", file, "nicejs");
+                CheckError(parserData.ExpectedNiceJsMap, outNiceJsMap, ref errors, "beautified js map", file, "nicejs.map");
+            }
+            foreach (var fileDep in Directory.EnumerateFiles("Input/ConstEval", "*.js",
                 new EnumerationOptions { RecurseSubdirectories = true }))
             {
                 var file = PathUtils.Normalize(fileDep);
@@ -28,14 +40,7 @@ namespace Test
                     continue;
                 var input = File.ReadAllText(file);
                 tests++;
-                if (file.StartsWith("Input/Parser"))
-                {
-                    TestParser(file, input, ref errors);
-                }
-                else if (file.StartsWith("Input/ConstEval"))
-                {
-                    TestConstEval(file, input, ref errors);
-                }
+                TestConstEval(file, input, ref errors);
             }
 
             Console.ForegroundColor = errors == 0 ? ConsoleColor.Green : ConsoleColor.Red;
@@ -126,15 +131,15 @@ namespace Test
             CheckError(innicejsmap, outnicejsmap, ref errors, "beautified js map", file, "nicejs.map");
         }
 
-        static void CheckError(string intext, string outtext, ref int errors, string whatText, string file, string ext)
+        static void CheckError(string inText, string outText, ref int errors, string whatText, string file, string ext)
         {
-            if (intext != outtext)
+            if (inText != outText)
             {
                 errors++;
                 Console.WriteLine("Difference in " + whatText + " " + file);
                 var outfile = "Wrong/" + file.Substring(6, file.Length - 6 - 3) + "." + ext;
                 Directory.CreateDirectory(Path.GetDirectoryName(outfile));
-                File.WriteAllText(outfile, outtext);
+                File.WriteAllText(outfile, outText);
             }
         }
 

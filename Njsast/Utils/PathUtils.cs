@@ -83,7 +83,7 @@ namespace Njsast.Utils
 
             return path.Substring(0, p);
         }
-        
+
         /// <summary>
         /// Return parent directory from path. Path string can contain slashes, backslashes or both as file separator.
         /// If you are sure that your path is normalized and contains only slashes you can safely use <see cref="Parent"/> method
@@ -140,6 +140,53 @@ namespace Njsast.Utils
             return (dir, path.Substring(dir.Length + 1));
         }
 
+        public static string Name(string path)
+        {
+            if (path.Length == 0)
+                return path;
+            var p = path.Length - 1;
+            if (path[0] == '/')
+            {
+                if (p == 0)
+                    return path;
+                if (p > 1 && path[1] == '/')
+                {
+                    if (path[p] == '/')
+                        p--;
+                    while (path[p] != '/')
+                        p--;
+                    if (p == 1)
+                        return path;
+                }
+                else
+                {
+                    if (path[p] == '/')
+                        p--;
+                    while (path[p] != '/')
+                        p--;
+                    if (p == 0)
+                        p = 1;
+                }
+            }
+            else
+            {
+                if (p <= 2)
+                    return path;
+                if (path[p] == '/')
+                    p--;
+                while (p >= 0 && path[p] != '/')
+                    p--;
+                if (p < 0)
+                    return path;
+                if (p == 2)
+                {
+                    p = 3;
+                }
+            }
+
+            return path.Substring(p + 1);
+        }
+
         public static string Join(string dir1, string dir2)
         {
             if (Path.IsPathRooted(dir2))
@@ -165,17 +212,14 @@ namespace Njsast.Utils
         {
             var slashPos = fileName.LastIndexOf('/');
             var dotPos = fileName.LastIndexOf('.');
-            if (newExtension.StartsWith('.'))
-            {
-                newExtension = newExtension.Substring(1);
-            }
+            var extensionAlreadyStartsWithDot = newExtension.StartsWith('.');
 
             if (dotPos <= slashPos + 1)
             {
-                return $"{fileName}.{newExtension}";
+                return extensionAlreadyStartsWithDot ? $"{fileName}{newExtension}" : $"{fileName}.{newExtension}";
             }
 
-            return fileName.Substring(0, dotPos + 1) + newExtension;
+            return fileName.Substring(0, dotPos + (extensionAlreadyStartsWithDot ? 0 : 1)) + newExtension;
         }
 
         public static string WithoutExtension(string fileName)
