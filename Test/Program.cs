@@ -50,7 +50,7 @@ namespace Test
             {
                 errors++;
                 Console.WriteLine("Difference in " + whatText + " " + file);
-                var outfile = "Wrong/" + file.Substring(6, file.Length - 6 - 3) + "." + ext;
+                var outfile = "Wrong/" + file.Substring(6, file.Length - 6) + "." + ext;
                 Directory.CreateDirectory(Path.GetDirectoryName(outfile));
                 File.WriteAllText(outfile, outText);
             }

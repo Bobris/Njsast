@@ -44,6 +44,10 @@ namespace Test.Reader
                     new Options {SourceFile = testData.SourceName, EcmaVersion = testData.EcmaScriptVersion},
                     testData.Input);
                 var toplevel = parser.Parse();
+                if (testData.InputSourceMap != null)
+                {
+                    SourceMap.Parse(testData.InputSourceMap, ".").ResolveInAst(toplevel);
+                }
                 var strSink = new StringLineSink();
                 toplevel.FigureOutScope();
                 var dumper = new DumpAst(new AstDumpWriter(strSink));
