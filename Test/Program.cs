@@ -6,8 +6,6 @@ using Njsast.Bobril;
 using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
-using Njsast.Runtime;
-using Njsast.Scope;
 using Njsast.SourceMap;
 using Njsast.Utils;
 using Test.ConstEval;
@@ -32,103 +30,18 @@ namespace Test
                 CheckError(parserData.ExpectedNiceJs, outNiceJs, ref errors, "beautified js", file, "nicejs");
                 CheckError(parserData.ExpectedNiceJsMap, outNiceJsMap, ref errors, "beautified js map", file, "nicejs.map");
             }
-            foreach (var fileDep in Directory.EnumerateFiles("Input/ConstEval", "*.js",
-                new EnumerationOptions { RecurseSubdirectories = true }))
+            foreach (var constEvalData in new ConstEvalDataProviderAttribute("Input/ConstEval").GetTypedData())
             {
-                var file = PathUtils.Normalize(fileDep);
-                if (file.StartsWith("Input/ConstEval/dep-"))
-                    continue;
-                var input = File.ReadAllText(file);
+                var file = constEvalData.Name;
+                var outNiceJs = ConstEvalTest.ConstEvalTestCore(constEvalData);
                 tests++;
-                TestConstEval(file, input, ref errors);
+                CheckError(constEvalData.ExpectedNiceJs, outNiceJs, ref errors, "const eval", file, "nicejs");
             }
 
             Console.ForegroundColor = errors == 0 ? ConsoleColor.Green : ConsoleColor.Red;
             Console.WriteLine($"Total {errors} differences in {tests} tests");
             Console.ResetColor();
             Environment.ExitCode = errors == 0 ? 0 : 1;
-        }
-
-        static void TestConstEval(string file, string input, ref int errors)
-        {
-            var innicejs = ReadIn(file, "nicejs");
-            var outnicejs = "";
-            try
-            {
-                var files = new TestImportResolver();
-                var ctx = new ResolvingConstEvalCtx(file, files);
-                var parser = new Parser(new Options(), input);
-                var toplevel = parser.Parse();
-                new ScopeParser().FigureOutScope(toplevel);
-                var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
-                var isConst = lastStatement.IsConstValue(ctx);
-                var val = lastStatement.ConstValue(ctx);
-                outnicejs = isConst ? "Const\n" : "Not const\n";
-                if (val != null)
-                {
-                    var valAst = TypeConverter.ToAst(val);
-                    var outputOptions = new OutputOptions();
-                    outputOptions.Beautify = true;
-                    outnicejs += valAst.PrintToString(outputOptions);
-                }
-            }
-            catch (SyntaxError e)
-            {
-                outnicejs = e.Message;
-            }
-
-            CheckError(innicejs, outnicejs, ref errors, "const eval", file, "nicejs");
-        }
-
-        static void TestParser(string file, string input, ref int errors)
-        {
-            var inast = ReadIn(file, "txt");
-            var inminjs = ReadIn(file, "minjs");
-            var inminjsmap = ReadIn(file, "minjs.map");
-            var innicejs = ReadIn(file, "nicejs");
-            var innicejsmap = ReadIn(file, "nicejs.map");
-
-            //Console.WriteLine(file);
-            //Console.WriteLine(input);
-            var outast = "";
-            var outminjs = "";
-            var outminjsmap = "";
-            var outnicejs = "";
-            var outnicejsmap = "";
-            try
-            {
-                var sourceFile = PathUtils.SplitDirAndFile(file).Item2;
-                var parser = new Parser(new Options { SourceFile = sourceFile }, input);
-                var toplevel = parser.Parse();
-                var strSink = new StringLineSink();
-                toplevel.FigureOutScope();
-                var dumper = new DumpAst(new AstDumpWriter(strSink));
-                dumper.Walk(toplevel);
-                outast = strSink.ToString();
-                var outminjsBuilder = new SourceMapBuilder();
-                var outputOptions = new OutputOptions();
-                toplevel.PrintToBuilder(outminjsBuilder, outputOptions);
-                outminjsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(sourceFile, "minjs.map")}");
-                outminjs = outminjsBuilder.Content();
-                outminjsmap = outminjsBuilder.Build(".", ".").ToString();
-                var outnicejsBuilder = new SourceMapBuilder();
-                outputOptions = new OutputOptions {Beautify = true};
-                toplevel.PrintToBuilder(outnicejsBuilder, outputOptions);
-                outnicejsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(sourceFile, "nicejs.map")}");
-                outnicejs = outnicejsBuilder.Content();
-                outnicejsmap = outnicejsBuilder.Build(".", ".").ToString();
-                toplevel.Mangle();
-            }
-            catch (SyntaxError e)
-            {
-                outast = e.Message;
-            }
-
-            CheckError(inast, outast, ref errors, "AST", file, "txt");
-            CheckError(inminjs, outminjs, ref errors, "minified js", file, "minjs");
-            CheckError(inminjsmap, outminjsmap, ref errors, "minified js map", file, "minjs.map");
-            CheckError(innicejs, outnicejs, ref errors, "beautified js", file, "nicejs");
-            CheckError(innicejsmap, outnicejsmap, ref errors, "beautified js map", file, "nicejs.map");
         }
 
         static void CheckError(string inText, string outText, ref int errors, string whatText, string file, string ext)
@@ -141,17 +54,6 @@ namespace Test
                 Directory.CreateDirectory(Path.GetDirectoryName(outfile));
                 File.WriteAllText(outfile, outText);
             }
-        }
-
-        static string ReadIn(string file, string ext)
-        {
-            var infile = file.Substring(0, file.Length - 3) + "." + ext;
-            if (File.Exists(infile))
-            {
-                return File.ReadAllText(infile);
-            }
-
-            return "";
         }
 
         static void Debug()
