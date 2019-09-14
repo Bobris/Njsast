@@ -4,8 +4,15 @@ namespace Njsast.Ast
 {
     public class JsModule : IEquatable<JsModule>
     {
-        public string ImportedFrom;
-        public string Name;
+        public readonly string ImportedFrom;
+        public readonly string Name;
+
+        public JsModule(string importedFrom, string name)
+        {
+            ImportedFrom = importedFrom;
+            Name = name;
+        }
+
         public override bool Equals(object obj)
         {
             return Equals(obj as JsModule);

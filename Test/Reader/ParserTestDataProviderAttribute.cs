@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Njsast.Reader;
-using Njsast.SourceMap;
 using Njsast.Utils;
 using Xunit.Sdk;
 
@@ -20,7 +19,7 @@ namespace Test.Reader
         const string MinJsFileExtension = ".minjs";
         const string MinJsMapFileExtension = ".minjs.map";
 
-        readonly Regex EcmaScriptVersion = new Regex("es([0-9]+)");
+        readonly Regex _ecmaScriptVersion = new Regex("es([0-9]+)");
         readonly string _testFileDirectory;
         readonly string _searchPattern;
         readonly bool _searchSubDirectories;
@@ -82,7 +81,7 @@ namespace Test.Reader
 
         int GetEcmaVersion(string fileName)
         {
-            var match = EcmaScriptVersion.Match(fileName);
+            var match = _ecmaScriptVersion.Match(fileName);
             if (!match.Success)
             {
                 return Options.DefaultEcmaVersion;

@@ -1,5 +1,3 @@
-using System.Net.NetworkInformation;
-
 namespace Njsast.Ast
 {
     public static class Extensions

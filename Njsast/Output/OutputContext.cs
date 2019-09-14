@@ -18,9 +18,7 @@ namespace Njsast.Output
         bool _mightNeedSemicolon;
         bool _frequencyCounting;
         uint[] _frequency;
-        int _currentPos;
         int _currentCol;
-        int _currentLine;
         public int Indentation;
         const string _spaces = "                ";
         char _lastChar = char.MinValue;
@@ -90,14 +88,13 @@ namespace Njsast.Output
             {
                 _storage.AddRange(text);
             }
-            _currentPos += text.Length;
+
             _lastChar = text[^1];
             _currentCol += text.Length;
             var pos = text.IndexOf('\n');
             while (pos >= 0)
             {
                 text = text.Slice(pos + 1);
-                _currentLine++;
                 _currentCol = text.Length;
                 pos = text.IndexOf('\n');
             }

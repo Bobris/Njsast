@@ -1,7 +1,5 @@
 ﻿using System;
 using System.IO;
-using Njsast.Ast;
-using Njsast.AstDump;
 using Njsast.Bobril;
 using Njsast.ConstEval;
 using Njsast.Output;
@@ -78,7 +76,7 @@ namespace Test
             toplevel.FigureOutScope();
             var files = new InMemoryImportResolver();
             var ctx = new ResolvingConstEvalCtx("src/a.js", files);
-            var sourceInfo = GatherBobrilSourceInfo.Gather(toplevel, ctx, (IConstEvalCtx myctx, string text) =>
+            var sourceInfo = GatherBobrilSourceInfo.Gather(toplevel, ctx, (myctx, text) =>
             {
                 return PathUtils.Join(PathUtils.Parent(myctx.SourceName), text);
             });

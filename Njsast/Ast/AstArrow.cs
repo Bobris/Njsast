@@ -14,7 +14,7 @@ namespace Njsast.Ast
         {
         }
 
-        public override void DoPrint(OutputContext output, bool nokeyword = false)
+        public override void DoPrint(OutputContext output, bool noKeyword = false)
         {
             var parent = output.Parent();
             var needsParens = parent is AstBinary ||

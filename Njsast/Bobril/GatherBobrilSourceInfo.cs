@@ -136,9 +136,9 @@ namespace Njsast.Bobril
                                 {
                                     SourceInfo.BobrilImport = ExpressionName();
                                 }
-                                else if (str.Value == "bobril-g11n" && SourceInfo.BobrilG11nImport == null)
+                                else if (str.Value == "bobril-g11n" && SourceInfo.BobrilG11NImport == null)
                                 {
-                                    SourceInfo.BobrilG11nImport = ExpressionName();
+                                    SourceInfo.BobrilG11NImport = ExpressionName();
                                 }
                             }
                         }

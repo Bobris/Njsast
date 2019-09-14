@@ -399,7 +399,6 @@ namespace Njsast.Reader
             Expect(TokenType.BraceL);
             EnterLexicalScope();
 
-            var startLoc = Start;
             AstSwitchBranch consequent = null;
             var backupAllowBreak = _allowBreak;
             for (var sawDefault = false; Type != TokenType.BraceR;)
@@ -412,7 +411,7 @@ namespace Njsast.Reader
                         consequent.End = _lastTokEnd;
                     }
 
-                    startLoc = Start;
+                    var startLoc = Start;
                     Next();
                     _allowBreak = true;
                     if (isCase)
@@ -749,7 +748,7 @@ namespace Njsast.Reader
             MakeSymbolFunArg(ref parameters);
             var body = new StructList<AstNode>();
             var useStrict = false;
-            var expression = ParseFunctionBody(parameters, startLoc, id, allowExpressionBody, ref body, ref useStrict);
+            var unused = ParseFunctionBody(parameters, startLoc, id, allowExpressionBody, ref body, ref useStrict);
 
             _inGenerator = oldInGen;
             _inAsync = oldInAsync;

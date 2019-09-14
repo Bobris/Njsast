@@ -66,9 +66,9 @@ namespace Njsast.Ast
             DoPrint(output);
         }
 
-        public virtual void DoPrint(OutputContext output, bool nokeyword = false)
+        public virtual void DoPrint(OutputContext output, bool noKeyword = false)
         {
-            if (!nokeyword)
+            if (!noKeyword)
             {
                 if (Async)
                 {
@@ -88,11 +88,11 @@ namespace Njsast.Ast
                 }
             }
 
-            if (Name is AstSymbol)
+            if (Name != null)
             {
                 Name.Print(output);
             }
-            else if (nokeyword && Name != null)
+            else if (noKeyword && Name != null)
             {
                 output.Print("[");
                 Name.Print(output); // Computed method name

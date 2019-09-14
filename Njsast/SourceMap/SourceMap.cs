@@ -67,7 +67,7 @@ namespace Njsast.SourceMap
         {
             var sb = new StringBuilder();
             sb.Append("AAAA");
-            var endsWithNL = SourceMapBuilder.EndsWithNL(content);
+            var endsWithNL = SourceMapBuilder.EndsWithNewLine(content);
             var len = content.Length - (endsWithNL ? 1 : 0);
             for (var i = 0; i < len; i++)
                 if (content[i] == '\n')

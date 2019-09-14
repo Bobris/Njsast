@@ -6,7 +6,7 @@ namespace Njsast.SourceMap
 {
     public class SourceMapBuilder
     {
-        StructList<char> _content;
+        StructList<char> _content = new StructList<char>();
         StructList<string> _sources;
         StructList<char> _mappings;
         int _lastSourceIndex;
@@ -51,21 +51,21 @@ namespace Njsast.SourceMap
             };
         }
 
-        static int CountNL(ReadOnlySpan<char> content)
+        static int CountNewLines(ReadOnlySpan<char> content)
         {
             var result = 0;
-            for (var i = 0; i < content.Length; i++)
+            foreach (var ch in content)
             {
-                if (content[i] == '\n') result++;
+                if (ch == '\n') result++;
             }
 
             return result;
         }
 
-        public static bool EndsWithNL(in ReadOnlySpan<char> content)
+        public static bool EndsWithNewLine(in ReadOnlySpan<char> content)
         {
             if (content.Length == 0) return false;
-            return content[content.Length - 1] == '\n';
+            return content[^1] == '\n';
         }
 
         public void AddText(ReadOnlySpan<char> content)
@@ -73,8 +73,8 @@ namespace Njsast.SourceMap
             if (_newOutputColEnd > 0)
                 AddTextWithMapping("\n");
             _content.AddRange(content);
-            var lines = CountNL(content);
-            if (!EndsWithNL(content))
+            var lines = CountNewLines(content);
+            if (!EndsWithNewLine(content))
             {
                 lines++;
                 _content.Add('\n');
@@ -83,7 +83,7 @@ namespace Njsast.SourceMap
             _mappings.RepeatAdd(';', (uint) lines);
         }
 
-        static void addVLQ(ref StructList<char> that, int num)
+        static void AddVlq(ref StructList<char> that, int num)
         {
             if (num < 0)
             {
@@ -116,8 +116,8 @@ namespace Njsast.SourceMap
             }
 
             _content.AddRange(content);
-            var sourceLines = CountNL(content);
-            if (!EndsWithNL(content))
+            var sourceLines = CountNewLines(content);
+            if (!EndsWithNewLine(content))
             {
                 sourceLines++;
                 _content.Add('\n');
@@ -150,7 +150,7 @@ namespace Njsast.SourceMap
             void Commit()
             {
                 if (valPos == 0) return;
-                addVLQ(ref _mappings, inOutputCol - lastOutputCol);
+                AddVlq(ref _mappings, inOutputCol - lastOutputCol);
                 lastOutputCol = inOutputCol;
                 if (valPos == 1)
                 {
@@ -159,11 +159,11 @@ namespace Njsast.SourceMap
                 }
 
                 var outSourceIndex = sourceRemap[(uint) inSourceIndex];
-                addVLQ(ref _mappings, outSourceIndex - _lastSourceIndex);
+                AddVlq(ref _mappings, outSourceIndex - _lastSourceIndex);
                 _lastSourceIndex = outSourceIndex;
-                addVLQ(ref _mappings, inSourceLine - _lastSourceLine);
+                AddVlq(ref _mappings, inSourceLine - _lastSourceLine);
                 _lastSourceLine = inSourceLine;
-                addVLQ(ref _mappings, inSourceCol - _lastSourceCol);
+                AddVlq(ref _mappings, inSourceCol - _lastSourceCol);
                 _lastSourceCol = inSourceCol;
                 valPos = 0;
             }
@@ -242,7 +242,6 @@ namespace Njsast.SourceMap
             int _line;
             int _col;
             int _index;
-            bool _needNewLine;
 
             public PlainTextAdder(SourceMapBuilder owner, string content)
             {
@@ -263,8 +262,7 @@ namespace Njsast.SourceMap
             {
                 if (text.Length == 0) return;
                 _owner._content.AddRange(text);
-                var lines = CountNL(text);
-                _needNewLine = !EndsWithNL(text);
+                var lines = CountNewLines(text);
                 _owner._mappings.RepeatAdd(';', (uint) lines);
             }
 
@@ -430,17 +428,17 @@ namespace Njsast.SourceMap
                     }
                 }
 
-                addVLQ(ref _owner._mappings, _lastOutputCol - _lastOutputLastCol);
+                AddVlq(ref _owner._mappings, _lastOutputCol - _lastOutputLastCol);
                 _lastOutputLastCol = _lastOutputCol;
                 _lastOutputCol = _lastOutputColEnd;
 
                 if (_lastSourceIndex != -1)
                 {
-                    addVLQ(ref _owner._mappings, _lastSourceIndex - _owner._lastSourceIndex);
+                    AddVlq(ref _owner._mappings, _lastSourceIndex - _owner._lastSourceIndex);
                     _owner._lastSourceIndex = _lastSourceIndex;
-                    addVLQ(ref _owner._mappings, _lastSourceLine - _owner._lastSourceLine);
+                    AddVlq(ref _owner._mappings, _lastSourceLine - _owner._lastSourceLine);
                     _owner._lastSourceLine = _lastSourceLine;
-                    addVLQ(ref _owner._mappings, _lastSourceCol - _owner._lastSourceCol);
+                    AddVlq(ref _owner._mappings, _lastSourceCol - _owner._lastSourceCol);
                     _owner._lastSourceCol = _lastSourceCol;
                 }
 
@@ -562,17 +560,17 @@ namespace Njsast.SourceMap
                 }
             }
 
-            addVLQ(ref _mappings, _newOutputCol - _lastOutputCol);
+            AddVlq(ref _mappings, _newOutputCol - _lastOutputCol);
             _lastOutputCol = _newOutputCol;
             _newOutputCol = _newOutputColEnd;
 
             if (_newSourceIndex != -1)
             {
-                addVLQ(ref _mappings, _newSourceIndex - _lastSourceIndex);
+                AddVlq(ref _mappings, _newSourceIndex - _lastSourceIndex);
                 _lastSourceIndex = _newSourceIndex;
-                addVLQ(ref _mappings, _newSourceLine - _lastSourceLine);
+                AddVlq(ref _mappings, _newSourceLine - _lastSourceLine);
                 _lastSourceLine = _newSourceLine;
-                addVLQ(ref _mappings, _newSourceCol - _lastSourceCol);
+                AddVlq(ref _mappings, _newSourceCol - _lastSourceCol);
                 _lastSourceCol = _newSourceCol;
             }
 

@@ -691,7 +691,7 @@ namespace Njsast.Reader
         AstNode ParseNew()
         {
             var nodeStart = Start;
-            var meta = ParseIdent(true);
+            var unused = ParseIdent(true);
             if (Options.EcmaVersion >= 6 && Eat(TokenType.Dot))
             {
                 var identifierNode = ParseIdent(true);
@@ -1013,7 +1013,7 @@ namespace Njsast.Reader
                 CheckYieldAwaitInDefaultParams();
                 var body = new StructList<AstNode>();
                 var useStrict = false;
-                var expression = ParseFunctionBody(parameters, startLoc, null, false, ref body, ref useStrict);
+                var unused = ParseFunctionBody(parameters, startLoc, null, false, ref body, ref useStrict);
                 return new AstFunction(this, startLoc, _lastTokEnd, null, ref parameters, isGenerator, isAsync,
                     ref body).SetUseStrict(useStrict) as AstFunction;
             }
@@ -1076,7 +1076,7 @@ namespace Njsast.Reader
                 ToAssignableList(ref parameters, true);
                 var body = new StructList<AstNode>();
                 var useStrict = false;
-                var expression = ParseFunctionBody(parameters, startLoc, null, true, ref body, ref useStrict);
+                var unused = ParseFunctionBody(parameters, startLoc, null, true, ref body, ref useStrict);
                 return new AstArrow(this, startLoc, _lastTokEnd, null, ref parameters, _inGenerator, isAsync, ref body)
                     .SetUseStrict(useStrict);
             }

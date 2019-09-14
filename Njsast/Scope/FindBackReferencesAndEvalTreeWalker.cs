@@ -120,7 +120,7 @@ namespace Njsast.Scope
                         case AstFor _:
                             usage |= SymbolUsage.Read;
                             break;
-                        case AstNode parent:
+                        case { } parent:
                             throw new NotImplementedException("Symbol Usage Detection parent " + parent.GetType().Name);
                     }
 
