@@ -8,7 +8,7 @@ namespace Njsast.Ast
     public class AstLambda : AstScope
     {
         /// [AstSymbolDeclaration?] the name of this function
-        public AstSymbolDeclaration Name;
+        public AstSymbolDeclaration? Name;
 
         /// [AstSymbolFunarg|AstDestructuring|AstExpansion|AstDefaultAssign*] array of function arguments, destructurings, or expanding arguments
         public StructList<AstNode> ArgNames;
@@ -22,7 +22,7 @@ namespace Njsast.Ast
         /// [boolean] is this method async
         public bool Async;
 
-        public AstLambda(Parser parser, Position startPos, Position endPos, AstSymbolDeclaration name,
+        public AstLambda(Parser parser, Position startPos, Position endPos, AstSymbolDeclaration? name,
             ref StructList<AstNode> argNames, bool isGenerator, bool async, ref StructList<AstNode> body) : base(parser,
             startPos, endPos)
         {

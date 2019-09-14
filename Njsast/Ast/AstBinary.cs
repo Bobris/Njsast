@@ -101,7 +101,7 @@ namespace Njsast.Ast
             return false;
         }
 
-        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        public override bool IsConstValue(IConstEvalCtx? ctx = null)
         {
             if (!Left.IsConstValue(ctx)) return false;
             if (Operator == Operator.LogicalOr) return true;
@@ -130,7 +130,7 @@ namespace Njsast.Ast
             return false;
         }
 
-        public override object ConstValue(IConstEvalCtx ctx = null)
+        public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             var left = Left.ConstValue(ctx);
             if (left == null) return null;

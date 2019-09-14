@@ -7,13 +7,13 @@ namespace Njsast.Ast
     public class AstTry : AstBlock
     {
         /// [AstCatch?] the catch block, or null if not present
-        public AstCatch Bcatch;
+        public AstCatch? Bcatch;
 
         /// [AstFinally?] the finally block, or null if not present
-        public AstFinally Bfinally;
+        public AstFinally? Bfinally;
 
-        public AstTry(Parser parser, Position startPos, Position endPos, ref StructList<AstNode> body, AstCatch bcatch,
-            AstFinally bfinally) : base(parser, startPos, endPos, ref body)
+        public AstTry(Parser parser, Position startPos, Position endPos, ref StructList<AstNode> body, AstCatch? bcatch,
+            AstFinally? bfinally) : base(parser, startPos, endPos, ref body)
         {
             Bcatch = bcatch;
             Bfinally = bfinally;

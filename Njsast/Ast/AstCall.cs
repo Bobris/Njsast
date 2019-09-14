@@ -62,7 +62,7 @@ namespace Njsast.Ast
                    && assign.Left == p;
         }
 
-        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        public override bool IsConstValue(IConstEvalCtx? ctx = null)
         {
             if (Expression is AstSymbolRef symb)
             {
@@ -77,7 +77,7 @@ namespace Njsast.Ast
             return false;
         }
 
-        public override object ConstValue(IConstEvalCtx ctx = null)
+        public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             if (Expression is AstSymbolRef symb)
             {
@@ -85,9 +85,9 @@ namespace Njsast.Ast
                 if (def == null || ctx == null || Args.Count != 1) return null;
                 if (def.Undeclared && def.Global && def.Name == "require")
                 {
-                    var param = Args[0].ConstValue(ctx?.StripPathResolver());
+                    var param = Args[0].ConstValue(ctx.StripPathResolver());
                     if (!(param is string)) return null;
-                    return ctx.ResolveRequire((string) param);
+                    return ctx!.ResolveRequire((string) param);
                 }
             }
 

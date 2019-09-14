@@ -24,7 +24,7 @@ namespace Njsast.Ast
             Key = key;
             Value = value;
         }
-        
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);
@@ -33,7 +33,7 @@ namespace Njsast.Ast
             w.Walk(Value);
         }
 
-        protected void PrintGetterSetter(OutputContext output, string type, bool @static)
+        protected void PrintGetterSetter(OutputContext output, string? type, bool @static)
         {
             if (@static)
             {

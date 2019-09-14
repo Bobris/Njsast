@@ -35,6 +35,6 @@ namespace Njsast.Ast
         }
 
         public virtual bool IsBlockScope => true;
-        public AstScope BlockScope { get; set; }
+        public AstScope? BlockScope { get; set; }
     }
 }

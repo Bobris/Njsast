@@ -64,7 +64,7 @@ namespace Njsast.Ast
             return output.FirstInStatement();
         }
 
-        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        public override bool IsConstValue(IConstEvalCtx? ctx = null)
         {
             var allowEvalObjectWithJustConstKeys = ctx?.AllowEvalObjectWithJustConstKeys ?? false;
             for (var i = 0u; i < Properties.Count; i++)
@@ -79,10 +79,10 @@ namespace Njsast.Ast
             return true;
         }
 
-        public override object ConstValue(IConstEvalCtx ctx = null)
+        public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             var allowEvalObjectWithJustConstKeys = ctx?.AllowEvalObjectWithJustConstKeys ?? false;
-            var res = new Dictionary<object, object>();
+            var res = new Dictionary<object, object?>();
             for (var i = 0u; i < Properties.Count; i++)
             {
                 var prop = Properties[i];

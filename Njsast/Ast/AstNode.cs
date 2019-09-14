@@ -16,9 +16,9 @@ namespace Njsast.Ast
         public Position End;
 
         /// Name of original Source Code
-        public string Source;
+        public string? Source;
 
-        protected AstNode(Parser parser, Position startLoc, Position endLoc)
+        protected AstNode(Parser? parser, Position startLoc, Position endLoc)
         {
             Source = parser?.SourceFile;
             Start = startLoc;
@@ -78,14 +78,14 @@ namespace Njsast.Ast
             output.PopNode();
         }
 
-        public string PrintToString(OutputOptions options = null)
+        public string PrintToString(OutputOptions? options = null)
         {
             var o = new OutputContext(options);
             Print(o);
             return o.ToString();
         }
 
-        public void PrintToBuilder(SourceMapBuilder builder, OutputOptions options = null)
+        public void PrintToBuilder(SourceMapBuilder builder, OutputOptions? options = null)
         {
             var o = new OutputContext(options, builder);
             Print(o);
@@ -93,13 +93,13 @@ namespace Njsast.Ast
         }
 
         /// Optimistic test if this AST Tree is constant expression
-        public virtual bool IsConstValue(IConstEvalCtx ctx = null)
+        public virtual bool IsConstValue(IConstEvalCtx? ctx = null)
         {
             return false;
         }
 
         /// Returns null if not constant
-        public virtual object ConstValue(IConstEvalCtx ctx = null)
+        public virtual object? ConstValue(IConstEvalCtx? ctx = null)
         {
             return null;
         }

@@ -7,9 +7,9 @@ namespace Njsast.Ast
     public class AstLoopControl : AstJump
     {
         /// [AstLabelRef?] the label, or null if none
-        public AstLabelRef Label;
+        public AstLabelRef? Label;
 
-        public AstLoopControl(Parser parser, Position startPos, Position endPos, AstLabelRef label = null) : base(
+        public AstLoopControl(Parser parser, Position startPos, Position endPos, AstLabelRef? label = null) : base(
             parser, startPos, endPos)
         {
             Label = label;

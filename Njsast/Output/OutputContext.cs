@@ -11,7 +11,7 @@ namespace Njsast.Output
     public class OutputContext
     {
         public readonly OutputOptions Options;
-        SourceMapBuilder _sourceMapBuilder;
+        SourceMapBuilder? _sourceMapBuilder;
         StructList<char> _storage = new StructList<char>();
         StructList<AstNode> _stack = new StructList<AstNode>();
         bool _mightNeedSpace;
@@ -25,7 +25,7 @@ namespace Njsast.Output
         const string _spaces = "                ";
         char _lastChar = char.MinValue;
 
-        public OutputContext(OutputOptions options = null, SourceMapBuilder sourceMapBuilder = null)
+        public OutputContext(OutputOptions? options = null, SourceMapBuilder? sourceMapBuilder = null)
         {
             Options = options ?? new OutputOptions();
             _sourceMapBuilder = sourceMapBuilder;
@@ -357,7 +357,7 @@ namespace Njsast.Output
             return _stack[(uint) (_stack.Count - 2 - distance)];
         }
 
-        public void AddMapping(string sourceFile, in Position position, bool allowMerge)
+        public void AddMapping(string? sourceFile, in Position position, bool allowMerge)
         {
             if (_frequencyCounting)
                 return;

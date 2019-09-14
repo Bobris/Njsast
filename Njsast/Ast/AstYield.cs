@@ -8,7 +8,7 @@ namespace Njsast.Ast
     public class AstYield : AstNode
     {
         /// [AstNode?] the value returned or thrown by this statement; could be null (representing undefined) but only when is_star is set to false
-        public AstNode Expression;
+        public AstNode? Expression;
 
         /// [Boolean] Whether this is a yield or yield* statement
         public bool IsStar;

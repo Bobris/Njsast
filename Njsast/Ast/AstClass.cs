@@ -7,10 +7,10 @@ namespace Njsast.Ast
     public class AstClass : AstScope
     {
         /// [AstSymbolClass|AstSymbolDefClass?] optional class name.
-        public AstSymbolDeclaration Name;
+        public AstSymbolDeclaration? Name;
 
         /// [AstNode]? optional parent class
-        public AstNode Extends;
+        public AstNode? Extends;
 
         /// [AstObjectProperty*] array of properties
         public StructList<AstObjectProperty> Properties;
