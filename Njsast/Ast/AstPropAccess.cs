@@ -23,6 +23,18 @@ namespace Njsast.Ast
             Property = property;
         }
 
+        public string? PropertyAsString
+        {
+            get
+            {
+                if (Property is string str)
+                    return str;
+                if (Property is AstString str2)
+                    return str2.Value;
+                return null;
+            }
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);

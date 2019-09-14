@@ -1,26 +1,21 @@
+using Njsast.Reader;
+
 namespace Njsast.Ast
 {
     public static class Extensions
     {
-        public static bool IsRequireSymbol(this SymbolDef? symbol)
+        static bool IsGlobalSymbol(SymbolDef? symbol, string name)
         {
-            return symbol != null && symbol.Undeclared && symbol.Global && symbol.Name == "require";
+            return symbol != null && symbol.Undeclared && symbol.Global && symbol.Name == name;
         }
 
-        public static bool IsExportsSymbol(this SymbolDef? symbol)
-        {
-            return symbol != null && symbol.Undeclared && symbol.Global && symbol.Name == "exports";
-        }
+        public static bool IsRequireSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "require");
 
-        public static bool IsPromiseSymbol(this SymbolDef? symbol)
-        {
-            return symbol != null && symbol.Undeclared && symbol.Global && symbol.Name == "Promise";
-        }
+        public static bool IsExportsSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "exports");
 
-        public static bool IsTsReexportSymbol(this SymbolDef? symbol)
-        {
-            return symbol != null && symbol.Undeclared && symbol.Global && symbol.Name == "__exportStar";
-        }
+        public static bool IsPromiseSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "Promise");
+
+        public static bool IsTsReexportSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "__exportStar");
 
         public static string? IsRequireCall(this AstNode node)
         {
@@ -52,20 +47,31 @@ namespace Njsast.Ast
                 case AstCall call when call.Args.Count == 1:
                 {
                     var then = call.Expression;
-                    if (then is AstDot dot && dot.Property as string == "then") {
-                        if (dot.Expression is AstCall resolveCall && resolveCall.Args.Count == 0) {
-                            if (resolveCall.Expression is AstDot resolveExpr && resolveExpr.Property as string == "resolve") {
+                    if (then is AstDot dot && dot.Property as string == "then")
+                    {
+                        if (dot.Expression is AstCall resolveCall && resolveCall.Args.Count == 0)
+                        {
+                            if (resolveCall.Expression is AstDot resolveExpr &&
+                                resolveExpr.Property as string == "resolve")
+                            {
                                 var promiseRef = resolveExpr.Expression;
-                                if (!(promiseRef is AstSymbolRef symbol) || !symbol.Thedef.IsPromiseSymbol()) return null;
-                            } else return null;
-                        } else return null;
-                    } else return null;
+                                if (!(promiseRef is AstSymbolRef symbol) || !symbol.Thedef.IsPromiseSymbol())
+                                    return null;
+                            }
+                            else return null;
+                        }
+                        else return null;
+                    }
+                    else return null;
 
                     if (
                         call.Args[0] is AstFunction argumentFunction &&
-                        argumentFunction.ArgNames.Count == 0) {
-                        if (argumentFunction.Body.Count == 1) {
-                            if (argumentFunction.Body[0] is AstReturn returnStatement) return returnStatement.Value.IsRequireCall();
+                        argumentFunction.ArgNames.Count == 0)
+                    {
+                        if (argumentFunction.Body.Count == 1)
+                        {
+                            if (argumentFunction.Body[0] is AstReturn returnStatement)
+                                return returnStatement.Value.IsRequireCall();
                         }
                     }
 
@@ -74,6 +80,43 @@ namespace Njsast.Ast
             }
 
             return null;
+        }
+
+        public static SymbolDef? IsSymbolDef(this AstNode? node)
+        {
+            if (node is AstSymbolRef symbol) return symbol.Thedef;
+            return null;
+        }
+
+        public static (string name, AstNode? value)? IsExportsAssign(this AstNode node)
+        {
+            if (!(node is AstAssign assign)) return null;
+            if (assign.Operator != Operator.Assignment) return null;
+            if (!(assign.Left is AstPropAccess propAccess)) return null;
+            if (!propAccess.Expression.IsSymbolDef().IsExportsSymbol())
+                return null;
+            var name = propAccess.PropertyAsString;
+            if (name != null)
+                return (name, assign.Right);
+            return null;
+        }
+
+        /// return true is parameter is Object.defineProperty(exports, "__esModule", { value: true })
+        public static bool IsDefinePropertyExportsEsModule(this AstCall call)
+        {
+            if (call.Args.Count != 3 || !call.Args[0].IsSymbolDef().IsExportsSymbol()) return false;
+            if (!(call.Expression is AstPropAccess propAccess)) return false;
+            if (propAccess.PropertyAsString != "defineProperty") return false;
+            return IsGlobalSymbol(propAccess.Expression.IsSymbolDef(), "Object");
+        }
+
+        public static bool IsConstantSymbolRef(this AstNode? node)
+        {
+            var def = node.IsSymbolDef();
+            if (def == null) return false;
+            if (def.Undeclared) return false;
+            if (def.Orig.Count != 1) return false;
+            return def.Orig[0] is AstSymbolDefun || def.Orig[0].IsConstValue();
         }
     }
 }
