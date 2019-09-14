@@ -113,7 +113,7 @@ namespace Njsast.Reader
         {
             var startLoc = Start;
             Next();
-            var argument = ParseMaybeAssign(false, refDestructuringErrors);
+            var argument = ParseMaybeAssign(Start, false, refDestructuringErrors);
             return new AstExpansion(this, startLoc, _lastTokEnd, argument);
         }
 
@@ -190,12 +190,12 @@ namespace Njsast.Reader
 
         // Parses assignment pattern around given atom if possible.
         [NotNull]
-        AstNode ParseMaybeDefault(Position startLoc, AstNode left = null)
+        AstNode ParseMaybeDefault(Position startLoc, AstNode? left = null)
         {
-            left = left ?? ParseBindingAtom();
+            left ??= ParseBindingAtom();
             if (Options.EcmaVersion < 6 || !Eat(TokenType.Eq))
                 return left;
-            var right = ParseMaybeAssign();
+            var right = ParseMaybeAssign(Start);
             return new AstDefaultAssign(this, startLoc, _lastTokEnd, left, right);
         }
 
@@ -205,8 +205,7 @@ namespace Njsast.Reader
         // var indicating that the lval creates a 'var' binding
         // let indicating that the lval creates a lexical ('let' or 'const') binding
         // null indicating that the binding should be checked for illegal identifiers, but not for duplicate references
-        void CheckLVal([NotNull] AstNode expr, bool isBinding, VariableKind? bindingType,
-            [CanBeNull] ISet<string> checkClashes = null)
+        void CheckLVal(AstNode expr, bool isBinding, VariableKind? bindingType, ISet<string>? checkClashes = null)
         {
             switch (expr)
             {

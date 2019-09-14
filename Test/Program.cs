@@ -58,23 +58,11 @@ namespace Test
 
         static void Debug()
         {
-            var files = new InMemoryImportResolver();
-            files.Add("/b", @"""use strict"";
-Object.defineProperty(exports, ""__esModule"", { value: true });
-exports.exp = 42;
-");
-            var parser = new Parser(new Options(),
-                "var b = require(\"./b\"); b.exp;"
+            var parser = new Parser(new Options { EcmaVersion = 6 },
+                "import(\"i\")"
             );
             var toplevel = parser.Parse();
             toplevel.FigureOutScope();
-            var lastStatement = ((AstSimpleStatement)toplevel.Body[toplevel.Body.Count - 1]).Body;
-            var ctx = new ResolvingConstEvalCtx("/a", files);
-            var isConst = lastStatement.IsConstValue(ctx);
-            var val = lastStatement.ConstValue(ctx);
-            var dumper = new DumpAst(new AstDumpWriter(new ConsoleLineSink()));
-            dumper.Walk(toplevel);
-            //toplevel.Mangle(new ScopeOptions {TopLevel = true});
             var outputOptions = new OutputOptions();
             outputOptions.Beautify = true;
             Console.WriteLine(toplevel.PrintToString(outputOptions));

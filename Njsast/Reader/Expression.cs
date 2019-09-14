@@ -136,17 +136,17 @@ namespace Njsast.Reader
         // property assignment in contexts where both object expression
         // and object pattern might appear (so it's possible to raise
         // delayed syntax error at correct position).
-        public AstNode ParseExpression(bool noIn = false, [CanBeNull] DestructuringErrors refDestructuringErrors = null)
+        public AstNode ParseExpression(Position startLocation, bool noIn = false,
+            [CanBeNull] DestructuringErrors refDestructuringErrors = null)
         {
-            var startLocation = Start;
-            var expr = ParseMaybeAssign(noIn, refDestructuringErrors);
+            var expr = ParseMaybeAssign(startLocation, noIn, refDestructuringErrors);
             if (Type == TokenType.Comma)
             {
                 var expressions = new StructList<AstNode>();
                 expressions.Add(expr);
                 while (Eat(TokenType.Comma))
                 {
-                    expressions.Add(ParseMaybeAssign(noIn, refDestructuringErrors));
+                    expressions.Add(ParseMaybeAssign(Start, noIn, refDestructuringErrors));
                 }
 
                 return new AstSequence(this, startLocation, _lastTokEnd, ref expressions);
@@ -157,10 +157,11 @@ namespace Njsast.Reader
 
         // Parse an assignment expression. This includes applications of
         // operators like `+=`.
-        AstNode ParseMaybeAssign(bool noIn = false, DestructuringErrors refDestructuringErrors = null,
+        AstNode ParseMaybeAssign(Position startLocation, bool noIn = false,
+            DestructuringErrors refDestructuringErrors = null,
             [CanBeNull] Func<Parser, AstNode, int, Position, AstNode> afterLeftParse = null)
         {
-            if (_inGenerator && IsContextual("yield"))
+            if (_inGenerator && !_wasImportKeyword && IsContextual("yield"))
                 return ParseYield();
 
             var ownDestructuringErrors = false;
@@ -178,12 +179,11 @@ namespace Njsast.Reader
                 ownDestructuringErrors = true;
             }
 
-            var startLoc = Start;
             if (Type == TokenType.ParenL || Type == TokenType.Name)
-                _potentialArrowAt = Start;
-            var left = ParseMaybeConditional(noIn, refDestructuringErrors);
+                _potentialArrowAt = startLocation;
+            var left = ParseMaybeConditional(startLocation, noIn, refDestructuringErrors);
             if (afterLeftParse != null)
-                left = afterLeftParse(this, left, Start.Index, startLoc);
+                left = afterLeftParse(this, left, Start.Index, startLocation);
             if (Type == TokenType.Eq || Type == TokenType.Assign)
             {
                 CheckPatternErrors(refDestructuringErrors, true);
@@ -193,8 +193,8 @@ namespace Njsast.Reader
                 refDestructuringErrors.ShorthandAssign = default; // reset because shorthand default was used correctly
                 CheckLVal(leftNode, false, null);
                 Next();
-                var right = ParseMaybeAssign(noIn);
-                return new AstAssign(this, startLoc, _lastTokEnd, leftNode, right, @operator);
+                var right = ParseMaybeAssign(Start, noIn);
+                return new AstAssign(this, startLocation, _lastTokEnd, leftNode, right, @operator);
             }
 
             if (ownDestructuringErrors) CheckExpressionErrors(refDestructuringErrors, true);
@@ -261,33 +261,31 @@ namespace Njsast.Reader
         }
 
         // Parse a ternary conditional (`?:`) operator.
-        AstNode ParseMaybeConditional(bool noIn, DestructuringErrors refDestructuringErrors)
+        AstNode ParseMaybeConditional(Position startLocation, bool noIn, DestructuringErrors refDestructuringErrors)
         {
-            var startLoc = Start;
-            var expr = ParseExpressionOperators(noIn, refDestructuringErrors);
+            var expr = ParseExpressionOperators(startLocation, noIn, refDestructuringErrors);
             if (CheckExpressionErrors(refDestructuringErrors))
                 return expr;
             if (Eat(TokenType.Question))
             {
-                var consequent = ParseMaybeAssign();
+                var consequent = ParseMaybeAssign(Start);
                 Expect(TokenType.Colon);
-                var alternate = ParseMaybeAssign(noIn);
-                return new AstConditional(this, startLoc, _lastTokEnd, expr, consequent, alternate);
+                var alternate = ParseMaybeAssign(Start, noIn);
+                return new AstConditional(this, startLocation, _lastTokEnd, expr, consequent, alternate);
             }
 
             return expr;
         }
 
         // Start the precedence parser.
-        AstNode ParseExpressionOperators(bool noIn, DestructuringErrors refDestructuringErrors)
+        AstNode ParseExpressionOperators(Position startLocation, bool noIn, DestructuringErrors refDestructuringErrors)
         {
-            var startLoc = Start;
-            var expr = ParseMaybeUnary(refDestructuringErrors, false);
+            var expr = ParseMaybeUnary(startLocation, refDestructuringErrors, false);
             if (CheckExpressionErrors(refDestructuringErrors))
                 return expr;
-            return expr.Start.Index == startLoc.Index && expr is AstArrow
+            return expr.Start.Index == startLocation.Index && expr is AstArrow
                 ? expr
-                : ParseExpressionOperator(expr, startLoc, -1, noIn);
+                : ParseExpressionOperator(expr, startLocation, -1, noIn);
         }
 
         // Parse binary operators with the operator precedence parsing
@@ -305,7 +303,7 @@ namespace Njsast.Reader
                     var op = StringToOperator((string) Value);
                     Next();
                     var startLoc = Start;
-                    var right = ParseExpressionOperator(ParseMaybeUnary(null, false), startLoc, prec, noIn);
+                    var right = ParseExpressionOperator(ParseMaybeUnary(Start, null, false), startLoc, prec, noIn);
                     var node = BuildBinary(leftStartLoc, left, right, op);
                     return ParseExpressionOperator(node, leftStartLoc, minPrec, noIn);
                 }
@@ -321,9 +319,8 @@ namespace Njsast.Reader
         }
 
         // Parse unary operators, both prefix and postfix.
-        AstNode ParseMaybeUnary(DestructuringErrors refDestructuringErrors, bool sawUnary)
+        AstNode ParseMaybeUnary(Position startLocation, DestructuringErrors refDestructuringErrors, bool sawUnary)
         {
-            var startLoc = Start;
             AstNode expr;
             if (_inAsync && IsContextual("await"))
             {
@@ -335,18 +332,18 @@ namespace Njsast.Reader
                 var update = Type == TokenType.IncDec;
                 var @operator = StringToOperator((string) Value);
                 Next();
-                var argument = ParseMaybeUnary(null, true);
+                var argument = ParseMaybeUnary(Start, null, true);
                 CheckExpressionErrors(refDestructuringErrors, true);
                 if (update) CheckLVal(argument, false, null);
                 else if (_strict && @operator == Operator.Delete &&
                          argument is AstSymbol)
-                    RaiseRecoverable(startLoc, "Deleting local variable in strict mode");
+                    RaiseRecoverable(startLocation, "Deleting local variable in strict mode");
                 else sawUnary = true;
-                expr = new AstUnaryPrefix(this, startLoc, _lastTokEnd, @operator, argument);
+                expr = new AstUnaryPrefix(this, startLocation, _lastTokEnd, @operator, argument);
             }
             else
             {
-                expr = ParseExpressionSubscripts(refDestructuringErrors);
+                expr = ParseExpressionSubscripts(startLocation, refDestructuringErrors);
                 if (CheckExpressionErrors(refDestructuringErrors))
                     return expr;
                 while (TokenInformation.Types[Type].Postfix && !CanInsertSemicolon())
@@ -354,12 +351,12 @@ namespace Njsast.Reader
                     var @operator = StringToOperator((string) Value);
                     CheckLVal(expr, false, null);
                     Next();
-                    expr = new AstUnaryPostfix(this, startLoc, _lastTokEnd, ToPostfix(@operator), expr);
+                    expr = new AstUnaryPostfix(this, startLocation, _lastTokEnd, ToPostfix(@operator), expr);
                 }
             }
 
             if (!sawUnary && Eat(TokenType.Starstar))
-                return BuildBinary(startLoc, expr, ParseMaybeUnary(null, false), Operator.Power);
+                return BuildBinary(startLocation, expr, ParseMaybeUnary(Start, null, false), Operator.Power);
             return expr;
         }
 
@@ -377,16 +374,15 @@ namespace Njsast.Reader
         }
 
         // Parse call, dot, and `[]`-subscript expressions.
-        AstNode ParseExpressionSubscripts([CanBeNull] DestructuringErrors refDestructuringErrors = null)
+        AstNode ParseExpressionSubscripts(Position startLocation, DestructuringErrors? refDestructuringErrors = null)
         {
-            var startLoc = Start;
-            var expr = ParseExpressionAtom(refDestructuringErrors);
+            var expr = ParseExpressionAtom(startLocation, refDestructuringErrors);
             var skipArrowSubscripts = expr is AstArrow &&
                                       _input.Substring(_lastTokStart.Index, _lastTokEnd.Index - _lastTokStart.Index) !=
                                       ")";
             if (CheckExpressionErrors(refDestructuringErrors) || skipArrowSubscripts)
                 return expr;
-            var result = ParseSubscripts(expr, startLoc);
+            var result = ParseSubscripts(expr, startLocation);
             if (refDestructuringErrors != null && result is AstPropAccess)
             {
                 if (refDestructuringErrors.ParenthesizedAssign.Index >= result.Start.Index)
@@ -409,7 +405,7 @@ namespace Njsast.Reader
                 bool computed;
                 if ((computed = Eat(TokenType.BracketL)) || Eat(TokenType.Dot))
                 {
-                    var property = computed ? ParseExpression() : ParseIdent(true);
+                    var property = computed ? ParseExpression(Start) : ParseIdent(true);
                     if (computed) Expect(TokenType.BracketR);
                     if (computed)
                     {
@@ -442,7 +438,18 @@ namespace Njsast.Reader
                     CheckExpressionErrors(refDestructuringErrors, true);
                     _yieldPos = oldYieldPos.Line != 0 ? oldYieldPos : _yieldPos;
                     _awaitPos = oldAwaitPos.Line != 0 ? oldAwaitPos : _awaitPos;
-                    @base = new AstCall(this, startLoc, _lastTokEnd, @base, ref expressionList);
+                    if (@base is AstSymbolRef symbol && symbol.Name == "!import")
+                    {
+                        if (expressionList.Count != 1)
+                        {
+                            Raise(startLoc, "dynamic import must have one parameter");
+                        }
+                        @base = new AstImportExpression(this, startLoc, _lastTokEnd, expressionList[0]);
+                    }
+                    else
+                    {
+                        @base = new AstCall(this, startLoc, _lastTokEnd, @base, ref expressionList);
+                    }
                 }
                 else if (Type == TokenType.BackQuote)
                 {
@@ -460,15 +467,19 @@ namespace Njsast.Reader
         // expression, an expression started by a keyword like `function` or
         // `new`, or an expression wrapped in punctuation like `()`, `[]`,
         // or `{}`.
-        AstNode ParseExpressionAtom([CanBeNull] DestructuringErrors refDestructuringErrors = null)
+        AstNode ParseExpressionAtom(Position startLocation, DestructuringErrors? refDestructuringErrors = null)
         {
+            if (_wasImportKeyword)
+            {
+                _wasImportKeyword = false;
+                return new AstSymbolRef(this, startLocation, _lastTokEnd, "!import");
+            }
             var canBeArrow = _potentialArrowAt.Index == Start.Index;
-            var startLoc = Start;
             switch (Type)
             {
                 case TokenType.Super:
                     if (!_inFunction)
-                        Raise(startLoc, "'super' outside of function or class");
+                        Raise(startLocation, "'super' outside of function or class");
                     Next();
 
                     // The `super` keyword can appear at below:
@@ -482,22 +493,22 @@ namespace Njsast.Reader
                         Raise(Start, "Unexpected token");
                     }
 
-                    return new AstSuper(this, startLoc, _lastTokEnd);
+                    return new AstSuper(this, startLocation, _lastTokEnd);
                 case TokenType.This:
                     Next();
-                    return new AstThis(this, startLoc, _lastTokEnd);
+                    return new AstThis(this, startLocation, _lastTokEnd);
                 case TokenType.Name:
                     var id = ParseIdent(Type != TokenType.Name);
                     if (Options.EcmaVersion >= 8 && id.Name == "async" && !CanInsertSemicolon() &&
                         Eat(TokenType.Function))
-                        return ParseFunction(startLoc, false, false, false, true);
+                        return ParseFunction(startLocation, false, false, false, true);
                     if (canBeArrow && !CanInsertSemicolon())
                     {
                         if (Eat(TokenType.Arrow))
                         {
                             var arg = new StructList<AstNode>();
                             arg.Add(id);
-                            return ParseArrowExpression(startLoc, ref arg);
+                            return ParseArrowExpression(startLocation, ref arg);
                         }
 
                         if (Options.EcmaVersion >= 8 && id.Name == "async" && Type == TokenType.Name)
@@ -510,7 +521,7 @@ namespace Njsast.Reader
 
                             var arg = new StructList<AstNode>();
                             arg.Add(id);
-                            return ParseArrowExpression(startLoc, ref arg, true);
+                            return ParseArrowExpression(startLocation, ref arg, true);
                         }
                     }
 
@@ -518,7 +529,7 @@ namespace Njsast.Reader
                 case TokenType.Regexp:
                     var r = (RegExp) Value;
                     Next();
-                    return new AstRegExp(this, startLoc, _lastTokEnd, r);
+                    return new AstRegExp(this, startLocation, _lastTokEnd, r);
                 case TokenType.Num:
                     if (Value is int intValue)
                         return ParseLiteral(intValue);
@@ -526,24 +537,24 @@ namespace Njsast.Reader
                 case TokenType.String:
                     var s = (string) Value;
                     Next();
-                    return new AstString(this, startLoc, _lastTokEnd, s);
+                    return new AstString(this, startLocation, _lastTokEnd, s);
                 case TokenType.Null:
                     Next();
-                    return new AstNull(this, startLoc, _lastTokEnd);
+                    return new AstNull(this, startLocation, _lastTokEnd);
                 case TokenType.True:
                     Next();
-                    return new AstTrue(this, startLoc, _lastTokEnd);
+                    return new AstTrue(this, startLocation, _lastTokEnd);
                 case TokenType.False:
                     Next();
-                    return new AstFalse(this, startLoc, _lastTokEnd);
+                    return new AstFalse(this, startLocation, _lastTokEnd);
                 case TokenType.ParenL:
                     var expr = ParseParenAndDistinguishExpression(canBeArrow);
                     if (refDestructuringErrors != null)
                     {
                         if (refDestructuringErrors.ParenthesizedAssign.Line == 0 && !IsSimpleAssignTarget(expr))
-                            refDestructuringErrors.ParenthesizedAssign = startLoc;
+                            refDestructuringErrors.ParenthesizedAssign = startLocation;
                         if (refDestructuringErrors.ParenthesizedBind.Line == 0)
-                            refDestructuringErrors.ParenthesizedBind = startLoc;
+                            refDestructuringErrors.ParenthesizedBind = startLocation;
                     }
 
                     return expr;
@@ -551,21 +562,21 @@ namespace Njsast.Reader
                     Next();
                     var elements = new StructList<AstNode>();
                     ParseExpressionList(ref elements, TokenType.BracketR, true, true, refDestructuringErrors);
-                    return new AstArray(this, startLoc, _lastTokEnd, ref elements);
+                    return new AstArray(this, startLocation, _lastTokEnd, ref elements);
                 case TokenType.BraceL:
                     return ParseObj(false, refDestructuringErrors);
                 case TokenType.Function:
                     Next();
-                    return ParseFunction(startLoc, false, false);
+                    return ParseFunction(startLocation, false, false);
                 case TokenType.Class:
-                    return ParseClass(startLoc, false, false);
+                    return ParseClass(startLocation, false, false);
                 case TokenType.New:
                     return ParseNew();
                 case TokenType.BackQuote:
                     return ParseTemplate();
             }
 
-            Raise(startLoc, "Unexpected token");
+            Raise(startLocation, "Unexpected token");
             return null;
         }
 
@@ -581,7 +592,7 @@ namespace Njsast.Reader
         AstNode ParseParenExpression()
         {
             Expect(TokenType.ParenL);
-            var val = ParseExpression();
+            var val = ParseExpression(Start);
             Expect(TokenType.ParenR);
             return val;
         }
@@ -624,7 +635,7 @@ namespace Njsast.Reader
                         break;
                     }
 
-                    exprList.Add(ParseMaybeAssign(false, refDestructuringErrors,
+                    exprList.Add(ParseMaybeAssign(Start, false, refDestructuringErrors,
                         (parser, item, position, location) => item));
                 }
 
@@ -692,7 +703,7 @@ namespace Njsast.Reader
             }
 
             var startLoc = Start;
-            var callee = ParseSubscripts(ParseExpressionAtom(), startLoc, true);
+            var callee = ParseSubscripts(ParseExpressionAtom(Start), startLoc, true);
             var arguments = new StructList<AstNode>();
             if (Eat(TokenType.ParenL))
                 ParseExpressionList(ref arguments, TokenType.ParenR, Options.EcmaVersion >= 8, false);
@@ -740,7 +751,7 @@ namespace Njsast.Reader
             while (!isTail)
             {
                 Expect(TokenType.DollarBraceL);
-                expressions.Add(ParseExpression());
+                expressions.Add(ParseExpression(Start));
                 Expect(TokenType.BraceR);
                 isTail = Type == TokenType.BackQuote;
                 expressions.Add(ParseTemplateElement(ref isTagged));
@@ -860,7 +871,7 @@ namespace Njsast.Reader
 
             if (Eat(TokenType.Colon))
             {
-                var value = isPattern ? ParseMaybeDefault(Start) : ParseMaybeAssign(false, refDestructuringErrors);
+                var value = isPattern ? ParseMaybeDefault(Start) : ParseMaybeAssign(Start, false, refDestructuringErrors);
                 return (value, PropertyKind.Initialise, false, false, computed, key);
             }
 
@@ -961,14 +972,14 @@ namespace Njsast.Reader
             {
                 if (Eat(TokenType.BracketL))
                 {
-                    var key = ParseMaybeAssign();
+                    var key = ParseMaybeAssign(Start);
                     Expect(TokenType.BracketR);
                     return (true, key);
                 }
             }
 
             return (false,
-                Type == TokenType.Num || Type == TokenType.String ? ParseExpressionAtom() : new AstSymbolProperty(ParseIdent(true)));
+                Type == TokenType.Num || Type == TokenType.String ? ParseExpressionAtom(Start) : new AstSymbolProperty(ParseIdent(true)));
         }
 
         // Parse object or class method.
@@ -1089,7 +1100,7 @@ namespace Njsast.Reader
             bool expression;
             if (isExpression)
             {
-                var simpleBody = ParseMaybeAssign();
+                var simpleBody = ParseMaybeAssign(Start);
                 body.Add(new AstSimpleStatement(this, simpleBody.Start, simpleBody.End, simpleBody));
                 expression = true;
                 CheckParams(parameters, false);
@@ -1214,7 +1225,7 @@ namespace Njsast.Reader
                 }
                 else
                 {
-                    element = ParseMaybeAssign(false, refDestructuringErrors);
+                    element = ParseMaybeAssign(Start, false, refDestructuringErrors);
                 }
 
                 elements.Add(element);
@@ -1290,7 +1301,7 @@ namespace Njsast.Reader
                 (Type == TokenType.Star || TokenInformation.Types[Type].StartsExpression))
             {
                 @delegate = Eat(TokenType.Star);
-                argument = ParseMaybeAssign();
+                argument = ParseMaybeAssign(Start);
             }
 
             return new AstYield(this, startLoc, _lastTokEnd, argument, @delegate);
@@ -1303,7 +1314,7 @@ namespace Njsast.Reader
 
             var startLoc = Start;
             Next();
-            var argument = ParseMaybeUnary(null, true);
+            var argument = ParseMaybeUnary(Start, null, true);
 
             return new AstAwait(this, startLoc, _lastTokEnd, argument);
         }

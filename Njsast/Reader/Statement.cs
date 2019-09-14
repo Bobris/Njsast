@@ -156,6 +156,12 @@ namespace Njsast.Reader
                     return ParseEmptyStatement(startLocation);
                 case TokenType.Export:
                 case TokenType.Import:
+                    Next();
+                    if (starttype == TokenType.Import && Type == TokenType.ParenL)
+                    {
+                        _wasImportKeyword = true;
+                        break;
+                    }
                     if (!Options.AllowImportExportEverywhere)
                     {
                         if (!topLevel)
@@ -169,14 +175,14 @@ namespace Njsast.Reader
                         : ParseExport(startLocation, exports);
             }
 
-            if (IsAsyncFunction() && declaration)
+            if (!_wasImportKeyword && IsAsyncFunction() && declaration)
             {
                 Next();
                 return ParseFunctionStatement(startLocation, true);
             }
 
             var maybeName = Value;
-            var expr = ParseExpression();
+            var expr = ParseExpression(startLocation);
             if (starttype == TokenType.Name && expr is AstSymbol identifierNode && Eat(TokenType.Colon))
                 return ParseLabelledStatement(startLocation, (string) maybeName, identifierNode);
             return ParseExpressionStatement(startLocation, expr);
@@ -326,7 +332,7 @@ namespace Njsast.Reader
             else
             {
                 var refDestructuringErrors = new DestructuringErrors();
-                var init = ParseExpression(true, refDestructuringErrors);
+                var init = ParseExpression(Start, true, refDestructuringErrors);
                 if (Type == TokenType.In || Options.EcmaVersion >= 6 && IsContextual("of"))
                 {
                     init = ToAssignable(init);
@@ -377,7 +383,7 @@ namespace Njsast.Reader
             AstNode argument = null;
             if (!Eat(TokenType.Semi) && !InsertSemicolon())
             {
-                argument = ParseExpression();
+                argument = ParseExpression(Start);
                 Semicolon();
             }
 
@@ -411,7 +417,7 @@ namespace Njsast.Reader
                     _allowBreak = true;
                     if (isCase)
                     {
-                        var test = ParseExpression();
+                        var test = ParseExpression(Start);
                         consequent = new AstCase(this, startLoc, startLoc, test);
                     }
                     else
@@ -452,7 +458,7 @@ namespace Njsast.Reader
             Next();
             if (LineBreak.IsMatch(_input.Substring(_lastTokEnd.Index, Start.Index - _lastTokEnd.Index)))
                 Raise(_lastTokEnd, "Illegal newline after throw");
-            var argument = ParseExpression();
+            var argument = ParseExpression(Start);
             Semicolon();
             return new AstThrow(this, nodeStart, _lastTokEnd, argument);
         }
@@ -609,9 +615,9 @@ namespace Njsast.Reader
         AstStatement ParseFor(Position nodeStart, AstNode init)
         {
             Expect(TokenType.Semi);
-            var test = Type == TokenType.Semi ? null : ParseExpression();
+            var test = Type == TokenType.Semi ? null : ParseExpression(Start);
             Expect(TokenType.Semi);
-            var update = Type == TokenType.ParenR ? null : ParseExpression();
+            var update = Type == TokenType.ParenR ? null : ParseExpression(Start);
             Expect(TokenType.ParenR);
             ExitLexicalScope();
             var backupAllowBreak = _allowBreak;
@@ -631,7 +637,7 @@ namespace Njsast.Reader
         {
             var isIn = Type == TokenType.In;
             Next();
-            var right = ParseExpression();
+            var right = ParseExpression(Start);
             Expect(TokenType.ParenR);
             ExitLexicalScope();
             var backupAllowBreak = _allowBreak;
@@ -659,7 +665,7 @@ namespace Njsast.Reader
                 AstNode init = null;
                 if (Eat(TokenType.Eq))
                 {
-                    init = ParseMaybeAssign(isFor);
+                    init = ParseMaybeAssign(Start, isFor);
                 }
                 else if (kind == VariableKind.Const &&
                          !(Type == TokenType.In || Options.EcmaVersion >= 6 && IsContextual("of")))
@@ -905,14 +911,13 @@ namespace Njsast.Reader
         [CanBeNull]
         AstNode ParseClassSuper()
         {
-            return Eat(TokenType.Extends) ? ParseExpressionSubscripts() : null;
+            return Eat(TokenType.Extends) ? ParseExpressionSubscripts(Start) : null;
         }
 
         // Parses module export declaration.
         [NotNull]
         AstNode ParseExport(Position nodeStart, IDictionary<string, bool> exports)
         {
-            Next();
             // export * from '...'
             if (Eat(TokenType.Star))
             {
@@ -923,7 +928,7 @@ namespace Njsast.Reader
                 ExpectContextual("from");
                 if (Type != TokenType.String)
                     Raise(Start, "Unexpected token");
-                var source = ParseExpressionAtom() as AstString;
+                var source = ParseExpressionAtom(Start) as AstString;
                 Semicolon();
                 return new AstExport(this, nodeStart, _lastTokEnd, source, null, ref specifiers);
             }
@@ -947,7 +952,7 @@ namespace Njsast.Reader
                 }
                 else
                 {
-                    declaration = ParseMaybeAssign();
+                    declaration = ParseMaybeAssign(Start);
                     Semicolon();
                 }
 
@@ -981,7 +986,7 @@ namespace Njsast.Reader
                     {
                         if (Type != TokenType.String)
                             Raise(Start, "Unexpected token");
-                        source = ParseExpressionAtom() as AstString;
+                        source = ParseExpressionAtom(Start) as AstString;
                     }
                     else
                     {
@@ -1074,17 +1079,15 @@ namespace Njsast.Reader
         }
 
         // Parses import declaration.
-        [NotNull]
         AstImport ParseImport(Position nodeStart)
         {
-            Next();
             // import '...'
             var importNames = new StructList<AstNameMapping>();
             AstSymbolImport importName = null;
             AstString source = null;
             if (Type == TokenType.String)
             {
-                source = ParseExpressionAtom() as AstString;
+                source = ParseExpressionAtom(Start) as AstString;
             }
             else
             {
@@ -1092,7 +1095,7 @@ namespace Njsast.Reader
                 ExpectContextual("from");
                 if (Type == TokenType.String)
                 {
-                    source = ParseExpressionAtom() as AstString;
+                    source = ParseExpressionAtom(Start) as AstString;
                 }
                 else
                 {
