@@ -17,7 +17,7 @@ namespace Njsast.Ast
 
         public static bool IsTsReexportSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "__exportStar");
 
-        public static string? IsRequireCall(this AstNode node)
+        public static string? IsRequireCall(this AstNode? node)
         {
             if (!(node is AstCall call) || call.Args.Count != 1 || !(call.Expression is AstSymbol methodNameSymbol) ||
                 !methodNameSymbol.Thedef.IsRequireSymbol()) return null;

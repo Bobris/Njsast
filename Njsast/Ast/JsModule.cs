@@ -13,12 +13,12 @@ namespace Njsast.Ast
             Name = name;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             return Equals(obj as JsModule);
         }
 
-        public bool Equals(JsModule other)
+        public bool Equals(JsModule? other)
         {
             return other != null &&
                    ImportedFrom == other.ImportedFrom &&

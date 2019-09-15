@@ -113,7 +113,7 @@ namespace Njsast.Bobril
                 {
                     if (call.Expression is AstSymbol expSymbol && call.Args.Count == 1)
                     {
-                        var def = expSymbol.Thedef;
+                        var def = expSymbol.Thedef!;
                         if (def.Global && def.Name == "require")
                         {
                             var arg = call.Args[0];
@@ -343,7 +343,7 @@ namespace Njsast.Bobril
                 }
             }
 
-            string ExpressionName()
+            string? ExpressionName()
             {
                 var parent = Parent();
                 if (parent is AstVarDef varDef)

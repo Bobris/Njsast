@@ -86,7 +86,7 @@ namespace Test
             var adder = builder.CreateSourceAdder(source,
                 SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
             var sourceReplacer = new SourceReplacer();
-            var m1 = sourceInfo.Assets[0];
+            var m1 = sourceInfo.Assets![0];
             sourceReplacer.Replace(m1.StartLine, m1.StartCol, m1.EndLine, m1.EndCol, "\""+m1.Name+"\"");
             sourceReplacer.Apply(adder);
             //builder.AddSource(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")), SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));

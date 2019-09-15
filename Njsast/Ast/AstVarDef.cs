@@ -12,7 +12,7 @@ namespace Njsast.Ast
         /// [AstNode?] initializer, or null of there's no initializer
         public AstNode? Value;
 
-        public AstVarDef(Parser parser, Position startLoc, Position endLoc, AstNode name, AstNode value = null) : base(
+        public AstVarDef(Parser parser, Position startLoc, Position endLoc, AstNode name, AstNode? value = null) : base(
             parser, startLoc, endLoc)
         {
             Name = name;
