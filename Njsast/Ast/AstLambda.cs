@@ -22,6 +22,9 @@ namespace Njsast.Ast
         /// [boolean] is this method async
         public bool Async;
 
+        /// Calling this function does not have visible side effect when its result is not used (null means unknown)
+        public bool? Pure;
+
         public AstLambda(Parser parser, Position startPos, Position endPos, AstSymbolDeclaration? name,
             ref StructList<AstNode> argNames, bool isGenerator, bool async, ref StructList<AstNode> body) : base(parser,
             startPos, endPos)
