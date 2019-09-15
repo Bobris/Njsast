@@ -16,6 +16,11 @@ namespace Njsast.Reader
             return new Position(Line, Column + i, Index + i);
         }
 
+        public string ToShortString()
+        {
+            return $"{Line + 1}:{Column + 1}";
+        }
+
         public override string ToString()
         {
             return $"(Line: {Line}, Column: {Column}, Index: {Index})";

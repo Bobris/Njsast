@@ -63,7 +63,7 @@ namespace Test.Reader
                 foreach (var (block, content, location) in comments)
                 {
                     strSink.Print(
-                        $"{(block ? "Block" : "Line")} Comment ({location.Start.Line + 1}:{location.Start.Column + 1}-{location.End.Line + 1}:{location.End.Column + 1}): {content}");
+                        $"{(block ? "Block" : "Line")} Comment ({location.Start.ToShortString()}-{location.End.ToShortString()}): {content}");
                 }
 
                 outAst = strSink.ToString();
