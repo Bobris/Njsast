@@ -5,3 +5,5 @@ Toplevel 1:1 - 2:16
       SimpleStatement 2:11 - 2:13
         SymbolRef 2:11 - 2:12 [Read]
           Name: x
+Block Comment (1:20-2:11):  Multiline
+Comment 

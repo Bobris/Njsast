@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Njsast.AstDump;
 using Njsast.Output;
 using Njsast.Reader;
@@ -30,8 +31,9 @@ namespace Test.Reader
             Assert.Equal(testData.ExpectedNiceJsMap, outNiceJsMap);
         }
 
-        public static (string outAst, string outMinJs, string outMinJsMap, string outNiceJs, string outNiceJsMap) ParseTestCore(
-            ParserTestData testData)
+        public static (string outAst, string outMinJs, string outMinJsMap, string outNiceJs, string outNiceJsMap)
+            ParseTestCore(
+                ParserTestData testData)
         {
             string outAst;
             var outMinJs = string.Empty;
@@ -40,23 +42,36 @@ namespace Test.Reader
             var outNiceJsMap = string.Empty;
             try
             {
+                var comments = new List<(bool block, string content, SourceLocation location)>();
                 var parser = new Parser(
-                    new Options {SourceFile = testData.SourceName, EcmaVersion = testData.EcmaScriptVersion},
+                    new Options
+                    {
+                        SourceFile = testData.SourceName, EcmaVersion = testData.EcmaScriptVersion, OnComment =
+                            (block, content, location) => { comments.Add((block, content, location)); }
+                    },
                     testData.Input);
                 var toplevel = parser.Parse();
                 if (testData.InputSourceMap != null)
                 {
                     SourceMap.Parse(testData.InputSourceMap, ".").ResolveInAst(toplevel);
                 }
+
                 var strSink = new StringLineSink();
                 toplevel.FigureOutScope();
                 var dumper = new DumpAst(new AstDumpWriter(strSink));
                 dumper.Walk(toplevel);
+                foreach (var (block, content, location) in comments)
+                {
+                    strSink.Print(
+                        $"{(block ? "Block" : "Line")} Comment ({location.Start.Line + 1}:{location.Start.Column + 1}-{location.End.Line + 1}:{location.End.Column + 1}): {content}");
+                }
+
                 outAst = strSink.ToString();
                 var outMinJsBuilder = new SourceMapBuilder();
                 var outputOptions = new OutputOptions();
                 toplevel.PrintToBuilder(outMinJsBuilder, outputOptions);
-                outMinJsBuilder.AddText($"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "minjs.map")}");
+                outMinJsBuilder.AddText(
+                    $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "minjs.map")}");
                 outMinJs = outMinJsBuilder.Content();
                 outMinJsMap = outMinJsBuilder.Build(".", ".").ToString();
                 var outNiceJsBuilder = new SourceMapBuilder();

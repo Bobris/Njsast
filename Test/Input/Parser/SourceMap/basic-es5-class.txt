@@ -42,3 +42,5 @@ Toplevel 1:1 - 12:44 [HasUseStrictDirective]
         Property: world
         SymbolRef 9:1 - 9:2 [Read]
           Name: h
+Block Comment (2:13-2:26): * @class 
+Line Comment (12:1-12:44): # sourceMappingURL=basic-es5-class.js.map

@@ -6,3 +6,5 @@ Toplevel 1:1 - 2:19
     SimpleStatement 2:11 - 2:17
       SymbolRef 2:11 - 2:16 [Read]
         Name: error
+Block Comment (1:14-2:11):  Multiline
+Comment 
