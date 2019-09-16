@@ -104,9 +104,10 @@ namespace Njsast.Ast
         public override bool IsConstValue(IConstEvalCtx ctx = null)
         {
             if (!Left.IsConstValue(ctx)) return false;
+            if (Operator == Operator.LogicalOr && TypeConverter.ToBoolean(Left.ConstValue(ctx))) return true;
+            if (!Right.IsConstValue(ctx?.StripPathResolver())) return false;
             if (Operator == Operator.LogicalOr) return true;
             if (Operator == Operator.LogicalAnd) return true;
-            if (!Right.IsConstValue(ctx?.StripPathResolver())) return false;
             if (Operator == Operator.BitwiseOr) return true;
             if (Operator == Operator.BitwiseAnd) return true;
             if (Operator == Operator.BitwiseXOr) return true;
