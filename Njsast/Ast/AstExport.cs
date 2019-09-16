@@ -8,10 +8,10 @@ namespace Njsast.Ast
     public class AstExport : AstStatement
     {
         /// [AstDefun|AstDefinitions|AstDefClass?] An exported definition
-        public AstNode ExportedDefinition;
+        public AstNode? ExportedDefinition;
 
         /// [AstNode?] An exported value
-        public AstNode ExportedValue;
+        public AstNode? ExportedValue;
 
         /// [Boolean] Whether this is the default exported value of this module
         public bool IsDefault;
@@ -20,7 +20,7 @@ namespace Njsast.Ast
         public StructList<AstNameMapping> ExportedNames;
 
         /// [AstString?] Name of the file to load exports from
-        public AstString ModuleName;
+        public AstString? ModuleName;
 
         public AstExport(Parser parser, Position startPos, Position endPos, AstString source, AstNode declaration,
             ref StructList<AstNameMapping> specifiers) : base(parser, startPos, endPos)

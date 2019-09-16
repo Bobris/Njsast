@@ -9,7 +9,7 @@ namespace Njsast.Ast
     public class AstToplevel : AstScope
     {
         /// [Object/S] a map of name -> SymbolDef for all undeclared names
-        public Dictionary<string, SymbolDef> Globals;
+        public Dictionary<string, SymbolDef>? Globals;
 
         public AstToplevel(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
@@ -18,7 +18,7 @@ namespace Njsast.Ast
         public SymbolDef DefGlobal(AstSymbol symbol)
         {
             var name = symbol.Name;
-            if (Globals.ContainsKey(name))
+            if (Globals!.ContainsKey(name))
             {
                 return Globals[name];
             }
@@ -60,13 +60,13 @@ namespace Njsast.Ast
 
         public override bool IsBlockScope => false;
 
-        public void FigureOutScope(ScopeOptions options = null)
+        public void FigureOutScope(ScopeOptions? options = null)
         {
             if (options == null) options = new ScopeOptions();
             new ScopeParser(options).FigureOutScope(this);
         }
 
-        public void Mangle(ScopeOptions options = null)
+        public void Mangle(ScopeOptions? options = null)
         {
             if (options == null) options = new ScopeOptions();
             new ScopeParser(options).FigureOutScope(this);

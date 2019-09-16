@@ -12,22 +12,23 @@ namespace Test.Reader
     public class ParserTestDataProviderAttribute : DataAttribute
     {
         const string InputFileExtension = ".js";
+        const string InputMapFileExtension = ".js.map";
         const string OutputFileExtension = ".txt";
         const string NiceJsFileExtension = ".nicejs";
         const string NiceJsMapFileExtension = ".nicejs.map";
         const string MinJsFileExtension = ".minjs";
         const string MinJsMapFileExtension = ".minjs.map";
 
-        readonly Regex EcmaScriptVersion = new Regex("es([0-9]+)");
+        readonly Regex _ecmaScriptVersion = new Regex("es([0-9]+)");
         readonly string _testFileDirectory;
         readonly string _searchPattern;
         readonly bool _searchSubDirectories;
 
-        private IEnumerable<string> InputFiles =>
+        IEnumerable<string> InputFiles =>
             Directory
                 .EnumerateFiles(_testFileDirectory, _searchPattern,
                     _searchSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
-                .Where(x => x.EndsWith(InputFileExtension));
+                .Where(x => x.EndsWith(InputFileExtension)).Select(PathUtils.Normalize);
 
         public ParserTestDataProviderAttribute(string testFileDirectory, string searchPattern = "*",
             bool searchSubDirectories = true)
@@ -37,46 +38,55 @@ namespace Test.Reader
             _searchSubDirectories = searchSubDirectories;
         }
 
-        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+        public IEnumerable<ParserTestData> GetParserData()
         {
             return InputFiles.Select(inputFile =>
             {
+                var inputMapFile = PathUtils.ChangeExtension(inputFile, InputMapFileExtension);
                 var outputFile = PathUtils.ChangeExtension(inputFile, OutputFileExtension);
                 var niceJsFile = PathUtils.ChangeExtension(inputFile, NiceJsFileExtension);
                 var niceJsMapFile = PathUtils.ChangeExtension(inputFile, NiceJsMapFileExtension);
                 var minJsFile = PathUtils.ChangeExtension(inputFile, MinJsFileExtension);
                 var minJsMapFile = PathUtils.ChangeExtension(inputFile, MinJsMapFileExtension);
                 var isInvalid = !File.Exists(niceJsFile) || !File.Exists(minJsFile);
-                if (!File.Exists(outputFile))
-                {
-                    throw new FileNotFoundException("File with expected result was not found", outputFile);
-                }
 
                 var testData = new ParserTestData
                 {
-                    Name = Path.GetFileNameWithoutExtension(inputFile),
+                    Name = PathUtils.WithoutExtension(inputFile),
                     Input = File.ReadAllText(inputFile),
-                    ExpectedAst = File.ReadAllText(outputFile),
+                    SourceName = PathUtils.Name(inputFile),
+                    ExpectedAst = File.Exists(outputFile) ? File.ReadAllText(outputFile) : "",
                     IsInvalid = isInvalid,
                     EcmaScriptVersion = GetEcmaVersion(inputFile)
                 };
-                if (isInvalid) return new object[] {testData};
+                if (File.Exists(inputMapFile))
+                {
+                    testData.InputSourceMap = File.ReadAllText(inputMapFile);
+                }
+
+                if (isInvalid) return testData;
                 testData.ExpectedMinJs = File.ReadAllText(minJsFile);
                 testData.ExpectedMinJsMap = File.ReadAllText(minJsMapFile);
                 testData.ExpectedNiceJs = File.ReadAllText(niceJsFile);
                 testData.ExpectedNiceJsMap = File.ReadAllText(niceJsMapFile);
 
-                return new object[] {testData};
+                return testData;
             });
         }
 
-        private int GetEcmaVersion(string fileName)
+        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
         {
-            var match = EcmaScriptVersion.Match(fileName);
+            return GetParserData().Select(x => new object[] {x});
+        }
+
+        int GetEcmaVersion(string fileName)
+        {
+            var match = _ecmaScriptVersion.Match(fileName);
             if (!match.Success)
             {
                 return Options.DefaultEcmaVersion;
             }
+
             return int.Parse(match.Groups[1].Value);
         }
     }

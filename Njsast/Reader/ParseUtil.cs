@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using Njsast.Ast;
 
 namespace Njsast.Reader
@@ -102,7 +101,7 @@ namespace Njsast.Reader
             }
         }
 
-        static void CheckPatternErrors([CanBeNull] DestructuringErrors refDestructuringErrors, bool isAssign)
+        static void CheckPatternErrors(DestructuringErrors? refDestructuringErrors, bool isAssign)
         {
             if (refDestructuringErrors == null) return;
             if (refDestructuringErrors.TrailingComma.Line > 0)
@@ -113,7 +112,7 @@ namespace Njsast.Reader
             if (parens.Line > 0) RaiseRecoverable(parens, "Parenthesized pattern");
         }
 
-        static bool CheckExpressionErrors([CanBeNull] DestructuringErrors refDestructuringErrors, bool andThrow = false)
+        static bool CheckExpressionErrors(DestructuringErrors? refDestructuringErrors, bool andThrow = false)
         {
             var pos = refDestructuringErrors?.ShorthandAssign ?? default;
             if (!andThrow) return pos.Line > 0;

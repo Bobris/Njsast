@@ -31,7 +31,7 @@ namespace Njsast.Ast
             Expression.Print(output);
         }
 
-        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        public override bool IsConstValue(IConstEvalCtx? ctx = null)
         {
             if (!Expression.IsConstValue(ctx)) return false;
             if (Operator == Operator.Void) return true;
@@ -42,7 +42,7 @@ namespace Njsast.Ast
             return false;
         }
 
-        public override object ConstValue(IConstEvalCtx ctx = null)
+        public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             var v = Expression.ConstValue(ctx?.StripPathResolver());
             if (v == null) return null;

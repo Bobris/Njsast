@@ -318,7 +318,7 @@ namespace Njsast.Runtime
         {
             switch (o)
             {
-                case string s:
+                case string _:
                     return JsType.String;
                 case AstString _:
                     return JsType.String;
@@ -330,11 +330,11 @@ namespace Njsast.Runtime
                     return JsType.Boolean;
                 case double _:
                     return JsType.Number;
-                case AstNumber astNumber:
+                case AstNumber _:
                     return JsType.Number;
-                case int i:
+                case int _:
                     return JsType.Number;
-                case uint u:
+                case uint _:
                     return JsType.Number;
                 case AstUndefined _:
                     return JsType.Undefined;

@@ -15,7 +15,7 @@ namespace Njsast.ConstEval
 
         public JsModule ResolveRequire(string name)
         {
-            return new JsModule { ImportedFrom = SourceName, Name = name };
+            return new JsModule(SourceName, name);
         }
 
         public object ConstValue(IConstEvalCtx ctx, JsModule module, object export)

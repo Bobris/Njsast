@@ -14,6 +14,13 @@ namespace Test.ConstEval
         [ConstEvalDataProvider("Input/ConstEval")]
         public void ShouldCorrectlyEvaluateConstantsOrProduceSyntaxError(ConstEvalTestData testData)
         {
+            var outNiceJs = ConstEvalTestCore(testData);
+
+            Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
+        }
+
+        public static string ConstEvalTestCore(ConstEvalTestData testData)
+        {
             string outNiceJs;
             try
             {
@@ -38,7 +45,7 @@ namespace Test.ConstEval
                 outNiceJs = e.Message;
             }
 
-            Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
+            return outNiceJs;
         }
     }
 }

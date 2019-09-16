@@ -12,21 +12,21 @@ namespace Njsast
             _stopDescending = true;
         }
 
-        protected AstNode Parent()
+        protected AstNode? Parent()
         {
             if (_stack.Count <= 1)
                 return null;
             return _stack[_stack.Count - 2];
         }
 
-        protected AstNode Parent(int generation)
+        protected AstNode? Parent(int generation)
         {
             if (_stack.Count <= 1 + generation)
                 return null;
             return _stack[_stack.Count - 2 - (uint) generation];
         }
 
-        protected T FindParent<T>() where T : AstNode
+        protected T FindParent<T>() where T : AstNode?
         {
             uint i = _stack.Count - 2;
             while (i < _stack.Count)
@@ -53,7 +53,7 @@ namespace Njsast
 
         protected abstract void Visit(AstNode node);
 
-        public void Walk(AstNode start)
+        public void Walk(AstNode? start)
         {
             if (start == null) return;
             _stack.Add(start);

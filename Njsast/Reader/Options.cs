@@ -3,6 +3,8 @@ using Njsast.Ast;
 
 namespace Njsast.Reader
 {
+    public delegate void OnCommentAction(bool block, string content, SourceLocation sourceLocation);
+
     public sealed class Options
     {
         public const int DefaultEcmaVersion = 7;
@@ -34,11 +36,12 @@ namespace Njsast.Reader
         // `program` option in subsequent parses. This will add the
         // toplevel forms of the parsed file to the `Program` (top) node
         // of an existing parse tree.
-        public AstToplevel Program = null;
+        public AstToplevel? Program = null;
         // When `locations` is on, you can pass this to record the source
         // file in every node's `loc` object.
-        public string SourceFile = null;
+        public string? SourceFile = null;
         public bool StartInFunction;
+        public OnCommentAction? OnComment;
 
         [NotNull]
         public static Options GetOptions([CanBeNull] Options options)

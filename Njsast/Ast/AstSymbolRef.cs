@@ -1,5 +1,4 @@
-﻿using System;
-using Njsast.ConstEval;
+﻿using Njsast.ConstEval;
 using Njsast.Reader;
 
 namespace Njsast.Ast
@@ -15,7 +14,7 @@ namespace Njsast.Ast
         {
         }
 
-        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        public override bool IsConstValue(IConstEvalCtx? ctx = null)
         {
             if (Thedef == null) return false;
             if (Thedef.Global && Thedef.Undeclared)
@@ -39,7 +38,7 @@ namespace Njsast.Ast
             return t == typeof(AstSymbolVar) || t == typeof(AstSymbolLet) || t == typeof(AstSymbolConst);
         }
 
-        public override object ConstValue(IConstEvalCtx ctx = null)
+        public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             if (Thedef == null) return null;
             if (Thedef.Global && Thedef.Undeclared)

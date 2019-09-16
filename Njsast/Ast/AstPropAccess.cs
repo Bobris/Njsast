@@ -23,6 +23,18 @@ namespace Njsast.Ast
             Property = property;
         }
 
+        public string? PropertyAsString
+        {
+            get
+            {
+                if (Property is string str)
+                    return str;
+                if (Property is AstString str2)
+                    return str2.Value;
+                return null;
+            }
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);
@@ -76,7 +88,7 @@ namespace Njsast.Ast
             return false;
         }
 
-        public override bool IsConstValue(IConstEvalCtx ctx = null)
+        public override bool IsConstValue(IConstEvalCtx? ctx = null)
         {
             if (ctx != null && ctx.JustModuleExports)
             {
@@ -86,10 +98,10 @@ namespace Njsast.Ast
             return Expression.IsConstValue(ctx) && (Property is string || ((AstNode) Property).IsConstValue(ctx));
         }
 
-        public override object ConstValue(IConstEvalCtx ctx = null)
+        public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             var expr = Expression.ConstValue(ctx);
-            var prop = Property;
+            object? prop = Property;
             if (prop is AstNode node) prop = node.ConstValue(ctx?.StripPathResolver());
             if (prop == null) return null;
             prop = TypeConverter.ToString(prop);

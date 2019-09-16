@@ -37,6 +37,7 @@ namespace Njsast.Reader
         bool _allowBreak;
         bool _allowContinue;
         bool _canBeDirective;
+        bool _wasImportKeyword;
 
         public Parser(Options options, string input, int? startPos = null)
         {

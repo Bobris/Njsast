@@ -45,7 +45,7 @@ namespace Njsast.Ast
                 output.Indentation -= output.Options.IndentLevel;
                 output.Indent();
                 output.Print("}");
-            };
+            }
         }
     }
 }

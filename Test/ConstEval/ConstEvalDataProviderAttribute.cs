@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,7 +18,7 @@ namespace Test.ConstEval
 
         IEnumerable<string> InputFiles => Directory.EnumerateFiles(_testFileDirectory, _searchPattern,
                 _searchSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
-            .Where(x => !Path.GetFileNameWithoutExtension(x).StartsWith("dep-"));
+            .Select(PathUtils.Normalize).Where(x => !PathUtils.Name(x).StartsWith("dep-", StringComparison.Ordinal));
 
         public ConstEvalDataProviderAttribute(string testFileDirectory, string searchPattern = "*.js",
             bool searchSubDirectories = true)
@@ -27,22 +28,24 @@ namespace Test.ConstEval
             _searchSubDirectories = searchSubDirectories;
         }
 
-        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+        public IEnumerable<ConstEvalTestData> GetTypedData()
         {
             return InputFiles.Select(inputFile =>
             {
                 var niceJsFile = PathUtils.ChangeExtension(inputFile, NiceJsFileExtension);
-                return new object[]
+                return new ConstEvalTestData
                 {
-                    new ConstEvalTestData
-                    {
-                        InputContent = File.ReadAllText(inputFile),
-                        InputFileName = inputFile,
-                        Name = Path.GetFileNameWithoutExtension(inputFile),
-                        ExpectedNiceJs = File.ReadAllText(niceJsFile)
-                    }
+                    InputContent = File.ReadAllText(inputFile),
+                    InputFileName = inputFile,
+                    Name = PathUtils.WithoutExtension(inputFile),
+                    ExpectedNiceJs = File.ReadAllText(niceJsFile)
                 };
             });
+        }
+
+        public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+        {
+            return GetTypedData().Select(x => new object[] {x});
         }
     }
 }
