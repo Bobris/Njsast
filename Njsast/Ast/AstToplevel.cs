@@ -73,5 +73,10 @@ namespace Njsast.Ast
             var m = new MangleTreeWalker(options);
             m.Mangle(this);
         }
+
+        public void RemoveDeadCode()
+        {
+            
+        }
     }
 }
