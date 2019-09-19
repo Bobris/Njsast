@@ -85,6 +85,13 @@ namespace Njsast
             _a[_count] = default;
         }
 
+        public void RemoveItem(T item)
+        {
+            var index = IndexOf(item);
+            if (index < 0) throw new ArgumentOutOfRangeException(nameof(item), item, "Item not found in list");
+            RemoveAt((uint) index);
+        }
+
         public void Reserve(uint count)
         {
             if (count > int.MaxValue) throw new ArgumentOutOfRangeException(nameof(count));
@@ -288,6 +295,38 @@ namespace Njsast
             var res = new T[_count];
             AsSpan().CopyTo(res);
             return res;
+        }
+
+        public void ReplaceItem(T originalItem, T newItem)
+        {
+            var index = IndexOf(originalItem);
+            _a[index] = newItem;
+        }
+
+        public void ReplaceItem(T originalItem, StructList<T> newItems)
+        {
+            var index = IndexOf(originalItem);
+            if (index < 0) throw new ArgumentOutOfRangeException(nameof(originalItem), originalItem, "Item not found in List");
+            var itemsToInsert = newItems.Count;
+            if (itemsToInsert == 0)
+            {
+                RemoveAt((uint)index);
+                return;
+            }
+
+            if (itemsToInsert == 1)
+            {
+                _a[index] = newItems[0];
+                return;
+            }
+            
+            var totalCount = _count + itemsToInsert - 1;
+            if (_a == null || totalCount > _a.Length)
+                Expand(totalCount);
+
+            AsSpan(index + 1).CopyTo(AsSpan((int) (index + itemsToInsert)));
+            newItems.AsSpan().CopyTo(AsSpan(index));
+            _count = totalCount;
         }
     }
 }

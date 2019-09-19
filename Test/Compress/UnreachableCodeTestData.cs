@@ -1,6 +1,6 @@
 namespace Test.Compress
 {
-    public class DeadCodeTestData
+    public class UnreachableCodeTestData
     {
         public string Name { get; set; } = string.Empty;
         public string InputFileName { get; set; } = string.Empty;

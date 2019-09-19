@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Njsast.Compress;
 using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Scope;
@@ -74,9 +75,11 @@ namespace Njsast.Ast
             m.Mangle(this);
         }
 
-        public void RemoveDeadCode()
+        public void RemoveUnreachableCode()
         {
-            
+            var treeWalker = new UnreachableCodeEliminationTreeWalker();
+            var controlFlows = treeWalker.FindOutControlFlows(this);
+            UnreachableCodeEliminationTreeWalker.RemoveUnreachableCode(controlFlows);
         }
     }
 }

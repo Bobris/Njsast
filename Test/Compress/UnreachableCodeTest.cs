@@ -6,20 +6,20 @@ using Xunit;
 
 namespace Test.Compress
 {
-    public class DeadCodeTest
+    public class UnreachableCodeTest
     {
         [Theory]
-        [DeadCodeDataProvider("Input/Compress/DeadCode")]
-        public void ShouldRemoveDeadCode(DeadCodeTestData testData)
+        [UnreachableCodeDataProvider("Input/Compress/UnreachableCode")]
+        public void ShouldRemoveUnreachableCode(UnreachableCodeTestData testData)
         {
-            var (outAst, outMinJs, outNiceJs) = DeadCodeTestCore(testData);
+            var (outAst, outMinJs, outNiceJs) = UnreachableCodeTestCore(testData);
             
             Assert.Equal(testData.ExpectedAst, outAst);
             Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
             Assert.Equal(testData.ExpectedMinJs, outMinJs);
         }
 
-        public static (string outAst, string outMinJs, string outNiceJs)  DeadCodeTestCore(DeadCodeTestData testData)
+        public static (string outAst, string outMinJs, string outNiceJs)  UnreachableCodeTestCore(UnreachableCodeTestData testData)
         {
             string outAst;
             var outNiceJs = string.Empty;
@@ -29,7 +29,7 @@ namespace Test.Compress
                 var parser = new Parser(new Options(), testData.InputContent);
                 var toplevel = parser.Parse();
                 toplevel.FigureOutScope();
-                toplevel.RemoveDeadCode();
+                toplevel.RemoveUnreachableCode();
                 var strSink = new StringLineSink();
                 var dumper = new DumpAst(new AstDumpWriter(strSink));
                 dumper.Walk(toplevel);

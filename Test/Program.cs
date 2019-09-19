@@ -6,6 +6,7 @@ using Njsast.Output;
 using Njsast.Reader;
 using Njsast.SourceMap;
 using Njsast.Utils;
+using Test.Compress;
 using Test.ConstEval;
 using Test.Reader;
 
@@ -34,6 +35,16 @@ namespace Test
                 var outNiceJs = ConstEvalTest.ConstEvalTestCore(constEvalData);
                 tests++;
                 CheckError(constEvalData.ExpectedNiceJs, outNiceJs, ref errors, "const eval", file, "nicejs");
+            }
+
+            foreach (var unreachableCodeTestData in new UnreachableCodeDataProviderAttribute("Input/Compress/UnreachableCode").GetTypedData())
+            {
+                var file = unreachableCodeTestData.Name;
+                var (outAst, outMinJs, outNiceJs) = UnreachableCodeTest.UnreachableCodeTestCore(unreachableCodeTestData);
+                tests++;
+                CheckError(unreachableCodeTestData.ExpectedAst, outAst, ref errors, "AST", file, "txt");
+                CheckError(unreachableCodeTestData.ExpectedMinJs, outMinJs, ref errors, "minified js", file, "minjs");
+                CheckError(unreachableCodeTestData.ExpectedNiceJs, outNiceJs, ref errors, "beutified js", file, "nicejs");
             }
 
             Console.ForegroundColor = errors == 0 ? ConsoleColor.Green : ConsoleColor.Red;
@@ -95,9 +106,18 @@ namespace Test
             File.WriteAllText("Output/out.js.map", builder.Build("..", "..").ToString());
         }
 
+        static void UnreachableCodeDebug()
+        {
+            var parser = new Parser(new Options(), File.ReadAllText("Input/Compress/UnreachableCode/simpleIf.js"));
+            var toplevel = parser.Parse();
+            toplevel.FigureOutScope();
+            toplevel.RemoveUnreachableCode();
+        }
+
         static void Main()
         {
             RunAllTests();
+            //UnreachableCodeDebug();
             //Debug();
             //SourceMapEmitDebug();
         }
