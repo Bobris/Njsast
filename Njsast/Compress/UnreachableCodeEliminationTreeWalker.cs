@@ -47,6 +47,9 @@ namespace Njsast.Compress
                     case AstIf ifStatement:
                         RemoveUnreachableCode(controlFlow.Parent, ifStatement);
                         break;
+                    case AstWhile whileStatement:
+                        RemoveUnreachableCode(controlFlow.Parent, whileStatement);
+                        break;
                     default:
                         // TODO implement other controlFlows 
                         throw new NotImplementedException();
@@ -75,6 +78,14 @@ namespace Njsast.Compress
                     parent.Body.ReplaceItem(ifStatement, statement);
                     break;
             }
+        }
+
+        static void RemoveUnreachableCode(AstBlock parent, AstWhile whileStatement)
+        {
+            if (!whileStatement.Condition.IsConstValue() || TypeConverter.ToBoolean(whileStatement.Condition.ConstValue()))
+                return;
+            
+            parent.Body.RemoveItem(whileStatement);
         }
     }
 }
