@@ -321,12 +321,13 @@ namespace Njsast
             }
             
             var totalCount = _count + itemsToInsert - 1;
-            if (_a == null || totalCount > _a.Length)
+            if (totalCount > _a.Length)
                 Expand(totalCount);
-
-            AsSpan(index + 1).CopyTo(AsSpan((int) (index + itemsToInsert)));
-            newItems.AsSpan().CopyTo(AsSpan(index));
+            
             _count = totalCount;
+
+            AsSpan(index + 1, (int) _count - (int) itemsToInsert - index).CopyTo(AsSpan((int) (index + itemsToInsert)));
+            newItems.AsSpan().CopyTo(AsSpan(index));
         }
     }
 }
