@@ -105,6 +105,7 @@ namespace Njsast.Ast
         {
             if (!Left.IsConstValue(ctx)) return false;
             if (Operator == Operator.LogicalOr && TypeConverter.ToBoolean(Left.ConstValue(ctx))) return true;
+            if (Operator == Operator.LogicalAnd && !TypeConverter.ToBoolean(Left.ConstValue(ctx))) return true;
             if (!Right.IsConstValue(ctx?.StripPathResolver())) return false;
             if (Operator == Operator.LogicalOr) return true;
             if (Operator == Operator.LogicalAnd) return true;
