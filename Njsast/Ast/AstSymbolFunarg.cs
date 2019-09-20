@@ -9,7 +9,7 @@ namespace Njsast.Ast
         {
         }
 
-        public AstSymbolFunarg(Position start, Position end, string name) : base(start, end, name)
+        public AstSymbolFunarg(AstNode from, string name) : base(from, name)
         {
         }
     }

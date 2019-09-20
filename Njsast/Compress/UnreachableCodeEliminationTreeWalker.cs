@@ -65,7 +65,7 @@ namespace Njsast.Compress
 //                    case AstWith astWith:
 //                        break;
                     default:
-                        // TODO implement other controlFlows 
+                        // TODO implement other controlFlows
                         throw new NotImplementedException();
                 }
             }
@@ -73,10 +73,11 @@ namespace Njsast.Compress
 
         static void RemoveUnreachableCode(AstBlock parent, AstIf ifStatement)
         {
-            if (!ifStatement.Condition.IsConstValue())
+            var conditionValue = ifStatement.Condition.ConstValue();
+            if (conditionValue == null)
                 return;
-            
-            var statement = TypeConverter.ToBoolean(ifStatement.Condition.ConstValue())
+
+            var statement = TypeConverter.ToBoolean(conditionValue)
                 ? ifStatement.Body
                 : ifStatement.Alternative;
 
@@ -97,20 +98,20 @@ namespace Njsast.Compress
 
         static void RemoveUnreachableCode(AstBlock parent, AstWhile whileStatement)
         {
-            if (!whileStatement.Condition.IsConstValue() || TypeConverter.ToBoolean(whileStatement.Condition.ConstValue()))
+            if (TypeConverter.ToBoolean(whileStatement.Condition.ConstValue() ?? AstTrue.Instance))
                 return;
-            
+
             parent.Body.RemoveItem(whileStatement);
         }
 
         static void RemoveUnreachableCode(AstBlock parent, AstDo doStatement)
         {
-            if (!doStatement.Condition.IsConstValue() || TypeConverter.ToBoolean(doStatement.Condition.ConstValue()))
+            if (TypeConverter.ToBoolean(doStatement.Condition.ConstValue() ?? AstTrue.Instance))
                 return;
-            
+
             var treeWalker = new BreakFinderTreeWalker();
             treeWalker.Walk(doStatement);
-            
+
             if (doStatement.HasBreak)
                 return; // if do-while contains break we cannot inline it without more sophisticated inspection
 
@@ -131,7 +132,7 @@ namespace Njsast.Compress
 
         static void RemoveUnreachableCode(AstBlock parent, AstFor forStatement)
         {
-            if (!forStatement.Condition.IsConstValue() || TypeConverter.ToBoolean(forStatement.Condition.ConstValue()))
+            if (TypeConverter.ToBoolean(forStatement.Condition.ConstValue() ?? AstTrue.Instance))
                 return;
 
             switch (forStatement.Init)
@@ -144,9 +145,7 @@ namespace Njsast.Compress
                     parent.Body.ReplaceItem(forStatement, astStatement);
                     break;
                 default:
-                    parent.Body.ReplaceItem(forStatement,
-                        new AstSimpleStatement(null, forStatement.Init.Start, forStatement.Init.End,
-                            forStatement.Init));
+                    parent.Body.ReplaceItem(forStatement, new AstSimpleStatement(forStatement.Init));
                     break;
             }
         }

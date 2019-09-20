@@ -18,8 +18,9 @@ namespace Njsast.Ast
             Init = init;
         }
 
-        public AstSymbolDeclaration(Position start, Position end, string name) : base(start, end, name)
+        public AstSymbolDeclaration(AstNode from, string name, AstNode? init = null) : base(from, name)
         {
+            Init = init;
         }
     }
 }

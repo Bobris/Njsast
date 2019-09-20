@@ -14,6 +14,11 @@ namespace Njsast.Ast
             Body = body;
         }
 
+        public AstSimpleStatement(AstNode body) : base(body)
+        {
+            Body = body;
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);

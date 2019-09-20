@@ -56,7 +56,7 @@ namespace Njsast.Ast
             UsesArguments = false;
             // Arrow functions cannot use arguments
             if (!(this is AstArrow))
-                DefVariable(new AstSymbolFunarg(Start, End, "arguments"), null);
+                DefVariable(new AstSymbolFunarg(this, "arguments"), null);
         }
 
         public override AstScope Resolve()
