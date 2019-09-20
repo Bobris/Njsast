@@ -72,6 +72,7 @@ namespace Njsast.Compress
             switch (statement)
             {
                 case null:
+                case AstEmptyStatement _:
                     parent.Body.RemoveItem(ifStatement);
                     break;
                 case AstBlock blockStatement:
@@ -100,7 +101,7 @@ namespace Njsast.Compress
             switch (doStatement.Body)
             {
                 case null: // Body should not be null at all
-                case AstEmptyStatement emptyStatement:
+                case AstEmptyStatement _:
                     parent.Body.RemoveItem(doStatement);
                     break;
                 case AstBlock blockStatement:
