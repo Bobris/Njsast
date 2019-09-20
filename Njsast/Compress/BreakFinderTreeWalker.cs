@@ -8,9 +8,13 @@ namespace Njsast.Compress
     {
         protected override void Visit(AstNode node)
         {
-            if (node is AstBreak astBreak)
+            switch (node)
             {
-                if (astBreak.Label == null)
+                case AstLambda _:
+                    // any nested functions does not need to be visited
+                    StopDescending();
+                    break;
+                case AstBreak astBreak when astBreak.Label == null:
                 {
                     var parent = FindParent<AstIterationStatement, AstSwitch>();
                     if (parent is AstIterationStatement iteration)
@@ -26,10 +30,8 @@ namespace Njsast.Compress
 
                     throw new SyntaxError("break must be inside loop or switch", node.Start);
                 }
-                else
-                {
+                case AstBreak astBreak:
                     throw new NotImplementedException();
-                }
             }
         }
     }
