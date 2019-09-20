@@ -50,6 +50,9 @@ namespace Njsast.Compress
                     case AstWhile whileStatement:
                         RemoveUnreachableCode(controlFlow.Parent, whileStatement);
                         break;
+                    case AstDo doStatement:
+                        RemoveUnreachableCode(controlFlow.Parent, doStatement);
+                        break;
                     default:
                         // TODO implement other controlFlows 
                         throw new NotImplementedException();
@@ -86,6 +89,27 @@ namespace Njsast.Compress
                 return;
             
             parent.Body.RemoveItem(whileStatement);
+        }
+
+        static void RemoveUnreachableCode(AstBlock parent, AstDo doStatement)
+        {
+            if (!doStatement.Condition.IsConstValue() || TypeConverter.ToBoolean(doStatement.Condition.ConstValue()))
+                return;
+            
+            // TODO detect if doStatement contains break (we can not inline code if break is present in code block)
+            switch (doStatement.Body)
+            {
+                case null: // Body should not be null at all
+                case AstEmptyStatement emptyStatement:
+                    parent.Body.RemoveItem(doStatement);
+                    break;
+                case AstBlock blockStatement:
+                    parent.Body.ReplaceItem(doStatement, blockStatement.Body);
+                    break;
+                default:
+                    parent.Body.ReplaceItem(doStatement, doStatement.Body);
+                    break;
+            }
         }
     }
 }
