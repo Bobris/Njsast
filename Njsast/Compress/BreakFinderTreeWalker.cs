@@ -36,12 +36,6 @@ namespace Njsast.Compress
                 case AstBreak astBreak:
                     var label = astBreak.Label.Thedef;
                     var upToScope = label.Scope;
-                    var jumpTo = label.OfStatement!;
-                    if (label.IsLoop)
-                    {
-                        ((AstIterationStatement) jumpTo.Body).HasBreak = true;
-                    }
-
                     foreach (var parent in Parents())
                     {
                         if (parent is AstIterationStatement iterationStatement)
