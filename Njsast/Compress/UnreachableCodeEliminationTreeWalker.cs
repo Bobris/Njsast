@@ -53,6 +53,17 @@ namespace Njsast.Compress
                     case AstDo doStatement:
                         RemoveUnreachableCode(controlFlow.Parent, doStatement);
                         break;
+                    case AstFor forStatement:
+                        RemoveUnreachableCode(controlFlow.Parent, forStatement);
+                        break;
+//                    case AstForOf astForOf:
+//                        break;
+//                    case AstForIn astForIn:
+//                        break;
+//                    case AstLabeledStatement astLabeledStatement:
+//                        break;
+//                    case AstWith astWith:
+//                        break;
                     default:
                         // TODO implement other controlFlows 
                         throw new NotImplementedException();
@@ -114,6 +125,28 @@ namespace Njsast.Compress
                     break;
                 default:
                     parent.Body.ReplaceItem(doStatement, doStatement.Body);
+                    break;
+            }
+        }
+
+        static void RemoveUnreachableCode(AstBlock parent, AstFor forStatement)
+        {
+            if (!forStatement.Condition.IsConstValue() || TypeConverter.ToBoolean(forStatement.Condition.ConstValue()))
+                return;
+
+            switch (forStatement.Init)
+            {
+                case null:
+                case AstEmptyStatement _:
+                    parent.Body.RemoveItem(forStatement);
+                    break;
+                case AstStatement astStatement:
+                    parent.Body.ReplaceItem(forStatement, astStatement);
+                    break;
+                default:
+                    parent.Body.ReplaceItem(forStatement,
+                        new AstSimpleStatement(null, forStatement.Init.Start, forStatement.Init.End,
+                            forStatement.Init));
                     break;
             }
         }
