@@ -97,7 +97,12 @@ namespace Njsast.Compress
             if (!doStatement.Condition.IsConstValue() || TypeConverter.ToBoolean(doStatement.Condition.ConstValue()))
                 return;
             
-            // TODO detect if doStatement contains break (we can not inline code if break is present in code block)
+            var treeWalker = new BreakFinderTreeWalker();
+            treeWalker.Walk(doStatement);
+            
+            if (doStatement.HasBreak)
+                return; // if do-while contains break we cannot inline it without more sophisticated inspection
+
             switch (doStatement.Body)
             {
                 case null: // Body should not be null at all
