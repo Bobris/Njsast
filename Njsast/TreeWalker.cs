@@ -28,12 +28,26 @@ namespace Njsast
 
         protected T FindParent<T>() where T : AstNode?
         {
-            uint i = _stack.Count - 2;
+            var i = _stack.Count - 2;
             while (i < _stack.Count)
             {
                 var p = _stack[i];
                 if (p is T node)
                     return node;
+                i--;
+            }
+
+            return null;
+        }
+
+        protected AstNode? FindParent<T1,T2>() where T1 : AstNode? where T2: AstNode?
+        {
+            var i = _stack.Count - 2;
+            while (i < _stack.Count)
+            {
+                var p = _stack[i];
+                if (p is T1 || p is T2)
+                    return p;
                 i--;
             }
 
