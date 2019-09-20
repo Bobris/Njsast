@@ -56,11 +56,11 @@ namespace Njsast.Compress
                     case AstFor forStatement:
                         RemoveUnreachableCode(controlFlow.Parent, forStatement);
                         break;
+                    case AstLabeledStatement _:
+                        break;
 //                    case AstForOf astForOf:
 //                        break;
 //                    case AstForIn astForIn:
-//                        break;
-//                    case AstLabeledStatement astLabeledStatement:
 //                        break;
 //                    case AstWith astWith:
 //                        break;

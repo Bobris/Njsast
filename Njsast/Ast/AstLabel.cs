@@ -12,6 +12,8 @@ namespace Njsast.Ast
 
         public bool IsLoop;
 
+        public AstLabeledStatement? OfStatement;
+
         public string? MangledName;
 
         public AstLabel(Parser parser, Position startLoc, Position endLoc, string name) : base(parser, startLoc, endLoc,

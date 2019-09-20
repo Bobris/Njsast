@@ -1,3 +1,7 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Diagnostics;
 using Njsast.Ast;
 
 namespace Njsast
@@ -26,6 +30,58 @@ namespace Njsast
             return _stack[_stack.Count - 2 - (uint) generation];
         }
 
+        public struct Enumerator : IEnumerator<AstNode>, IEnumerable<AstNode>
+        {
+            int _position;
+            readonly AstNode[] _stack;
+
+            public Enumerator(int start, AstNode[] stack)
+            {
+                _position = start;
+                _stack = stack;
+            }
+
+            public bool MoveNext()
+            {
+                Debug.Assert(_position >= 0);
+                _position--;
+                return _position >= 0;
+            }
+
+            public void Reset()
+            {
+                throw new NotSupportedException();
+            }
+
+            public AstNode Current => _stack[_position];
+
+            object IEnumerator.Current => Current;
+
+            public void Dispose()
+            {
+            }
+
+            public Enumerator GetEnumerator()
+            {
+                return this;
+            }
+
+            IEnumerator<AstNode> IEnumerable<AstNode>.GetEnumerator()
+            {
+                return this;
+            }
+
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this;
+            }
+        }
+
+        public Enumerator Parents()
+        {
+            return new Enumerator((int) _stack.Count - 1, _stack.UnsafeBackingArray);
+        }
+
         protected T FindParent<T>() where T : AstNode?
         {
             var i = _stack.Count - 2;
@@ -40,7 +96,7 @@ namespace Njsast
             return null;
         }
 
-        protected AstNode? FindParent<T1,T2>() where T1 : AstNode? where T2: AstNode?
+        protected AstNode? FindParent<T1, T2>() where T1 : AstNode? where T2 : AstNode?
         {
             var i = _stack.Count - 2;
             while (i < _stack.Count)
@@ -62,7 +118,8 @@ namespace Njsast
 
         protected void DescendOnce()
         {
-            Descend(); StopDescending();
+            Descend();
+            StopDescending();
         }
 
         protected abstract void Visit(AstNode node);

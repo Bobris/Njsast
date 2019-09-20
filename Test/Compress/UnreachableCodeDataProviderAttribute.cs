@@ -40,13 +40,18 @@ namespace Test.Compress
                     InputFileName = inputFile,
                     InputContent = File.ReadAllText(inputFile),
                     Name = PathUtils.WithoutExtension(inputFile),
-                    ExpectedAst = File.ReadAllText(astFile),
-                    ExpectedNiceJs = File.ReadAllText(niceJsFile),
-                    ExpectedMinJs = File.ReadAllText(minJsFile)
+                    ExpectedAst = TryReadAllText(astFile),
+                    ExpectedNiceJs = TryReadAllText(niceJsFile),
+                    ExpectedMinJs = TryReadAllText(minJsFile)
                 };
             });
         }
-        
+
+        static string TryReadAllText(string name)
+        {
+            return File.Exists(name) ? File.ReadAllText(name) : "";
+        }
+
         public override IEnumerable<object[]> GetData(MethodInfo testMethod)
         {
             return GetTypedData().Select(x => new object[] {x});

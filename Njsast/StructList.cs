@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Njsast.Ast;
 
 namespace Njsast
 {
@@ -173,6 +174,8 @@ namespace Njsast
             get => _count;
         }
 
+        public T[] UnsafeBackingArray => _a;
+
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<T> AsSpan()
         {
@@ -319,11 +322,11 @@ namespace Njsast
                 _a[index] = newItems[0];
                 return;
             }
-            
+
             var totalCount = _count + itemsToInsert - 1;
             if (totalCount > _a.Length)
                 Expand(totalCount);
-            
+
             _count = totalCount;
 
             AsSpan(index + 1, (int) _count - (int) itemsToInsert - index).CopyTo(AsSpan((int) (index + itemsToInsert)));
