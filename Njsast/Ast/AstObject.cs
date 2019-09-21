@@ -28,6 +28,12 @@ namespace Njsast.Ast
             w.WalkList(Properties);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            tt.TransformList(ref Properties);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             if (Properties.Count > 0)

@@ -21,6 +21,12 @@ namespace Njsast.Ast
             w.WalkList(Definitions);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            tt.TransformList(ref Definitions);
+        }
+
         protected void DoPrint(OutputContext output, string kind)
         {
             output.Print(kind);

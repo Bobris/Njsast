@@ -31,6 +31,14 @@ namespace Njsast.Ast
             w.WalkList(ImportedNames);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            ModuleName = (AstString) tt.Transform(ModuleName);
+            ImportedName = (AstSymbolImport)tt.Transform(ImportedName);
+            tt.TransformList(ref ImportedNames);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Print("import");

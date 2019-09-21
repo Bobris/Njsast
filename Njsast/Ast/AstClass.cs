@@ -33,6 +33,14 @@ namespace Njsast.Ast
             w.WalkList(Properties);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            Name = (AstSymbolDeclaration)tt.Transform(Name);
+            Extends = tt.Transform(Extends);
+            tt.TransformList(ref Properties);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Print("class");

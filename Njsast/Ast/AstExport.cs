@@ -62,6 +62,15 @@ namespace Njsast.Ast
             w.WalkList(ExportedNames);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            ModuleName = (AstString)tt.Transform(ModuleName);
+            ExportedDefinition = tt.Transform(ExportedDefinition);
+            ExportedValue = tt.Transform(ExportedValue);
+            tt.TransformList(ref ExportedNames);
+        }
+
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);

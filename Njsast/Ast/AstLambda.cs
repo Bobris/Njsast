@@ -43,6 +43,13 @@ namespace Njsast.Ast
             base.Visit(w);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            Name = (AstSymbolDeclaration)tt.Transform(Name);
+            tt.TransformList(ref ArgNames);
+            base.Transform(tt);
+        }
+
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);

@@ -31,6 +31,14 @@ namespace Njsast.Ast
             base.Visit(w);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            Init = tt.Transform(Init);
+            Condition = tt.Transform(Condition);
+            Step = tt.Transform(Step);
+            base.Transform(tt);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Print("for");

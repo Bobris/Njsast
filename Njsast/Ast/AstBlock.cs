@@ -29,6 +29,12 @@ namespace Njsast.Ast
             w.WalkList(Body);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            tt.TransformList(ref Body);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.PrintBraced(this, false);

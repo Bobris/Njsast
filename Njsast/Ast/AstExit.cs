@@ -21,6 +21,12 @@ namespace Njsast.Ast
             w.Walk(Value);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            Value = tt.Transform(Value)!;
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Print(this is AstReturn ? "return" : "throw");

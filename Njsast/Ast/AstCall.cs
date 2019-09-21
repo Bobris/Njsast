@@ -27,6 +27,13 @@ namespace Njsast.Ast
             w.WalkList(Args);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            Expression = tt.Transform(Expression)!;
+            tt.TransformList(ref Args);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             Expression.Print(output);
