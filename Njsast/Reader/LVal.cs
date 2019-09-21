@@ -109,7 +109,7 @@ namespace Njsast.Reader
 
         // Parses spread element.
         [NotNull]
-        AstExpansion ParseSpread(DestructuringErrors refDestructuringErrors)
+        AstExpansion ParseSpread(DestructuringErrors? refDestructuringErrors)
         {
             var startLoc = Start;
             Next();

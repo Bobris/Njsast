@@ -13,7 +13,7 @@ namespace Njsast.Reader
 
         public Position Start { get; }
         public Position End { get; }
-        public string Source { get; }
+        public string? Source { get; }
 
         public override string ToString()
         {

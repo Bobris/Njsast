@@ -4,7 +4,7 @@ using Njsast.Reader;
 namespace Njsast.Ast
 {
     /// An `import` statement
-    public class AstImport : AstNode
+    public class AstImport : AstStatement
     {
         /// [AstSymbolImport] The name of the variable holding the module's default export.
         public AstSymbolImport ImportedName;

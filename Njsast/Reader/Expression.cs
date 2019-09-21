@@ -188,7 +188,7 @@ namespace Njsast.Reader
             {
                 CheckPatternErrors(refDestructuringErrors, true);
                 if (!ownDestructuringErrors) refDestructuringErrors.Reset();
-                var @operator = StringToOperator((string) Value);
+                var @operator = StringToOperator((string) GetValue());
                 var leftNode = Type == TokenType.Eq ? ToAssignable(left) : left;
                 refDestructuringErrors.ShorthandAssign = default; // reset because shorthand default was used correctly
                 CheckLVal(leftNode, false, null);
@@ -300,7 +300,7 @@ namespace Njsast.Reader
             {
                 if (prec > minPrec)
                 {
-                    var op = StringToOperator((string) Value);
+                    var op = StringToOperator((string) GetValue());
                     Next();
                     var startLoc = Start;
                     var right = ParseExpressionOperator(ParseMaybeUnary(Start, null, false), startLoc, prec, noIn);
@@ -330,7 +330,7 @@ namespace Njsast.Reader
             else if (TokenInformation.Types[Type].Prefix)
             {
                 var update = Type == TokenType.IncDec;
-                var @operator = StringToOperator((string) Value);
+                var @operator = StringToOperator((string) GetValue());
                 Next();
                 var argument = ParseMaybeUnary(Start, null, true);
                 CheckExpressionErrors(refDestructuringErrors, true);
@@ -348,7 +348,7 @@ namespace Njsast.Reader
                     return expr;
                 while (TokenInformation.Types[Type].Postfix && !CanInsertSemicolon())
                 {
-                    var @operator = StringToOperator((string) Value);
+                    var @operator = StringToOperator((string) GetValue());
                     CheckLVal(expr, false, null);
                     Next();
                     expr = new AstUnaryPostfix(this, startLocation, _lastTokEnd, ToPostfix(@operator), expr);
@@ -527,15 +527,15 @@ namespace Njsast.Reader
 
                     return id;
                 case TokenType.Regexp:
-                    var r = (RegExp) Value;
+                    var r = (RegExp) GetValue();
                     Next();
                     return new AstRegExp(this, startLocation, _lastTokEnd, r);
                 case TokenType.Num:
                     if (Value is int intValue)
                         return ParseLiteral(intValue);
-                    return ParseLiteral((double) Value);
+                    return ParseLiteral((double) GetValue());
                 case TokenType.String:
-                    var s = (string) Value;
+                    var s = (string) GetValue();
                     Next();
                     return new AstString(this, startLocation, _lastTokEnd, s);
                 case TokenType.Null:
@@ -725,13 +725,13 @@ namespace Njsast.Reader
                     RaiseRecoverable(Start, "Bad escape sequence in untagged template literal");
                 }
 
-                rawStr = (string) Value;
+                rawStr = (string) GetValue();
                 valueStr = string.Empty;
             }
             else
             {
                 rawStr = TemplateRawRegex.Replace(_input.Substring(Start.Index, End.Index - Start.Index), "\n");
-                valueStr = (string) Value;
+                valueStr = (string) GetValue();
             }
 
             Next();
@@ -1013,8 +1013,10 @@ namespace Njsast.Reader
                 var body = new StructList<AstNode>();
                 var useStrict = false;
                 var unused = ParseFunctionBody(parameters, startLoc, null, false, ref body, ref useStrict);
-                return new AstFunction(this, startLoc, _lastTokEnd, null, ref parameters, isGenerator, isAsync,
-                    ref body).SetUseStrict(useStrict) as AstFunction;
+                var astFunction = new AstFunction(this, startLoc, _lastTokEnd, null, ref parameters, isGenerator,
+                    isAsync, ref body); 
+                astFunction.SetUseStrict(useStrict);
+                return astFunction;
             }
             finally
             {
@@ -1090,7 +1092,7 @@ namespace Njsast.Reader
         }
 
         // Parse function body and check parameters.
-        bool ParseFunctionBody(in StructList<AstNode> parameters, Position startLoc, [CanBeNull] AstNode id,
+        bool ParseFunctionBody(in StructList<AstNode> parameters, Position startLoc, AstNode? id,
             bool isArrowFunction, ref StructList<AstNode> body, ref bool useStrict)
         {
             var isExpression = isArrowFunction && Type != TokenType.BraceL;
@@ -1256,10 +1258,10 @@ namespace Njsast.Reader
             var startLocation = Start;
             if (liberal && "never".Equals(Options.AllowReserved)) liberal = false;
 
-            string name = null;
+            var name = string.Empty;
             if (Type == TokenType.Name)
             {
-                name = (string) Value;
+                name = (string) GetValue();
             }
             else if (TokenInformation.Types[Type].Keyword != null)
             {
@@ -1295,7 +1297,7 @@ namespace Njsast.Reader
             var startLoc = Start;
             Next();
             var @delegate = false;
-            AstNode argument = null;
+            AstNode? argument = null;
             if (Type != TokenType.Semi && !CanInsertSemicolon() &&
                 (Type == TokenType.Star || TokenInformation.Types[Type].StartsExpression))
             {

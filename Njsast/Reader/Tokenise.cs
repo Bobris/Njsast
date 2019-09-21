@@ -171,7 +171,7 @@ namespace Njsast.Reader
         // maintains `context` and `exprAllowed`, and skips the space after
         // the token, so that the next one's `start` will point at the
         // right position.
-        void FinishToken(TokenType type, [CanBeNull] object val = null)
+        void FinishToken(TokenType type, object? val = null)
         {
             End = CurPosition();
             var prevType = Type;

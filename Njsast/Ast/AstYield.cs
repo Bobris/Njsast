@@ -13,9 +13,13 @@ namespace Njsast.Ast
         /// [Boolean] Whether this is a yield or yield* statement
         public bool IsStar;
 
-        public AstYield(Parser parser, Position startLoc, Position endLoc, AstNode expression, bool isStar) : base(
+        public AstYield(Parser parser, Position startLoc, Position endLoc, AstNode? expression, bool isStar) : base(
             parser, startLoc, endLoc)
         {
+            if (isStar && expression == null)
+            {
+                throw Parser.NewSyntaxError(startLoc, "Expression is missing in yield*");
+            }
             Expression = expression;
             IsStar = isStar;
         }

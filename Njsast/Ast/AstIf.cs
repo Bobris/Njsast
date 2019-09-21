@@ -13,7 +13,7 @@ namespace Njsast.Ast
         public AstStatement? Alternative;
 
         public AstIf(Parser parser, Position startPos, Position endPos, AstNode condition, AstStatement body,
-            AstStatement alternative) : base(parser, startPos, endPos, body)
+            AstStatement? alternative) : base(parser, startPos, endPos, body)
         {
             Condition = condition;
             Alternative = alternative;

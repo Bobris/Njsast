@@ -21,7 +21,7 @@ namespace Njsast.Reader
         // Set `allowReserved` to a boolean value to explicitly turn this on
         // an off. When this option has the value "never", reserved words
         // and keywords can also not be used as property names.
-        public object AllowReserved;
+        public object? AllowReserved;
         // When enabled, a return at the top level is not considered an
         // error.
         public bool AllowReturnOutsideFunction = false;

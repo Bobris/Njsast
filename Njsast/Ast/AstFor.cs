@@ -15,8 +15,8 @@ namespace Njsast.Ast
         /// [AstNode?] the `for` update clause, or null if empty
         public AstNode? Step;
 
-        public AstFor(Parser parser, Position startPos, Position endPos, AstStatement body, AstNode init,
-            AstNode condition, AstNode step) : base(parser, startPos, endPos, body)
+        public AstFor(Parser parser, Position startPos, Position endPos, AstStatement body, AstNode? init,
+            AstNode? condition, AstNode? step) : base(parser, startPos, endPos, body)
         {
             Init = init;
             Condition = condition;
