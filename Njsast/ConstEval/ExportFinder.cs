@@ -8,7 +8,7 @@ namespace Njsast.ConstEval
     {
         readonly string _export;
         readonly IConstEvalCtx _ctx;
-        internal AstNode Result;
+        internal AstNode? Result;
         public bool CompleteResult;
 
         public ExportFinder(string export, IConstEvalCtx ctx)

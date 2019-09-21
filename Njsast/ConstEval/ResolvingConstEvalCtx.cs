@@ -18,7 +18,7 @@ namespace Njsast.ConstEval
             return new JsModule(SourceName, name);
         }
 
-        public object ConstValue(IConstEvalCtx ctx, JsModule module, object export)
+        public object? ConstValue(IConstEvalCtx ctx, JsModule module, object export)
         {
             if (JustModuleExports)
                 return null;

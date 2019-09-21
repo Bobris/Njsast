@@ -137,7 +137,7 @@ namespace Njsast.Reader
         // and object pattern might appear (so it's possible to raise
         // delayed syntax error at correct position).
         public AstNode ParseExpression(Position startLocation, bool noIn = false,
-            [CanBeNull] DestructuringErrors refDestructuringErrors = null)
+            DestructuringErrors? refDestructuringErrors = null)
         {
             var expr = ParseMaybeAssign(startLocation, noIn, refDestructuringErrors);
             if (Type == TokenType.Comma)
@@ -158,8 +158,8 @@ namespace Njsast.Reader
         // Parse an assignment expression. This includes applications of
         // operators like `+=`.
         AstNode ParseMaybeAssign(Position startLocation, bool noIn = false,
-            DestructuringErrors refDestructuringErrors = null,
-            [CanBeNull] Func<Parser, AstNode, int, Position, AstNode> afterLeftParse = null)
+            DestructuringErrors? refDestructuringErrors = null,
+            Func<Parser, AstNode, int, Position, AstNode>? afterLeftParse = null)
         {
             if (_inGenerator && !_wasImportKeyword && IsContextual("yield"))
                 return ParseYield();
@@ -319,7 +319,7 @@ namespace Njsast.Reader
         }
 
         // Parse unary operators, both prefix and postfix.
-        AstNode ParseMaybeUnary(Position startLocation, DestructuringErrors refDestructuringErrors, bool sawUnary)
+        AstNode ParseMaybeUnary(Position startLocation, DestructuringErrors? refDestructuringErrors, bool sawUnary)
         {
             AstNode expr;
             if (_inAsync && IsContextual("await"))
@@ -576,8 +576,7 @@ namespace Njsast.Reader
                     return ParseTemplate();
             }
 
-            Raise(startLocation, "Unexpected token");
-            return null;
+            throw NewSyntaxError(startLocation, "Unexpected token");
         }
 
         [NotNull]
@@ -727,7 +726,7 @@ namespace Njsast.Reader
                 }
 
                 rawStr = (string) Value;
-                valueStr = null;
+                valueStr = string.Empty;
             }
             else
             {
@@ -771,7 +770,7 @@ namespace Njsast.Reader
 
         // Parse an object literal or binding pattern.
         [NotNull]
-        AstNode ParseObj(bool isPattern, [CanBeNull] DestructuringErrors refDestructuringErrors = null)
+        AstNode ParseObj(bool isPattern, DestructuringErrors? refDestructuringErrors = null)
         {
             var startLoc = Start;
             var first = true;
@@ -808,7 +807,7 @@ namespace Njsast.Reader
         }
 
         [NotNull]
-        AstObjectProperty ParseProperty(bool isPattern, [CanBeNull] DestructuringErrors refDestructuringErrors)
+        AstObjectProperty ParseProperty(bool isPattern, DestructuringErrors? refDestructuringErrors)
         {
             var isGenerator = false;
             bool isAsync;
@@ -862,7 +861,7 @@ namespace Njsast.Reader
 
         (AstNode value, PropertyKind kind, bool method, bool shorthand, bool computed, AstNode key) ParsePropertyValue(
             bool computed, AstNode key, bool isPattern, bool isGenerator, bool isAsync, Position startLoc,
-            [CanBeNull] DestructuringErrors refDestructuringErrors)
+            DestructuringErrors? refDestructuringErrors)
         {
             if ((isGenerator || isAsync) && Type == TokenType.Colon)
             {
@@ -948,19 +947,19 @@ namespace Njsast.Reader
 
         AstNode MakeSymbolMethod(AstNode key)
         {
-            if (key is AstNumber)
+            if (key is AstNumber astNumberKey)
             {
-                return new AstSymbolMethod(this, key.Start, key.End, ((AstNumber) key).Literal);
+                return new AstSymbolMethod(this, astNumberKey.Start, astNumberKey.End, astNumberKey.Literal ?? string.Empty);
             }
 
-            if (key is AstString)
+            if (key is AstString astStringKey)
             {
-                return new AstSymbolMethod(this, key.Start, key.End, ((AstString) key).Value);
+                return new AstSymbolMethod(this, astStringKey.Start, astStringKey.End, astStringKey.Value);
             }
 
-            if (key is AstSymbol)
+            if (key is AstSymbol astSymbolKey)
             {
-                return new AstSymbolMethod(this, key.Start, key.End, ((AstSymbol) key).Name);
+                return new AstSymbolMethod(this, astSymbolKey.Start, astSymbolKey.End, astSymbolKey.Name);
             }
 
             throw new InvalidOperationException(key.ToString());
@@ -1201,7 +1200,7 @@ namespace Njsast.Reader
         // nothing in between them to be parsed as `null` (which is needed
         // for array literals).
         void ParseExpressionList(ref StructList<AstNode> elements, TokenType close, bool allowTrailingComma,
-            bool allowEmpty, [CanBeNull] DestructuringErrors refDestructuringErrors = null)
+            bool allowEmpty, DestructuringErrors? refDestructuringErrors = null)
         {
             var first = true;
             while (!Eat(close))

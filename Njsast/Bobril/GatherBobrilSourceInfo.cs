@@ -30,7 +30,7 @@ namespace Njsast.Bobril
                 return _ctx.ResolveRequire(name);
             }
 
-            public object ConstValue(IConstEvalCtx ctx, JsModule module, object export)
+            public object? ConstValue(IConstEvalCtx ctx, JsModule module, object export)
             {
                 if (module.Name == "bobril" && export is string expName)
                 {

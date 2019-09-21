@@ -17,7 +17,7 @@ namespace Njsast.Output
         bool _mightNeedSpace;
         bool _mightNeedSemicolon;
         bool _frequencyCounting;
-        uint[] _frequency;
+        uint[] _frequency = new uint[128];
         int _currentCol;
         public int Indentation;
         const string _spaces = "                ";
@@ -31,8 +31,12 @@ namespace Njsast.Output
 
         public void InitializeForFrequencyCounting()
         {
-            _frequencyCounting = true;
-            _frequency = new uint[128];
+            if (!_frequencyCounting)
+            {
+                _frequencyCounting = true;
+                return;
+            }
+            _frequency = new uint[128];    
         }
 
         public char[] FinishFrequencyCounting()
@@ -40,6 +44,7 @@ namespace Njsast.Output
             var letters = CountAndSort("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_");
             var numbers = CountAndSort("0123456789");
             letters.AddRange(numbers);
+            _frequencyCounting = false;
             return letters.ToArray();
         }
 
@@ -347,7 +352,7 @@ namespace Njsast.Output
             node.Print(this, parens);
         }
 
-        public AstNode Parent(int distance = 0)
+        public AstNode? Parent(int distance = 0)
         {
             if (distance > (int) _stack.Count - 2)
                 return null;
@@ -716,7 +721,7 @@ namespace Njsast.Output
         public bool FirstInStatement()
         {
             var node = Parent(-1); // Current Node
-            AstNode p;
+            AstNode? p;
             for (var i = 0; (p = Parent(i)) != null; i++)
             {
                 if (p is IAstStatementWithBody statementWithBody && statementWithBody.GetBody() == node)

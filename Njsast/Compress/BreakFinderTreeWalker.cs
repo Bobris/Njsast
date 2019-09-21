@@ -34,8 +34,8 @@ namespace Njsast.Compress
                     throw new SyntaxError("break must be inside loop or switch", node.Start);
                 }
                 case AstBreak astBreak:
-                    var label = astBreak.Label.Thedef;
-                    var upToScope = label.Scope;
+                    var label = astBreak.Label?.Thedef;
+                    var upToScope = label?.Scope;
                     foreach (var parent in Parents())
                     {
                         if (parent is AstIterationStatement iterationStatement)
