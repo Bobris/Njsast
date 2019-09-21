@@ -79,8 +79,8 @@ namespace Njsast.Reader
                 return;
             var key = prop.Key;
             string name;
-            if (key is AstSymbol)
-                name = ((AstSymbol) key).Name;
+            if (key is AstSymbol astSymbolKey)
+                name = astSymbolKey.Name;
             else
             {
                 return;
@@ -1259,13 +1259,14 @@ namespace Njsast.Reader
             if (liberal && "never".Equals(Options.AllowReserved)) liberal = false;
 
             var name = string.Empty;
+            string? keyword;
             if (Type == TokenType.Name)
             {
                 name = (string) GetValue();
             }
-            else if (TokenInformation.Types[Type].Keyword != null)
+            else if ((keyword = TokenInformation.Types[Type].Keyword) != null)
             {
-                name = TokenInformation.Types[Type].Keyword;
+                name = keyword;
 
                 // To fix https://github.com/ternjs/acorn/issues/575
                 // `class` and `function` keywords push new context into this.context.

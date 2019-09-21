@@ -22,7 +22,7 @@ namespace Njsast.Ast
         /// [AstString?] Name of the file to load exports from
         public AstString? ModuleName;
 
-        public AstExport(Parser parser, Position startPos, Position endPos, AstString source, AstNode declaration,
+        public AstExport(Parser parser, Position startPos, Position endPos, AstString? source, AstNode? declaration,
             ref StructList<AstNameMapping> specifiers) : base(parser, startPos, endPos)
         {
             ModuleName = source;

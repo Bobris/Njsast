@@ -541,7 +541,7 @@ namespace Njsast.Reader
             var val = ReadInt(radix);
             if (!val.HasValue)
             {
-                Raise(Start.Increment(2), "Expected number in radix " + radix);
+                throw NewSyntaxError(Start.Increment(2), "Expected number in radix " + radix);
             }
             if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
             FinishToken(TokenType.Num, val.Value);

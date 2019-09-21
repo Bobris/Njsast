@@ -106,7 +106,7 @@ namespace Njsast.Reader
             {
                 case TokenType.Break:
                 case TokenType.Continue:
-                    return ParseBreakContinueStatement(startLocation, TokenInformation.Types[starttype].Keyword);
+                    return ParseBreakContinueStatement(startLocation, TokenInformation.Types[starttype].Keyword ?? string.Empty);
                 case TokenType.Debugger:
                     return ParseDebuggerStatement(startLocation);
                 case TokenType.Do:
@@ -661,7 +661,7 @@ namespace Njsast.Reader
             {
                 var startLocation = Start;
                 var id = ParseVarId(kind);
-                AstNode init = null;
+                AstNode? init = null;
                 if (Eat(TokenType.Eq))
                 {
                     init = ParseMaybeAssign(Start, isFor);
@@ -718,7 +718,7 @@ namespace Njsast.Reader
             if (Options.EcmaVersion < 8 && isAsync)
                 throw new InvalidOperationException();
 
-            AstSymbol id = null;
+            AstSymbol? id = null;
             if (isStatement || isNullableId)
             {
                 id = isNullableId && Type != TokenType.Name ? null : ParseIdent();
@@ -760,7 +760,7 @@ namespace Njsast.Reader
             {
                 if (id != null)
                     id = new AstSymbolDefun(id);
-                var astDefun = new AstDefun(this, startLoc, _lastTokEnd, (AstSymbolDefun) id, ref parameters, generator,
+                var astDefun = new AstDefun(this, startLoc, _lastTokEnd, id != null ? (AstSymbolDefun) id : null, ref parameters, generator,
                     isAsync, ref body);
                 astDefun.SetUseStrict(useStrict);
                 return astDefun;
@@ -768,7 +768,7 @@ namespace Njsast.Reader
 
             if (id != null)
                 id = new AstSymbolLambda(id);
-            var astFunction = new AstFunction(this, startLoc, _lastTokEnd, (AstSymbolLambda) id, ref parameters,
+            var astFunction = new AstFunction(this, startLoc, _lastTokEnd, id != null ? (AstSymbolLambda) id : null, ref parameters,
                 generator, isAsync, ref body);
             astFunction.SetUseStrict(useStrict);
             return astFunction;
@@ -799,7 +799,7 @@ namespace Njsast.Reader
                 var methodStart = Start;
                 var isGenerator = Eat(TokenType.Star);
                 var isAsync = false;
-                var isMaybeStatic = Type == TokenType.Name && (string) Value == "static";
+                var isMaybeStatic = Type == TokenType.Name && "static".Equals(Value);
                 var (computed, key) = ParsePropertyName();
                 var @static = isMaybeStatic && Type != TokenType.ParenL;
                 if (@static)
@@ -898,8 +898,7 @@ namespace Njsast.Reader
             return new AstClassExpression(this, nodeStart, _lastTokEnd, id, superClass, ref body);
         }
 
-        [CanBeNull]
-        AstSymbolDeclaration ParseClassId(bool isStatement)
+        AstSymbolDeclaration? ParseClassId(bool isStatement)
         {
             if (Type == TokenType.Name)
                 return new AstSymbolDeclaration(ParseIdent());
@@ -911,8 +910,7 @@ namespace Njsast.Reader
             return null;
         }
 
-        [CanBeNull]
-        AstNode ParseClassSuper()
+        AstNode? ParseClassSuper()
         {
             return Eat(TokenType.Extends) ? ParseExpressionSubscripts(Start) : null;
         }
@@ -964,9 +962,9 @@ namespace Njsast.Reader
             else
             {
                 // export var|const|let|function|class ...
-                AstNode declaration;
+                AstNode? declaration;
                 var specifiers = new StructList<AstNameMapping>();
-                AstString source = null;
+                AstString? source = null;
                 if (ShouldParseExportStatement())
                 {
                     declaration = ParseStatement(true);
@@ -976,7 +974,7 @@ namespace Njsast.Reader
                     }
                     else
                     {
-                        var declarationNode = (AstSymbolDeclaration) declaration;
+                        var declarationNode = (AstSymbolDeclaration) declaration; // TODO possible System.InvalidCastException
                         CheckExport(exports, declarationNode.Name, declarationNode.Start);
                     }
                 }
@@ -1086,11 +1084,11 @@ namespace Njsast.Reader
         {
             // import '...'
             var importNames = new StructList<AstNameMapping>();
-            AstSymbolImport importName = null;
-            AstString source = null;
+            AstSymbolImport? importName = null;
+            AstString? source;
             if (Type == TokenType.String)
             {
-                source = ParseExpressionAtom(Start) as AstString;
+                source = (AstString) ParseExpressionAtom(Start);
             }
             else
             {
@@ -1098,11 +1096,11 @@ namespace Njsast.Reader
                 ExpectContextual("from");
                 if (Type == TokenType.String)
                 {
-                    source = ParseExpressionAtom(Start) as AstString;
+                    source = (AstString) ParseExpressionAtom(Start);
                 }
                 else
                 {
-                    Raise(Start, "Unexpected token");
+                    throw NewSyntaxError(Start, "Unexpected token");
                 }
             }
 
@@ -1111,7 +1109,7 @@ namespace Njsast.Reader
         }
 
         // Parses a comma-separated list of module imports.
-        void ParseImportSpecifiers(ref StructList<AstNameMapping> importNames, ref AstSymbolImport importName)
+        void ParseImportSpecifiers(ref StructList<AstNameMapping> importNames, ref AstSymbolImport? importName)
         {
             var first = true;
             if (Type == TokenType.Name)
@@ -1127,7 +1125,7 @@ namespace Njsast.Reader
             if (Type == TokenType.Star)
             {
                 var startLoc = Start;
-                var starSymbol = new AstSymbolImportForeign(this, Start, End, null);
+                var starSymbol = new AstSymbolImportForeign(this, Start, End, string.Empty);
                 Next();
                 ExpectContextual("as");
                 var local = ParseIdent();

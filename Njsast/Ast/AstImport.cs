@@ -7,7 +7,7 @@ namespace Njsast.Ast
     public class AstImport : AstStatement
     {
         /// [AstSymbolImport] The name of the variable holding the module's default export.
-        public AstSymbolImport ImportedName;
+        public AstSymbolImport? ImportedName; // TODO not sure if it is correct that ImportName should be null
 
         /// [AstNameMapping*] The names of non-default imported variables
         public StructList<AstNameMapping> ImportedNames;
@@ -16,7 +16,7 @@ namespace Njsast.Ast
         public AstString ModuleName;
 
         public AstImport(Parser parser, Position startLoc, Position endLoc, AstString moduleName,
-            AstSymbolImport importName, ref StructList<AstNameMapping> specifiers) : base(parser, startLoc, endLoc)
+            AstSymbolImport? importName, ref StructList<AstNameMapping> specifiers) : base(parser, startLoc, endLoc)
         {
             ModuleName = moduleName;
             ImportedName = importName;
