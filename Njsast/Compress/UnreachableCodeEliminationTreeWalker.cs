@@ -27,7 +27,7 @@ namespace Njsast.Compress
                 {
                     throw new SemanticError("Statement with body must be placed within block", astStatementWithBody);
                 }
-                _controlFlows.Add(new ControlFlow(astStatementWithBody, _lastBlock));
+                _controlFlows?.Add(new ControlFlow(astStatementWithBody, _lastBlock));
             }
         }
 
@@ -132,7 +132,7 @@ namespace Njsast.Compress
 
         static void RemoveUnreachableCode(AstBlock parent, AstFor forStatement)
         {
-            if (TypeConverter.ToBoolean(forStatement.Condition.ConstValue() ?? AstTrue.Instance))
+            if (forStatement.Condition == null || TypeConverter.ToBoolean(forStatement.Condition.ConstValue() ?? AstTrue.Instance))
                 return;
 
             switch (forStatement.Init)
