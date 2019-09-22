@@ -135,6 +135,7 @@ namespace Njsast
 
         public ref T Last
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 if (_count == 0) ThrowEmptyList();

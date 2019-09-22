@@ -13,7 +13,7 @@ namespace Njsast
 
         protected void Descend()
         {
-            var top = Stack[Stack.Count - 1];
+            var top = Stack.Last;
             top.Visit(this);
         }
 
