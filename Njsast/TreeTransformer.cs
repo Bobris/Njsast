@@ -1,7 +1,6 @@
 using System;
 using Njsast.Ast;
 using Njsast.Output;
-using Njsast.Reader;
 
 namespace Njsast
 {
