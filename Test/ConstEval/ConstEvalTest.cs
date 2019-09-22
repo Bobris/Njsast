@@ -29,7 +29,7 @@ namespace Test.ConstEval
                 var parser = new Parser(new Options(), testData.InputContent);
                 var toplevel = parser.Parse();
                 new ScopeParser().FigureOutScope(toplevel);
-                var lastStatement = ((AstSimpleStatement) toplevel.Body[toplevel.Body.Count - 1]).Body;
+                var lastStatement = ((AstSimpleStatement) toplevel.Body.Last).Body;
                 var isConst = lastStatement.IsConstValue(ctx);
                 var val = lastStatement.ConstValue(ctx);
                 outNiceJs = isConst ? "Const\n" : "Not const\n";

@@ -183,7 +183,7 @@ namespace Njsast.Bobril
                                     if (call.Args.Count == 3 + (styleDef.IsEx ? 1 : 0))
                                     {
                                         styleDef.UserNamed = true;
-                                        var nameArg = call.Args[call.Args.Count - 1];
+                                        var nameArg = call.Args.Last;
                                         styleDef.StartLine = nameArg.Start.Line;
                                         styleDef.StartCol = nameArg.Start.Column;
                                         styleDef.EndLine = nameArg.End.Line;

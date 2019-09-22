@@ -133,6 +133,15 @@ namespace Njsast
             }
         }
 
+        public ref T Last
+        {
+            get
+            {
+                if (_count == 0) ThrowEmptyList();
+                return ref _a[_count - 1];
+            }
+        }
+
         void ThrowIndexOutOfRange(uint index)
         {
             throw new ArgumentOutOfRangeException(nameof(index), index,
