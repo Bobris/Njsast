@@ -31,7 +31,7 @@ namespace Test.Utils
 
         [Theory]
         [InlineData("Input/ConstEval\\import1.js", "Input")]
-        [InlineData("Input\\ConstEval\\import1.js", null)]
+        [InlineData("Input\\ConstEval\\import1.js", "")]
         public void Method_Parent_ShouldNotWorkCorrectlyWithNonNormalizedPaths(string path, string expectedResult)
         {
             Assert.Equal(expectedResult, PathUtils.Parent(path));

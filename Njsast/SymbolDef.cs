@@ -6,7 +6,7 @@ namespace Njsast
     public class SymbolDef
     {
         public string Name;
-        public string MangledName;
+        public string? MangledName;
         public StructList<AstSymbol> Orig;
         public AstNode? Init;
         public int Eliminated;
@@ -48,9 +48,9 @@ namespace Njsast
             }
         }
 
-        public SymbolDef Redefined()
+        public SymbolDef? Redefined()
         {
-            return Defun?.Variables.GetOrDefault(Name);
+            return Defun?.Variables?.GetOrDefault(Name);
         }
 
         public bool Unmangleable(ScopeOptions options)

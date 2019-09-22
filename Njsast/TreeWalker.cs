@@ -93,7 +93,7 @@ namespace Njsast
                 i--;
             }
 
-            return null;
+            return null!;
         }
 
         protected AstNode? FindParent<T1, T2>() where T1 : AstNode? where T2 : AstNode?

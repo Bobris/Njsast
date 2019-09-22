@@ -9,7 +9,7 @@ namespace Njsast
 {
     public struct StructList<T> : IEnumerable<T>
     {
-        T[] _a;
+        T[]? _a;
         uint _count;
 
         public StructList(in StructList<T> from) : this()
@@ -18,7 +18,7 @@ namespace Njsast
             {
                 _count = from.Count;
                 _a = new T[_count];
-                Array.Copy(from._a, _a, _count);
+                Array.Copy(from._a!, _a, _count);
             }
         }
 
@@ -29,7 +29,7 @@ namespace Njsast
                 Expand();
             }
 
-            _a[_count++] = value;
+            _a![_count++] = value;
         }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Njsast
         {
             for (var i = 0u; i < _count; i++)
             {
-                if (value.Equals(_a[i]))
+                if (value!.Equals(_a![i]))
                 {
                     return false;
                 }
@@ -58,7 +58,7 @@ namespace Njsast
                 Expand();
             }
 
-            return ref _a[_count++];
+            return ref _a![_count++];
         }
 
         public ref T Insert(uint index)
@@ -74,7 +74,7 @@ namespace Njsast
             {
                 AsSpan((int)index, (int)_count - (int)index - 1).CopyTo(AsSpan((int)index + 1, (int)(_count - index - 1)));
             }
-            _a[index] = default;
+            _a![index] = default!; // TODO This should be source of problem
             return ref _a[index];
         }
 
@@ -83,7 +83,7 @@ namespace Njsast
             if (index >= _count) throw new ArgumentOutOfRangeException(nameof(index), index, "RemoveAt out of range");
             AsSpan((int)index + 1).CopyTo(AsSpan((int)index));
             _count--;
-            _a[_count] = default;
+            _a![_count] = default!; // TODO This should be source of problem
         }
 
         public void RemoveItem(T item)
@@ -129,7 +129,7 @@ namespace Njsast
             {
                 if (index >= _count)
                     ThrowIndexOutOfRange(index);
-                return ref _a[index];
+                return ref _a![index];
             }
         }
 
@@ -174,7 +174,7 @@ namespace Njsast
             get => _count;
         }
 
-        public T[] UnsafeBackingArray => _a;
+        public T[] UnsafeBackingArray => _a!;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public Span<T> AsSpan()
@@ -219,7 +219,7 @@ namespace Njsast
 
             public T Current => _array[_position];
 
-            object IEnumerator.Current => Current;
+            object IEnumerator.Current => Current!;
 
             public void Dispose()
             {
@@ -228,12 +228,12 @@ namespace Njsast
 
         public Enumerator GetEnumerator()
         {
-            return new Enumerator((int)_count, _a);
+            return new Enumerator((int)_count, _a!);
         }
 
         IEnumerator<T> IEnumerable<T>.GetEnumerator()
         {
-            return new Enumerator((int)_count, _a);
+            return new Enumerator((int)_count, _a!);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -274,7 +274,7 @@ namespace Njsast
         {
             for (uint i = 0; i < _count; i++)
             {
-                if (!predicate(_a[i]))
+                if (!predicate(_a![i]))
                     return false;
             }
 
@@ -286,7 +286,7 @@ namespace Njsast
             var comparer = EqualityComparer<T>.Default;
             for (uint i = 0; i < _count; i++)
             {
-                if (comparer.Equals(_a[i], value))
+                if (comparer.Equals(_a![i], value))
                     return (int)i;
             }
 
@@ -303,7 +303,7 @@ namespace Njsast
         public void ReplaceItem(T originalItem, T newItem)
         {
             var index = IndexOf(originalItem);
-            _a[index] = newItem;
+            _a![index] = newItem;
         }
 
         public void ReplaceItem(T originalItem, StructList<T> newItems)
@@ -319,12 +319,12 @@ namespace Njsast
 
             if (itemsToInsert == 1)
             {
-                _a[index] = newItems[0];
+                _a![index] = newItems[0];
                 return;
             }
 
             var totalCount = _count + itemsToInsert - 1;
-            if (totalCount > _a.Length)
+            if (totalCount > _a!.Length)
                 Expand(totalCount);
 
             _count = totalCount;

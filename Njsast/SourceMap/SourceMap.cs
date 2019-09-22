@@ -15,22 +15,27 @@ namespace Njsast.SourceMap
     {
         public SourceMap()
         {
+            sources = new List<string>();
+        }
+        public SourceMap(List<string> sources)
+        {
             version = 3;
+            this.sources = sources;
         }
 
         public int version { get; set; }
-        public string file { get; set; }
-        public string sourceRoot { get; set; }
+        public string? file { get; set; }
+        public string sourceRoot { get; set; } = string.Empty;
         public List<string> sources { get; set; }
-        public List<string> sourcesContent { get; set; }
-        public List<string> names { get; set; }
-        public string mappings { get; set; }
+        public List<string>? sourcesContent { get; set; }
+        public List<string>? names { get; set; }
+        public string mappings { get; set; } = string.Empty;
 
         public const uint CacheLineSkip = 8;
 
         [JsonIgnore]
         // cache for every multiply of CacheLineSkip output lines
-        SourceMapPositionTrinity[] _searchCache;
+        SourceMapPositionTrinity[]? _searchCache;
 
         struct SourceMapPositionTrinity
         {
@@ -58,7 +63,6 @@ namespace Njsast.SourceMap
         {
             return new SourceMap
             {
-                sources = new List<string>(),
                 mappings = ""
             };
         }
@@ -74,9 +78,8 @@ namespace Njsast.SourceMap
                     sb.Append(";AACA");
             if (endsWithNL)
                 sb.Append(";");
-            return new SourceMap
+            return new SourceMap(new List<string> {fileName})
             {
-                sources = new List<string> {fileName},
                 mappings = sb.ToString()
             };
         }
@@ -238,7 +241,7 @@ namespace Njsast.SourceMap
             if (line > CacheLineSkip)
             {
                 var pos = (uint) (line - 1) / CacheLineSkip;
-                ref var entry = ref _searchCache[pos - 1];
+                ref var entry = ref _searchCache![pos - 1];
                 outputLine = (int) (pos * CacheLineSkip);
                 ip = entry.Pos;
                 inSourceIndex = entry.Index;

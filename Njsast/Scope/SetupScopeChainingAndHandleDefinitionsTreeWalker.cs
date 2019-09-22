@@ -173,7 +173,9 @@ namespace Njsast.Scope
             }
             else if (node is AstSymbolCatch astSymbolCatch)
             {
-                _currentScope.DefVariable(astSymbolCatch, null).Defun = _defun;
+                var symbol = _currentScope?.DefVariable(astSymbolCatch, null);
+                if (symbol != null)
+                    symbol.Defun = _defun;
             }
             else if (node is AstLabelRef labelRef)
             {

@@ -42,12 +42,12 @@ namespace Njsast.Utils
         public static string Parent(string path)
         {
             if (path.Length == 0)
-                return null;
+                return string.Empty;
             var p = path.Length - 1;
             if (path[0] == '/')
             {
                 if (p == 0)
-                    return null;
+                    return string.Empty;
                 if (p > 1 && path[1] == '/')
                 {
                     if (path[p] == '/')
@@ -55,7 +55,7 @@ namespace Njsast.Utils
                     while (path[p] != '/')
                         p--;
                     if (p == 1)
-                        return null;
+                        return string.Empty;
                     return path.Substring(0, p);
                 }
 
@@ -69,13 +69,13 @@ namespace Njsast.Utils
             }
 
             if (p <= 2)
-                return null;
+                return string.Empty;
             if (path[p] == '/')
                 p--;
             while (p >= 0 && path[p] != '/')
                 p--;
             if (p < 0)
-                return null;
+                return string.Empty;
             if (p == 2)
             {
                 return path.Substring(0, 3);
@@ -135,9 +135,7 @@ namespace Njsast.Utils
         public static (string, string) SplitDirAndFile(string path)
         {
             var dir = Parent(path);
-            if (dir == null)
-                return (null, path);
-            return (dir, path.Substring(dir.Length + 1));
+            return dir == string.Empty ? (string.Empty, path) : (dir, path.Substring(dir.Length + 1));
         }
 
         public static string Name(string path)

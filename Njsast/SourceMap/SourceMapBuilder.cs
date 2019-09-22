@@ -43,10 +43,9 @@ namespace Njsast.SourceMap
             var sources = new List<string>((int) _sources.Count);
             foreach (var s in _sources) sources.Add(PathUtils.Subtract(s, subtractDir));
 
-            return new SourceMap
+            return new SourceMap(sources)
             {
                 sourceRoot = srcRoot,
-                sources = sources,
                 mappings = new string(_mappings.AsSpan())
             };
         }
@@ -107,7 +106,7 @@ namespace Njsast.SourceMap
             } while (num > 0);
         }
 
-        public void AddSource(ReadOnlySpan<char> content, SourceMap sourceMap = null)
+        public void AddSource(ReadOnlySpan<char> content, SourceMap? sourceMap = null)
         {
             if (sourceMap == null)
             {
@@ -228,7 +227,7 @@ namespace Njsast.SourceMap
             }
         }
 
-        public ISourceAdder CreateSourceAdder(string content, SourceMap sourceMap = null)
+        public ISourceAdder CreateSourceAdder(string content, SourceMap? sourceMap = null)
         {
             if (sourceMap == null)
                 return new PlainTextAdder(this, content);
@@ -608,7 +607,7 @@ namespace Njsast.SourceMap
             _newSourceCol = sourceCol;
         }
 
-        string _sourceFileCache;
+        string? _sourceFileCache;
         int _sourceIndexCache;
 
         public void AddMapping(string? sourceFile, int line, int col, bool allowMerge)
