@@ -189,7 +189,7 @@ namespace Njsast.Reader
                 CheckPatternErrors(refDestructuringErrors, true);
                 if (!ownDestructuringErrors) refDestructuringErrors.Reset();
                 var @operator = StringToOperator((string) GetValue());
-                var leftNode = Type == TokenType.Eq ? ToAssignable(left) : left;
+                var leftNode = Type == TokenType.Eq ? ToAssignable(left)! : left;
                 refDestructuringErrors.ShorthandAssign = default; // reset because shorthand default was used correctly
                 CheckLVal(leftNode, false, null);
                 Next();

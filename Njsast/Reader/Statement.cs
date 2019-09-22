@@ -335,7 +335,7 @@ namespace Njsast.Reader
                 var init = ParseExpression(Start, true, refDestructuringErrors);
                 if (Type == TokenType.In || Options.EcmaVersion >= 6 && IsContextual("of"))
                 {
-                    init = ToAssignable(init);
+                    init = ToAssignable(init)!;
                     CheckLVal(init, false, null);
                     CheckPatternErrors(refDestructuringErrors, true);
                     return ParseForIn(nodeStart, init);
