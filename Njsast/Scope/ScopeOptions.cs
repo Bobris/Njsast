@@ -16,6 +16,6 @@ namespace Njsast.Scope
         }
 
         // More like context
-        public char[] Chars;
+        public char[] Chars = new char[0];
     }
 }

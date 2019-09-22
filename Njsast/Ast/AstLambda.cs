@@ -50,7 +50,7 @@ namespace Njsast.Ast
             writer.PrintProp("Async", Async);
         }
 
-        public override void InitScopeVars(AstScope parentScope)
+        public override void InitScopeVars(AstScope? parentScope)
         {
             base.InitScopeVars(parentScope);
             UsesArguments = false;

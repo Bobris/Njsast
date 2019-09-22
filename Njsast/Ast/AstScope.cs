@@ -58,7 +58,7 @@ namespace Njsast.Ast
             writer.PrintProp("HasUseStrictDirective", HasUseStrictDirective);
         }
 
-        public virtual void InitScopeVars(AstScope parentScope)
+        public virtual void InitScopeVars(AstScope? parentScope)
         {
             Variables = new Dictionary<string, SymbolDef>();
             Functions = new Dictionary<string, SymbolDef>();
@@ -91,7 +91,7 @@ namespace Njsast.Ast
             return symbol.Thedef = def;
         }
 
-        public SymbolDef DefFunction(AstSymbol symbol, AstNode init)
+        public SymbolDef DefFunction(AstSymbol symbol, AstNode? init)
         {
             var def = DefVariable(symbol, init);
             if (def.Init == null || def.Init is AstDefun) def.Init = init;

@@ -80,7 +80,7 @@ namespace Njsast.Runtime
         }
 
         /// http://www.ecma-international.org/ecma-262/5.1/#sec-9.3
-        public static double ToNumber(object o)
+        public static double ToNumber(object? o)
         {
             switch (o)
             {
@@ -233,7 +233,7 @@ namespace Njsast.Runtime
         }
 
         /// http://www.ecma-international.org/ecma-262/6.0/#sec-tostring
-        public static string ToString(object o)
+        public static string ToString(object? o)
         {
             switch (o)
             {
@@ -272,12 +272,12 @@ namespace Njsast.Runtime
             }
         }
 
-        public static object ToPrimitiveString(object o)
+        public static object? ToPrimitiveString(object o)
         {
             return ToPrimitive(o);
         }
 
-        public static object ToPrimitive(object o)
+        public static object? ToPrimitive(object o)
         {
             switch (o)
             {

@@ -256,7 +256,7 @@ namespace Njsast.Ast
             return null;
         }
 
-        static object LessThan(object left, object right)
+        static object LessThan(object? left, object? right)
         {
             if (left is string leftStr && right is string rightStr)
             {
