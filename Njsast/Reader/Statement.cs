@@ -181,10 +181,10 @@ namespace Njsast.Reader
                 return ParseFunctionStatement(startLocation, true);
             }
 
-            var maybeName = GetValue();
+            var maybeName = Value;
             var expr = ParseExpression(startLocation);
             if (starttype == TokenType.Name && expr is AstSymbol identifierNode && Eat(TokenType.Colon))
-                return ParseLabelledStatement(startLocation, (string) maybeName, identifierNode);
+                return ParseLabelledStatement(startLocation, maybeName is string stringName ? stringName : string.Empty, identifierNode);
             return ParseExpressionStatement(startLocation, expr);
         }
 
