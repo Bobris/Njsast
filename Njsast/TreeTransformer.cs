@@ -1,11 +1,35 @@
+using System;
 using Njsast.Ast;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast
 {
     public abstract class TreeTransformer : TreeWalkerBase
     {
-        public static readonly AstNode Remove = new AstHole(null, new Position(), new Position());
+        class AstRemoveMe : AstNode
+        {
+            public AstRemoveMe()
+            {
+            }
+
+            public override void Visit(TreeWalker w)
+            {
+                throw new InvalidOperationException();
+            }
+
+            public override void Transform(TreeTransformer tt)
+            {
+                throw new InvalidOperationException();
+            }
+
+            public override void CodeGen(OutputContext output)
+            {
+                throw new InvalidOperationException();
+            }
+        }
+
+        public static readonly AstNode Remove = new AstRemoveMe();
 
         protected void Descend()
         {
