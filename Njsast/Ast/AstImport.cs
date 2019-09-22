@@ -35,7 +35,8 @@ namespace Njsast.Ast
         {
             base.Transform(tt);
             ModuleName = (AstString) tt.Transform(ModuleName);
-            ImportedName = (AstSymbolImport)tt.Transform(ImportedName);
+            if (ImportedName != null)
+                ImportedName = (AstSymbolImport)tt.Transform(ImportedName);
             tt.TransformList(ref ImportedNames);
         }
 

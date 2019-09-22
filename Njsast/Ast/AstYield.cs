@@ -33,7 +33,8 @@ namespace Njsast.Ast
         public override void Transform(TreeTransformer tt)
         {
             base.Transform(tt);
-            Expression = tt.Transform(Expression);
+            if (Expression != null)
+                Expression = tt.Transform(Expression);
         }
 
         public override void DumpScalars(IAstDumpWriter writer)

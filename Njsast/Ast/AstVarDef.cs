@@ -30,7 +30,8 @@ namespace Njsast.Ast
         {
             base.Transform(tt);
             Name = tt.Transform(Name);
-            Value = tt.Transform(Value);
+            if (Value != null)
+                Value = tt.Transform(Value);
         }
 
         public override void CodeGen(OutputContext output)

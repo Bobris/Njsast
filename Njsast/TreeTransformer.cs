@@ -43,9 +43,8 @@ namespace Njsast
         /// After descend if returns non null it will be returned from Transform
         protected abstract AstNode? After(AstNode node, bool inList);
 
-        public AstNode? Transform(AstNode? start, bool inList = false)
+        public AstNode Transform(AstNode start, bool inList = false)
         {
-            if (start == null) return null;
             Stack.Add(start);
             try
             {

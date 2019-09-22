@@ -45,7 +45,8 @@ namespace Njsast.Ast
 
         public override void Transform(TreeTransformer tt)
         {
-            Name = (AstSymbolDeclaration)tt.Transform(Name);
+            if (Name != null)
+                Name = (AstSymbolDeclaration)tt.Transform(Name);
             tt.TransformList(ref ArgNames);
             base.Transform(tt);
         }

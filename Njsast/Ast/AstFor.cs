@@ -33,9 +33,12 @@ namespace Njsast.Ast
 
         public override void Transform(TreeTransformer tt)
         {
-            Init = tt.Transform(Init);
-            Condition = tt.Transform(Condition);
-            Step = tt.Transform(Step);
+            if (Init != null)
+                Init = tt.Transform(Init);
+            if (Condition != null)
+                Condition = tt.Transform(Condition);
+            if (Step != null)
+                Step = tt.Transform(Step);
             base.Transform(tt);
         }
 

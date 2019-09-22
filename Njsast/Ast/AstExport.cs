@@ -65,9 +65,12 @@ namespace Njsast.Ast
         public override void Transform(TreeTransformer tt)
         {
             base.Transform(tt);
-            ModuleName = (AstString)tt.Transform(ModuleName);
-            ExportedDefinition = tt.Transform(ExportedDefinition);
-            ExportedValue = tt.Transform(ExportedValue);
+            if (ModuleName != null)
+                ModuleName = (AstString)tt.Transform(ModuleName);
+            if (ExportedDefinition != null)
+                ExportedDefinition = tt.Transform(ExportedDefinition);
+            if (ExportedValue != null)
+                ExportedValue = tt.Transform(ExportedValue);
             tt.TransformList(ref ExportedNames);
         }
 

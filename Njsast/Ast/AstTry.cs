@@ -29,8 +29,10 @@ namespace Njsast.Ast
         public override void Transform(TreeTransformer tt)
         {
             base.Transform(tt);
-            Bcatch = (AstCatch) tt.Transform(Bcatch);
-            Bfinally = (AstFinally) tt.Transform(Bfinally);
+            if (Bcatch != null)
+                Bcatch = (AstCatch) tt.Transform(Bcatch);
+            if (Bfinally != null)
+                Bfinally = (AstFinally) tt.Transform(Bfinally);
         }
 
         public override void CodeGen(OutputContext output)

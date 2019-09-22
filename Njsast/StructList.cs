@@ -138,7 +138,7 @@ namespace Njsast
             get
             {
                 if (_count == 0) ThrowEmptyList();
-                return ref _a[_count - 1];
+                return ref _a![_count - 1];
             }
         }
 
