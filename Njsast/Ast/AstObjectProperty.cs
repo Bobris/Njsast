@@ -7,7 +7,7 @@ namespace Njsast.Ast
     public abstract class AstObjectProperty : AstNode
     {
         /// [AstNode] property name.
-        public readonly AstNode Key;
+        public AstNode Key;
 
         /// [AstNode] property value. For getters and setters this is an AstAccessor.
         public AstNode Value;
@@ -30,6 +30,13 @@ namespace Njsast.Ast
             base.Visit(w);
             w.Walk(Key);
             w.Walk(Value);
+        }
+
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            Key = tt.Transform(Key);
+            Value = tt.Transform(Value);
         }
 
         protected void PrintGetterSetter(OutputContext output, string? type, bool @static)

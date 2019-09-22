@@ -21,6 +21,12 @@ namespace Njsast.Ast
             base.Visit(w);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            Label = (AstLabel)tt.Transform(Label);
+            base.Transform(tt);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             var name = Label.MangledName ?? Label.Name;

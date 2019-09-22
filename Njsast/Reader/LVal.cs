@@ -98,7 +98,7 @@ namespace Njsast.Reader
 
             if (expressionList.Count != 0)
             {
-                var last = expressionList[expressionList.Count - 1];
+                var last = expressionList.Last;
                 if (Options.EcmaVersion == 6 && isBinding && last is AstExpansion restElementNode &&
                     !(restElementNode.Expression is AstSymbol))
                 {

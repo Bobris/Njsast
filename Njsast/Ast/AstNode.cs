@@ -56,6 +56,10 @@ namespace Njsast.Ast
         {
         }
 
+        public virtual void Transform(TreeTransformer tt)
+        {
+        }
+
         public virtual void DumpScalars(IAstDumpWriter writer)
         {
         }

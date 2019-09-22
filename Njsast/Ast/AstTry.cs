@@ -26,6 +26,13 @@ namespace Njsast.Ast
             w.Walk(Bfinally);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            Bcatch = (AstCatch) tt.Transform(Bcatch);
+            Bfinally = (AstFinally) tt.Transform(Bfinally);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Print("try");

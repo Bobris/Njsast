@@ -38,9 +38,17 @@ namespace Njsast.Ast
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);
-            if (Property is AstNode)
-                w.Walk((AstNode) Property);
+            if (Property is AstNode node)
+                w.Walk(node);
             w.Walk(Expression);
+        }
+
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            if (Property is AstNode node)
+                Property = tt.Transform(node);
+            Expression = tt.Transform(Expression);
         }
 
         public override void DumpScalars(IAstDumpWriter writer)

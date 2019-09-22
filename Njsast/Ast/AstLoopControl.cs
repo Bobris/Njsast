@@ -21,6 +21,12 @@ namespace Njsast.Ast
             w.Walk(Label);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            Label = (AstLabelRef)tt.Transform(Label);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Print(this is AstBreak ? "break" : "continue");

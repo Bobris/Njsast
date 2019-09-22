@@ -26,6 +26,13 @@ namespace Njsast.Ast
             w.Walk(Alternative);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            Condition = tt.Transform(Condition)!;
+            base.Transform(tt);
+            Alternative = (AstStatement)tt.Transform(Alternative);
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Print("if");

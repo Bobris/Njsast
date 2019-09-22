@@ -30,6 +30,12 @@ namespace Njsast.Ast
             w.Walk(Expression);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            Expression = tt.Transform(Expression);
+        }
+
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);

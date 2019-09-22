@@ -33,6 +33,13 @@ namespace Njsast.Ast
             w.Walk(Right);
         }
 
+        public override void Transform(TreeTransformer tt)
+        {
+            base.Transform(tt);
+            Left = tt.Transform(Left)!;
+            Right = tt.Transform(Right)!;
+        }
+
         public override void DumpScalars(IAstDumpWriter writer)
         {
             base.DumpScalars(writer);
