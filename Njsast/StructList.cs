@@ -122,6 +122,17 @@ namespace Njsast
             Array.Resize(ref _a, (int)Math.Min(int.MaxValue, Math.Max(count, _count * 2)));
         }
 
+        public ref T this[int index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                if ((uint)index >= _count)
+                    ThrowIndexOutOfRange(index);
+                return ref _a![index];
+            }
+        }
+
         public ref T this[uint index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -130,6 +141,24 @@ namespace Njsast
                 if (index >= _count)
                     ThrowIndexOutOfRange(index);
                 return ref _a![index];
+            }
+        }
+
+        public ref T this[Index index]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return ref this[index.GetOffset((int)_count)];
+            }
+        }
+
+        public Span<T> this[Range range]
+        {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            get
+            {
+                return AsSpan()[range];
             }
         }
 
@@ -144,6 +173,12 @@ namespace Njsast
         }
 
         void ThrowIndexOutOfRange(uint index)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index), index,
+                "List has " + _count + " items. Accessing " + index);
+        }
+
+        void ThrowIndexOutOfRange(int index)
         {
             throw new ArgumentOutOfRangeException(nameof(index), index,
                 "List has " + _count + " items. Accessing " + index);
