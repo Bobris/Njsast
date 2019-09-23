@@ -108,40 +108,6 @@ namespace Njsast.Ast
             return false;
         }
 
-        public override bool IsConstValue(IConstEvalCtx? ctx = null)
-        {
-            if (!Left.IsConstValue(ctx)) return false;
-            var leftConstValue = Left.ConstValue(ctx);
-            if (Operator == Operator.LogicalOr && leftConstValue != null &&
-                TypeConverter.ToBoolean(leftConstValue)) return true;
-            if (Operator == Operator.LogicalAnd && leftConstValue != null &&
-                !TypeConverter.ToBoolean(leftConstValue)) return true;
-            if (!Right.IsConstValue(ctx?.StripPathResolver())) return false;
-            if (Operator == Operator.LogicalOr) return true;
-            if (Operator == Operator.LogicalAnd) return true;
-            if (Operator == Operator.BitwiseOr) return true;
-            if (Operator == Operator.BitwiseAnd) return true;
-            if (Operator == Operator.BitwiseXOr) return true;
-            if (Operator == Operator.Addition) return true;
-            if (Operator == Operator.Subtraction) return true;
-            if (Operator == Operator.Multiplication) return true;
-            if (Operator == Operator.Division) return true;
-            if (Operator == Operator.Modulus) return true;
-            if (Operator == Operator.Power) return true;
-            if (Operator == Operator.Equals) return true;
-            if (Operator == Operator.NotEquals) return true;
-            if (Operator == Operator.StrictEquals) return true;
-            if (Operator == Operator.StrictNotEquals) return true;
-            if (Operator == Operator.LessThan) return true;
-            if (Operator == Operator.LessEquals) return true;
-            if (Operator == Operator.GreaterThan) return true;
-            if (Operator == Operator.GreaterEquals) return true;
-            if (Operator == Operator.LeftShift) return true;
-            if (Operator == Operator.RightShift) return true;
-            if (Operator == Operator.RightShiftUnsigned) return true;
-            return false;
-        }
-
         public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             var left = Left.ConstValue(ctx);

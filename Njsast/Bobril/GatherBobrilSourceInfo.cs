@@ -145,9 +145,9 @@ namespace Njsast.Bobril
                         return;
                     }
                     _evalCtx.JustModuleExports = true;
-                    if (call.Expression.IsConstValue(_evalCtx))
+                    var fn = call.Expression.ConstValue(_evalCtx);
+                    if (fn != null)
                     {
-                        var fn = call.Expression.ConstValue(_evalCtx);
                         _evalCtx.JustModuleExports = false;
                         if (fn is JsModuleExport exp)
                         {

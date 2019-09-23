@@ -103,12 +103,6 @@ namespace Njsast.Ast
             builder.AddMapping(null, 0, 0, false);
         }
 
-        /// Optimistic test if this AST Tree is constant expression
-        public virtual bool IsConstValue(IConstEvalCtx? ctx = null)
-        {
-            return false;
-        }
-
         /// Returns null if not constant
         public virtual object? ConstValue(IConstEvalCtx? ctx = null)
         {

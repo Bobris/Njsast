@@ -69,21 +69,6 @@ namespace Njsast.Ast
                    && assign.Left == p;
         }
 
-        public override bool IsConstValue(IConstEvalCtx? ctx = null)
-        {
-            if (Expression is AstSymbolRef symb)
-            {
-                var def = symb.Thedef;
-                if (def == null || ctx == null || Args.Count != 1) return false;
-                if (def.Undeclared && def.Global && def.Name == "require")
-                {
-                    return Args[0].IsConstValue(ctx);
-                }
-            }
-
-            return false;
-        }
-
         public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             if (Expression is AstSymbolRef symb)

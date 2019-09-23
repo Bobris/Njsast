@@ -116,7 +116,7 @@ namespace Njsast.Ast
             if (def == null) return false;
             if (def.Undeclared) return false;
             if (def.Orig.Count != 1) return false;
-            return def.Orig[0] is AstSymbolDefun || def.Orig[0].IsConstValue();
+            return def.Orig[0] is AstSymbolDefun || (def.Orig[0].ConstValue() != null);
         }
     }
 }

@@ -70,21 +70,6 @@ namespace Njsast.Ast
             return output.FirstInStatement();
         }
 
-        public override bool IsConstValue(IConstEvalCtx? ctx = null)
-        {
-            var allowEvalObjectWithJustConstKeys = ctx?.AllowEvalObjectWithJustConstKeys ?? false;
-            for (var i = 0u; i < Properties.Count; i++)
-            {
-                var prop = Properties[i];
-                if (!(prop is AstObjectKeyVal keyVal))
-                    return false;
-                if (!keyVal.Key.IsConstValue(ctx)) return false;
-                if (!allowEvalObjectWithJustConstKeys && !keyVal.Value.IsConstValue(ctx)) return false;
-            }
-
-            return true;
-        }
-
         public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             var allowEvalObjectWithJustConstKeys = ctx?.AllowEvalObjectWithJustConstKeys ?? false;

@@ -14,24 +14,6 @@ namespace Njsast.Ast
         {
         }
 
-        public override bool IsConstValue(IConstEvalCtx? ctx = null)
-        {
-            if (Thedef == null) return false;
-            if (Thedef.Global && Thedef.Undeclared)
-            {
-                if (Name == "Infinity") return true;
-                if (Name == "NaN") return true;
-                if (Name == "undefined") return true;
-                return false;
-            }
-
-            if (Thedef.IsSingleInit)
-            {
-                return (Thedef.VarInit == null && IsVarLetConst(Thedef.Orig[0])) || (Thedef.VarInit?.IsConstValue(ctx) ?? false);
-            }
-            return false;
-        }
-
         static bool IsVarLetConst(AstSymbol astSymbol)
         {
             var t = astSymbol.GetType();

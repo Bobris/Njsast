@@ -96,16 +96,6 @@ namespace Njsast.Ast
             return false;
         }
 
-        public override bool IsConstValue(IConstEvalCtx? ctx = null)
-        {
-            if (ctx != null && ctx.JustModuleExports)
-            {
-                if (this is AstSub) return false;
-                if (!(Expression is AstSymbolRef)) return false;
-            }
-            return Expression.IsConstValue(ctx) && (Property is string || ((AstNode) Property).IsConstValue(ctx));
-        }
-
         public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             var expr = Expression.ConstValue(ctx);

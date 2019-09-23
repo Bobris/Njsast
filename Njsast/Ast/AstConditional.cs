@@ -69,11 +69,6 @@ namespace Njsast.Ast
             return false;
         }
 
-        public override bool IsConstValue(IConstEvalCtx? ctx = null)
-        {
-            return Condition.IsConstValue(ctx);
-        }
-
         public override object? ConstValue(IConstEvalCtx? ctx = null)
         {
             var cond = Condition.ConstValue(ctx?.StripPathResolver());
