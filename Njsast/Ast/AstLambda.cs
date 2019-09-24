@@ -56,6 +56,8 @@ namespace Njsast.Ast
             base.DumpScalars(writer);
             writer.PrintProp("IsGenerator", IsGenerator);
             writer.PrintProp("Async", Async);
+            writer.PrintProp("Pure", Pure ?? false);
+            writer.PrintProp("Impure", !Pure ?? false);
         }
 
         public override void InitScopeVars(AstScope? parentScope)

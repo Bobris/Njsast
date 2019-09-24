@@ -7,7 +7,7 @@ namespace Njsast.Bobril
 {
     public class CommentListener : TreeWalker
     {
-        HashSet<string> _pureFunctionNames = new HashSet<string>();
+        readonly HashSet<string> _pureFunctionNames = new HashSet<string>();
         StructList<Position> _classStartsAfterPositions = new StructList<Position>();
 
         public void OnComment(bool block, string content, SourceLocation sourceLocation)
@@ -25,7 +25,9 @@ namespace Njsast.Bobril
                     {
                         _pureFunctionNames.Add(functionName.ToString());
                     }
-                    c = c.Slice(pos);
+
+                    if (c.Length == pos) break;
+                    c = c.Slice(pos + 1);
                 }
             }
             else if (block && c.IndexOf("@class") >= 0)

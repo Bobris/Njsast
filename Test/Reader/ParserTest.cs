@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Njsast.AstDump;
+using Njsast.Bobril;
 using Njsast.Output;
 using Njsast.Reader;
 using Njsast.SourceMap;
@@ -43,14 +44,20 @@ namespace Test.Reader
             try
             {
                 var comments = new List<(bool block, string content, SourceLocation location)>();
+                var commentListener = new CommentListener();
                 var parser = new Parser(
                     new Options
                     {
                         SourceFile = testData.SourceName, EcmaVersion = testData.EcmaScriptVersion, OnComment =
-                            (block, content, location) => { comments.Add((block, content, location)); }
+                            (block, content, location) =>
+                            {
+                                commentListener.OnComment(block, content, location);
+                                comments.Add((block, content, location));
+                            }
                     },
                     testData.Input);
                 var toplevel = parser.Parse();
+                commentListener.Walk(toplevel);
                 if (testData.InputSourceMap != null)
                 {
                     SourceMap.Parse(testData.InputSourceMap, ".").ResolveInAst(toplevel);
