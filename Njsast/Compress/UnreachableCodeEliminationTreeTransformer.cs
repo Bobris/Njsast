@@ -6,7 +6,7 @@ namespace Njsast.Compress
 {
     public class UnreachableCodeEliminationTreeTransformer : TreeTransformer
     {
-        protected override AstNode? Before(AstNode node, bool inList)
+        protected override AstNode Before(AstNode node, bool inList)
         {
             switch (node)
             {
@@ -19,7 +19,7 @@ namespace Njsast.Compress
                 case AstFor forStatement:
                     return RemoveUnreachableCode(forStatement);
                 case AstLabeledStatement _:
-                    return null;
+                    return node;
                 case AstForOf _:
                     throw new NotImplementedException();
                 case AstForIn _:
@@ -27,20 +27,20 @@ namespace Njsast.Compress
                 case AstWith _:
                     throw new NotImplementedException();
                 default:
-                    return null;
+                    return node;
             }
         }
 
-        protected override AstNode? After(AstNode node, bool inList)
+        protected override AstNode After(AstNode node, bool inList)
         {
-            return null;
+            throw new NotSupportedException();
         }
         
-        static AstNode? RemoveUnreachableCode(AstIf ifStatement)
+        static AstNode RemoveUnreachableCode(AstIf ifStatement)
         {
             var conditionValue = ifStatement.Condition.ConstValue();
             if (conditionValue == null)
-                return null;
+                return ifStatement;
 
             var statement = TypeConverter.ToBoolean(conditionValue)
                 ? ifStatement.Body
@@ -55,24 +55,24 @@ namespace Njsast.Compress
             }
         }
 
-        static AstNode? RemoveUnreachableCode(AstWhile whileStatement)
+        static AstNode RemoveUnreachableCode(AstWhile whileStatement)
         {
             if (TypeConverter.ToBoolean(whileStatement.Condition.ConstValue() ?? AstTrue.Instance))
-                return null;
+                return whileStatement;
 
             return Remove;
         }
 
-        static AstNode? RemoveUnreachableCode(AstDo doStatement)
+        static AstNode RemoveUnreachableCode(AstDo doStatement)
         {
             if (TypeConverter.ToBoolean(doStatement.Condition.ConstValue() ?? AstTrue.Instance))
-                return null;
+                return doStatement;
 
             var treeWalker = new BreakFinderTreeWalker();
             treeWalker.Walk(doStatement);
 
             if (doStatement.HasBreak)
-                return null; // if do-while contains break we cannot inline it without more sophisticated inspection
+                return doStatement; // if do-while contains break we cannot inline it without more sophisticated inspection
 
             switch (doStatement.Body)
             {
@@ -84,10 +84,10 @@ namespace Njsast.Compress
             }
         }
 
-        static AstNode? RemoveUnreachableCode(AstFor forStatement)
+        static AstNode RemoveUnreachableCode(AstFor forStatement)
         {
             if (forStatement.Condition == null || TypeConverter.ToBoolean(forStatement.Condition.ConstValue() ?? AstTrue.Instance))
-                return null;
+                return forStatement;
 
             switch (forStatement.Init)
             {
