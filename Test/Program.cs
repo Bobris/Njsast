@@ -37,10 +37,10 @@ namespace Test
                 CheckError(constEvalData.ExpectedNiceJs, outNiceJs, ref errors, "const eval", file, "nicejs");
             }
 
-            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnreachableCode").GetTypedData())
+            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled").GetTypedData())
             {
                 var file = compressTestData.Name;
-                var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.UnreachableCodeCompressOptions);
+                var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.UnreachableCodeBlocksAndEmptyStatementsCompressOptions);
                 tests++;
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs, file);
             }

@@ -9,7 +9,7 @@ namespace Test.Compress
 {
     public class CompressTest
     {
-        public static readonly ICompressOptions UnreachableCodeCompressOptions = new CompressOptions
+        public static readonly ICompressOptions UnreachableCodeBlocksAndEmptyStatementsCompressOptions = new CompressOptions
         {
             EnableBlockElimination = true,
             EnableEmptyStatementElimination = true,
@@ -30,10 +30,10 @@ namespace Test.Compress
         };
         
         [Theory]
-        [CompressDataProvider("Input/Compress/UnreachableCode")]
-        public void ShouldRemoveUnreachableCode(CompressTestData testData)
+        [CompressDataProvider("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled")]
+        public void ShouldRemoveUnreachableCodeUnnecessaryBlocksAndEmptyStatements(CompressTestData testData)
         {
-            RunAndAssert(testData, UnreachableCodeCompressOptions);
+            RunAndAssert(testData, UnreachableCodeBlocksAndEmptyStatementsCompressOptions);
         }
 
         [Theory]
