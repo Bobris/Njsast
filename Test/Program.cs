@@ -44,6 +44,14 @@ namespace Test
                 tests++;
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs, file);
             }
+            
+            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnreachableCode/Only").GetTypedData())
+            {
+                var file = compressTestData.Name;
+                var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.UnreachableCodeBlocksCompressOptions);
+                tests++;
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs, file);
+            }
 
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/RemoveBlock").GetTypedData())
             {

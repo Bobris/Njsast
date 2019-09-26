@@ -17,6 +17,12 @@ namespace Test.Compress
             MaxPasses = 3
         };
         
+        public static readonly ICompressOptions UnreachableCodeBlocksCompressOptions = new CompressOptions
+        {
+            EnableUnreachableCodeElimination = true,
+            MaxPasses = 1
+        };
+        
         public static readonly ICompressOptions BlockEliminationCompressOptions = new CompressOptions
         {
             EnableBlockElimination = true,
@@ -34,6 +40,13 @@ namespace Test.Compress
         public void ShouldRemoveUnreachableCodeUnnecessaryBlocksAndEmptyStatements(CompressTestData testData)
         {
             RunAndAssert(testData, UnreachableCodeBlocksAndEmptyStatementsCompressOptions);
+        }
+
+        [Theory]
+        [CompressDataProvider("Input/Compress/UnreachableCode/Only")]
+        public void ShouldRemoveUnreachableCode(CompressTestData testData)
+        {
+            RunAndAssert(testData, UnreachableCodeBlocksCompressOptions);
         }
 
         [Theory]
