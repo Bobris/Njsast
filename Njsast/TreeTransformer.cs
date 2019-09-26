@@ -6,6 +6,31 @@ namespace Njsast
 {
     public abstract class TreeTransformer : TreeWalkerBase
     {
+        class AstSpreadStructList<T> : AstNode where T : AstNode
+        {
+            public readonly StructList<T> NodeList;
+            
+            public AstSpreadStructList(ref StructList<T> nodeList)
+            {
+                NodeList = nodeList;
+            }
+            
+            public override void Visit(TreeWalker w)
+            {
+                throw new InvalidOperationException();
+            }
+
+            public override void Transform(TreeTransformer tt)
+            {
+                throw new InvalidOperationException();
+            }
+
+            public override void CodeGen(OutputContext output)
+            {
+                throw new InvalidOperationException();
+            }
+        }
+        
         class AstRemoveMe : AstNode
         {
             public AstRemoveMe()
@@ -29,6 +54,11 @@ namespace Njsast
         }
 
         public static readonly AstNode Remove = new AstRemoveMe();
+
+        public static AstNode SpreadStructList(AstBlock block)
+        {
+            return new AstSpreadStructList<AstNode>(ref block.Body);
+        }
 
         protected void Descend()
         {
@@ -63,11 +93,16 @@ namespace Njsast
         {
             for (uint i = 0; i < list.Count; i++)
             {
-                var item = (T) Transform(list[i], true);
+                var originalNode = list[i];
+                var item = (T) Transform(originalNode, true);
                 if (item == Remove)
                 {
                     list.RemoveAt(i);
                     i--;
+                }
+                else if (item is AstSpreadStructList<T> spreadList)
+                {
+                    list.ReplaceItem(originalNode, spreadList.NodeList);
                 }
                 else
                 {

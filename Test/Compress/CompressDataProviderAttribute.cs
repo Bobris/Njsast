@@ -7,7 +7,7 @@ using Xunit.Sdk;
 
 namespace Test.Compress
 {
-    public class UnreachableCodeDataProviderAttribute : DataAttribute
+    public class CompressDataProviderAttribute : DataAttribute
     {
         const string NiceJsFileExtension = ".nicejs";
         const string MinJsFileExtension = ".minjs";
@@ -20,7 +20,7 @@ namespace Test.Compress
                 _searchSubDirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly)
             .Select(PathUtils.Normalize);
 
-        public UnreachableCodeDataProviderAttribute(string testFileDirectory, string searchPattern = "*.js",
+        public CompressDataProviderAttribute(string testFileDirectory, string searchPattern = "*.js",
             bool searchSubDirectories = true)
         {
             _testFileDirectory = testFileDirectory;
@@ -28,14 +28,14 @@ namespace Test.Compress
             _searchSubDirectories = searchSubDirectories;
         }
 
-        public IEnumerable<UnreachableCodeTestData> GetTypedData()
+        public IEnumerable<CompressTestData> GetTypedData()
         {
             return InputFiles.Select(inputFile =>
             {
                 var astFile = PathUtils.ChangeExtension(inputFile, AstFileExtension);
                 var niceJsFile = PathUtils.ChangeExtension(inputFile, NiceJsFileExtension);
                 var minJsFile = PathUtils.ChangeExtension(inputFile, MinJsFileExtension);
-                return new UnreachableCodeTestData
+                return new CompressTestData
                 {
                     InputFileName = inputFile,
                     InputContent = File.ReadAllText(inputFile),

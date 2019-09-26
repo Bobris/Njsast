@@ -12,6 +12,8 @@ namespace Njsast.Ast
         /// [Object/S] a map of name -> SymbolDef for all undeclared names
         public Dictionary<string, SymbolDef>? Globals;
 
+        bool _isScopeFigured;
+
         public AstToplevel(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
         }
@@ -65,21 +67,34 @@ namespace Njsast.Ast
         {
             if (options == null) options = new ScopeOptions();
             new ScopeParser(options).FigureOutScope(this);
+            _isScopeFigured = true;
         }
 
         public void Mangle(ScopeOptions? options = null)
         {
-            if (options == null) options = new ScopeOptions();
+            options ??= new ScopeOptions();
             new ScopeParser(options).FigureOutScope(this);
             var m = new MangleTreeWalker(options);
             m.Mangle(this);
         }
 
-        public void RemoveUnreachableCode()
+        public AstToplevel Compress(ICompressOptions? compressOptions = null, ScopeOptions? scopeOptions = null)
         {
-            var treeWalker = new UnreachableCodeEliminationTreeWalker();
-            var controlFlows = treeWalker.FindOutControlFlows(this);
-            UnreachableCodeEliminationTreeWalker.RemoveUnreachableCode(controlFlows);
+            compressOptions ??= CompressOptions.Default;
+            scopeOptions ??= new ScopeOptions();
+            var iteration = 0;
+            
+            var treeTransformer = new CompressTreeTransformer(compressOptions);
+            var transformed = this;
+            bool shouldIterateAgain;
+            do
+            {
+                if (!_isScopeFigured || iteration > 0)
+                    FigureOutScope(scopeOptions);
+                transformed = (AstToplevel) treeTransformer.Compress(transformed, out shouldIterateAgain);                
+            } while (shouldIterateAgain && ++iteration < compressOptions.MaxPasses);
+            
+            return transformed;
         }
     }
 }
