@@ -1,0 +1,21 @@
+Toplevel 1:1 - 7:2
+  Defun 1:1 - 7:2
+    SymbolDefun 1:10 - 1:14 [Write]
+      Name: func
+    Var 2:5 - 2:16
+      VarDef 2:9 - 2:15
+        SymbolVar 2:9 - 2:10 [Write]
+          Name: a
+        Number 2:13 - 2:15
+          Value: 10
+          Literal: 10
+    SimpleStatement 5:5 - 5:9
+      UnaryPostfix 5:5 - 5:8
+        Operator: IncrementPostfix
+        SymbolRef 5:5 - 5:6 [Read] [Write]
+          Name: a
+    SimpleStatement 6:5 - 6:9
+      UnaryPostfix 6:5 - 6:8
+        Operator: DecrementPostfix
+        SymbolRef 6:5 - 6:6 [Read] [Write]
+          Name: a
