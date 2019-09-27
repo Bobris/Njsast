@@ -24,8 +24,8 @@ namespace Njsast.Compress
                     throw new NotImplementedException();
                 case AstForIn _:
                     throw new NotImplementedException();
-                case AstWith _:
-                    throw new NotImplementedException();
+                case AstWith withStatement:
+                    return RemoveUnreachableCode(withStatement);
                 default:
                     return node;
             }
@@ -97,6 +97,18 @@ namespace Njsast.Compress
                     return astStatement;
                 default:
                     return new AstSimpleStatement(forStatement.Init);
+            }
+        }
+        
+        static AstNode RemoveUnreachableCode(AstWith withStatement)
+        {
+            switch (withStatement.Body)
+            {
+                case AstEmptyStatement _:
+                case AstBlock astBlock when astBlock.Body.Count == 0:
+                    return Remove;
+                default:
+                    return withStatement;
             }
         }
     }
