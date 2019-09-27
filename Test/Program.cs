@@ -39,34 +39,32 @@ namespace Test
 
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled").GetTypedData())
             {
-                var file = compressTestData.Name;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.UnreachableCodeBlocksAndEmptyStatementsCompressOptions);
-                tests++;
-                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs, file);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
             
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnreachableCode/Only").GetTypedData())
             {
-                var file = compressTestData.Name;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.UnreachableCodeBlocksCompressOptions);
-                tests++;
-                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs, file);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
 
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/RemoveBlock").GetTypedData())
             {
-                var file = compressTestData.Name;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.BlockEliminationCompressOptions);
-                tests++;
-                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs, file);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
 
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/EmptyStatement").GetTypedData())
             {
-                var file = compressTestData.Name;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.EmptyStatementEliminationCompressOptions);
-                tests++;
-                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs, file);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
+            }
+
+            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/BooleanCompress").GetTypedData())
+            {
+                var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.BooleanCompressCompressOptions);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
 
             Console.ForegroundColor = errors == 0 ? ConsoleColor.Green : ConsoleColor.Red;
@@ -74,9 +72,10 @@ namespace Test
             Console.ResetColor();
             Environment.ExitCode = errors == 0 ? 0 : 1;
 
-            void CheckCompressError(CompressTestData compressTestData, string outAst, string outMinJs, string outNiceJs,
-                string file)
+            void CheckCompressError(CompressTestData compressTestData, string outAst, string outMinJs, string outNiceJs)
             {
+                var file = compressTestData.Name;
+                tests++;
                 CheckError(compressTestData.ExpectedAst, outAst, ref errors, "AST", file, "txt");
                 CheckError(compressTestData.ExpectedMinJs, outMinJs, ref errors, "minified js", file, "minjs");
                 CheckError(compressTestData.ExpectedNiceJs, outNiceJs, ref errors, "beutified js", file, "nicejs");

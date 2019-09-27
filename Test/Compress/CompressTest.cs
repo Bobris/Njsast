@@ -34,6 +34,12 @@ namespace Test.Compress
             EnableEmptyStatementElimination = true,
             MaxPasses = 1
         };
+
+        public static readonly ICompressOptions BooleanCompressCompressOptions = new CompressOptions
+        {
+            EnableBooleanCompress = true,
+            MaxPasses = 1
+        };
         
         [Theory]
         [CompressDataProvider("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled")]
@@ -62,6 +68,13 @@ namespace Test.Compress
         public void ShouldRemoveEmptyStatements(CompressTestData testData)
         {
             RunAndAssert(testData, EmptyStatementEliminationCompressOptions);
+        }
+
+        [Theory]
+        [CompressDataProvider("Input/Compress/BooleanCompress")]
+        public void ShouldCompressBooleanExpressions(CompressTestData testData)
+        {
+            RunAndAssert(testData, BooleanCompressCompressOptions);
         }
 
         void RunAndAssert(CompressTestData testData, ICompressOptions options)

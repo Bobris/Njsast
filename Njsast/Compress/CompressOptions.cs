@@ -5,6 +5,7 @@ namespace Njsast.Compress
         public bool EnableUnreachableCodeElimination { get; set; }
         public bool EnableEmptyStatementElimination { get; set; }
         public bool EnableBlockElimination { get; set; }
+        public bool EnableBooleanCompress { get; set; }
         public uint MaxPasses { get; set; }
 
         public static readonly ICompressOptions Default = new CompressOptions
@@ -12,6 +13,7 @@ namespace Njsast.Compress
             EnableUnreachableCodeElimination = true,
             EnableEmptyStatementElimination = true,
             EnableBlockElimination = true,
+            EnableBooleanCompress = true,
             MaxPasses = 10
         };
     }
