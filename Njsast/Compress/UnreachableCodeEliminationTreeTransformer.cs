@@ -19,11 +19,10 @@ namespace Njsast.Compress
                 case AstFor forStatement:
                     return RemoveUnreachableCode(forStatement);
                 case AstLabeledStatement _:
-                    return node;
+                // AstFor statements needs deeper analysis if it could be safely removed so we skip them
                 case AstForOf _:
-                    throw new NotImplementedException();
                 case AstForIn _:
-                    throw new NotImplementedException();
+                    return node;
                 case AstWith withStatement:
                     return RemoveUnreachableCode(withStatement);
                 default:

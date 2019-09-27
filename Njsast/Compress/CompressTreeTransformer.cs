@@ -7,6 +7,7 @@ namespace Njsast.Compress
         bool _shouldIterateAgain;
         readonly ICompressOptions _options;
         readonly UnreachableCodeEliminationTreeTransformer _unreachableCodeEliminationTransformer = new UnreachableCodeEliminationTreeTransformer();
+        readonly UnreachableFunctionCodeEliminationTreeTransformer _unreachableFunctionCodeEliminationTreeTransformer;
         readonly BlockEliminationTreeTransformer _blockEliminationTreeTransformer = new BlockEliminationTreeTransformer();
         readonly EmptyStatementEliminationTreeTransformer _emptyStatementEliminationTreeTransformer = new EmptyStatementEliminationTreeTransformer();
         readonly BooleanConstantsTreeTransformer _booleanConstantsTreeTransformer = new BooleanConstantsTreeTransformer();
@@ -14,6 +15,7 @@ namespace Njsast.Compress
         public CompressTreeTransformer(ICompressOptions options)
         {
             _options = options;
+            _unreachableFunctionCodeEliminationTreeTransformer = new UnreachableFunctionCodeEliminationTreeTransformer(_options);
         }
 
 
@@ -35,10 +37,11 @@ namespace Njsast.Compress
                 transformed = _blockEliminationTreeTransformer.Transform(transformed, inList);
             }
 
-            if (_options.EnableUnreachableCodeElimination && transformed is AstStatementWithBody)
+            if (_options.EnableUnreachableCodeElimination && (transformed is AstStatementWithBody))
             {
                 transformed = _unreachableCodeEliminationTransformer.Transform(transformed, inList);
             }
+            transformed = _unreachableFunctionCodeEliminationTreeTransformer.Transform(transformed, inList);
 
             if (_options.EnableBooleanCompress && transformed is AstBoolean)
             {
