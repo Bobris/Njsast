@@ -15,11 +15,15 @@ namespace Njsast.Ast
             Body.TransferFrom(ref body);
         }
 
-        public AstBlock(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
+        protected AstBlock(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
         {
         }
 
         protected AstBlock(AstNode from) : base(from)
+        {
+        }
+
+        protected AstBlock()
         {
         }
 

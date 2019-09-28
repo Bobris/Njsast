@@ -14,6 +14,10 @@ namespace Njsast.Ast
         {
         }
 
+        protected AstStatement()
+        {
+        }
+
         public override void CodeGen(OutputContext output)
         {
             throw new System.InvalidOperationException();

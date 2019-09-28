@@ -30,6 +30,11 @@ namespace Njsast.Ast
             Name = symbol.Name;
         }
 
+        protected AstSymbol(string name)
+        {
+            Name = name;
+        }
+
         protected AstSymbol(AstNode from, string name) : base(from)
         {
             Name = name;

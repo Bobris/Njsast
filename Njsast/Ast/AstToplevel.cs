@@ -12,9 +12,13 @@ namespace Njsast.Ast
         /// [Object/S] a map of name -> SymbolDef for all undeclared names
         public Dictionary<string, SymbolDef>? Globals;
 
-       bool _isScopeFigured;
+        bool _isScopeFigured;
 
         public AstToplevel(Parser parser, Position startPos, Position endPos) : base(parser, startPos, endPos)
+        {
+        }
+
+        public AstToplevel()
         {
         }
 
@@ -83,7 +87,7 @@ namespace Njsast.Ast
             compressOptions ??= CompressOptions.Default;
             scopeOptions ??= new ScopeOptions();
             var iteration = 0;
-            
+
             var treeTransformer = new CompressTreeTransformer(compressOptions);
             var transformed = this;
             bool shouldIterateAgain;
@@ -91,9 +95,9 @@ namespace Njsast.Ast
             {
                 if (!transformed._isScopeFigured || iteration > 0)
                     transformed.FigureOutScope(scopeOptions);
-                transformed = (AstToplevel) treeTransformer.Compress(transformed, out shouldIterateAgain);                
+                transformed = (AstToplevel) treeTransformer.Compress(transformed, out shouldIterateAgain);
             } while (shouldIterateAgain && ++iteration < compressOptions.MaxPasses);
-            
+
             return transformed;
         }
     }

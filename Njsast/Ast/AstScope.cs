@@ -37,6 +37,10 @@ namespace Njsast.Ast
         {
         }
 
+        protected AstScope()
+        {
+        }
+
         public AstScope(Parser parser, Position startPos, Position endPos, ref StructList<AstNode> body) : base(parser,
             startPos, endPos, ref body)
         {

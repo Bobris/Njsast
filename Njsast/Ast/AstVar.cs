@@ -11,6 +11,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstVar(ref StructList<AstVarDef> definitions) : base(ref definitions)
+        {
+        }
+
         public override void CodeGen(OutputContext output)
         {
             DoPrint(output, "var");
