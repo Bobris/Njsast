@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Njsast.Ast;
 
 namespace Njsast.Compress
@@ -7,15 +8,19 @@ namespace Njsast.Compress
         bool _shouldIterateAgain;
         readonly ICompressOptions _options;
         readonly UnreachableCodeEliminationTreeTransformer _unreachableCodeEliminationTransformer = new UnreachableCodeEliminationTreeTransformer();
-        readonly UnreachableFunctionCodeEliminationTreeTransformer _unreachableFunctionCodeEliminationTreeTransformer;
         readonly BlockEliminationTreeTransformer _blockEliminationTreeTransformer = new BlockEliminationTreeTransformer();
         readonly EmptyStatementEliminationTreeTransformer _emptyStatementEliminationTreeTransformer = new EmptyStatementEliminationTreeTransformer();
         readonly BooleanConstantsTreeTransformer _booleanConstantsTreeTransformer = new BooleanConstantsTreeTransformer();
+        readonly IReadOnlyList<CompressModuleTreeTransformerBase> CompressModules; 
 
         public CompressTreeTransformer(ICompressOptions options)
         {
             _options = options;
-            _unreachableFunctionCodeEliminationTreeTransformer = new UnreachableFunctionCodeEliminationTreeTransformer(_options);
+            CompressModules = new List<CompressModuleTreeTransformerBase>
+            {
+                new UnreachableFunctionCodeEliminationTreeTransformer(_options),
+                new UnreachableLoopCodeEliminationTreeTransformer(_options)
+            };
         }
 
 
@@ -41,7 +46,11 @@ namespace Njsast.Compress
             {
                 transformed = _unreachableCodeEliminationTransformer.Transform(transformed, inList);
             }
-            transformed = _unreachableFunctionCodeEliminationTreeTransformer.Transform(transformed, inList);
+            
+            foreach (var compressModuleTreeTransformer in CompressModules)
+            {
+                transformed = compressModuleTreeTransformer.Transform(transformed, inList);
+            }
 
             if (_options.EnableBooleanCompress && transformed is AstBoolean)
             {
