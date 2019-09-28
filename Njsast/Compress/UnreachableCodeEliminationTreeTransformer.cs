@@ -1,11 +1,14 @@
-using System;
 using Njsast.Ast;
 using Njsast.Runtime;
 
 namespace Njsast.Compress
 {
-    public class UnreachableCodeEliminationTreeTransformer : TreeTransformer
+    public class UnreachableCodeEliminationTreeTransformer : CompressModuleTreeTransformerBase
     {
+        public UnreachableCodeEliminationTreeTransformer(ICompressOptions options) : base(options)
+        {
+        }
+        
         protected override AstNode Before(AstNode node, bool inList)
         {
             switch (node)
@@ -30,11 +33,11 @@ namespace Njsast.Compress
             }
         }
 
-        protected override AstNode After(AstNode node, bool inList)
+        protected override bool CanProcessNode(ICompressOptions options, AstNode node)
         {
-            throw new NotSupportedException();
+            return options.EnableUnreachableCodeElimination && node is AstStatementWithBody;
         }
-        
+
         static AstNode RemoveUnreachableCode(AstIf ifStatement)
         {
             var conditionValue = ifStatement.Condition.ConstValue();
@@ -70,7 +73,7 @@ namespace Njsast.Compress
             var treeWalker = new BreakFinderTreeWalker();
             treeWalker.Walk(doStatement);
 
-            if (doStatement.HasBreak)
+            if (doStatement.HasBreak) // TODO we should also find continue
                 return doStatement; // if do-while contains break we cannot inline it without more sophisticated inspection
 
             switch (doStatement.Body)

@@ -4,8 +4,12 @@ using Njsast.Reader;
 
 namespace Njsast.Compress
 {
-    public class BooleanConstantsTreeTransformer : TreeTransformer
+    public class BooleanConstantsTreeTransformer : CompressModuleTreeTransformerBase
     {
+        public BooleanConstantsTreeTransformer(ICompressOptions options) : base(options)
+        {
+        }
+        
         protected override AstNode Before(AstNode node, bool inList)
         {
             switch (node)
@@ -19,9 +23,9 @@ namespace Njsast.Compress
             }
         }
 
-        protected override AstNode After(AstNode node, bool inList)
+        protected override bool CanProcessNode(ICompressOptions options, AstNode node)
         {
-            throw new NotSupportedException();
+            return options.EnableBooleanCompress && node is AstBoolean;
         }
 
         static AstUnaryPrefix CompressedTrueNode => new AstUnaryPrefix(Operator.LogicalNot, new AstNumber(0));

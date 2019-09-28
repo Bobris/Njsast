@@ -1,20 +1,21 @@
-using System;
 using Njsast.Ast;
 
 namespace Njsast.Compress
 {
-    internal class EmptyStatementEliminationTreeTransformer : TreeTransformer
+    internal class EmptyStatementEliminationTreeTransformer : CompressModuleTreeTransformerBase
     {
+        public EmptyStatementEliminationTreeTransformer(ICompressOptions options) : base(options)
+        {
+        }
+        
         protected override AstNode Before(AstNode node, bool inList)
         {
-            if (!(node is AstEmptyStatement))
-                return node;
             return inList ? Remove : node;
         }
 
-        protected override AstNode After(AstNode node, bool inList)
+        protected override bool CanProcessNode(ICompressOptions options, AstNode node)
         {
-            throw new NotSupportedException();
+            return options.EnableEmptyStatementElimination && node is AstEmptyStatement;
         }
     }
 }

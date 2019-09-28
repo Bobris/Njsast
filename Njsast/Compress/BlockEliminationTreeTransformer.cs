@@ -1,17 +1,15 @@
-using System;
 using Njsast.Ast;
 
 namespace Njsast.Compress
 {
-    public class BlockEliminationTreeTransformer : TreeTransformer
+    public class BlockEliminationTreeTransformer : CompressModuleTreeTransformerBase
     {
+        public BlockEliminationTreeTransformer(ICompressOptions options) : base(options)
+        {
+        }
+        
         protected override AstNode Before(AstNode node, bool inList)
         {
-            if (node is AstSwitch || node is AstSwitchBranch)
-            {
-                // TODO we should check all cases which could destroy block
-                return node;
-            }
             Descend();
             
             if (!inList)
@@ -32,9 +30,10 @@ namespace Njsast.Compress
             }
         }
 
-        protected override AstNode After(AstNode node, bool inList)
+        protected override bool CanProcessNode(ICompressOptions options, AstNode node)
         {
-            throw new NotSupportedException();
+            // TODO we should check all cases which could destroy block
+            return options.EnableBlockElimination && node is AstBlock && !(node is AstSwitch) && !(node is AstSwitchBranch);
         }
     }
 }
