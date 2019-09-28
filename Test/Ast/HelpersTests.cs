@@ -14,5 +14,13 @@ namespace Test.Ast
             toplevel.Body.Add(ast);
             Assert.Equal("var DEBUG=true,answer=42", toplevel.PrintToString());
         }
+
+        [Fact]
+        public void EmitVarDefineJsonTest()
+        {
+            var (toplevel, symbol) = Helpers.EmitVarDefineJson("[42]", null);
+            Assert.Equal("content", symbol.Name);
+            Assert.Equal("var content=[42]", toplevel.PrintToString());
+        }
     }
 }
