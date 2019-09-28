@@ -19,6 +19,7 @@ namespace Njsast.Compress
                     foreach (var astVarDef in definitions.Definitions)
                     {
                         // We can safely remove write and value because assignment is preformed after exit
+                        ShouldIterateAgain = true;
                         if (astVarDef.Name is AstSymbol symbol)
                         {
                             symbol.Usage = SymbolUsage.Unknown;
@@ -29,6 +30,7 @@ namespace Njsast.Compress
                     return node;
                 }
                 default:
+                    ShouldIterateAgain = true;
                     return Remove;
             }
         }

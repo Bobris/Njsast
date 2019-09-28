@@ -7,12 +7,17 @@ namespace Njsast.Compress
     {
         protected override AstNode Before(AstNode node, bool inList)
         {
+            if (node is AstSwitch || node is AstSwitchBranch)
+            {
+                // TODO we should check all cases which could destroy block
+                return node;
+            }
             Descend();
             
             if (!inList)
                 return node;
             
-            if (!(node is AstBlock astBlock)) 
+            if (!(node is AstBlock astBlock))
                 return node;
             
             var parent = Parent();

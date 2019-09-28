@@ -5,7 +5,9 @@ namespace Njsast.Compress
 {
     public abstract class CompressModuleTreeTransformerBase : TreeTransformer
     {
-        protected readonly ICompressOptions Options;
+        readonly ICompressOptions _options;
+        
+        public bool ShouldIterateAgain { get; protected set; }
 
         protected virtual void ResetState()
         {
@@ -13,7 +15,7 @@ namespace Njsast.Compress
 
         protected CompressModuleTreeTransformerBase(ICompressOptions options)
         {
-            Options = options;
+            _options = options;
         }
 
         protected abstract bool CanProcessNode(ICompressOptions options, AstNode node);
@@ -25,7 +27,8 @@ namespace Njsast.Compress
 
         public new AstNode Transform(AstNode start, bool inList = false)
         {
-            if (!CanProcessNode(Options, start)) 
+            ShouldIterateAgain = false;
+            if (!CanProcessNode(_options, start))
                 return start;
             ResetState();
             return base.Transform(start, inList);

@@ -11,15 +11,16 @@ namespace Njsast.Compress
         readonly BlockEliminationTreeTransformer _blockEliminationTreeTransformer = new BlockEliminationTreeTransformer();
         readonly EmptyStatementEliminationTreeTransformer _emptyStatementEliminationTreeTransformer = new EmptyStatementEliminationTreeTransformer();
         readonly BooleanConstantsTreeTransformer _booleanConstantsTreeTransformer = new BooleanConstantsTreeTransformer();
-        readonly IReadOnlyList<CompressModuleTreeTransformerBase> CompressModules; 
+        readonly IReadOnlyList<CompressModuleTreeTransformerBase> _compressModules; 
 
         public CompressTreeTransformer(ICompressOptions options)
         {
             _options = options;
-            CompressModules = new List<CompressModuleTreeTransformerBase>
+            _compressModules = new List<CompressModuleTreeTransformerBase>
             {
                 new UnreachableFunctionCodeEliminationTreeTransformer(_options),
-                new UnreachableLoopCodeEliminationTreeTransformer(_options)
+                new UnreachableLoopCodeEliminationTreeTransformer(_options),
+                new UnreachableSwitchCodeEliminationTreeTransformer(_options)
             };
         }
 
@@ -47,9 +48,10 @@ namespace Njsast.Compress
                 transformed = _unreachableCodeEliminationTransformer.Transform(transformed, inList);
             }
             
-            foreach (var compressModuleTreeTransformer in CompressModules)
+            foreach (var compressModuleTreeTransformer in _compressModules)
             {
                 transformed = compressModuleTreeTransformer.Transform(transformed, inList);
+                _shouldIterateAgain = _shouldIterateAgain || compressModuleTreeTransformer.ShouldIterateAgain;
             }
 
             if (_options.EnableBooleanCompress && transformed is AstBoolean)
