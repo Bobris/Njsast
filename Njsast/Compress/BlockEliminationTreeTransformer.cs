@@ -40,10 +40,13 @@ namespace Njsast.Compress
 
         bool BlockIsDisallowed(AstBlock node)
         {
-            // TODO we should check all cases which could destroy block
-            return node is AstSwitch || 
-                   node is AstSwitchBranch || 
-                   node is AstLambda;
+            return node is AstSwitch ||
+                   node is AstSwitchBranch ||
+                   node is AstLambda ||
+                   node is AstTry ||
+                   node is AstCatch ||
+                   node is AstFinally ||
+                   node is AstClass;
         }
     }
 }
