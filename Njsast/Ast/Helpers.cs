@@ -26,5 +26,17 @@ namespace Njsast.Ast
             var toplevel = parser.Parse();
             return (toplevel, (AstSymbolVar) ((AstVar) toplevel.Body[0]).Definitions[0].Name);
         }
+
+        public static (AstToplevel toplevel, AstSymbolVar varExports) EmitCommonJsWrapper(AstBlock code,
+            string? varName = null)
+        {
+            varName ??= "exports";
+            var toplevel = new Parser(new Options(),
+                    $"var {varName}=(function(){{ var exports = {{}}; var module = {{ exports: exports }}; var global = this; return module.exports; }}).call(window);")
+                .Parse();
+            var mainFunc = (AstFunction) ((AstDot) ((AstCall) ((AstVar) toplevel.Body[0]).Definitions[0].Value!).Expression).Expression;
+            mainFunc.Body.InsertRange(^1, code.Body.AsSpan());
+            return (toplevel, (AstSymbolVar) ((AstVar) toplevel.Body[0]).Definitions[0].Name);
+        }
     }
 }

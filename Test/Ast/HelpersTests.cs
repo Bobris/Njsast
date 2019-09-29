@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Njsast.Ast;
+using Njsast.Reader;
 using Xunit;
 
 namespace Test.Ast
@@ -21,6 +22,14 @@ namespace Test.Ast
             var (toplevel, symbol) = Helpers.EmitVarDefineJson("[42]", null);
             Assert.Equal("content", symbol.Name);
             Assert.Equal("var content=[42]", toplevel.PrintToString());
+        }
+
+        [Fact]
+        public void EmitCommonJsWrapperTest()
+        {
+            var (toplevel, symbol) = Helpers.EmitCommonJsWrapper(new Parser(new Options(), "exports.a=42").Parse());
+            Assert.Equal("exports", symbol.Name);
+            Assert.Equal("var exports=function(){var exports={};var module={exports:exports};var global=this;exports.a=42;return module.exports}.call(window)", toplevel.PrintToString());
         }
     }
 }
