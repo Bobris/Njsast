@@ -1,6 +1,4 @@
 function func() {
-    if (a) {
-        return;
-    }
+    if (a) {}
 }
 

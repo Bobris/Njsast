@@ -40,6 +40,12 @@ namespace Test.Compress
             EnableBooleanCompress = true,
             MaxPasses = 1
         };
+
+        public static readonly ICompressOptions FunctionReturnCompressCompressOptions = new CompressOptions
+        {
+            EnableFunctionReturnCompress = true,
+            MaxPasses = 1
+        };
         
         [Theory]
         [CompressDataProvider("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled")]
@@ -75,6 +81,13 @@ namespace Test.Compress
         public void ShouldCompressBooleanExpressions(CompressTestData testData)
         {
             RunAndAssert(testData, BooleanCompressCompressOptions);
+        }
+
+        [Theory]
+        [CompressDataProvider("Input/Compress/FunctionReturn")]
+        public void ShouldCompressFunctionsReturnStatement(CompressTestData testData)
+        {
+            RunAndAssert(testData, FunctionReturnCompressCompressOptions);
         }
 
         void RunAndAssert(CompressTestData testData, ICompressOptions options)

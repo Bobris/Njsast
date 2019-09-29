@@ -1,1 +1,1 @@
-function func(){if(a){return}}
+function func(){if(a){}}

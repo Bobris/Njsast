@@ -73,7 +73,7 @@ namespace Njsast
             {
                 AsSpan((int)index, (int)_count - (int)index - 1).CopyTo(AsSpan((int)index + 1, (int)(_count - index - 1)));
             }
-            _a![index] = default!; // TODO This should be source of problem
+            _a![index] = default!;
             return ref _a[index];
         }
 
@@ -82,7 +82,7 @@ namespace Njsast
             if (index >= _count) throw new ArgumentOutOfRangeException(nameof(index), index, "RemoveAt out of range");
             AsSpan((int)index + 1).CopyTo(AsSpan((int)index));
             _count--;
-            _a![_count] = default!; // TODO This should be source of problem
+            _a![_count] = default!;
         }
 
         public void RemoveItem(T item)

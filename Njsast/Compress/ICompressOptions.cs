@@ -6,6 +6,7 @@ namespace Njsast.Compress
         bool EnableEmptyStatementElimination { get; }
         bool EnableBlockElimination { get; }
         bool EnableBooleanCompress { get; }
+        bool EnableFunctionReturnCompress { get; }
         uint MaxPasses { get; }
     }
 }
