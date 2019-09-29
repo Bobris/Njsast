@@ -46,9 +46,36 @@ namespace Njsast.Ast
             output.Space();
             output.Print("=>");
             output.Space();
-            output.PrintBraced(Body, false);
+            PrintArrowBody(output);
             if (needsParens)
                 output.Print(")");
+        }
+        
+        void PrintArrowBody(OutputContext output)
+        {
+            if (Body.Count == 1 && Body.Last is AstStatement astStatement)
+            {
+                // We expect that only scope (function, class,...) or simple statement is valid expression
+                // Invalid expressions are: AstBreak, AstCatch, AstConst, AstContinue, AstDwLoop, AstDebugger,
+                // AstDefinitions, AstDo, AstEmptyStatement, AstExit, AstExport, AstFinally, AstFor, AstForIn, AstForOf,
+                // AstIf, AstImport, AstIterationStatement, AstJump, AstLabeledStatement, AstLet, AstLoopControl,
+                // AstReturn, AstStatementWithBody, AstSwitch, AstThrow, AstTry, AstVar, AstWhile, AstWith
+                // At this level it should not be: AstAccessor, AstBlockStatement, AstCase, AstDefClass, AstDefault,
+                // AstSwitchBranch, AstToplevel
+                if (astStatement is AstScope scope)
+                {
+                    scope.CodeGen(output);
+                    return;
+                }
+
+                if (astStatement is AstSimpleStatement simpleStatement)
+                {
+                    simpleStatement.Body.Print(output);
+                    return;
+                }
+            }
+
+            output.PrintBraced(Body, false);
         }
 
         public override bool NeedParens(OutputContext output)
