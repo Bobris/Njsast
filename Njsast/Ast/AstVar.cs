@@ -11,6 +11,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstVar(AstNode from) : base(from)
+        {
+        }
+
         public AstVar(ref StructList<AstVarDef> definitions) : base(ref definitions)
         {
         }
