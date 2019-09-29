@@ -3,7 +3,7 @@ using Njsast.Reader;
 
 namespace Njsast.Compress
 {
-    public class BreakFinderTreeWalker : TreeWalker
+    public class LoopControlFinderTreeWalker : TreeWalker
     {
         protected override void Visit(AstNode node)
         {
@@ -15,6 +15,7 @@ namespace Njsast.Compress
                     break;
                 case AstIterationStatement iterationStatement:
                     iterationStatement.HasBreak = false;
+                    iterationStatement.HasContinue = false;
                     break;
                 case AstBreak astBreak when astBreak.Label == null:
                 {
@@ -32,14 +33,25 @@ namespace Njsast.Compress
 
                     throw new SyntaxError("break must be inside loop or switch", node.Start);
                 }
-                case AstBreak astBreak:
-                    var label = astBreak.Label?.Thedef;
+                case AstContinue astContinue when astContinue.Label == null:
+                {
+                    var parent = FindParent<AstIterationStatement>();
+                    if (parent == null) 
+                        throw new SyntaxError("continue must be inside loop", node.Start);
+                    parent.HasContinue = true;
+                    return;
+                }
+                case AstLoopControl astLoopControl:
+                    var label = astLoopControl.Label?.Thedef;
                     var upToScope = label?.Scope;
                     foreach (var parent in Parents())
                     {
                         if (parent is AstIterationStatement iterationStatement)
                         {
-                            iterationStatement.HasBreak = true;
+                            if (astLoopControl is AstBreak)
+                                iterationStatement.HasBreak = true;
+                            else
+                                iterationStatement.HasContinue = true;
                         }
 
                         if (parent == upToScope) break;

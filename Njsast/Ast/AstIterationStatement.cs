@@ -14,6 +14,7 @@ namespace Njsast.Ast
 
         public AstScope? BlockScope { get; set; }
 
-        public bool HasBreak { get; set; } = false;
+        public bool HasBreak { get; set; }
+        public bool HasContinue { get; set; }
     }
 }
