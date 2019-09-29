@@ -53,26 +53,38 @@ namespace Njsast.Ast
         
         void PrintArrowBody(OutputContext output)
         {
-            if (Body.Count == 1 && Body.Last is AstStatement astStatement)
+            if (Body.Count == 1)
             {
-                // We expect that only scope (function, class,...) or simple statement is valid expression
+                // We expect that only scope (function, class,...), simple statement, constants or array is valid expression
                 // Invalid expressions are: AstBreak, AstCatch, AstConst, AstContinue, AstDwLoop, AstDebugger,
                 // AstDefinitions, AstDo, AstEmptyStatement, AstExit, AstExport, AstFinally, AstFor, AstForIn, AstForOf,
                 // AstIf, AstImport, AstIterationStatement, AstJump, AstLabeledStatement, AstLet, AstLoopControl,
                 // AstReturn, AstStatementWithBody, AstSwitch, AstThrow, AstTry, AstVar, AstWhile, AstWith
                 // At this level it should not be: AstAccessor, AstBlockStatement, AstCase, AstDefClass, AstDefault,
                 // AstSwitchBranch, AstToplevel
-                if (astStatement is AstScope scope)
+                if (Body.Last is AstScope scope)
                 {
                     scope.CodeGen(output);
                     return;
                 }
-
-                if (astStatement is AstSimpleStatement simpleStatement)
+                
+                if (Body.Last is AstSimpleStatement simpleStatement)
                 {
                     simpleStatement.Body.Print(output);
                     return;
                 }
+
+                if (Body.Last is AstConstant constant)
+                {
+                    constant.CodeGen(output);
+                    return;
+                }
+
+                if (Body.Last is AstArray array)
+                {
+                    array.CodeGen(output);
+                    return;
+                } 
             }
 
             output.PrintBraced(Body, false);
