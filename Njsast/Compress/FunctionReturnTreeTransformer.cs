@@ -30,13 +30,16 @@ namespace Njsast.Compress
 
         protected override AstNode? Before(AstNode node, bool inList)
         {
-            if (_isInFunction && IsNonEfficientCode(node))
+            if (_isInFunction)
             {
                 if (IsNonEfficientCode(node))
                     return node; // TODO test both
-                _efficientStatementsBetweenReturn++;
-                if (_lastReturn != null)
-                    _lastReturn.IsFollowedByEfficientCode = true;
+                if (!(node is AstReturn))
+                {
+                    _efficientStatementsBetweenReturn++;
+                    if (_lastReturn != null)
+                        _lastReturn.IsFollowedByEfficientCode = true;
+                }
             }
 
             if (node is AstLambda astLambda)
@@ -48,10 +51,10 @@ namespace Njsast.Compress
                 if (_returnInfos.Count == 0)
                     return astLambda;
 
-                for (int i = 0; i < _returnInfos.Count - 1; i++)
+                for (int i = 0; i <= _returnInfos.Count - 1; i++)
                 {
                     var first = _returnInfos[i];
-                    var second = i < _returnInfos.Count - 2 ? _returnInfos[i + 1] : null;
+                    var second = i < _returnInfos.Count - 1 ? _returnInfos[i + 1] : null;
                     if (ShouldRemoveFirstReturn(first, second))
                     {
                         first.ParentBlock.Body.RemoveItem(first.ReturnStatement);
@@ -73,6 +76,7 @@ namespace Njsast.Compress
 
             if (node is AstStatementWithBody astStatementWithBody)
             {
+                // TODO iteration statement mark
                 var safeEfficientStatementsBetweenReturn = _efficientStatementsBetweenReturn;
                 var safeIsAfterReturn = _isAfterReturn;
                 var safeReturnCount = _returnInfos.Count;
@@ -92,7 +96,7 @@ namespace Njsast.Compress
 
                 var returnInfo = new ReturnInfo(astReturn, FindParent<AstBlock>())
                 {
-                    EfficientStatementsBefore = _efficientStatementsBetweenReturn - 1
+                    EfficientStatementsBefore = _efficientStatementsBetweenReturn
                 };
                 _efficientStatementsBetweenReturn = 0;
                 _lastReturn = returnInfo;

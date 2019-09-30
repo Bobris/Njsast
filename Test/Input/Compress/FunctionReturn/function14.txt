@@ -1,5 +1,5 @@
-Toplevel 1:1 - 8:2
-  Defun 1:1 - 8:2
+Toplevel 1:1 - 9:2
+  Defun 1:1 - 9:2
     SymbolDefun 1:10 - 1:14 [Write]
       Name: func
     If 2:5 - 5:6
@@ -16,4 +16,10 @@ Toplevel 1:1 - 8:2
       UnaryPostfix 6:5 - 6:8
         Operator: IncrementPostfix
         SymbolRef 6:5 - 6:6 [Read] [Write]
+          Name: a
+    Return 7:5 - 7:12
+    SimpleStatement 8:5 - 8:9
+      UnaryPostfix 8:5 - 8:8
+        Operator: IncrementPostfix
+        SymbolRef 8:5 - 8:6 [Read] [Write]
           Name: a

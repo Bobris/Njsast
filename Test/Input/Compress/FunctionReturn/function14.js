@@ -4,5 +4,6 @@ function func() {
         return;
     }
     a++;
+    return;
+    a++;
 }
-
