@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using Njsast.Bobril;
 using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
 using Njsast.SourceMap;
 using Njsast.Utils;
+using Test.Bundler;
 using Test.Compress;
 using Test.ConstEval;
 using Test.Reader;
@@ -29,6 +31,7 @@ namespace Test
                 CheckError(parserData.ExpectedNiceJs, outNiceJs, ref errors, "beautified js", file, "nicejs");
                 CheckError(parserData.ExpectedNiceJsMap, outNiceJsMap, ref errors, "beautified js map", file, "nicejs.map");
             }
+
             foreach (var constEvalData in new ConstEvalDataProviderAttribute("Input/ConstEval").GetTypedData())
             {
                 var file = constEvalData.Name;
@@ -37,12 +40,20 @@ namespace Test
                 CheckError(constEvalData.ExpectedNiceJs, outNiceJs, ref errors, "const eval", file, "nicejs");
             }
 
+            foreach (var testData in new ModuleParserDataProviderAttribute("Input/ModuleParser").GetTypedData().Concat(new ModuleParserDataProviderAttribute("Input/ModuleParser", "*.json").GetTypedData()))
+            {
+                var file = testData.Name;
+                var outNiceJs = ModuleParserTest.ModuleParserTestCore(testData);
+                tests++;
+                CheckError(testData.ExpectedNiceJs, outNiceJs, ref errors, "module parser", file, "nicejs");
+            }
+
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled").GetTypedData())
             {
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.UnreachableCodeBlocksAndEmptyStatementsCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
-            
+
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnreachableCode/Only").GetTypedData())
             {
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.UnreachableCodeBlocksCompressOptions);

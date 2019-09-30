@@ -28,7 +28,8 @@ namespace Njsast.Ast
         public override void Transform(TreeTransformer tt)
         {
             base.Transform(tt);
-            Body = tt.Transform(Body);
+            if (Body != TreeTransformer.Remove)
+                Body = tt.Transform(Body);
         }
 
         public override void CodeGen(OutputContext output)

@@ -35,9 +35,24 @@ namespace Njsast.Bundler
 
             if (node is AstSimpleStatement {Body: var stmBody })
             {
-                if (stmBody is AstCall call && call.IsDefinePropertyExportsEsModule())
+                if (stmBody is AstCall call)
                 {
-                    return Remove;
+                    if (call.IsDefinePropertyExportsEsModule())
+                    {
+                        return Remove;
+                    }
+
+                    if (call.Expression.IsSymbolDef().IsTsReexportSymbol() && call.Args.Count == 1)
+                    {
+                        req = call.Args[0].IsRequireCall();
+                        if (req != null)
+                        {
+                            var resolvedReq = _resolver.Invoke(_sourceFile.Name, req);
+                            _sourceFile.Requires.AddUnique(resolvedReq);
+                            _sourceFile.SelfExports.Add(new ExportStarSelfExport(resolvedReq));
+                            return Remove;
+                        }
+                    }
                 }
 
                 var pea = stmBody.IsExportsAssign();
@@ -64,6 +79,22 @@ namespace Njsast.Bundler
                     _sourceFile.SelfExports.Add(new SimpleSelfExport(pea.Value.name, astSymbolVar));
                     return newVar;
                 }
+            }
+
+            if (node is AstPropAccess propAccess && propAccess.Expression.IsSymbolDef().IsExportsSymbol() && propAccess.PropertyAsString is { } name)
+            {
+                if (_exportName2VarNameMap.TryGetValue(name, out var varName))
+                {
+                    return new AstSymbolRef(node, varName);
+                }
+                var newName = "__export_" + name;
+                var newVar = new AstVar(node);
+                var astSymbolVar = new AstSymbolVar(node, newName);
+                newVar.Definitions.Add(new AstVarDef(astSymbolVar));
+                _exportName2VarNameMap[name] = newName;
+                _sourceFile.SelfExports.Add(new SimpleSelfExport(name, astSymbolVar));
+                _bodyPrepend.Add(newVar);
+                return new AstSymbolRef(node, newName);
             }
 
             return null;

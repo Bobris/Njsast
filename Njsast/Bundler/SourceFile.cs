@@ -6,12 +6,12 @@ namespace Njsast.Bundler
     public class SourceFile
     {
         internal string Name;
-        internal AstToplevel Ast;
-        internal StructList<string> Requires = new StructList<string>();
-        internal StructList<string> LazyRequires = new StructList<string>();
-        internal AstSymbol? WholeExport;
-        internal StructList<SelfExport> SelfExports = new StructList<SelfExport>();
-        internal IDictionary<string, AstNode>? Exports = null;
+        public AstToplevel Ast;
+        public StructList<string> Requires = new StructList<string>();
+        public StructList<string> LazyRequires = new StructList<string>();
+        public AstSymbol? WholeExport;
+        public StructList<SelfExport> SelfExports = new StructList<SelfExport>();
+        public IDictionary<string, AstNode>? Exports = null;
 
         internal SourceFile(string name, AstToplevel ast)
         {
@@ -20,7 +20,7 @@ namespace Njsast.Bundler
         }
     }
 
-    abstract class SelfExport
+    public abstract class SelfExport
     {
     }
 
@@ -34,6 +34,11 @@ namespace Njsast.Bundler
             Name = name;
             Symbol = symbol;
         }
+
+        public override string ToString()
+        {
+            return Name + ": " + Symbol.PrintToString();
+        }
     }
 
     class ExportStarSelfExport : SelfExport
@@ -43,6 +48,11 @@ namespace Njsast.Bundler
         internal ExportStarSelfExport(string sourceName)
         {
             SourceName = sourceName;
+        }
+
+        public override string ToString()
+        {
+            return "*: " + SourceName;
         }
     }
 }
