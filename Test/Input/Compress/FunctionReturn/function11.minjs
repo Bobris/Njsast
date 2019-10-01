@@ -1,1 +1,1 @@
-function func(){while(true){return}return}
+function func(){while(true){return}}
