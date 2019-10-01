@@ -37,7 +37,7 @@ namespace Njsast.Bundler
 
         public override string ToString()
         {
-            return Name + ": " + Symbol.PrintToString();
+            return $"{Name}: {Symbol.PrintToString()}";
         }
     }
 
@@ -52,7 +52,7 @@ namespace Njsast.Bundler
 
         public override string ToString()
         {
-            return "*: " + SourceName;
+            return $"*: {SourceName}";
         }
     }
 }

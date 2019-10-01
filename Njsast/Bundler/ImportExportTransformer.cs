@@ -10,6 +10,7 @@ namespace Njsast.Bundler
         readonly Func<string, string, string> _resolver;
         readonly Dictionary<string, string> _exportName2VarNameMap = new Dictionary<string, string>();
         StructList<AstNode> _bodyPrepend = new StructList<AstNode>();
+        SymbolDef? _reexportSymbol;
 
         public ImportExportTransformer(SourceFile sourceFile, Func<string, string, string> resolver)
         {
@@ -42,7 +43,8 @@ namespace Njsast.Bundler
                         return Remove;
                     }
 
-                    if (call.Expression.IsSymbolDef().IsTsReexportSymbol() && call.Args.Count == 1)
+                    var callSymbol = call.Expression.IsSymbolDef();
+                    if ((callSymbol == _reexportSymbol || callSymbol.IsTsReexportSymbol()) && call.Args.Count == 1)
                     {
                         req = call.Args[0].IsRequireCall();
                         if (req != null)
@@ -58,6 +60,10 @@ namespace Njsast.Bundler
                 var pea = stmBody.IsExportsAssign();
                 if (pea != null)
                 {
+                    if (pea.Value.name == "__esModule")
+                    {
+                        return Remove;
+                    }
                     if (_exportName2VarNameMap.TryGetValue(pea.Value.name, out var varName))
                     {
                         ((AstAssign) stmBody).Left = new AstSymbolRef(((AstAssign) stmBody).Left, varName);
@@ -81,12 +87,20 @@ namespace Njsast.Bundler
                 }
             }
 
-            if (node is AstPropAccess propAccess && propAccess.Expression.IsSymbolDef().IsExportsSymbol() && propAccess.PropertyAsString is { } name)
+            if (node is AstDefun func && func.ArgNames.Count == 1 && func.Name.IsSymbolDef()?.Name == "__export")
+            {
+                _reexportSymbol = func.Name.IsSymbolDef();
+                return Remove;
+            }
+
+            if (node is AstPropAccess propAccess && propAccess.Expression.IsSymbolDef().IsExportsSymbol() &&
+                propAccess.PropertyAsString is { } name)
             {
                 if (_exportName2VarNameMap.TryGetValue(name, out var varName))
                 {
                     return new AstSymbolRef(node, varName);
                 }
+
                 var newName = "__export_" + name;
                 var newVar = new AstVar(node);
                 var astSymbolVar = new AstSymbolVar(node, newName);

@@ -84,7 +84,7 @@ namespace Njsast.Ast
 
         public static SymbolDef? IsSymbolDef(this AstNode? node)
         {
-            if (node is AstSymbolRef symbol) return symbol.Thedef;
+            if (node is AstSymbol symbol) return symbol.Thedef;
             return null;
         }
 
