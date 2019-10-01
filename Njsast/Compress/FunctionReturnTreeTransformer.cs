@@ -13,6 +13,7 @@ namespace Njsast.Compress
             public bool IsFollowedByEfficientCode { get; set; }
             public int EfficientStatementsBefore { get; set; }
             public bool IsLoopReturn { get; set; }
+            public int NestedLevel { get; set; }
             
             public ReturnInfo(AstReturn returnStatement, AstBlock parentBlock)
             {
@@ -24,6 +25,7 @@ namespace Njsast.Compress
         bool _isInLoop;
         bool _isAfterReturn;
         int _efficientStatementsBetweenReturn;
+        int _nestedLevel;
         List<ReturnInfo> _returnInfos = new List<ReturnInfo>(0);
         ReturnInfo? _lastReturn;
         
@@ -37,7 +39,7 @@ namespace Njsast.Compress
             {
                 if (IsNonEfficientCode(node))
                     return node; // TODO test both
-                if (!(node is AstReturn))
+                if (node is AstStatement && !(node is AstReturn) && typeof(AstBlock) != node.GetType())
                 {
                     _efficientStatementsBetweenReturn++;
                     if (_lastReturn != null)
@@ -54,13 +56,23 @@ namespace Njsast.Compress
                 if (_returnInfos.Count == 0)
                     return astLambda;
 
-                for (int i = 0; i <= _returnInfos.Count - 1; i++)
+                for (var i = 0; i <= _returnInfos.Count - 1; i++)
                 {
                     var first = _returnInfos[i];
-                    var second = i < _returnInfos.Count - 1 ? _returnInfos[i + 1] : null;
+                    ReturnInfo? second = null;
+                    for (var j = i + 1; j < _returnInfos.Count; j++)
+                    {
+                        var current = _returnInfos[j];
+                        if (current.NestedLevel >= first.NestedLevel) 
+                            continue;
+                        second = current;
+                        break;
+                    }
+                    // var second = i < _returnInfos.Count - 1 ? _returnInfos[i + 1] : null;
                     if (ShouldRemoveFirstReturn(first, second))
                     {
                         first.ParentBlock.Body.RemoveItem(first.ReturnStatement);
+                        ShouldIterateAgain = true;
                     }
                 }
                 // TODO remove
@@ -79,16 +91,17 @@ namespace Njsast.Compress
 
             if (node is AstStatementWithBody astStatementWithBody)
             {
-                // TODO iteration statement mark
                 var safeEfficientStatementsBetweenReturn = _efficientStatementsBetweenReturn;
                 var safeIsAfterReturn = _isAfterReturn;
                 var safeReturnCount = _returnInfos.Count;
                 var safeIsInLoop = _isInLoop;
+                _nestedLevel++;
                 if (astStatementWithBody is AstIterationStatement)
                 {
                     _isInLoop = true;
                 }
                 Descend();
+                _nestedLevel--;
                 if (safeReturnCount != _returnInfos.Count)
                 {
                     // TODO return was found inside nested block
@@ -107,7 +120,8 @@ namespace Njsast.Compress
                 var returnInfo = new ReturnInfo(astReturn, FindParent<AstBlock>())
                 {
                     EfficientStatementsBefore = _efficientStatementsBetweenReturn,
-                    IsLoopReturn = _isInLoop
+                    IsLoopReturn = _isInLoop,
+                    NestedLevel = _nestedLevel
                 };
                 _efficientStatementsBetweenReturn = 0;
                 _lastReturn = returnInfo;
@@ -132,6 +146,7 @@ namespace Njsast.Compress
             _returnInfos = new List<ReturnInfo>();
             _efficientStatementsBetweenReturn = 0;
             _lastReturn = null;
+            _nestedLevel = 0;
         }
 
         protected override AstNode? After(AstNode node, bool inList)
@@ -149,6 +164,7 @@ namespace Njsast.Compress
             if (astLambda.Body.Count > 0 && astLambda.Body.Last is AstReturn astReturn && astReturn.Value == null)
             {
                 astLambda.Body.RemoveAt(astLambda.Body.Count - 1);
+                ShouldIterateAgain = true;
             }
         }
 
