@@ -5,3 +5,4 @@ function func() {
     if (b) {}
     return c;
 }
+
