@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Njsast.Ast;
 
@@ -11,6 +12,7 @@ namespace Njsast.Compress
             public AstReturn ReturnStatement { get; }
             public bool IsFollowedByEfficientCode { get; set; }
             public int EfficientStatementsBefore { get; set; }
+            public bool IsLoopReturn { get; set; }
             
             public ReturnInfo(AstReturn returnStatement, AstBlock parentBlock)
             {
@@ -19,6 +21,7 @@ namespace Njsast.Compress
             }
         }
         bool _isInFunction;
+        bool _isInLoop;
         bool _isAfterReturn;
         int _efficientStatementsBetweenReturn;
         List<ReturnInfo> _returnInfos = new List<ReturnInfo>(0);
@@ -80,12 +83,19 @@ namespace Njsast.Compress
                 var safeEfficientStatementsBetweenReturn = _efficientStatementsBetweenReturn;
                 var safeIsAfterReturn = _isAfterReturn;
                 var safeReturnCount = _returnInfos.Count;
+                var safeIsInLoop = _isInLoop;
+                if (astStatementWithBody is AstIterationStatement)
+                {
+                    _isInLoop = true;
+                }
                 Descend();
                 if (safeReturnCount != _returnInfos.Count)
                 {
                     // TODO return was found inside nested block
                 }
                 _isAfterReturn = safeIsAfterReturn;
+                _efficientStatementsBetweenReturn = safeEfficientStatementsBetweenReturn;
+                _isInLoop = safeIsInLoop;
                 return node;
             }
 
@@ -96,7 +106,8 @@ namespace Njsast.Compress
 
                 var returnInfo = new ReturnInfo(astReturn, FindParent<AstBlock>())
                 {
-                    EfficientStatementsBefore = _efficientStatementsBetweenReturn
+                    EfficientStatementsBefore = _efficientStatementsBetweenReturn,
+                    IsLoopReturn = _isInLoop
                 };
                 _efficientStatementsBetweenReturn = 0;
                 _lastReturn = returnInfo;
@@ -116,6 +127,7 @@ namespace Njsast.Compress
         {
             base.ResetState();
             _isInFunction = false;
+            _isInLoop = false;
             _isAfterReturn = false;
             _returnInfos = new List<ReturnInfo>();
             _efficientStatementsBetweenReturn = 0;
@@ -150,32 +162,105 @@ namespace Njsast.Compress
 
         bool ShouldRemoveFirstReturn(ReturnInfo returnToRemove, ReturnInfo? followedReturn)
         {
-            // after return is code with possible side effect
+            // After return is code with possible side effect
             if (returnToRemove.IsFollowedByEfficientCode) 
                 return false;
+            // Return is placed inside loop 
+            if (returnToRemove.IsLoopReturn)
+                return false;
+            // if (followedReturn == null && )
+            
             // Second does not exist so at end both returns undefined
             if (followedReturn == null && returnToRemove.ReturnStatement.Value == null) 
                 return true;
-            // Both returns undefined
-            if (followedReturn != null && followedReturn.ReturnStatement.Value == null && returnToRemove.ReturnStatement.Value == null) 
-                return true;
             // Both returns same value
-            if (followedReturn != null && followedReturn.ReturnStatement.Value != null && returnToRemove.ReturnStatement.Value != null)
-            {
-                var returnToRemoveValue = returnToRemove.ReturnStatement.Value.ConstValue();
-                var followedReturnValue = followedReturn.ReturnStatement.Value.ConstValue();
-                // Both is constants
-                if (returnToRemoveValue != null && followedReturnValue != null &&
-                    returnToRemove.Equals(followedReturnValue))
-                    return true;
-                // Both use same symbol ref
-                if (returnToRemove.ReturnStatement.Value is AstSymbolRef returnToRemoveSymbolRef &&
-                    followedReturn.ReturnStatement.Value is AstSymbolRef followedReturnSymbolRef &&
-                    returnToRemoveSymbolRef.Name == followedReturnSymbolRef.Name)
-                    return true; // TODO write test
-            }
+            if (followedReturn != null &&
+                HasSameReturnValue(returnToRemove.ReturnStatement, followedReturn.ReturnStatement))
+                return true;
 
             return false;
+        }
+
+        bool HasSameReturnValue(AstReturn returnA, AstReturn returnB)
+        {
+            // Both return undefined
+            if (returnA.Value == null && returnB.Value == null)
+                return true;
+            // Only one of them is undefined
+            if (returnA.Value == null || returnB.Value == null)
+                return false;
+            // Both is SymbolRef
+            if (returnA.Value is AstSymbolRef symbolA && returnB.Value is AstSymbolRef symbolB)
+                return IsSameReference(symbolA, symbolB);
+            // Both is Call
+            if (returnA.Value is AstCall callA && returnB.Value is AstCall callB)
+                return IsSameCall(callA, callB);
+            // Both is constants with same value
+            var constReturnA = returnA.Value.ConstValue();
+            var constReturnB = returnB.Value.ConstValue();
+            return constReturnA != null && constReturnB != null && constReturnA.Equals(constReturnB);
+        }
+
+        bool IsSameCall(AstCall callA, AstCall callB)
+        {
+            // TODO write test for same call check
+            if (!(callA.Expression is AstSymbolRef symbolRefA && 
+                  callB.Expression is AstSymbolRef symbolRefB) ||
+                !IsSameReference(symbolRefA, symbolRefB))
+                return false;
+            var argsA = TrimEndingUndefined(callA.Args);
+            var argsB = TrimEndingUndefined(callB.Args);
+            if (argsA.Count != argsB.Count)
+                return false;
+            for (var i = 0; i < argsA.Count; i++)
+            {
+                var argA = argsA[i];
+                var argB = argsB[i];
+                // Constant 
+                if (argA is AstConstant && argB is AstConstant)
+                {
+                    // TODO all possible cases => + tests
+                    throw new NotImplementedException();
+                }
+                // SymbolRef
+                if (argA is AstSymbolRef argSymbolRefA && 
+                    argB is AstSymbolRef argSymbolRefB)
+                {
+                    if (IsSameReference(argSymbolRefA, argSymbolRefB))
+                        continue;
+                    return false;
+                } 
+                // Call
+                if (argA is AstCall argCallA &&
+                    argB is AstCall argCallB)
+                {
+                    if (IsSameCall(argCallA, argCallB)) 
+                        continue;
+                    return false;
+                }
+                
+                // TODO another cases
+                throw new NotImplementedException();
+            }
+
+            return true;
+        }
+
+        StructList<AstNode> TrimEndingUndefined(StructList<AstNode> list)
+        {
+            var newList = new StructList<AstNode>(list);
+            // TODO remove undefined at end of list
+//            for (var i = newList.Count - 1; i >= 0; i--)
+//            {
+//                var currentNode = newList[i - 1];
+//                if (currentNode != undefined) break;
+//            }
+            return newList;
+        } 
+
+        bool IsSameReference(AstSymbolRef symbolRefA, AstSymbolRef symbolRefB)
+        {
+            return symbolRefA.Name == symbolRefB.Name && symbolRefA.Thedef!.Scope == symbolRefB.Thedef!.Scope;
         }
 
         bool IsNonEfficientCode(AstNode node)
