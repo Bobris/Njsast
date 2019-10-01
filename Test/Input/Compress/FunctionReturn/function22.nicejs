@@ -1,0 +1,9 @@
+function func() {
+    if (a) {
+        if (b) {} else {
+            return d;
+        }
+        return c;
+    } else {}
+    return d;
+}

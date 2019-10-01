@@ -1,1 +1,1 @@
-function func(){if(a){return b;}else{return b}return b}
+function func(){if(a){}else{}return b}

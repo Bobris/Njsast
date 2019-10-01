@@ -6,13 +6,7 @@ Toplevel 1:1 - 8:2
       SymbolRef 2:9 - 2:10 [Read]
         Name: a
       Block 2:12 - 4:6
-        Return 3:9 - 3:18
-          SymbolRef 3:16 - 3:17 [Read]
-            Name: b
       Block 4:12 - 6:6
-        Return 5:9 - 5:18
-          SymbolRef 5:16 - 5:17 [Read]
-            Name: b
     Return 7:5 - 7:14
       SymbolRef 7:12 - 7:13 [Read]
         Name: b
