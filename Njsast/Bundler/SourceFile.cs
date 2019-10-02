@@ -12,6 +12,7 @@ namespace Njsast.Bundler
         public AstSymbol? WholeExport;
         public StructList<SelfExport> SelfExports = new StructList<SelfExport>();
         public IDictionary<string, AstNode>? Exports = null;
+        public StructList<string> PlainJsDependencies = new StructList<string>();
 
         internal SourceFile(string name, AstToplevel ast)
         {

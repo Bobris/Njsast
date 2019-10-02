@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Net.Sockets;
 using Njsast.Ast;
 using Njsast.Reader;
 using Njsast.Utils;
@@ -33,6 +35,17 @@ namespace Njsast.Bundler
             var sourceFile = new SourceFile(name, toplevel);
             new ImportExportTransformer(sourceFile, resolver).Transform(toplevel);
             return sourceFile;
+        }
+
+        public static void AppendToplevelWithRename(AstToplevel main, AstToplevel add, string suffix)
+        {
+            var renameWalker = new ToplevelRenameWalker(main.Variables!, suffix);
+            renameWalker.Walk(add);
+            main.Body.AddRange(add.Body.AsSpan());
+            foreach (var (_, symbolDef) in add.Variables!)
+            {
+                main.Variables!.Add(symbolDef.Name, symbolDef);
+            }
         }
     }
 }
