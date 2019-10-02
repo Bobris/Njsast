@@ -1,0 +1,5 @@
+function func() {
+    if (a) {} else {}
+    return b;
+}
+

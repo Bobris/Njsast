@@ -1,0 +1,11 @@
+function func() {
+    if (a) {
+        if (b) {} else {
+            return d;
+        }
+    } else {
+        return d;
+    }
+    return c;
+}
+

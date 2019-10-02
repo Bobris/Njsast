@@ -6,6 +6,7 @@ namespace Njsast.Compress
         public bool EnableEmptyStatementElimination { get; set; }
         public bool EnableBlockElimination { get; set; }
         public bool EnableBooleanCompress { get; set; }
+        public bool EnableFunctionReturnCompress { get; set; }
         public uint MaxPasses { get; set; }
 
         public static readonly ICompressOptions Default = new CompressOptions
