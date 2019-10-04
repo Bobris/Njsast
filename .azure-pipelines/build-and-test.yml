@@ -40,6 +40,16 @@ jobs:
       publishTestResults: false
     continueOnError: true
 
+  - task: DotNetCoreCLI@2
+    displayName: Functional Test
+    inputs:
+      command: 'test'
+      projects: 'FunctionalTest/FunctionalTest.csproj'
+      arguments: '--no-build --no-restore --configuration Release --runtime ${{ parameters.runtime }} --logger trx --results-directory $(Common.TestResultsDirectory)'
+      feedsToUse: 'config'
+      publishTestResults: false
+    continueOnError: true
+
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: 'VSTest'
