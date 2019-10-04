@@ -72,7 +72,7 @@ namespace Njsast.Compress
         
         static bool IsSameReference(AstSymbolRef symbolRefA, AstSymbolRef symbolRefB)
         {
-            return symbolRefA.Name == symbolRefB.Name && symbolRefA.Thedef!.Scope == symbolRefB.Thedef!.Scope;
+            return symbolRefA.Thedef == symbolRefB.Thedef;
         }
         
         static StructList<AstNode> TrimEndingUndefined(StructList<AstNode> list)
