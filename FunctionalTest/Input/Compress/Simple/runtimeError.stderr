@@ -1,0 +1,2 @@
+Uncaught ReferenceError: abcd is not defined
+TEST_FAIL

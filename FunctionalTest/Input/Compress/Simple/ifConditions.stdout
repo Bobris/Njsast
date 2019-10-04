@@ -1,0 +1,5 @@
+TEST_START
+a == 11
+a < 12
+a > 10
+TEST_FINISH

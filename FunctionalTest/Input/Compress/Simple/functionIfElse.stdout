@@ -1,0 +1,3 @@
+TEST_START
+a <= 11
+TEST_FINISH

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Input/Compress/Simple</title>
+</head>
+<body>
+<script type="application/javascript">
+    window.onerror = function(err) {
+        $writeError(err);
+        $testFail();
+    };
+    function $testStart() {
+        $write("TEST_START");
+    }
+    function $testFinish() {
+        $write("TEST_FINISH");
+    }
+    function $testFail() {
+        $writeError("TEST_FAIL")
+    }
+    function $write(message) {
+        console.log(message);
+    }
+    function $writeError(message) {
+        console.error(message);
+    }
+    $testStart();
+    (function $testRuntime() {
+        %%INJECT%%
+    })();
+    $testFinish();
+</script>
+</body>
+</html>
