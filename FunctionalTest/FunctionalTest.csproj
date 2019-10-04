@@ -2,12 +2,10 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.0</TargetFramework>
-
         <IsPackable>false</IsPackable>
-
         <LangVersion>8</LangVersion>
-
         <Nullable>enable</Nullable>
+        <RuntimeIdentifiers>linux-x64;win-x64;osx-x64</RuntimeIdentifiers>
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
