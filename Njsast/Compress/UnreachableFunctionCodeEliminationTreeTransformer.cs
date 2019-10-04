@@ -31,11 +31,20 @@ namespace Njsast.Compress
             {
                 return TryRemoveNode(node);
             }
-            
+
             if (node is AstStatementWithBody)
             {
+                var safeIsAfterExit = _isAfterExit;
+                if (node is AstIf astIf && astIf.Alternative != null)
+                {
+                    astIf.Body.Transform(this);
+                    _isAfterExit = safeIsAfterExit;
+                    astIf.Alternative.Transform(this);
+                    _isAfterExit = safeIsAfterExit;
+                    return astIf;
+                }
                 Descend();
-                _isAfterExit = false;
+                _isAfterExit = safeIsAfterExit;
                 return node;
             }
 
