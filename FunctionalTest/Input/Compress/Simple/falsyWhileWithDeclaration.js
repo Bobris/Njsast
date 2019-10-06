@@ -1,4 +1,4 @@
-if (false) {
+while(false) {
     var a = 10;
     function func() {
         $writeError("NEVER");

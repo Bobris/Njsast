@@ -59,12 +59,8 @@ namespace Njsast.Compress
             }
 
             AstVar? declarations = null;
-            if (falsyStatement != null)
-            {
-                var declarationCollectorTreeWalker = new DeclarationCollectorTreeWalker();
-                declarationCollectorTreeWalker.Walk(falsyStatement);
-                declarations = declarationCollectorTreeWalker.GetAllDeclarationsAsVar();
-            }
+            if (falsyStatement != null) 
+                declarations = GetDeclarations(falsyStatement);
 
             switch (statement)
             {
@@ -89,7 +85,8 @@ namespace Njsast.Compress
             if (TypeConverter.ToBoolean(whileStatement.Condition.ConstValue() ?? AstTrue.Instance))
                 return whileStatement;
 
-            return Remove;
+            var declarations = GetDeclarations(whileStatement.Body);
+            return declarations ?? Remove;
         }
 
         static AstNode RemoveUnreachableCode(AstDo doStatement)
@@ -139,6 +136,13 @@ namespace Njsast.Compress
                 default:
                     return withStatement;
             }
+        }
+
+        static AstVar? GetDeclarations(AstNode astNode)
+        {
+            var declarationCollectorTreeWalker = new DeclarationCollectorTreeWalker();
+            declarationCollectorTreeWalker.Walk(astNode);
+            return declarationCollectorTreeWalker.GetAllDeclarationsAsVar();
         }
     }
 }
