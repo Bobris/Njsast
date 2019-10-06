@@ -9,12 +9,12 @@ namespace Njsast
         class AstSpreadStructList<T> : AstNode where T : AstNode
         {
             public readonly StructList<T> NodeList;
-            
+
             public AstSpreadStructList(ref StructList<T> nodeList)
             {
                 NodeList = nodeList;
             }
-            
+
             public override void Visit(TreeWalker w)
             {
                 throw new InvalidOperationException();
@@ -30,7 +30,7 @@ namespace Njsast
                 throw new InvalidOperationException();
             }
         }
-        
+
         class AstRemoveMe : AstNode
         {
             public AstRemoveMe()
@@ -91,7 +91,7 @@ namespace Njsast
 
         internal void TransformList<T>(ref StructList<T> list) where T : AstNode
         {
-            for (uint i = 0; i < list.Count; i++)
+            for (var i = 0; i < list.Count; i++)
             {
                 var originalNode = list[i];
                 var item = (T) Transform(originalNode, true);

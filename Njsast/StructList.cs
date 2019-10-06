@@ -21,6 +21,8 @@ namespace Njsast
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [DebuggerStepThrough]
         public void Add(in T value)
         {
             if (_a == null || _count == _a.Length)
@@ -50,6 +52,7 @@ namespace Njsast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [DebuggerStepThrough]
         public ref T AddRef()
         {
             if (_a == null || _count == _a.Length)
@@ -60,9 +63,11 @@ namespace Njsast
             return ref _a![_count++];
         }
 
-        public ref T Insert(uint index)
+        public ref T Insert(uint index) => ref Insert((int) index);
+        public ref T Insert(Index index) => ref Insert(index.GetOffset((int) _count));
+        public ref T Insert(int index)
         {
-            if (index > _count) throw new ArgumentOutOfRangeException(nameof(index), index, "Insert out of range");
+            if ((uint)index > _count) ThrowIndexOutOfRange(index);
             if (_a == null || _count == _a.Length)
             {
                 Expand();
@@ -71,18 +76,19 @@ namespace Njsast
             _count++;
             if (index + 1 < _count)
             {
-                AsSpan((int) index, (int) _count - (int) index - 1)
-                    .CopyTo(AsSpan((int) index + 1, (int) (_count - index - 1)));
+                AsSpan(index, (int) _count - index - 1)
+                    .CopyTo(AsSpan(index + 1, (int) (_count - index - 1)));
             }
-            
+
             _a![index] = default!;
             return ref _a[index];
         }
 
-        public void RemoveAt(uint index)
+        public void RemoveAt(Index index)
         {
-            if (index >= _count) throw new ArgumentOutOfRangeException(nameof(index), index, "RemoveAt out of range");
-            AsSpan((int) index + 1).CopyTo(AsSpan((int) index));
+            var idx = index.GetOffset((int)_count);
+            if ((uint)idx >= _count) ThrowIndexOutOfRange(idx);
+            AsSpan(idx + 1).CopyTo(AsSpan(idx));
             _count--;
             _a![_count] = default!;
         }
@@ -91,7 +97,7 @@ namespace Njsast
         {
             var index = IndexOf(item);
             if (index < 0) throw new ArgumentOutOfRangeException(nameof(item), item, "Item not found in list");
-            RemoveAt((uint) index);
+            RemoveAt(index);
         }
 
         public void Reserve(uint count)
@@ -126,6 +132,7 @@ namespace Njsast
         public ref T this[int index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            [DebuggerStepThrough]
             get
             {
                 if ((uint) index >= _count)
@@ -137,6 +144,7 @@ namespace Njsast
         public ref T this[uint index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            [DebuggerStepThrough]
             get
             {
                 if (index >= _count)
@@ -148,18 +156,21 @@ namespace Njsast
         public ref T this[Index index]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get { return ref this[index.GetOffset((int) _count)]; }
+            [DebuggerStepThrough]
+            get => ref this[index.GetOffset((int) _count)];
         }
 
         public Span<T> this[Range range]
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            get { return AsSpan()[range]; }
+            [DebuggerStepThrough]
+            get => AsSpan()[range];
         }
 
         public ref T Last
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            [DebuggerStepThrough]
             get
             {
                 if (_count == 0) ThrowEmptyList();
@@ -193,6 +204,7 @@ namespace Njsast
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [DebuggerStepThrough]
         public void Pop()
         {
             if (_count == 0)
@@ -208,28 +220,55 @@ namespace Njsast
             throw new InvalidOperationException("Cannot pop empty List");
         }
 
-        public uint Count
+        public readonly uint Count
         {
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
+            [DebuggerStepThrough]
             get => _count;
         }
 
         public T[] UnsafeBackingArray => _a!;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [DebuggerStepThrough]
         public Span<T> AsSpan()
         {
             return _a.AsSpan(0, (int) _count);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [DebuggerStepThrough]
+        public static implicit operator ReadOnlySpan<T>(in StructList<T> value) => value.AsReadOnlySpan();
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        [DebuggerStepThrough]
+        public readonly ReadOnlySpan<T> AsReadOnlySpan()
+        {
+            return _a.AsSpan(0, (int) _count);
+        }
+
+        [DebuggerStepThrough]
         public Span<T> AsSpan(int start)
         {
             return AsSpan().Slice(start);
         }
 
+        [DebuggerStepThrough]
+        public readonly ReadOnlySpan<T> AsReadOnlySpan(int start)
+        {
+            return AsReadOnlySpan().Slice(start);
+        }
+
+        [DebuggerStepThrough]
         public Span<T> AsSpan(int start, int length)
         {
             return AsSpan().Slice(start, length);
+        }
+
+        [DebuggerStepThrough]
+        public readonly ReadOnlySpan<T> AsReadOnlySpan(int start, int length)
+        {
+            return AsReadOnlySpan().Slice(start, length);
         }
 
         public struct Enumerator : IEnumerator<T>
@@ -257,7 +296,7 @@ namespace Njsast
                 _position = -1;
             }
 
-            public T Current => _array[_position];
+            public readonly T Current => _array[_position];
 
             object IEnumerator.Current => Current!;
 
@@ -310,7 +349,7 @@ namespace Njsast
             _count = count;
         }
 
-        public bool All(Predicate<T> predicate)
+        public readonly bool All(Predicate<T> predicate)
         {
             for (uint i = 0; i < _count; i++)
             {
@@ -321,7 +360,7 @@ namespace Njsast
             return true;
         }
 
-        public int IndexOf(in T value)
+        public readonly int IndexOf(in T value)
         {
             var comparer = EqualityComparer<T>.Default;
             for (uint i = 0; i < _count; i++)
@@ -333,10 +372,10 @@ namespace Njsast
             return -1;
         }
 
-        public T[] ToArray()
+        public readonly T[] ToArray()
         {
             var res = new T[_count];
-            AsSpan().CopyTo(res);
+            AsReadOnlySpan().CopyTo(res);
             return res;
         }
 
@@ -346,15 +385,15 @@ namespace Njsast
             _a![index] = newItem;
         }
 
-        public void ReplaceItem(T originalItem, StructList<T> newItems)
+        public void ReplaceItem(T originalItem, in ReadOnlySpan<T> newItems)
         {
             var index = IndexOf(originalItem);
             if (index < 0)
                 throw new ArgumentOutOfRangeException(nameof(originalItem), originalItem, "Item not found in List");
-            var itemsToInsert = newItems.Count;
+            var itemsToInsert = newItems.Length;
             if (itemsToInsert == 0)
             {
-                RemoveAt((uint) index);
+                RemoveAt(index);
                 return;
             }
 
@@ -364,14 +403,14 @@ namespace Njsast
                 return;
             }
 
-            var totalCount = _count + itemsToInsert - 1;
+            var totalCount = (uint)(_count + itemsToInsert - 1);
             if (totalCount > _a!.Length)
                 Expand(totalCount);
 
             _count = totalCount;
 
             AsSpan(index + 1, (int) _count - (int) itemsToInsert - index).CopyTo(AsSpan((int) (index + itemsToInsert)));
-            newItems.AsSpan().CopyTo(AsSpan(index));
+            newItems.CopyTo(AsSpan(index));
         }
 
         public void InsertRange(Index index, in ReadOnlySpan<T> values)

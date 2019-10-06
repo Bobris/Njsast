@@ -139,7 +139,7 @@ namespace Test
             {
                 Assert.Equal(expectedValue, list[index].Value);
             }
-            
+
             Assert.Equal(items + newItems -1, list.Count);
 
             IEnumerable<(uint, int)> GetExpectedIndexAndValue()
@@ -166,7 +166,6 @@ namespace Test
             var replaceList = new StructList<DummyClass>();
             Assert.Throws<ArgumentOutOfRangeException>(() => list.ReplaceItem(item, replaceList));
         }
-        
 
         static StructList<DummyClass> GetNewList(uint items, int valueOffset = 0)
         {
@@ -178,10 +177,10 @@ namespace Test
 
             return result;
         }
-        
+
         class DummyClass
         {
-            public int Value { get; set; } 
+            public int Value { get; set; }
         }
     }
 }

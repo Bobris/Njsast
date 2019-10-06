@@ -16,23 +16,23 @@ namespace Njsast.Compress
 
         protected override AstNode? Before(AstNode node, bool inList)
         {
-            if (node is AstSwitch astSwitch && 
-                astSwitch.Body.Count > 0 && 
-                astSwitch.Body.Last is AstCase astCase && 
+            if (node is AstSwitch astSwitch &&
+                astSwitch.Body.Count > 0 &&
+                astSwitch.Body.Last is AstCase astCase &&
                 astCase.Body.Count > 0 &&
                 astCase.Body.Last is AstBreak)
             {
                 ShouldIterateAgain = true;
                 // Remove not necessary break from switch statement
-                astCase.Body.RemoveAt(astSwitch.Body.Count - 1);
+                astCase.Body.RemoveAt(^1);
             }
-            
+
             if (node is AstSwitchBranch)
             {
                 _isAfterBreak = false;
                 // return node;
             }
-            
+
             if (inList && _isAfterBreak)
             {
                 return TryRemoveNode(node);
