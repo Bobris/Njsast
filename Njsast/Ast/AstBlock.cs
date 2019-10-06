@@ -19,7 +19,7 @@ namespace Njsast.Ast
         {
         }
 
-        protected AstBlock(AstNode from) : base(from)
+        public AstBlock(AstNode from) : base(from)
         {
         }
 

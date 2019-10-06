@@ -14,7 +14,7 @@ namespace Njsast.Compress
             switch (node)
             {
                 case AstIf ifStatement:
-                    return RemoveUnreachableCode(ifStatement);
+                    return RemoveUnreachableCode(ifStatement, inList);
                 case AstWhile whileStatement:
                     return RemoveUnreachableCode(whileStatement);
                 case AstDo doStatement:
@@ -39,22 +39,48 @@ namespace Njsast.Compress
         
         static readonly LoopControlFinderTreeWalker LoopControlFinderTreeWalker = new LoopControlFinderTreeWalker();
 
-        static AstNode RemoveUnreachableCode(AstIf ifStatement)
+        static AstNode RemoveUnreachableCode(AstIf ifStatement, bool inList)
         {
             var conditionValue = ifStatement.Condition.ConstValue();
             if (conditionValue == null)
                 return ifStatement;
 
-            var statement = TypeConverter.ToBoolean(conditionValue)
-                ? ifStatement.Body
-                : ifStatement.Alternative;
+            AstStatement? statement;
+            AstStatement? falsyStatement;
+            if (TypeConverter.ToBoolean(conditionValue))
+            {
+                statement = ifStatement.Body;
+                falsyStatement = ifStatement.Alternative;
+            }
+            else
+            {
+                statement = ifStatement.Alternative;
+                falsyStatement = ifStatement.Body;
+            }
+
+            AstVar? declarations = null;
+            if (falsyStatement != null)
+            {
+                var declarationCollectorTreeWalker = new DeclarationCollectorTreeWalker();
+                declarationCollectorTreeWalker.Walk(falsyStatement);
+                declarations = declarationCollectorTreeWalker.GetAllDeclarationsAsVar();
+            }
 
             switch (statement)
             {
                 case null:
-                    return Remove;
+                    return declarations ?? Remove;
                 default:
-                    return statement;
+                    if (declarations == null) 
+                        return statement;
+
+                    var statements = new StructList<AstNode>();
+                    statements.Add(declarations);
+                    statements.Add(statement);
+                    
+                    return inList 
+                        ? SpreadStructList(statements) 
+                        : new AstBlock(ifStatement) {Body = statements};
             }
         }
 

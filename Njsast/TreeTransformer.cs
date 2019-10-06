@@ -55,9 +55,14 @@ namespace Njsast
 
         public static readonly AstNode Remove = new AstRemoveMe();
 
-        public static AstNode SpreadStructList(AstBlock block)
+        protected static AstNode SpreadStructList(AstBlock block)
         {
             return new AstSpreadStructList<AstNode>(ref block.Body);
+        }
+
+        protected static AstNode SpreadStructList(StructList<AstNode> statements)
+        {
+            return new AstSpreadStructList<AstNode>(ref statements);
         }
 
         protected void Descend()
