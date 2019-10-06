@@ -20,7 +20,7 @@ namespace Njsast.Compress
                 case AstDo doStatement:
                     return RemoveUnreachableCode(doStatement);
                 case AstFor forStatement:
-                    return RemoveUnreachableCode(forStatement);
+                    return RemoveUnreachableCode(forStatement, inList);
                 case AstWith withStatement:
                     return RemoveUnreachableCode(withStatement);
                 // case AstLabeledStatement _:
@@ -109,21 +109,31 @@ namespace Njsast.Compress
             }
         }
 
-        static AstNode RemoveUnreachableCode(AstFor forStatement)
+        static AstNode RemoveUnreachableCode(AstFor forStatement, bool inList)
         {
             if (forStatement.Condition == null ||
                 TypeConverter.ToBoolean(forStatement.Condition.ConstValue() ?? AstTrue.Instance))
                 return forStatement;
 
-            switch (forStatement.Init)
+            var declarations = GetDeclarations(forStatement.Body);
+            
+            if (forStatement.Init == null)
             {
-                case null:
-                    return Remove;
-                case AstStatement astStatement:
-                    return astStatement;
-                default:
-                    return new AstSimpleStatement(forStatement.Init);
+                return declarations ?? Remove;
             }
+
+            var statement = forStatement.Init is AstStatement
+                ? forStatement.Init
+                : new AstSimpleStatement(forStatement.Init);
+
+            if (declarations == null) 
+                return statement;
+            var statements = new StructList<AstNode>();
+            statements.Add(statement);
+            statements.Add(declarations);
+            return inList
+                ? SpreadStructList(statements)
+                : new AstBlock(forStatement) {Body = statements};
         }
 
         static AstNode RemoveUnreachableCode(AstWith withStatement)
