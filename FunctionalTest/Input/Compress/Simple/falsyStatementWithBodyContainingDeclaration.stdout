@@ -1,0 +1,13 @@
+TEST_START
+FOR
+1
+undefined
+undefined
+IF
+undefined
+undefined
+func2b called
+WHILE
+undefined
+undefined
+TEST_FINISH
