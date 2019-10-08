@@ -46,6 +46,12 @@ namespace Test.Compress
             EnableFunctionReturnCompress = true,
             MaxPasses = 1
         };
+
+        public static readonly ICompressOptions VariableHostingCompressOptions = new CompressOptions
+        {
+            EnableVariableHoisting = true,
+            MaxPasses = 1
+        };
         
         [Theory]
         [CompressDataProvider("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled")]
@@ -88,6 +94,13 @@ namespace Test.Compress
         public void ShouldCompressFunctionsReturnStatement(CompressTestData testData)
         {
             RunAndAssert(testData, FunctionReturnCompressCompressOptions);
+        }
+
+        [Theory]
+        [CompressDataProvider("Input/Compress/VariableHoisting")]
+        public void ShouldHoistVariableToBeginOfScope(CompressTestData testData)
+        {
+            RunAndAssert(testData, VariableHostingCompressOptions);
         }
 
         void RunAndAssert(CompressTestData testData, ICompressOptions options)
