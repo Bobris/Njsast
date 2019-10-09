@@ -1,0 +1,31 @@
+Toplevel 1:1 - 5:11
+  Var 1:1 - 1:1
+    VarDef 3:5 - 3:6
+      SymbolVar 3:5 - 3:6
+        Name: a
+    VarDef 4:5 - 4:6
+      SymbolVar 4:5 - 4:6
+        Name: b
+  SimpleStatement 1:1 - 1:7
+    Assign 1:1 - 1:6
+      Operator: Assignment
+      SymbolRef 1:1 - 1:2 [Write]
+        Name: a
+      Number 1:5 - 1:6
+        Value: 1
+        Literal: 1
+  SimpleStatement 2:1 - 2:7
+    Assign 2:1 - 2:6
+      Operator: Assignment
+      SymbolRef 2:1 - 2:2 [Write]
+        Name: b
+      Number 2:5 - 2:6
+        Value: 2
+        Literal: 2
+  Var 5:1 - 5:11
+    VarDef 5:5 - 5:10
+      SymbolVar 5:5 - 5:6 [Write]
+        Name: c
+      Number 5:9 - 5:10
+        Value: 3
+        Literal: 3

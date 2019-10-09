@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Njsast.Ast;
+using Njsast.Utils;
 
 namespace Njsast.Compress
 {
@@ -7,18 +8,37 @@ namespace Njsast.Compress
     {
         class VariableInfo
         {
-            public VariableInfo(AstBlock parent, AstVar astVar)
+            public VariableInfo(AstBlock parent, AstVar astVar, AstVarDef astVarDef, bool canMoveInitialization)
             {
                 Parent = parent;
                 AstVar = astVar;
+                CanMoveInitialization = canMoveInitialization;
+                AstVarDef = astVarDef;
             }
 
             public AstBlock Parent { get; }
             public AstVar AstVar { get; }
+            public AstVarDef AstVarDef { get; }
+            public bool CanMoveInitialization { get; }
+        }
+
+        class ScopeVariableUsageInfo
+        {
+            // bool IsImmediatelyInitialized { get; set; }
+            public bool IsUsedInConditionalStatement { get; set; }
+            public int UnknownReferencesCount { get; set; }
+            public int ReadReferencesCount { get; set; }
+            public int WriteReferencesCount { get; set; }
+            public bool IsPossiblyUsedInCall { get; set; }
+            public AstNode? Initialization { get; set; }
+            public AstNode? InitializationParent { get; set; }
         }
         
         bool _isInScope;
+        bool _isInConditionalStatement;
+        bool _isAfterCall;
         List<VariableInfo> _scopeVariables = new List<VariableInfo>();
+        Dictionary<string, ScopeVariableUsageInfo> _scopeVariableUsages = new Dictionary<string, ScopeVariableUsageInfo>();
         AstBlock? _lastBlock;
         public VariableHoistingTreeTransformer(ICompressOptions options) : base(options)
         {
@@ -37,7 +57,7 @@ namespace Njsast.Compress
                 Descend();
                 _isInScope = false;
                 _lastBlock = null;
-
+                
                 if (_scopeVariables.Count == 0)
                     return astScope;
 
@@ -50,7 +70,8 @@ namespace Njsast.Compress
                     var toRemove = new StructList<AstVarDef>();
                     foreach (var astVarDefinition in scopeVariable.AstVar.Definitions)
                     {
-                        // TODO for now move on tom just variables without value. Value needs to be checked if it is safe
+                        // (astVarDefinition.Name as AstSymbol).Name
+                        // TODO for now move on top just variables without value. Value needs to be checked if it is safe
                         if (astVarDefinition.Value == null)
                         {
                             toRemove.Add(astVarDefinition);
@@ -78,15 +99,98 @@ namespace Njsast.Compress
                 return astScope;
             }
 
+            if (node is AstCall)
+            {
+                if (!_isAfterCall)
+                {
+                    _isAfterCall = true;
+                    foreach (var scopeVariableUsageInfo in _scopeVariableUsages)
+                    {
+                        scopeVariableUsageInfo.Value.IsPossiblyUsedInCall = true;
+                    }
+                }
+            }
+
+            if (node is AstSymbolRef astSymbolRef)
+            {
+                var name = astSymbolRef.Name;
+                if (!_scopeVariableUsages.ContainsKey(name))
+                {
+                    _scopeVariableUsages[name] = new ScopeVariableUsageInfo();
+                }
+
+                var scopeVariableInfo = _scopeVariableUsages[name];
+                scopeVariableInfo.IsUsedInConditionalStatement =
+                    scopeVariableInfo.IsUsedInConditionalStatement || _isInConditionalStatement;
+
+                scopeVariableInfo.IsPossiblyUsedInCall = _isAfterCall;
+                if (astSymbolRef.Usage == SymbolUsage.Read)
+                {
+                    scopeVariableInfo.ReadReferencesCount++;
+                }
+                else if (astSymbolRef.Usage == SymbolUsage.Unknown)
+                {
+                    scopeVariableInfo.UnknownReferencesCount++;
+                }
+                else
+                {
+                    scopeVariableInfo.WriteReferencesCount++;
+                }
+                
+                // TODO in this scope we should check if we are writing to variable
+                // and if it is FIRST usage of that variable if yes then we should initialization node use as init
+                
+                return null;
+            }
+
+            if (node is AstIterationStatement || node is AstIf)
+            {
+                var safeIsInConditionalStatement = _isInConditionalStatement;
+                _isInConditionalStatement = true;
+                Descend();
+                _isInConditionalStatement = safeIsInConditionalStatement;
+                return node;
+            }
+
             if (node is AstBlock astBlock)
             {
+                var safeLastBlock = _lastBlock;
                 _lastBlock = astBlock;
-                return null;
+                Descend();
+                _lastBlock = safeLastBlock;
+                return astBlock;
             }
 
             if (node is AstVar astVar)
             {
-                _scopeVariables.Add(new VariableInfo(_lastBlock!, astVar));
+                foreach (var astVarDefinition in astVar.Definitions)
+                {
+                    // TODO load information or create one
+                    var name = (astVarDefinition.Name as AstSymbol)?.Name;
+                    if (name == null)
+                        throw new SemanticError($"{nameof(AstVarDef)} contains name which is not {nameof(AstSymbol)}", astVarDefinition);
+                    if (!_scopeVariableUsages.ContainsKey(name))
+                    {
+                        // TODO create key
+                        _scopeVariableUsages[name] = new ScopeVariableUsageInfo
+                        {
+                            IsUsedInConditionalStatement = _isInConditionalStatement,
+                            IsPossiblyUsedInCall = _isAfterCall,
+                            // TODO READ UNKNOWN WRITE reference
+                        };
+                    }
+
+                    var usage = _scopeVariableUsages[name];
+                    var canMove = !usage.IsPossiblyUsedInCall && !usage.IsUsedInConditionalStatement &&
+                                  usage.ReadReferencesCount == 0 && usage.UnknownReferencesCount == 0;
+                    _scopeVariables.Add(new VariableInfo(_lastBlock!, astVar, astVarDefinition, canMove));
+                    if (canMove && usage.Initialization == null && astVarDefinition.Value != null)
+                    {
+                        usage.Initialization = astVarDefinition.Value;
+                        usage.InitializationParent = astVarDefinition;
+                    }
+                }
+                
                 return astVar;
             }
             
@@ -103,6 +207,11 @@ namespace Njsast.Compress
         {
             base.ResetState();
             _scopeVariables = new List<VariableInfo>();
+            _isAfterCall = false;
+            _scopeVariableUsages = new Dictionary<string, ScopeVariableUsageInfo>();
+            _isInConditionalStatement = false;
+            _lastBlock = null;
+            _isInScope = false;
         }
 
         protected override bool CanProcessNode(ICompressOptions options, AstNode node)
