@@ -27,10 +27,6 @@ namespace Njsast.Compress
 
         protected override AstNode? Before(AstNode node, bool inList)
         {
-            if (node is AstToplevel)
-            {
-                return null;
-            }
             var transformed = node;
 
             foreach (var compressModuleTreeTransformer in _compressModules)
