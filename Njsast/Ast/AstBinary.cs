@@ -18,7 +18,7 @@ namespace Njsast.Ast
         /// [AstNode] right-hand side expression
         public AstNode Right;
 
-        public AstBinary(Parser parser, Position startLoc, Position endLoc, AstNode left, AstNode right, Operator op) :
+        public AstBinary(Parser? parser, Position startLoc, Position endLoc, AstNode left, AstNode right, Operator op) :
             base(parser, startLoc, endLoc)
         {
             Left = left;
