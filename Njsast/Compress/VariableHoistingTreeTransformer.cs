@@ -85,6 +85,7 @@ namespace Njsast.Compress
         bool _isInScope;
         bool _isInConditionalStatement;
         bool _isAfterCall;
+        bool _canPerformMergeDefAndInit;
         int _astVarCount;
 
         Dictionary<string, ScopeVariableUsageInfo> _scopeVariableUsages =
@@ -130,6 +131,7 @@ namespace Njsast.Compress
             _scopeVariableUsages = new Dictionary<string, ScopeVariableUsageInfo>();
             _isInConditionalStatement = false;
             _isInScope = false;
+            _canPerformMergeDefAndInit = false;
             _astVarCount = 0;
         }
 
@@ -158,7 +160,7 @@ namespace Njsast.Compress
             Descend();
             _isInScope = false;
 
-            if (_astVarCount == 0/* || _astVarCount == 1 && astScope.Body[0] is AstVar*/)
+            if (_astVarCount == 0 || _astVarCount == 1 && !_canPerformMergeDefAndInit && astScope.Body[0] is AstVar)
             {
                 return astScope;
             }
@@ -195,6 +197,7 @@ namespace Njsast.Compress
                             break;
                         scopeVariableInfo.FirstHoistableInitialization =
                             new VariableInitialization(lastBlock, simpleStatement);
+                        _canPerformMergeDefAndInit = true;
                     }
 
                     break;
