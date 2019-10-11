@@ -6,7 +6,7 @@ namespace Njsast.Ast
     /// Reference to some symbol (not definition/declaration)
     public class AstSymbolRef : AstSymbol
     {
-        protected AstSymbolRef(AstSymbol symbol) : base(symbol)
+        public AstSymbolRef(AstSymbol symbol) : base(symbol)
         {
         }
 
