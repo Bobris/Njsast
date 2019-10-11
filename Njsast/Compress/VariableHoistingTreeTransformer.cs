@@ -27,8 +27,8 @@ namespace Njsast.Compress
             {
                 if (AstVarDef.Value == null)
                     throw new InvalidOperationException("Can not convert to assignment if there is no initial value");
-                RemoveVarDefFromVar();
                 Parent.Body.Insert(Parent.Body.IndexOf(AstVar)) = ConvertVariableDefinitionToSimpleStatement();
+                RemoveVarDefFromVar();
             }
 
             public void RemoveVarDefFromVar()
@@ -158,7 +158,7 @@ namespace Njsast.Compress
             Descend();
             _isInScope = false;
 
-            if (_astVarCount == 0 || _astVarCount == 1 && astScope.Body[0] is AstVar)
+            if (_astVarCount == 0/* || _astVarCount == 1 && astScope.Body[0] is AstVar*/)
             {
                 return astScope;
             }
