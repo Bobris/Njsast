@@ -53,6 +53,12 @@ namespace Test.Compress
             MaxPasses = 1
         };
         
+        public static readonly ICompressOptions VariableHosting2PassesCompressOptions = new CompressOptions
+        {
+            EnableVariableHoisting = true,
+            MaxPasses = 2
+        };
+        
         [Theory]
         [CompressDataProvider("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled")]
         public void ShouldRemoveUnreachableCodeUnnecessaryBlocksAndEmptyStatements(CompressTestData testData)
@@ -97,10 +103,17 @@ namespace Test.Compress
         }
 
         [Theory]
-        [CompressDataProvider("Input/Compress/VariableHoisting")]
+        [CompressDataProvider("Input/Compress/VariableHoisting", searchSubDirectories: false)]
         public void ShouldHoistVariableToBeginOfScope(CompressTestData testData)
         {
             RunAndAssert(testData, VariableHostingCompressOptions);
+        }
+
+        [Theory]
+        [CompressDataProvider("Input/Compress/VariableHoisting/2Passes")]
+        public void ShouldHoistVariableToBeginOfScopeWith2Passes(CompressTestData testData)
+        {
+            RunAndAssert(testData, VariableHosting2PassesCompressOptions);
         }
 
         void RunAndAssert(CompressTestData testData, ICompressOptions options)

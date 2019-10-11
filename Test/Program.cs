@@ -84,9 +84,15 @@ namespace Test
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
 
-            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/VariableHoisting").GetTypedData())
+            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/VariableHoisting", "*.js", false).GetTypedData())
             {
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.VariableHostingCompressOptions);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
+            }
+            
+            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/VariableHoisting/2Passes").GetTypedData())
+            {
+                var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.VariableHosting2PassesCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
 
