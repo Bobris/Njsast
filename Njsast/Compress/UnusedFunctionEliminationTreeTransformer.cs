@@ -15,17 +15,24 @@ namespace Njsast.Compress
                 if (node is AstLambda astLambda && astLambda.Name != null)
                 {
                     var canBeRemoved = true;
+                    var shouldPreserveName = false;
                     var definitionScope = astLambda.Name.Thedef!.Scope;
                     foreach (var reference in astLambda.Name.Thedef.References)
                     {
-                        // Usage of symbol in inner in inner scope
-                        if (reference.Scope != definitionScope)
+                        // Referenced in same scope as defined and used differently than writing
+                        if (reference.Scope == definitionScope)
                         {
-                            continue;
+                            if (reference.Usage != SymbolUsage.Write)
+                            {
+                                canBeRemoved = false;
+                                break;
+                            }
+
+                            shouldPreserveName = true;
                         }
 
-                        // Symbol is used only for writing 
-                        if (reference.Usage != SymbolUsage.Write)
+                        // Used in scope which is not defined by this function
+                        if (reference.Scope != definitionScope && !astLambda.IsParentScopeFor(reference.Scope))
                         {
                             canBeRemoved = false;
                             break;
@@ -34,6 +41,13 @@ namespace Njsast.Compress
 
                     if (canBeRemoved)
                     {
+                        ShouldIterateAgain = true;
+                        if (shouldPreserveName)
+                        {
+                            var varDefs = new StructList<AstVarDef>();
+                            varDefs.Add(new AstVarDef(new AstSymbolVar(astLambda.Name)));
+                            return new AstVar(ref varDefs);
+                        }
                         return Remove;
                     }
                 }
