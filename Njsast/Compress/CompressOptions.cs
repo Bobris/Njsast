@@ -8,6 +8,7 @@ namespace Njsast.Compress
         public bool EnableBooleanCompress { get; set; }
         public bool EnableFunctionReturnCompress { get; set; }
         public bool EnableVariableHoisting { get; set; }
+        public bool EnableUnusedFunctionElimination { get; set; }
         public uint MaxPasses { get; set; }
 
         public static readonly ICompressOptions Default = new CompressOptions
@@ -18,6 +19,7 @@ namespace Njsast.Compress
             EnableBooleanCompress = true,
             EnableFunctionReturnCompress = true,
             EnableVariableHoisting = true,
+            EnableUnusedFunctionElimination = true,
             MaxPasses = 10
         };
     }

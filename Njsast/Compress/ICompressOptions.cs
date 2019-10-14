@@ -8,6 +8,7 @@ namespace Njsast.Compress
         bool EnableBooleanCompress { get; }
         bool EnableFunctionReturnCompress { get; }
         bool EnableVariableHoisting { get; }
+        bool EnableUnusedFunctionElimination { get; }
         uint MaxPasses { get; }
     }
 }
