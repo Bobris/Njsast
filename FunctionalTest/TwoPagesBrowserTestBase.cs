@@ -25,6 +25,15 @@ namespace FunctionalTest
             PageB = browserFixture.Browser.NewPageAsync().GetAwaiter().GetResult();
             SetupPages();
         }
+        
+        protected abstract string RuntimeTemplate { get; }
+        
+        protected string InjectScriptToRuntimeTemplate(string testName, string injectCode)
+        {
+            return RuntimeTemplate
+                .Replace("%%TEST_NAME%%", testName)
+                .Replace("%%INJECT%%", injectCode);
+        }
 
         void SetupPages()
         {

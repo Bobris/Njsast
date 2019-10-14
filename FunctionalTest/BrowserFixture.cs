@@ -20,7 +20,7 @@ namespace FunctionalTest
             await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultRevision);
             return await Puppeteer.LaunchAsync(new LaunchOptions
             {
-                Headless = true
+                Headless = false
             });
         }
 

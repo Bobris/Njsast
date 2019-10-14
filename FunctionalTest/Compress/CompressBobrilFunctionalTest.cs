@@ -8,9 +8,9 @@ using Xunit;
 
 namespace FunctionalTest.Compress
 {
-    public class CompressSimpleFunctionalTest : TwoPagesBrowserTestBase
+    public class CompressBobrilFunctionalTest : TwoPagesBrowserTestBase
     {
-        readonly ICompressOptions _simpleTestCompressOptions = new CompressOptions
+        readonly ICompressOptions _bobrilTestCompressOptions = new CompressOptions
         {
             EnableBlockElimination = true,
             EnableBooleanCompress = true,
@@ -19,32 +19,32 @@ namespace FunctionalTest.Compress
             EnableUnreachableCodeElimination = true,
             EnableVariableHoisting = true,
             EnableUnusedFunctionElimination = true,
-            MaxPasses = 2
+            MaxPasses = 10
         };
-
+        
         readonly NavigationOptions _navigationOptions = new NavigationOptions
         {
             Timeout = 10000,
-            WaitUntil = new[] {WaitUntilNavigation.Load}
+            WaitUntil = new[] {WaitUntilNavigation.Load, WaitUntilNavigation.DOMContentLoaded}
         };
-        
-        const string SimpleTestPath = "Input/Compress/Simple";
+
+        const string BobrilTestPath = "Input/Compress/Bobril";
         protected override string RuntimeTemplate { get; }
 
-        public CompressSimpleFunctionalTest(BrowserFixture browserFixture) : base(browserFixture)
+        public CompressBobrilFunctionalTest(BrowserFixture browserFixture) : base(browserFixture)
         {
-            RuntimeTemplate = File.ReadAllText($"{SimpleTestPath}/TestRuntime.html");
+            RuntimeTemplate = File.ReadAllText($"{BobrilTestPath}/TestRuntime.html");
         }
 
         [Theory]
-        [CompressSimpleFunctionalTestDataProvider(SimpleTestPath)]
+        [CompressBobrilFunctionalTestDataProvider(BobrilTestPath)]
         public async void OriginalCodeShouldHaveSameOutputAsCompressed(CompressFunctionalTestData testData)
         {
             var htmlA = InjectScriptToRuntimeTemplate(testData.Name, testData.Input);
             await PageA.SetContentAsync(htmlA, _navigationOptions);
             Assert.Equal(testData.ExpectedStderr, string.Join("\n", StderrA));
             Assert.Equal(testData.ExpectedStdout, string.Join("\n", StdoutA));
-            var minified = Optimize(testData.Input, _simpleTestCompressOptions);
+            var minified = Optimize(testData.Input, _bobrilTestCompressOptions);
             var htmlB = InjectScriptToRuntimeTemplate($"{testData.Name} - minified", minified);
             await PageB.SetContentAsync(htmlB, _navigationOptions);
             Assert.Equal(testData.ExpectedStderr, string.Join("\n", StderrB));

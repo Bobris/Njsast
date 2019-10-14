@@ -27,13 +27,13 @@ namespace FunctionalTest.Compress
             _searchSubDirectories = searchSubDirectories;
         }
         
-        public IEnumerable<CompressSimpleFunctionalTestData> GetTypedData()
+        public IEnumerable<CompressFunctionalTestData> GetTypedData()
         {
             return InputFiles.Select(inputFile =>
             {
                 var stdOutFile = PathUtils.ChangeExtension(inputFile, StdoutFileExtension);
                 var stdErrFile = PathUtils.ChangeExtension(inputFile, StderrFileExtension);
-                return new CompressSimpleFunctionalTestData
+                return new CompressFunctionalTestData
                 {
                     InputFileName = inputFile,
                     Name = PathUtils.WithoutExtension(inputFile),

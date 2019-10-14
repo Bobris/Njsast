@@ -1,0 +1,16 @@
+TEST_START
+Before b.init
+After b.init
+Before b.syncUpdate
+TodoComponent::init
+createTask (description: "Learn Bobril", isDone: "false")
+createTask (description: "What is Bobflux?", isDone: "false")
+createTask (description: "Try BobX!", isDone: "false")
+createTask (description: "", isDone: "false")
+TodoComponent::render
+getTaskView (description: "Learn Bobril, isDone: false")
+getTaskView (description: "What is Bobflux?, isDone: false")
+getTaskView (description: "Try BobX!, isDone: false")
+isActualTaskEmpty
+After b.syncUpdate
+TEST_FINISH
