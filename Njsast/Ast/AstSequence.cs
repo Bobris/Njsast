@@ -9,7 +9,7 @@ namespace Njsast.Ast
         /// [AstNode*] array of expressions (at least two)
         public StructList<AstNode> Expressions;
 
-        public AstSequence(Parser parser, Position startLoc, Position endLoc, ref StructList<AstNode> expressions) :
+        public AstSequence(Parser? parser, Position startLoc, Position endLoc, ref StructList<AstNode> expressions) :
             base(parser, startLoc, endLoc)
         {
             Expressions.TransferFrom(ref expressions);

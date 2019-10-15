@@ -31,11 +31,31 @@ namespace Njsast.Compress
                     throw new InvalidOperationException("Can not convert to assignment if there is no initial value");
                 if (Parent != ParentBlock)
                 {
-                    if (Parent is AstFor astFor && astFor.Init == AstVar)
+                    if (Parent is AstFor astFor)
                     {
-                        astFor.Init = ConvertVariableDefinitionToAssignStatement(false);
-                        RemoveVarDefFromVar();
-                        return;
+                        if (astFor.Init == AstVar)
+                        {
+                            astFor.Init = ConvertVariableDefinitionToAssignStatement(false);
+                            RemoveVarDefFromVar();
+                            return;
+                        }
+
+                        if (astFor.Init is AstAssign astAssign)
+                        {
+                            var expressions = new StructList<AstNode>();
+                            expressions.Add(astAssign);
+                            expressions.Add(ConvertVariableDefinitionToAssignStatement(false));
+                            astFor.Init = new AstSequence(null, astAssign.Start, astAssign.End, ref expressions);
+                            RemoveVarDefFromVar();
+                            return;
+                        }
+
+                        if (astFor.Init is AstSequence astSequence)
+                        {
+                            astSequence.Expressions.Add(ConvertVariableDefinitionToAssignStatement(false));
+                            RemoveVarDefFromVar();
+                            return;
+                        }
                     }
                     throw new NotImplementedException();
                 }
