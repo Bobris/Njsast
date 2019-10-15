@@ -10,13 +10,15 @@ namespace Njsast.Compress
     {
         class VariableDefinition
         {
-            AstBlock Parent { get; }
+            AstBlock ParentBlock { get; }
+            AstNode Parent { get; }
             AstVar AstVar { get; }
             public AstVarDef AstVarDef { get; }
             public bool CanMoveInitialization { get; }
 
-            public VariableDefinition(AstBlock parent, AstVar astVar, AstVarDef astVarDef, bool canMoveInitialization)
+            public VariableDefinition(AstBlock parentBlock, AstNode parent, AstVar astVar, AstVarDef astVarDef, bool canMoveInitialization)
             {
+                ParentBlock = parentBlock;
                 Parent = parent;
                 AstVar = astVar;
                 CanMoveInitialization = canMoveInitialization;
@@ -27,31 +29,40 @@ namespace Njsast.Compress
             {
                 if (AstVarDef.Value == null)
                     throw new InvalidOperationException("Can not convert to assignment if there is no initial value");
-                Parent.Body.Insert(Parent.Body.IndexOf(AstVar)) = ConvertVariableDefinitionToSimpleStatement();
+                if (Parent != ParentBlock)
+                {
+                    if (Parent is AstFor astFor && astFor.Init == AstVar)
+                    {
+                        astFor.Init = ConvertVariableDefinitionToAssignStatement(false);
+                        RemoveVarDefFromVar();
+                        return;
+                    }
+                    throw new NotImplementedException();
+                }
+                ParentBlock.Body.Insert(ParentBlock.Body.IndexOf(AstVar)) = ConvertVariableDefinitionToAssignStatement();
                 RemoveVarDefFromVar();
             }
 
             public void RemoveVarDefFromVar()
             {
                 AstVar.Definitions.RemoveItem(AstVarDef);
-                if (AstVar.Definitions.Count == 0)
+                if (AstVar.Definitions.Count == 0 && Parent == ParentBlock)
                 {
-                    Parent.Body.RemoveItem(AstVar);
+                    ParentBlock.Body.RemoveItem(AstVar);
                 }
             }
 
-            AstSimpleStatement ConvertVariableDefinitionToSimpleStatement()
+            AstNode ConvertVariableDefinitionToAssignStatement(bool wrapToSimpleStatement = true)
             {
-                return new AstSimpleStatement(
-                    new AstAssign(
-                        null,
-                        AstVarDef.Start,
-                        AstVarDef.End,
-                        new AstSymbolRef((AstSymbol) AstVarDef.Name),
-                        AstVarDef.Value!,
-                        Operator.Assignment
-                    )
+                var assignStatement = new AstAssign(
+                    null,
+                    AstVarDef.Start,
+                    AstVarDef.End,
+                    new AstSymbolRef((AstSymbol) AstVarDef.Name),
+                    AstVarDef.Value!,
+                    Operator.Assignment
                 );
+                return wrapToSimpleStatement ? (AstNode) new AstSimpleStatement(assignStatement) : assignStatement;
             }
         }
 
@@ -226,8 +237,11 @@ namespace Njsast.Compress
 
                 var usage = _scopeVariableUsages[name];
                 var lastBlock = FindParent<AstBlock>();
+                var parent = Parent();
+                if (parent == null)
+                    throw new SemanticError($"Parent for {nameof(AstVar)} node was not found", astVar);
                 var variableDefinition =
-                    new VariableDefinition(lastBlock, astVar, astVarDefinition, usage.CanMoveInitialization);
+                    new VariableDefinition(lastBlock, parent, astVar, astVarDefinition, usage.CanMoveInitialization);
                 usage.Definitions.Add(variableDefinition);
             }
 
