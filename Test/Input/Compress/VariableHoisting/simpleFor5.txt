@@ -1,11 +1,11 @@
 Toplevel 1:1 - 2:39
   Var 1:1 - 1:1
-    VarDef 1:5 - 1:6
-      SymbolVar 1:5 - 1:6
-        Name: a
     VarDef 1:1 - 1:1
       SymbolVar 2:10 - 2:11 [Write]
         Name: b
+    VarDef 1:5 - 1:6
+      SymbolVar 1:5 - 1:6
+        Name: a
   For 2:1 - 2:39
     Sequence 2:6 - 2:29
       Assign 2:10 - 2:15

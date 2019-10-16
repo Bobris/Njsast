@@ -170,6 +170,7 @@ namespace Njsast.Compress
         bool _canPerformMergeDefAndInit;
         bool _isInRightSideOfBinary;
         int _astVarCount;
+        List<string> _variableWriteOrder = new List<string>();
 
         Dictionary<string, ScopeVariableUsageInfo> _scopeVariableUsages =
             new Dictionary<string, ScopeVariableUsageInfo>();
@@ -222,6 +223,7 @@ namespace Njsast.Compress
             _canPerformMergeDefAndInit = false;
             _astVarCount = 0;
             VariableDefinition.CreatedIfBlocks.Clear();
+            _variableWriteOrder = new List<string>();
         }
 
         protected override bool CanProcessNode(ICompressOptions options, AstNode node)
@@ -292,8 +294,10 @@ namespace Njsast.Compress
                     break;
                 case SymbolUsage.ReadWrite:
                     scopeVariableInfo.ReadReferencesCount++;
+                    _variableWriteOrder.Add(name);
                     break;
                 case SymbolUsage.Write:
+                    _variableWriteOrder.Add(name);
                     if (scopeVariableInfo.CanMoveInitialization &&
                         scopeVariableInfo.FirstHoistableInitialization == null)
                     {
@@ -372,6 +376,8 @@ namespace Njsast.Compress
                 {
                     _scopeVariableUsages[name] = SetCurrentState(new ScopeVariableUsageInfo());
                 }
+                if (astVarDefinition.Value != null)
+                    _variableWriteOrder.Add(name);
 
                 var usage = _scopeVariableUsages[name];
                 var lastBlock = FindParent<AstBlock>();
@@ -405,10 +411,27 @@ namespace Njsast.Compress
             return variableUsageInfo;
         }
 
+        IReadOnlyList<KeyValuePair<string, ScopeVariableUsageInfo>> GetSortVariableUsageInfosDictionaryAsList()
+        {
+            var processedVars = new HashSet<string>();
+            var variableOrder = new List<string>();
+            _variableWriteOrder.AddRange(_scopeVariableUsages.Keys);
+            foreach (var varName in _variableWriteOrder.Where(varName => !processedVars.Contains(varName)))
+            {
+                variableOrder.Add(varName);
+                processedVars.Add(varName);
+            }
+
+            var scopeVariableUsagesList = _scopeVariableUsages.ToList();
+            scopeVariableUsagesList.Sort((pairA, pairB) => variableOrder.IndexOf(pairA.Key) - variableOrder.IndexOf(pairB.Key));
+            return scopeVariableUsagesList;
+        }
+
         AstScope HoistVariables(AstScope astScope)
         {
             var hoistedVariables = new Dictionary<string, AstVarDef>();
-            foreach (var scopeVariableUsageInfo in _scopeVariableUsages)
+            
+            foreach (var scopeVariableUsageInfo in GetSortVariableUsageInfosDictionaryAsList())
             {
                 var variableName = scopeVariableUsageInfo.Key;
                 var isFirst = true;

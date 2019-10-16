@@ -1,4 +1,4 @@
-var k, n, r;
+var n, k, r;
 
 if (k) {
     n = call();
