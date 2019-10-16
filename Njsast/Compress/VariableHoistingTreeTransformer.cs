@@ -118,7 +118,7 @@ namespace Njsast.Compress
         }
 
         bool _isInScope;
-        bool _isInStatementWithBody;
+        bool _isInConditional;
         bool _isAfterCall;
         bool _canPerformMergeDefAndInit;
         bool _isInRightSideOfBinary;
@@ -148,9 +148,11 @@ namespace Njsast.Compress
                 return null;
             }
 
-            // statement with body (body is conditional)
-            if (node is AstIterationStatement || node is AstIf)
-                return ProcessStatementWithBody((AstStatementWithBody) node);
+            // statement with body (body is also conditional) or conditional (ternary operator)
+            if (node is AstIterationStatement || 
+                node is AstIf || 
+                node is AstConditional)
+                return ProcessConditional(node);
 
             if (node is AstVar astVar)
                 return ProcessAstVarNode(astVar);
@@ -168,7 +170,7 @@ namespace Njsast.Compress
             base.ResetState();
             _isAfterCall = false;
             _scopeVariableUsages = new Dictionary<string, ScopeVariableUsageInfo>();
-            _isInStatementWithBody = false;
+            _isInConditional = false;
             _isInScope = false;
             _canPerformMergeDefAndInit = false;
             _astVarCount = 0;
@@ -302,13 +304,13 @@ namespace Njsast.Compress
             return (parentNode, initNode);
         } 
 
-        AstStatementWithBody ProcessStatementWithBody(AstStatementWithBody statementWithBody)
+        AstNode ProcessConditional(AstNode node)
         {
-            var safeIsInStatementWithBody = _isInStatementWithBody;
-            _isInStatementWithBody = true;
+            var safeIsInConditional = _isInConditional;
+            _isInConditional = true;
             Descend();
-            _isInStatementWithBody = safeIsInStatementWithBody;
-            return statementWithBody;
+            _isInConditional = safeIsInConditional;
+            return node;
         }
 
         AstVar ProcessAstVarNode(AstVar astVar)
@@ -347,7 +349,7 @@ namespace Njsast.Compress
         ScopeVariableUsageInfo SetCurrentState(ScopeVariableUsageInfo variableUsageInfo)
         {
             variableUsageInfo.IsUsedInConditionalStatement =
-                variableUsageInfo.IsUsedInConditionalStatement || _isInStatementWithBody;
+                variableUsageInfo.IsUsedInConditionalStatement || _isInConditional;
             variableUsageInfo.IsPossiblyUsedInCall = _isAfterCall;
             variableUsageInfo.IsUsedOnRightSideOfBinary =
                 variableUsageInfo.IsUsedOnRightSideOfBinary || _isInRightSideOfBinary;
