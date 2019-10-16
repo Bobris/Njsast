@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Njsast.Ast;
 using Njsast.Reader;
 using Njsast.Utils;
@@ -13,15 +14,19 @@ namespace Njsast.Compress
             AstBlock ParentBlock { get; }
             AstNode Parent { get; }
             AstVar AstVar { get; }
+            int OriginalIndexInVar { get; }
             public AstVarDef AstVarDef { get; }
             public bool CanMoveInitialization { get; }
 
-            public VariableDefinition(AstBlock parentBlock, AstNode parent, AstVar astVar, AstVarDef astVarDef, bool canMoveInitialization)
+            public static readonly HashSet<AstBlock> CreatedIfBlocks = new HashSet<AstBlock>();
+
+            public VariableDefinition(AstBlock parentBlock, AstNode parent, AstVar astVar, AstVarDef astVarDef, bool canMoveInitialization, int originalIndexInVar)
             {
                 ParentBlock = parentBlock;
                 Parent = parent;
                 AstVar = astVar;
                 CanMoveInitialization = canMoveInitialization;
+                OriginalIndexInVar = originalIndexInVar;
                 AstVarDef = astVarDef;
             }
 
@@ -52,7 +57,48 @@ namespace Njsast.Compress
 
                         if (astFor.Init is AstSequence astSequence)
                         {
-                            astSequence.Expressions.Add(ConvertVariableDefinitionToAssignStatement(false));
+                            astSequence.Expressions.Add(ConvertVariableDefinitionToAssignStatement(false)); // TODO test for correct order of assignments
+                            RemoveVarDefFromVar();
+                            return;
+                        }
+                    }
+
+                    if (Parent is AstIf astIf)
+                    {
+                        if (astIf.Body == AstVar)
+                        {
+                            var block = new AstBlock(AstVar);
+                            CreatedIfBlocks.Add(block);
+                            block.Body.AddRange(AstVar.Definitions.Cast<AstNode>().ToArray());
+                            block.Body.ReplaceItem(AstVarDef, ConvertVariableDefinitionToAssignStatement());
+                            astIf.Body = block;
+                            RemoveVarDefFromVar();
+                            return;
+                        }
+
+                        if (astIf.Alternative == AstVar)
+                        {
+                            var block = new AstBlock(AstVar);
+                            CreatedIfBlocks.Add(block);
+                            block.Body.AddRange(AstVar.Definitions.Cast<AstNode>().ToArray());
+                            block.Body.ReplaceItem(AstVarDef, ConvertVariableDefinitionToAssignStatement());
+                            astIf.Alternative = block;
+                            RemoveVarDefFromVar();
+                            return;
+                        }
+
+                        if (astIf.Body is AstBlock bodyBlock && 
+                            CreatedIfBlocks.Contains(bodyBlock))
+                        {
+                            bodyBlock.Body.ReplaceItem(AstVarDef, ConvertVariableDefinitionToAssignStatement());
+                            RemoveVarDefFromVar();
+                            return;
+                        }
+
+                        if (astIf.Alternative is AstBlock alternativeBlock &&
+                            CreatedIfBlocks.Contains(alternativeBlock))
+                        {
+                            alternativeBlock.Body.ReplaceItem(AstVarDef, ConvertVariableDefinitionToAssignStatement());
                             RemoveVarDefFromVar();
                             return;
                         }
@@ -174,6 +220,7 @@ namespace Njsast.Compress
             _isInScope = false;
             _canPerformMergeDefAndInit = false;
             _astVarCount = 0;
+            VariableDefinition.CreatedIfBlocks.Clear();
         }
 
         protected override bool CanProcessNode(ICompressOptions options, AstNode node)
@@ -316,6 +363,7 @@ namespace Njsast.Compress
         AstVar ProcessAstVarNode(AstVar astVar)
         {
             _astVarCount++;
+            var index = 0;
             foreach (var astVarDefinition in astVar.Definitions)
             {
                 var name = GetAstVarDefinitionName(astVarDefinition);
@@ -330,7 +378,7 @@ namespace Njsast.Compress
                 if (parent == null)
                     throw new SemanticError($"Parent for {nameof(AstVar)} node was not found", astVar);
                 var variableDefinition =
-                    new VariableDefinition(lastBlock, parent, astVar, astVarDefinition, usage.CanMoveInitialization);
+                    new VariableDefinition(lastBlock, parent, astVar, astVarDefinition, usage.CanMoveInitialization, index++);
                 usage.Definitions.Add(variableDefinition);
             }
 
