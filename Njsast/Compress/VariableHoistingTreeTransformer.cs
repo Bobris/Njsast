@@ -40,24 +40,20 @@ namespace Njsast.Compress
                     {
                         if (astFor.Init == AstVar)
                         {
-                            astFor.Init = ConvertVariableDefinitionToAssignStatement(false);
-                            RemoveVarDefFromVar();
-                            return;
-                        }
-
-                        if (astFor.Init is AstAssign astAssign)
-                        {
-                            var expressions = new StructList<AstNode>();
-                            expressions.Add(astAssign);
-                            expressions.Add(ConvertVariableDefinitionToAssignStatement(false));
-                            astFor.Init = new AstSequence(null, astAssign.Start, astAssign.End, ref expressions);
-                            RemoveVarDefFromVar();
-                            return;
+                            if (AstVar.Definitions.Count == 1)
+                            {
+                                astFor.Init = ConvertVariableDefinitionToAssignStatement(false);
+                                RemoveVarDefFromVar();
+                                return;
+                            }
+                            var expressionsPlaceholders = new StructList<AstNode>();
+                            expressionsPlaceholders.AddRange(VarDefsWithInitialization());
+                            astFor.Init = new AstSequence(null, AstVar.Start, AstVar.End, ref expressionsPlaceholders);
                         }
 
                         if (astFor.Init is AstSequence astSequence)
                         {
-                            astSequence.Expressions.Add(ConvertVariableDefinitionToAssignStatement(false)); // TODO test for correct order of assignments
+                            astSequence.Expressions.ReplaceItem(AstVarDef, ConvertVariableDefinitionToAssignStatement(false));
                             RemoveVarDefFromVar();
                             return;
                         }
@@ -69,7 +65,7 @@ namespace Njsast.Compress
                         {
                             var block = new AstBlock(AstVar);
                             CreatedIfBlocks.Add(block);
-                            block.Body.AddRange(AstVar.Definitions.Cast<AstNode>().ToArray());
+                            block.Body.AddRange(VarDefsWithInitialization());
                             block.Body.ReplaceItem(AstVarDef, ConvertVariableDefinitionToAssignStatement());
                             astIf.Body = block;
                             RemoveVarDefFromVar();
@@ -80,7 +76,7 @@ namespace Njsast.Compress
                         {
                             var block = new AstBlock(AstVar);
                             CreatedIfBlocks.Add(block);
-                            block.Body.AddRange(AstVar.Definitions.Cast<AstNode>().ToArray());
+                            block.Body.AddRange(VarDefsWithInitialization());
                             block.Body.ReplaceItem(AstVarDef, ConvertVariableDefinitionToAssignStatement());
                             astIf.Alternative = block;
                             RemoveVarDefFromVar();
@@ -116,6 +112,11 @@ namespace Njsast.Compress
                 {
                     ParentBlock.Body.RemoveItem(AstVar);
                 }
+            }
+
+            ReadOnlySpan<AstNode> VarDefsWithInitialization()
+            {
+                return AstVar.Definitions.Where(x => x.Value != null).Cast<AstNode>().ToArray();
             }
 
             AstNode ConvertVariableDefinitionToAssignStatement(bool wrapToSimpleStatement = true)
