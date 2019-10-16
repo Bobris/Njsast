@@ -88,10 +88,10 @@ namespace Njsast.Compress
 
         class VariableInitialization
         {
-            public AstBlock Parent { get; }
-            public AstSimpleStatement Initialization { get; }
+            public AstNode Parent { get; }
+            public AstNode Initialization { get; }
 
-            public VariableInitialization(AstBlock parent, AstSimpleStatement initialization)
+            public VariableInitialization(AstNode parent, AstNode initialization)
             {
                 Parent = parent;
                 Initialization = initialization;
@@ -105,18 +105,23 @@ namespace Njsast.Compress
             public int UnknownReferencesCount { get; set; }
             public int ReadReferencesCount { get; set; }
             public bool IsPossiblyUsedInCall { get; set; }
+            public bool IsUsedOnRightSideOfBinary { get; set; }
 
             public bool CanMoveInitialization =>
-                !IsPossiblyUsedInCall && !IsUsedInConditionalStatement &&
-                ReadReferencesCount == 0 && UnknownReferencesCount == 0;
+                !IsPossiblyUsedInCall && 
+                !IsUsedInConditionalStatement &&
+                !IsUsedOnRightSideOfBinary &&
+                ReadReferencesCount == 0 && 
+                UnknownReferencesCount == 0;
 
             public VariableInitialization? FirstHoistableInitialization { get; set; }
         }
 
         bool _isInScope;
-        bool _isInConditionalStatement;
+        bool _isInStatementWithBody;
         bool _isAfterCall;
         bool _canPerformMergeDefAndInit;
+        bool _isInRightSideOfBinary;
         int _astVarCount;
 
         Dictionary<string, ScopeVariableUsageInfo> _scopeVariableUsages =
@@ -134,15 +139,18 @@ namespace Njsast.Compress
             if (node is AstCall && !_isAfterCall)
                 SetIsAfterCall();
 
+            if (node is AstBinary astBinary)
+                return ProcessBinaryNode(astBinary, inList);
+
             if (node is AstSymbolRef astSymbolRef)
             {
                 ProcessSymbolRefNode(astSymbolRef);
                 return null;
             }
 
-            // Conditional Statement
+            // statement with body (body is conditional)
             if (node is AstIterationStatement || node is AstIf)
-                return ProcessConditionalStatement((AstStatementWithBody) node);
+                return ProcessStatementWithBody((AstStatementWithBody) node);
 
             if (node is AstVar astVar)
                 return ProcessAstVarNode(astVar);
@@ -160,7 +168,7 @@ namespace Njsast.Compress
             base.ResetState();
             _isAfterCall = false;
             _scopeVariableUsages = new Dictionary<string, ScopeVariableUsageInfo>();
-            _isInConditionalStatement = false;
+            _isInStatementWithBody = false;
             _isInScope = false;
             _canPerformMergeDefAndInit = false;
             _astVarCount = 0;
@@ -199,6 +207,23 @@ namespace Njsast.Compress
             return HoistVariables(astScope);
         }
 
+        AstBinary ProcessBinaryNode(AstBinary astBinary, bool inList)
+        {
+            var safeIsInRightSideOfBinary = _isInRightSideOfBinary;
+            DescendNode(astBinary.Left);
+            _isInRightSideOfBinary = true;
+            DescendNode(astBinary.Right);
+            _isInRightSideOfBinary = safeIsInRightSideOfBinary;
+            return astBinary;
+
+            void DescendNode(AstNode node)
+            {
+                Stack.Add(node);
+                Before(node, inList);
+                Stack.Pop();
+            }
+        }
+
         void ProcessSymbolRefNode(AstSymbolRef astSymbolRef)
         {
             var name = astSymbolRef.Name;
@@ -222,26 +247,68 @@ namespace Njsast.Compress
                     if (scopeVariableInfo.CanMoveInitialization &&
                         scopeVariableInfo.FirstHoistableInitialization == null)
                     {
-                        var simpleStatement = FindParent<AstSimpleStatement>();
-                        var lastBlock = FindParent<AstBlock>();
-                        if (lastBlock!.Body.IndexOf(simpleStatement) == -1)
+                        AstSimpleStatement? initSimpleStatement;
+                        AstBlock? parentBlock;
+                        (parentBlock, initSimpleStatement) = GetInitAndParentNode<AstBlock?, AstSimpleStatement?>();
+
+                        if (parentBlock != null && 
+                            initSimpleStatement != null &&
+                            parentBlock.Body.IndexOf(initSimpleStatement) != -1 &&
+                            initSimpleStatement.Body is AstAssign)
+                        {
+                            scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parentBlock, initSimpleStatement);
+                            _canPerformMergeDefAndInit = true;
                             break;
-                        scopeVariableInfo.FirstHoistableInitialization =
-                            new VariableInitialization(lastBlock, simpleStatement);
-                        _canPerformMergeDefAndInit = true;
+                        }
+
+                        AstBinary? parentNode;
+                        AstAssign? initNode;
+                        (parentNode, initNode) = GetInitAndParentNode<AstBinary?, AstAssign?>();
+
+                        if (parentNode != null && initNode != null)
+                        {
+                            scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parentNode, initNode);
+                            _canPerformMergeDefAndInit = true;
+                            break;
+                        }
+
+                        throw new NotImplementedException();
                     }
 
                     break;
             }
         }
 
-        AstStatementWithBody ProcessConditionalStatement(AstStatementWithBody conditionalStatement)
+        (TParent, TInit) GetInitAndParentNode<TParent, TInit>(AstNode? stopNode = null) where TParent : AstNode? where TInit : AstNode?
         {
-            var safeIsInConditionalStatement = _isInConditionalStatement;
-            _isInConditionalStatement = true;
+            var parentNode = default(TParent)!;
+            var initNode = default(TInit)!;
+            foreach (var currentNode in Parents())
+            {
+                if (stopNode == currentNode)
+                    break;
+                if (initNode == null)
+                {
+                    if (currentNode is TInit tInitNode)
+                        initNode = tInitNode;
+                    continue;
+                }
+
+                if (currentNode is TParent tParentNode)
+                    parentNode = tParentNode;
+                break;
+            }
+
+            return (parentNode, initNode);
+        } 
+
+        AstStatementWithBody ProcessStatementWithBody(AstStatementWithBody statementWithBody)
+        {
+            var safeIsInStatementWithBody = _isInStatementWithBody;
+            _isInStatementWithBody = true;
             Descend();
-            _isInConditionalStatement = safeIsInConditionalStatement;
-            return conditionalStatement;
+            _isInStatementWithBody = safeIsInStatementWithBody;
+            return statementWithBody;
         }
 
         AstVar ProcessAstVarNode(AstVar astVar)
@@ -280,8 +347,10 @@ namespace Njsast.Compress
         ScopeVariableUsageInfo SetCurrentState(ScopeVariableUsageInfo variableUsageInfo)
         {
             variableUsageInfo.IsUsedInConditionalStatement =
-                variableUsageInfo.IsUsedInConditionalStatement || _isInConditionalStatement;
+                variableUsageInfo.IsUsedInConditionalStatement || _isInStatementWithBody;
             variableUsageInfo.IsPossiblyUsedInCall = _isAfterCall;
+            variableUsageInfo.IsUsedOnRightSideOfBinary =
+                variableUsageInfo.IsUsedOnRightSideOfBinary || _isInRightSideOfBinary;
             return variableUsageInfo;
         }
 
@@ -349,14 +418,31 @@ namespace Njsast.Compress
                 hoistedVariables.Add(variableName, variableDefinition.AstVarDef);
                 variableDefinition.RemoveVarDefFromVar();
 
-                if (!(scopeVariableUsageInfo.FirstHoistableInitialization.Initialization.Body is AstAssign assign))
+                var hoistableInitialization = scopeVariableUsageInfo.FirstHoistableInitialization;
+
+                if (hoistableInitialization.Parent is AstBlock parentBlock &&
+                    hoistableInitialization.Initialization is AstSimpleStatement initSimpleStatement &&
+                    initSimpleStatement.Body is AstAssign simpleStatementAssign)
                 {
-                    throw new NotImplementedException();
+                    variableDefinition.AstVarDef.Value = simpleStatementAssign.Right;
+                    parentBlock.Body.RemoveItem(initSimpleStatement);
+                    return;
                 }
 
-                variableDefinition.AstVarDef.Value = assign.Right;
-                scopeVariableUsageInfo.FirstHoistableInitialization.Parent.Body.RemoveItem(
-                    scopeVariableUsageInfo.FirstHoistableInitialization.Initialization);
+                if (hoistableInitialization.Parent is AstBinary parentBinary &&
+                    hoistableInitialization.Initialization is AstAssign initAssign)
+                {
+                    variableDefinition.AstVarDef.Value = initAssign.Right;
+                    if (parentBinary.Left == initAssign)
+                        parentBinary.Left = initAssign.Left;
+                    else if (parentBinary.Right == initAssign)
+                        parentBinary.Right = initAssign.Left;
+                    else
+                        throw new NotImplementedException();
+                    return;
+                }
+
+                throw new NotImplementedException();
             }
             // Move variable definition to top of scope and assign variable later at same place
             else if (!variableDefinition.CanMoveInitialization &&
