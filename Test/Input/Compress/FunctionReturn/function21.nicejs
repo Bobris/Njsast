@@ -1,6 +1,8 @@
 function func() {
     if (a) {
-        if (b) {} else {
+        if (b) {
+            return c;
+        } else {
             return d;
         }
     } else {

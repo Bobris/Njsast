@@ -10,6 +10,9 @@ Toplevel 1:1 - 13:2
           SymbolRef 3:13 - 3:14 [Read]
             Name: b
           Block 3:16 - 5:10
+            Return 4:13 - 4:22
+              SymbolRef 4:20 - 4:21 [Read]
+                Name: c
           Block 5:16 - 7:10
             Return 6:13 - 6:22
               SymbolRef 6:20 - 6:21 [Read]

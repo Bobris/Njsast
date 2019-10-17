@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Njsast.Ast;
 
@@ -9,18 +10,22 @@ namespace Njsast.Compress
         {
             public AstBlock ParentBlock { get; }
             public AstReturn ReturnStatement { get; }
+            public AstIf? IfStatement { get; }
             public bool IsFollowedByEfficientCode { get; set; }
             public bool IsLoopReturn { get; set; }
+            public bool IsInIf => IfStatement != null;
             public int NestedLevel { get; set; }
             
-            public ReturnInfo(AstReturn returnStatement, AstBlock parentBlock)
+            public ReturnInfo(AstReturn returnStatement, AstBlock parentBlock, AstIf? ifStatement)
             {
                 ReturnStatement = returnStatement;
                 ParentBlock = parentBlock;
+                IfStatement = ifStatement;
             }
         }
         bool _isInFunction;
         bool _isInLoop;
+        bool _isInIf;
         bool _isAfterReturn;
         int _nestedLevel;
         List<ReturnInfo> _returnInfos = new List<ReturnInfo>(0);
@@ -35,7 +40,7 @@ namespace Njsast.Compress
             if (_isInFunction)
             {
                 if (IsNonEfficientCode(node))
-                    return node; // TODO test both
+                    return node;
                 if (node is AstStatement && 
                     !(node is AstReturn) && 
                     typeof(AstBlock) != node.GetType() && 
@@ -89,7 +94,7 @@ namespace Njsast.Compress
             if (astReturn.Value?.ConstValue() is AstUndefined)
                 astReturn.Value = null;
 
-            var returnInfo = new ReturnInfo(astReturn, FindParent<AstBlock>())
+            var returnInfo = new ReturnInfo(astReturn, FindParent<AstBlock>(), _isInIf ? FindParent<AstIf>() : null)
             {
                 IsLoopReturn = _isInLoop,
                 NestedLevel = _nestedLevel
@@ -103,14 +108,22 @@ namespace Njsast.Compress
         {
             var safeIsAfterReturn = _isAfterReturn;
             var safeIsInLoop = _isInLoop;
+            var safeIsInIf = _isInIf;
             _nestedLevel++;
             if (astStatementWithBody is AstIterationStatement)
             {
                 _isInLoop = true;
             }
+
+            if (astStatementWithBody is AstIf)
+            {
+                _isInIf = true;
+            }
+            
             Descend();
             _isAfterReturn = safeIsAfterReturn;
             _isInLoop = safeIsInLoop;
+            _isInIf = safeIsInIf;
             _nestedLevel--;
             return astStatementWithBody;
         }
@@ -138,6 +151,24 @@ namespace Njsast.Compress
                 }
                 if (ShouldRemoveFirstReturn(first, second))
                 {
+                    if (first.IsInIf && first.ParentBlock.Body.IndexOf(first.ReturnStatement) == -1)
+                    {
+                        if (first.IfStatement!.Body == first.ReturnStatement)
+                        {
+                            first.IfStatement.Body = new AstEmptyStatement();
+                            ShouldIterateAgain = true;
+                            continue;
+                        }
+
+                        if (first.IfStatement.Alternative == first.ReturnStatement)
+                        {
+                            first.IfStatement.Alternative = null;
+                            ShouldIterateAgain = true;
+                            continue;
+                        }
+                        
+                        throw new NotSupportedException();
+                    }
                     first.ParentBlock.Body.RemoveItem(first.ReturnStatement);
                     ShouldIterateAgain = true;
                 }
@@ -164,6 +195,12 @@ namespace Njsast.Compress
             // After return is code with possible side effect
             if (returnToRemove.IsFollowedByEfficientCode) 
                 return false;
+            // Return is in two different if statements
+            if (returnToRemove.IsInIf && 
+                followedReturn != null && 
+                followedReturn.IsInIf &&
+                returnToRemove.IfStatement != followedReturn.IfStatement)
+                return false; 
             // Return is placed inside loop 
             if (returnToRemove.IsLoopReturn)
                 return false;
