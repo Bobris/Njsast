@@ -30,6 +30,21 @@ namespace Njsast.Compress
                 AstVarDef = astVarDef;
             }
 
+            public void TryRemoveVarFromForIn()
+            {
+                if (Parent is AstForIn astForIn)
+                {
+                    if (astForIn.Init != AstVar)
+                        throw new NotImplementedException();
+                    if (AstVar.Definitions.Count > 1) 
+                        throw new NotSupportedException();
+
+                    astForIn.Init = new AstSymbolRef((AstSymbol)AstVarDef.Name);
+                }
+
+                RemoveVarDefFromVar();
+            }
+
             public void ConvertToAssignmentAndInsertBeforeVarNode()
             {
                 if (AstVarDef.Value == null)
@@ -535,7 +550,7 @@ namespace Njsast.Compress
                 }
 
                 hoistedVariables.Add(variableName, variableDefinition.AstVarDef);
-                variableDefinition.RemoveVarDefFromVar();
+                variableDefinition.TryRemoveVarFromForIn();
             }
         }
 
