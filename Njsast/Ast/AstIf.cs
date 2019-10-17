@@ -31,7 +31,11 @@ namespace Njsast.Ast
             Condition = tt.Transform(Condition)!;
             base.Transform(tt);
             if (Alternative != null)
-                Alternative = (AstStatement)tt.Transform(Alternative);
+            {
+                var alt = tt.Transform(Alternative);
+                Alternative = (AstStatement)alt;
+            }
+                
         }
 
         public override void CodeGen(OutputContext output)
