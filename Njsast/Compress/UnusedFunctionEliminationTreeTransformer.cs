@@ -1,3 +1,4 @@
+using System.Linq;
 using Njsast.Ast;
 
 namespace Njsast.Compress
@@ -8,16 +9,79 @@ namespace Njsast.Compress
         {
         }
 
+        bool _isInBinaryOrVar;
+
         protected override AstNode? Before(AstNode node, bool inList)
         {
+            if (node is AstBinary astBinary)
+            {
+                DescendBinaryOrVar();
+
+                if (astBinary.Right == Remove)
+                {
+                    return astBinary.Left; // TODO tree transformer which remove alone symbol refs
+                }
+                
+                return astBinary;
+            }
+
+            if (node is AstVar astVar)
+            {
+                DescendBinaryOrVar();
+
+                var defsToRemove = astVar.Definitions.Where(astVarDef => astVarDef.Value == Remove).ToList();
+
+                foreach (var astVarDef in defsToRemove)
+                {
+                    astVar.Definitions.RemoveItem(astVarDef);
+                }
+
+                if (astVar.Definitions.Count == 0)
+                {
+                    return inList ? Remove : new AstEmptyStatement();
+                }
+
+                return astVar;
+            }
+            
             if (node is AstScope)
             {
-                if (node is AstLambda astLambda && astLambda.Name != null)
+                var parent = Parent();
+                SymbolDef? symbolDef = null;
+                if (parent is AstBinary)
                 {
+                    if (parent is AstAssign astAssign && astAssign.Left is AstSymbolRef symbolRef)
+                    {
+                        symbolDef = symbolRef.Thedef;
+                        if (symbolDef!.Global && symbolDef!.Orig.Where(x => x is AstSymbolDeclaration).ToList().Count == 0)
+                            return node;
+                    }
+                    else 
+                        return node; 
+                }
+
+                if (parent is AstVarDef astVarDef)
+                {
+                    if (astVarDef.Name is AstSymbol symbol)
+                    {
+                        symbolDef = symbol.Thedef;
+                    }
+                    else
+                        return node;
+                }
+
+                if (node is AstLambda astLambda && (inList || _isInBinaryOrVar))
+                {
+                    if (symbolDef == null && astLambda.Name == null)
+                        return node;
+                    
+                    if (symbolDef == null)
+                        symbolDef = astLambda.Name!.Thedef!;
+                    
                     var canBeRemoved = true;
                     var shouldPreserveName = false;
-                    var definitionScope = astLambda.Name.Thedef!.Scope;
-                    foreach (var reference in astLambda.Name.Thedef.References)
+                    var definitionScope = symbolDef.Scope;
+                    foreach (var reference in symbolDef.References)
                     {
                         // Referenced in same scope as defined and used differently than writing
                         if (reference.Scope == definitionScope)
@@ -42,10 +106,10 @@ namespace Njsast.Compress
                     if (canBeRemoved)
                     {
                         ShouldIterateAgain = true;
-                        if (shouldPreserveName)
+                        if (shouldPreserveName && !_isInBinaryOrVar)
                         {
                             var varDefs = new StructList<AstVarDef>();
-                            varDefs.Add(new AstVarDef(new AstSymbolVar(astLambda.Name)));
+                            varDefs.Add(new AstVarDef(new AstSymbolVar(symbolDef.Name)));
                             return new AstVar(ref varDefs);
                         }
                         return Remove;
@@ -67,6 +131,14 @@ namespace Njsast.Compress
         protected override AstNode? After(AstNode node, bool inList)
         {
             return null;
+        }
+
+        void DescendBinaryOrVar()
+        {
+            var safeIsInBinaryOrVar = _isInBinaryOrVar;
+            _isInBinaryOrVar = true;
+            Descend();
+            _isInBinaryOrVar = safeIsInBinaryOrVar;
         }
     }
 }
