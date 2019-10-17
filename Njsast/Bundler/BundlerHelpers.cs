@@ -1,13 +1,12 @@
 using System;
-using System.Linq;
-using System.Net.Sockets;
+using System.Collections.Generic;
 using Njsast.Ast;
 using Njsast.Reader;
 using Njsast.Utils;
 
 namespace Njsast.Bundler
 {
-    public class BundlerHelpers
+    public static class BundlerHelpers
     {
         public static SourceFile BuildSourceFile(string name, string content, SourceMap.SourceMap? sourceMap,
             Func<string, string, string> resolver)
@@ -46,6 +45,39 @@ namespace Njsast.Bundler
             {
                 main.Variables!.Add(symbolDef.Name, symbolDef);
             }
+        }
+
+        public static string MakeUniqueName(string name, IReadOnlyDictionary<string, SymbolDef> existing,
+            string? suffix)
+        {
+            if (!existing.ContainsKey(name)) return name;
+            var prefix = suffix != null ? name + suffix : name;
+            string newName;
+            var index = suffix == null ? 1 : 0;
+            do
+            {
+                index++;
+                newName = prefix;
+                if (index > 1) newName += index.ToString();
+            } while (existing.ContainsKey(newName));
+
+            return newName;
+        }
+
+        public static string NumberToIdent(int num)
+        {
+            Span<char> ret = stackalloc char[8];
+            var pos = 0;
+            var @base = 54;
+            num++;
+            do
+            {
+                num--;
+                ret[pos++] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789"[Math.DivRem(num, @base, out num)];
+                @base = 64;
+            } while (num > 0);
+
+            return new string(ret.Slice(0, pos));
         }
     }
 }
