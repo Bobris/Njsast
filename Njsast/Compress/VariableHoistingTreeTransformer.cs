@@ -559,7 +559,7 @@ namespace Njsast.Compress
             // Remove redundant variable definition
             if (variableDefinition.AstVarDef.Value == null)
             {
-                variableDefinition.RemoveVarDefFromVar();
+                variableDefinition.TryRemoveVarFromForIn();
             }
             // Replace var initialization with assign statement
             else
