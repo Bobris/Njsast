@@ -148,7 +148,13 @@ namespace Njsast.Compress
             }
         }
 
-        class VariableInitialization
+        interface IVariableInitialization
+        {
+            AstNode Parent { get; }
+            AstNode Initialization { get; }
+        }
+
+        class VariableInitialization : IVariableInitialization
         {
             public AstNode Parent { get; }
             public AstNode Initialization { get; }
@@ -158,6 +164,15 @@ namespace Njsast.Compress
                 Parent = parent;
                 Initialization = initialization;
             }
+        }
+
+        class NonHoistableVariableInitialization : IVariableInitialization
+        {
+            public AstNode Parent => throw new InvalidOperationException();
+
+            public AstNode Initialization => throw new InvalidOperationException();
+
+            public static readonly IVariableInitialization Instance = new NonHoistableVariableInitialization();
         }
 
         class ScopeVariableUsageInfo
@@ -176,7 +191,7 @@ namespace Njsast.Compress
                 ReadReferencesCount == 0 && 
                 UnknownReferencesCount == 0;
 
-            public VariableInitialization? FirstHoistableInitialization { get; set; }
+            public IVariableInitialization? FirstHoistableInitialization { get; set; }
         }
 
         bool _isInScope;
@@ -187,6 +202,7 @@ namespace Njsast.Compress
         int _astVarCount;
         List<string> _variableWriteOrder = new List<string>();
         readonly NodeFinderTreeWalker<AstCall> _callNodeFinderTreeWalker = new NodeFinderTreeWalker<AstCall>();
+        readonly NodeFinderTreeWalker<AstSymbolRef> _symbolRefNodeFinderTreeWalker = new NodeFinderTreeWalker<AstSymbolRef>();
 
         Dictionary<string, ScopeVariableUsageInfo> _scopeVariableUsages =
             new Dictionary<string, ScopeVariableUsageInfo>();
@@ -367,10 +383,23 @@ namespace Njsast.Compress
                     SetIsAfterCall();
                     return;
                 }
-                
+
+                if (IsValueHoistable(assign.Right))
+                {
+                    scopeVariableInfo.FirstHoistableInitialization = NonHoistableVariableInitialization.Instance;
+                    return;
+                }
+
                 scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parent, initialization);
                 _canPerformMergeDefAndInit = true;
             } 
+        }
+
+        bool IsValueHoistable(AstNode value)
+        {
+            return _symbolRefNodeFinderTreeWalker.FindNodes(value).Any(symbolRef =>
+                _scopeVariableUsages.ContainsKey(symbolRef.Name) &&
+                _scopeVariableUsages[symbolRef.Name].Definitions.Count == 0);
         }
 
         (TParent, TInit) GetInitAndParentNode<TParent, TInit>(AstNode? stopNode = null) where TParent : AstNode? where TInit : AstNode?
@@ -394,7 +423,7 @@ namespace Njsast.Compress
             }
 
             return (parentNode, initNode);
-        } 
+        }
 
         AstNode ProcessConditional(AstNode node)
         {
@@ -412,12 +441,18 @@ namespace Njsast.Compress
             foreach (var astVarDefinition in astVar.Definitions)
             {
                 var name = GetAstVarDefinitionName(astVarDefinition);
+                var canMoveInitialization = true;
                 if (astVarDefinition.Value != null)
                 {
                     _variableWriteOrder.Add(name);
                     if (_callNodeFinderTreeWalker.FindNodes(astVarDefinition.Value).Count > 0)
                     {
                         SetIsAfterCall();
+                    }
+                    
+                    if (IsValueHoistable(astVarDefinition.Value))
+                    {
+                        canMoveInitialization = false;
                     }
                 }
                 
@@ -432,7 +467,13 @@ namespace Njsast.Compress
                 if (parent == null)
                     throw new SemanticError($"Parent for {nameof(AstVar)} node was not found", astVar);
                 var variableDefinition =
-                    new VariableDefinition(lastBlock, parent, astVar, astVarDefinition, usage.CanMoveInitialization, index++);
+                    new VariableDefinition(
+                        lastBlock, 
+                        parent, 
+                        astVar, 
+                        astVarDefinition, 
+                        usage.CanMoveInitialization && canMoveInitialization, 
+                        index++);
                 usage.Definitions.Add(variableDefinition);
             }
 
@@ -534,7 +575,8 @@ namespace Njsast.Compress
             }
             // Use first usable assignment (move assignment to initialization)
             else if (variableDefinition.CanMoveInitialization &&
-                     scopeVariableUsageInfo.FirstHoistableInitialization != null)
+                     scopeVariableUsageInfo.FirstHoistableInitialization != null &&
+                     scopeVariableUsageInfo.FirstHoistableInitialization != NonHoistableVariableInitialization.Instance)
             {
                 hoistedVariables.Add(variableName, variableDefinition.AstVarDef);
                 variableDefinition.RemoveVarDefFromVar();

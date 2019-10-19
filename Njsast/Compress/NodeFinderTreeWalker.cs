@@ -15,7 +15,7 @@ namespace Njsast.Compress
         public IList<TNode> FindNodes(AstNode start)
         {
             _foundNodes = new List<TNode>();
-            Visit(start);
+            Walk(start);
             return _foundNodes;
         }
     }
