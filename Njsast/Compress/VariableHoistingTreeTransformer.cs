@@ -330,13 +330,23 @@ namespace Njsast.Compress
                             break;
                         }
 
-                        AstBinary? parentNode;
+                        AstBinary? parentBinaryNode;
                         AstAssign? initNode;
-                        (parentNode, initNode) = GetInitAndParentNode<AstBinary?, AstAssign?>();
+                        (parentBinaryNode, initNode) = GetInitAndParentNode<AstBinary?, AstAssign?>();
 
-                        if (parentNode != null && initNode != null)
+                        if (parentBinaryNode != null && initNode != null)
                         {
-                            scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parentNode, initNode);
+                            scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parentBinaryNode, initNode);
+                            _canPerformMergeDefAndInit = true;
+                            break;
+                        }
+
+                        AstSequence? parentSequenceNode;
+                        (parentSequenceNode, initNode) = GetInitAndParentNode<AstSequence?, AstAssign?>();
+
+                        if (parentSequenceNode != null && initNode != null)
+                        {
+                            scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parentSequenceNode, initNode);
                             _canPerformMergeDefAndInit = true;
                             break;
                         }
@@ -528,6 +538,14 @@ namespace Njsast.Compress
                         parentBinary.Right = initAssign.Left;
                     else
                         throw new NotImplementedException();
+                    return;
+                }
+
+                if (hoistableInitialization.Parent is AstSequence parentSequence &&
+                    hoistableInitialization.Initialization is AstAssign initAssign2)
+                {
+                    variableDefinition.AstVarDef.Value = initAssign2.Right;
+                    parentSequence.Expressions.RemoveItem(initAssign2);
                     return;
                 }
 
