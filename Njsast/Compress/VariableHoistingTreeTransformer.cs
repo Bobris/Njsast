@@ -186,6 +186,7 @@ namespace Njsast.Compress
         bool _isInRightSideOfBinary;
         int _astVarCount;
         List<string> _variableWriteOrder = new List<string>();
+        readonly NodeFinderTreeWalker<AstCall> _callNodeFinderTreeWalker = new NodeFinderTreeWalker<AstCall>();
 
         Dictionary<string, ScopeVariableUsageInfo> _scopeVariableUsages =
             new Dictionary<string, ScopeVariableUsageInfo>();
@@ -316,38 +317,32 @@ namespace Njsast.Compress
                     if (scopeVariableInfo.CanMoveInitialization &&
                         scopeVariableInfo.FirstHoistableInitialization == null)
                     {
-                        AstSimpleStatement? initSimpleStatement;
-                        AstBlock? parentBlock;
-                        (parentBlock, initSimpleStatement) = GetInitAndParentNode<AstBlock?, AstSimpleStatement?>();
+                        AstNode? parentNode;
+                        AstNode? initNode;
+                        (parentNode, initNode) = GetInitAndParentNode<AstBlock?, AstSimpleStatement?>();
 
-                        if (parentBlock != null && 
-                            initSimpleStatement != null &&
-                            parentBlock.Body.IndexOf(initSimpleStatement) != -1 &&
-                            initSimpleStatement.Body is AstAssign)
+                        if (parentNode != null && 
+                            initNode != null &&
+                            ((AstBlock)parentNode).Body.IndexOf(initNode) != -1 &&
+                            ((AstSimpleStatement)initNode).Body is AstAssign)
                         {
-                            scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parentBlock, initSimpleStatement);
-                            _canPerformMergeDefAndInit = true;
+                            SetVariableInitialization(parentNode, initNode);
                             break;
                         }
+                        
+                        (parentNode, initNode) = GetInitAndParentNode<AstBinary?, AstAssign?>();
 
-                        AstBinary? parentBinaryNode;
-                        AstAssign? initNode;
-                        (parentBinaryNode, initNode) = GetInitAndParentNode<AstBinary?, AstAssign?>();
-
-                        if (parentBinaryNode != null && initNode != null)
+                        if (parentNode != null && initNode != null)
                         {
-                            scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parentBinaryNode, initNode);
-                            _canPerformMergeDefAndInit = true;
+                            SetVariableInitialization(parentNode, initNode);
                             break;
                         }
+                        
+                        (parentNode, initNode) = GetInitAndParentNode<AstSequence?, AstAssign?>();
 
-                        AstSequence? parentSequenceNode;
-                        (parentSequenceNode, initNode) = GetInitAndParentNode<AstSequence?, AstAssign?>();
-
-                        if (parentSequenceNode != null && initNode != null)
+                        if (parentNode != null && initNode != null)
                         {
-                            scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parentSequenceNode, initNode);
-                            _canPerformMergeDefAndInit = true;
+                            SetVariableInitialization(parentNode, initNode);
                             break;
                         }
 
@@ -356,6 +351,26 @@ namespace Njsast.Compress
 
                     break;
             }
+
+            void SetVariableInitialization(AstNode parent, AstNode initialization)
+            {
+                var assign = initialization is AstSimpleStatement simpleStatement &&
+                                   simpleStatement.Body is AstAssign astAssign
+                    ? astAssign
+                    : initialization as AstAssign;
+
+                if (assign == null)
+                    throw new InvalidOperationException();
+
+                if (_callNodeFinderTreeWalker.FindNodes(assign.Right).Count > 0)
+                {
+                    SetIsAfterCall();
+                    return;
+                }
+                
+                scopeVariableInfo.FirstHoistableInitialization = new VariableInitialization(parent, initialization);
+                _canPerformMergeDefAndInit = true;
+            } 
         }
 
         (TParent, TInit) GetInitAndParentNode<TParent, TInit>(AstNode? stopNode = null) where TParent : AstNode? where TInit : AstNode?
@@ -397,12 +412,19 @@ namespace Njsast.Compress
             foreach (var astVarDefinition in astVar.Definitions)
             {
                 var name = GetAstVarDefinitionName(astVarDefinition);
+                if (astVarDefinition.Value != null)
+                {
+                    _variableWriteOrder.Add(name);
+                    if (_callNodeFinderTreeWalker.FindNodes(astVarDefinition.Value).Count > 0)
+                    {
+                        SetIsAfterCall();
+                    }
+                }
+                
                 if (!_scopeVariableUsages.ContainsKey(name))
                 {
                     _scopeVariableUsages[name] = SetCurrentState(new ScopeVariableUsageInfo());
                 }
-                if (astVarDefinition.Value != null)
-                    _variableWriteOrder.Add(name);
 
                 var usage = _scopeVariableUsages[name];
                 var lastBlock = FindParent<AstBlock>();
