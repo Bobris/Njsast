@@ -13,6 +13,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstFunction()
+        {
+        }
+
         public override bool NeedParens(OutputContext output)
         {
             if (output.FirstInStatement())

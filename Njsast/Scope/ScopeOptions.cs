@@ -6,6 +6,7 @@ namespace Njsast.Scope
     {
         public bool KeepFunctionNames = false;
         public bool KeepClassNames = true;
+        public bool FrequencyCounting = true;
         public bool TopLevel;
         public bool IgnoreEval;
         public HashSet<string> Reserved = new HashSet<string>();

@@ -19,7 +19,7 @@ namespace Njsast.Scope
         {
             var output = new OutputContext();
             output.InitializeForFrequencyCounting();
-            topLevel.Print(output);
+            if (_options.FrequencyCounting) topLevel.Print(output);
             _options.Chars = output.FinishFrequencyCounting();
             Walk(topLevel);
             for (var i = 0u; i < _toMangle.Count; i++)
@@ -42,7 +42,7 @@ namespace Njsast.Scope
                 }
                 case AstScope scope:
                 {
-                    if (scope.Variables == null) 
+                    if (scope.Variables == null)
                         break;
                     foreach (var def in scope.Variables.Values)
                     {

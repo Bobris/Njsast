@@ -36,6 +36,10 @@ namespace Njsast.Ast
             Body.TransferFrom(ref body);
         }
 
+        protected AstLambda()
+        {
+        }
+
         public override void Visit(TreeWalker w)
         {
             w.Walk(Name);

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using Njsast.Ast;
 using Njsast.Reader;
 using Njsast.Utils;
@@ -8,6 +10,23 @@ namespace Njsast.Bundler
 {
     public static class BundlerHelpers
     {
+        public static string GetText(string name)
+        {
+            using var stream = typeof(BundlerHelpers).Assembly.GetManifestResourceStream(name);
+            using var reader = new StreamReader(stream ?? throw new NotImplementedException("Resource missing "+name), Encoding.UTF8);
+            return reader.ReadToEnd();
+        }
+
+        public static string TslibJs = GetText("Njsast.Bundler.JsHeaders.tslib.js");
+        public static string ImportJs = GetText("Njsast.Bundler.JsHeaders.import.js");
+
+        public static string JsHeaders(bool withImport)
+        {
+            if (withImport)
+                return TslibJs + ImportJs;
+            return TslibJs;
+        }
+
         public static SourceFile BuildSourceFile(string name, string content, SourceMap.SourceMap? sourceMap,
             Func<string, string, string> resolver)
         {
@@ -78,6 +97,15 @@ namespace Njsast.Bundler
             } while (num > 0);
 
             return new string(ret.Slice(0, pos));
+        }
+
+        public static void WrapByIIFE(AstToplevel topLevelAst)
+        {
+            var func = new AstFunction();
+            func.ArgNames.Add(new AstSymbolFunarg("undefined"));
+            func.HasUseStrictDirective = true;
+            func.Body.TransferFrom(ref topLevelAst.Body);
+            topLevelAst.Body.Add(new AstCall(func));
         }
     }
 }

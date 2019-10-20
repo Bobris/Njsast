@@ -14,6 +14,7 @@ namespace Njsast.Bundler
         public StructList<SelfExport> SelfExports = new StructList<SelfExport>();
         public IDictionary<string, AstNode>? Exports = null;
         public StructList<string> PlainJsDependencies = new StructList<string>();
+        public string? PartOfBundle;
 
         internal SourceFile(string name, AstToplevel ast)
         {

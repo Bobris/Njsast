@@ -7,6 +7,10 @@
         {
         }
 
+        public AstSymbolFunarg(string name) : base(name)
+        {
+        }
+
         public AstSymbolFunarg(AstNode from, string name) : base(from, name)
         {
         }

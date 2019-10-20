@@ -20,6 +20,11 @@ namespace Njsast.Ast
             Args.TransferFrom(ref args);
         }
 
+        public AstCall(AstNode expression)
+        {
+            Expression = expression;
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);
