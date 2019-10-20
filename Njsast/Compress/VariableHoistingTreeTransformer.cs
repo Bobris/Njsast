@@ -384,7 +384,7 @@ namespace Njsast.Compress
                     return;
                 }
 
-                if (IsValueHoistable(assign.Right))
+                if (!IsValueHoistable(assign.Right))
                 {
                     scopeVariableInfo.FirstHoistableInitialization = NonHoistableVariableInitialization.Instance;
                     return;
@@ -397,9 +397,22 @@ namespace Njsast.Compress
 
         bool IsValueHoistable(AstNode value)
         {
-            return _symbolRefNodeFinderTreeWalker.FindNodes(value).Any(symbolRef =>
-                _scopeVariableUsages.ContainsKey(symbolRef.Name) &&
-                _scopeVariableUsages[symbolRef.Name].Definitions.Count == 0);
+            foreach (var astSymbolRef in _symbolRefNodeFinderTreeWalker.FindNodes(value))
+            {
+                if (_scopeVariableUsages.ContainsKey(astSymbolRef.Name))
+                {
+                    if (_scopeVariableUsages[astSymbolRef.Name].Definitions.Count == 0 || !_scopeVariableUsages[astSymbolRef.Name].Definitions[0].CanMoveInitialization)
+                    {
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         (TParent, TInit) GetInitAndParentNode<TParent, TInit>(AstNode? stopNode = null) where TParent : AstNode? where TInit : AstNode?
@@ -450,7 +463,7 @@ namespace Njsast.Compress
                         SetIsAfterCall();
                     }
                     
-                    if (IsValueHoistable(astVarDefinition.Value))
+                    if (!IsValueHoistable(astVarDefinition.Value))
                     {
                         canMoveInitialization = false;
                     }
