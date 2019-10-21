@@ -57,6 +57,12 @@ namespace Njsast.Bundler
 
         public static void AppendToplevelWithRename(AstToplevel main, AstToplevel add, string suffix)
         {
+            if (main.Body.Count == 0)
+            {
+                main.Body.AddRange(add.Body.AsSpan());
+                main.Variables = add.Variables;
+                return;
+            }
             var renameWalker = new ToplevelRenameWalker(main.Variables!, suffix);
             renameWalker.Walk(add);
             main.Body.AddRange(add.Body.AsSpan());

@@ -87,6 +87,7 @@ namespace Njsast.Bundler
                 var topLevelAst = new Parser(new Options(), Ctx.JsHeaders(splitName, lazySplitCounter > 0)).Parse();
                 if (GlobalDefines != null && GlobalDefines.Count > 0)
                     topLevelAst.Body.Add(Helpers.EmitVarDefines(GlobalDefines));
+                topLevelAst.FigureOutScope();
                 foreach (var sourceFile in _order)
                 {
                     if (sourceFile.PartOfBundle != splitName) continue;
@@ -146,7 +147,7 @@ namespace Njsast.Bundler
                 ? SourceMap.SourceMap.Parse(sourceMapContent, ".")
                 : SourceMap.SourceMap.Identity(content, fileName);
             var cached = BundlerHelpers.BuildSourceFile(fileName, content, sourceMap,
-                (name, from) => Ctx.ResolveRequire(name, from));
+                (from, name) => Ctx.ResolveRequire(name, from));
             cached.PartOfBundle = splitName;
             cached.PlainJsDependencies.AddRange(Ctx.GetPlainJsDependencies(fileName).ToArray());
             _cache[fileName] = cached;
