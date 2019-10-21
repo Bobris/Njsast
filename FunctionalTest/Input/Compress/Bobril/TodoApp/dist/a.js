@@ -10505,6 +10505,9 @@
                     padding: padding
                 }
             });
+            if (ctx.tasks.length > 0 && ctx.tasks[0].description == "a") {
+                $asyncTestFinish();
+            }
         }
     });
     function createTask(description, isDone) {
@@ -10539,6 +10542,7 @@
     var taskStyle = styleDef({
         textAlign: "left"
     });
+    $setAsyncTestTrue();
     $write("Before b.init");
     init(__export_TodoComponent);
     $write("After b.init");

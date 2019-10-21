@@ -25,6 +25,12 @@
     function $writeError(message) {
         console.error(message);
     }
+    function $asyncTestFinish() {
+        $write("TEST_ASYNC_FINISH");
+    }
+    function $setAsyncTestTrue() {
+        $write("ASYNC_TEST");
+    }
     $testStart();
     (function $testRuntime() {
         %%INJECT%%

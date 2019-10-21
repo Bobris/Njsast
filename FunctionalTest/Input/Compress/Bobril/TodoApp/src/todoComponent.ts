@@ -71,6 +71,9 @@ export const TodoComponent = b.createComponent<never, IContext>({
                 padding: padding
             }
         });
+        if (ctx.tasks.length > 0 && ctx.tasks[0].description == "a") {
+            $asyncTestFinish();
+        }
     }
 });
 
