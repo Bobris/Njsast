@@ -181,6 +181,7 @@ namespace Njsast.Compress
             public bool IsUsedInConditionalStatement { get; set; }
             public int UnknownReferencesCount { get; set; }
             public int ReadReferencesCount { get; set; }
+            public int WriteReferencesCount { get; set; }
             public bool IsPossiblyUsedInCall { get; set; }
             public bool IsUsedOnRightSideOfBinary { get; set; }
 
@@ -326,9 +327,11 @@ namespace Njsast.Compress
                     break;
                 case SymbolUsage.ReadWrite:
                     scopeVariableInfo.ReadReferencesCount++;
+                    scopeVariableInfo.WriteReferencesCount++;
                     _variableWriteOrder.Add(name);
                     break;
                 case SymbolUsage.Write:
+                    scopeVariableInfo.WriteReferencesCount++;
                     _variableWriteOrder.Add(name);
                     if (scopeVariableInfo.CanMoveInitialization &&
                         scopeVariableInfo.FirstHoistableInitialization == null)
@@ -401,7 +404,11 @@ namespace Njsast.Compress
             {
                 if (_scopeVariableUsages.ContainsKey(astSymbolRef.Name))
                 {
-                    if (_scopeVariableUsages[astSymbolRef.Name].Definitions.Count == 0 || !_scopeVariableUsages[astSymbolRef.Name].Definitions[0].CanMoveInitialization)
+                    if (_scopeVariableUsages[astSymbolRef.Name].Definitions.Count == 0 || 
+                        !_scopeVariableUsages[astSymbolRef.Name].Definitions[0].CanMoveInitialization ||  
+                        _scopeVariableUsages[astSymbolRef.Name].ReadReferencesCount > 0 || 
+                        _scopeVariableUsages[astSymbolRef.Name].WriteReferencesCount > 0 || 
+                        _scopeVariableUsages[astSymbolRef.Name].UnknownReferencesCount > 0)
                     {
                         return false;
                     }
@@ -553,7 +560,7 @@ namespace Njsast.Compress
 
             if (hoistedVariables.Count == 0)
                 return astScope;
-            ShouldIterateAgain = true;
+            ShouldIterateAgain = true; // TODO set should iterate again only if something has really changed
 
             var varDefs = new StructList<AstVarDef>();
             foreach (var hoistedVariablesValue in hoistedVariables.Values)
