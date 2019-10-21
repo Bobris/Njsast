@@ -58,6 +58,12 @@ namespace Test.Compress
             EnableVariableHoisting = true,
             MaxPasses = 2
         };
+
+        public static readonly ICompressOptions UnusedFunctionEliminationCompressOptions = new CompressOptions
+        {
+            EnableUnusedFunctionElimination = true,
+            MaxPasses = 3
+        };
         
         [Theory]
         [CompressDataProvider("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled")]
@@ -114,6 +120,13 @@ namespace Test.Compress
         public void ShouldHoistVariableToBeginOfScopeWith2Passes(CompressTestData testData)
         {
             RunAndAssert(testData, VariableHosting2PassesCompressOptions);
+        }
+
+        [Theory]
+        [CompressDataProvider("Input/Compress/UnusedFunction")]
+        public void ShouldRemoveUnusedFunctions(CompressTestData testData)
+        {
+            RunAndAssert(testData, UnusedFunctionEliminationCompressOptions);
         }
 
         void RunAndAssert(CompressTestData testData, ICompressOptions options)

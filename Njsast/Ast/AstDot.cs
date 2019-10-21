@@ -13,7 +13,7 @@ namespace Njsast.Ast
 
         public override void CodeGen(OutputContext output)
         {
-            Expression.Print(output);
+            Expression.Print(output, Expression is AstBinary && output.NeedNodeParens(Expression));
             if (output.NeedDotAfterNumber())
             {
                 output.Print(".");

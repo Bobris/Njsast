@@ -49,7 +49,7 @@ namespace Njsast.Ast
         public override void CodeGen(OutputContext output)
         {
             var op = Operator;
-            Left.Print(output);
+            Left.Print(output, Left is AstBinary && output.NeedNodeParens(Left));
             if (OutputContext.OperatorToString(op)[0] == '>' /* ">>" ">>>" ">" ">=" */
                 && Left is AstUnaryPostfix leftPostfix
                 && leftPostfix.Operator == Operator.DecrementPostfix)
@@ -79,7 +79,7 @@ namespace Njsast.Ast
                 output.Space();
             }
 
-            Right.Print(output);
+            Right.Print(output, Right is AstBinary && output.NeedNodeParens(Right));
         }
 
         public override bool NeedParens(OutputContext output)

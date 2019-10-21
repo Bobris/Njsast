@@ -15,3 +15,5 @@ obj
 launchSettings.json
 /Test/Sample/node_modules
 /Test/Sample/tsconfig.json
+
+**/node_modules/**

@@ -99,7 +99,7 @@ namespace Njsast
             for (var i = 0; i < list.Count; i++)
             {
                 var originalNode = list[i];
-                var item = (T) Transform(originalNode, true);
+                var item = Transform(originalNode, true);
                 if (item == Remove)
                 {
                     list.RemoveAt(i);
@@ -111,7 +111,7 @@ namespace Njsast
                 }
                 else
                 {
-                    list[i] = item;
+                    list[i] = (T)item;
                 }
             }
         }

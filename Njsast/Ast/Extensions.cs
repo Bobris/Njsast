@@ -17,6 +17,19 @@ namespace Njsast.Ast
 
         public static bool IsTsReexportSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "__exportStar");
 
+        public static bool IsParentScopeFor(this AstScope parentScope, AstScope? potentiallyNestedScope)
+        {
+            var scope = potentiallyNestedScope;
+            while (scope != null)
+            {
+                if (scope == parentScope)
+                    return true;
+                scope = scope.ParentScope;
+            }
+
+            return false;
+        }
+
         public static string? IsRequireCall(this AstNode? node)
         {
             if (!(node is AstCall call) || call.Args.Count != 1 || !(call.Expression is AstSymbol methodNameSymbol) ||

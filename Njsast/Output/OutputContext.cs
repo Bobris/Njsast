@@ -790,5 +790,13 @@ namespace Njsast.Output
                 _ => throw new ArgumentOutOfRangeException(nameof(@operator), $"Must be binary operator: {@operator}")
             };
         }
+
+        public bool NeedNodeParens(AstNode node)
+        {
+            PushNode(node);
+            var needParens = node.NeedParens(this);
+            PopNode();
+            return needParens;
+        }
     }
 }

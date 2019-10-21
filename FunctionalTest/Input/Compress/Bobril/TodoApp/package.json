@@ -1,0 +1,16 @@
+{
+  "name": "todoapp",
+  "version": "1.0.0",
+  "description": "Sample TODO application from bobril.com",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "npx bb b -c 0 -m 0 -b 1"
+  },
+  "dependencies": {
+    "bobril": "^12.0.0",
+    "bobril-m": "^0.15.0"
+  },
+  "devDependencies": {
+    "bobril-build": "^2.2.0"
+  }
+}

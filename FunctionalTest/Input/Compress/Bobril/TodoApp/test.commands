@@ -1,0 +1,5 @@
+MoveMouse 50 50
+Click div[role='checkbox']
+Click input
+Type a
+Click div[role='button']

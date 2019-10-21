@@ -96,6 +96,12 @@ namespace Test
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
 
+            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnusedFunction").GetTypedData())
+            {
+                var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData, CompressTest.UnusedFunctionEliminationCompressOptions);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
+            }
+
             Console.ForegroundColor = errors == 0 ? ConsoleColor.Green : ConsoleColor.Red;
             Console.WriteLine($"Total {errors} differences in {tests} tests");
             Console.ResetColor();

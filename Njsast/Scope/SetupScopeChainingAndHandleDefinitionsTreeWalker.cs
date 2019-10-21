@@ -102,7 +102,7 @@ namespace Njsast.Scope
                 // This should be defined in the parent scope, as we encounter the
                 // AstDefun node before getting to its AstSymbol.
                 var symbol =
-                    (astSymbolDefun.Scope = _defun?.ParentScope?.Resolve())?.DefFunction(astSymbolDefun, _defun);
+                    (astSymbolDefun.Scope = _defun?.ParentScope?.DefunScope())?.DefFunction(astSymbolDefun, _defun);
                 if (symbol != null)
                     MarkExport(symbol, 1);
             }

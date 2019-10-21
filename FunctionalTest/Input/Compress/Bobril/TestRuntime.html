@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>%%TEST_NAME%%</title>
+</head>
+<body>
+<script type="application/javascript">
+    window.onerror = function(err) {
+        $writeError(err);
+        $testFail();
+    };
+    function $testStart() {
+        $write("TEST_START");
+    }
+    function $testFinish() {
+        $write("TEST_FINISH");
+    }
+    function $testFail() {
+        $writeError("TEST_FAIL")
+    }
+    function $write(message) {
+        console.log(message);
+    }
+    function $writeError(message) {
+        console.error(message);
+    }
+    function $asyncTestFinish() {
+        $write("TEST_ASYNC_FINISH");
+    }
+    function $setAsyncTestTrue() {
+        $write("ASYNC_TEST");
+    }
+    $testStart();
+    (function $testRuntime() {
+        %%INJECT%%
+    })();
+    $testFinish();
+</script>
+</body>
+</html>

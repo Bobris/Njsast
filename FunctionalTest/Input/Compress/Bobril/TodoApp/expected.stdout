@@ -1,0 +1,36 @@
+TEST_START
+ASYNC_TEST
+Before b.init
+After b.init
+Before b.syncUpdate
+TodoComponent::init
+createTask (description: "Learn Bobril", isDone: "false")
+createTask (description: "What is Bobflux?", isDone: "false")
+createTask (description: "Try BobX!", isDone: "false")
+createTask (description: "", isDone: "false")
+TodoComponent::render
+getTaskView (description: "Learn Bobril, isDone: false")
+getTaskView (description: "What is Bobflux?, isDone: false")
+getTaskView (description: "Try BobX!, isDone: false")
+isActualTaskEmpty
+After b.syncUpdate
+TEST_FINISH
+TodoComponent::render
+getTaskView (description: "Learn Bobril, isDone: true")
+getTaskView (description: "What is Bobflux?, isDone: false")
+getTaskView (description: "Try BobX!, isDone: false")
+isActualTaskEmpty
+TodoComponent::render
+getTaskView (description: "Learn Bobril, isDone: true")
+getTaskView (description: "What is Bobflux?, isDone: false")
+getTaskView (description: "Try BobX!, isDone: false")
+isActualTaskEmpty
+isActualTaskEmpty
+createTask (description: "", isDone: "false")
+TodoComponent::render
+getTaskView (description: "a, isDone: false")
+getTaskView (description: "Learn Bobril, isDone: true")
+getTaskView (description: "What is Bobflux?, isDone: false")
+getTaskView (description: "Try BobX!, isDone: false")
+isActualTaskEmpty
+TEST_ASYNC_FINISH

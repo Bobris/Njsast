@@ -10,6 +10,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstEmptyStatement()
+        {
+        }
+
         public override void CodeGen(OutputContext output)
         {
             output.Semicolon();

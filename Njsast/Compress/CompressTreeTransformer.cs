@@ -14,6 +14,7 @@ namespace Njsast.Compress
             {
                 new EmptyStatementEliminationTreeTransformer(options),
                 new BlockEliminationTreeTransformer(options),
+                new UnusedFunctionEliminationTreeTransformer(options),
                 new UnreachableCodeEliminationTreeTransformer(options),
                 new UnreachableFunctionCodeEliminationTreeTransformer(options),
                 new FunctionReturnTreeTransformer(options),

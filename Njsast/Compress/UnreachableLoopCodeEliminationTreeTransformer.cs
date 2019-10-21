@@ -5,6 +5,7 @@ namespace Njsast.Compress
     public class UnreachableLoopCodeEliminationTreeTransformer : UnreachableAfterJumpCodeEliminationTreeTransformerBase
     {
         bool _isAfterLoopControl;
+        AstNode? _lastIfAlternative;
         
         public UnreachableLoopCodeEliminationTreeTransformer(ICompressOptions options) : base(options)
         {
@@ -17,9 +18,24 @@ namespace Njsast.Compress
 
         protected override AstNode? Before(AstNode node, bool inList)
         {
+            if (node == _lastIfAlternative)
+            {
+                _isAfterLoopControl = false;
+            }
+            
             if (_isAfterLoopControl)
             {
                 return TryRemoveNode(node);
+            }
+            
+            if (node is AstIf astIf)
+            {
+                var safeLastIfAlternative = _lastIfAlternative;
+                _lastIfAlternative = astIf.Alternative;
+                Descend();
+                _lastIfAlternative = safeLastIfAlternative;
+                _isAfterLoopControl = false;
+                return astIf;
             }
 
             if (node is AstStatementWithBody)
