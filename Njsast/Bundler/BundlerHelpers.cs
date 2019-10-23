@@ -111,7 +111,7 @@ namespace Njsast.Bundler
             func.ArgNames.Add(new AstSymbolFunarg("undefined"));
             func.HasUseStrictDirective = true;
             func.Body.TransferFrom(ref topLevelAst.Body);
-            topLevelAst.Body.Add(new AstCall(func));
+            topLevelAst.Body.Add(new AstSimpleStatement(new AstUnaryPrefix(Operator.LogicalNot,new AstCall(func))));
         }
     }
 }

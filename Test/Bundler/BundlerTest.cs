@@ -27,13 +27,38 @@ namespace Test.Bundler
         public static Dictionary<string, string> BundlerTestCore(BundlerTestData testData)
         {
             var output = new Dictionary<string, string>();
-            var bundler = new BundlerImpl(new BundlerCtx(testData, output));
+            var bundler = new BundlerImpl(new BundlerCtx(testData, output, "cbm-"));
             bundler.PartToMainFilesMap =
                 new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
             bundler.Mangle = true;
             bundler.CompressOptions = CompressOptions.Default;
             bundler.OutputOptions = new OutputOptions {Beautify = true};
             bundler.Run();
+
+            bundler = new BundlerImpl(new BundlerCtx(testData, output, "cm-"));
+            bundler.PartToMainFilesMap =
+                new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
+            bundler.Mangle = true;
+            bundler.CompressOptions = CompressOptions.Default;
+            bundler.OutputOptions = new OutputOptions {Beautify = false};
+            bundler.Run();
+
+            bundler = new BundlerImpl(new BundlerCtx(testData, output, "cb-"));
+            bundler.PartToMainFilesMap =
+                new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
+            bundler.Mangle = false;
+            bundler.CompressOptions = CompressOptions.Default;
+            bundler.OutputOptions = new OutputOptions {Beautify = true};
+            bundler.Run();
+
+            bundler = new BundlerImpl(new BundlerCtx(testData, output, "b-"));
+            bundler.PartToMainFilesMap =
+                new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
+            bundler.Mangle = false;
+            bundler.CompressOptions = null;
+            bundler.OutputOptions = new OutputOptions {Beautify = true};
+            bundler.Run();
+
             return output;
         }
 
@@ -41,11 +66,13 @@ namespace Test.Bundler
         {
             readonly BundlerTestData _testData;
             readonly Dictionary<string, string> _output;
+            readonly string _outputPrefix;
 
-            public BundlerCtx(BundlerTestData testData, Dictionary<string, string> output)
+            public BundlerCtx(BundlerTestData testData, Dictionary<string, string> output, string outputPrefix)
             {
                 _testData = testData;
                 _output = output;
+                _outputPrefix = outputPrefix;
             }
 
             public string? ReadContent(string fileName)
@@ -61,7 +88,7 @@ namespace Test.Bundler
 
             public string GenerateBundleName(string forName)
             {
-                return "cbm-" + forName + ".js";
+                return _outputPrefix + forName + ".js";
             }
 
             public string ResolveRequire(string name, string @from)

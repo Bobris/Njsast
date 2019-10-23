@@ -1,4 +1,4 @@
-function(t) {
+!function(t) {
     "use strict";
     var n, i, s, r, e, _;
     n = Object.setPrototypeOf || {
@@ -17,5 +17,5 @@ function(t) {
         }
         return t;
     };
-}()
+}();
 
