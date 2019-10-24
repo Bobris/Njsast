@@ -57,6 +57,13 @@ namespace Njsast.Scope
 
                             if (astVarDef.Value == node)
                                 usage |= SymbolUsage.Read;
+
+                            // This handle case for(var init in object) where node structure is AstForIn > AstVar > AstVarDef 
+                            if (Parent(2) is AstForIn forIn && forIn.Init == Parent(1))
+                            {
+                                astSymbol.Thedef!.References.Add(astSymbol);
+                                usage |= SymbolUsage.Write;
+                            }
                             break;
                         case AstAssign astAssign:
                             if (astAssign.Left == node)
