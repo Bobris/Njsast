@@ -1,6 +1,6 @@
 !function(undefined) {
     "use strict";
-    var __extendStatics, __assign, __values, __read, __await, lib;
+    var __extendStatics, __assign, __values, __read, __await;
     __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {

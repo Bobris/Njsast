@@ -262,7 +262,6 @@
     function hello() {
         return "Hello";
     }
-    var lib = require("./lib");
-    console.log(lib.hello());
+    console.log(hello());
 }();
 

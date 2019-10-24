@@ -39,8 +39,9 @@ namespace Njsast.Bundler
         public IBundlerCtx Ctx;
 
         StructList<SourceFile> _order = new StructList<SourceFile>();
-        Dictionary<string, SourceFile> _cache = new Dictionary<string, SourceFile>();
+        internal Dictionary<string, SourceFile> _cache = new Dictionary<string, SourceFile>();
         Dictionary<string, SplitInfo> _splitMap = new Dictionary<string, SplitInfo>();
+        internal SourceFile? _currentSourceFile;
 
         public void Run()
         {
@@ -91,7 +92,8 @@ namespace Njsast.Bundler
                 foreach (var sourceFile in _order)
                 {
                     if (sourceFile.PartOfBundle != splitName) continue;
-                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast, FileNameToIdent(sourceFile.Name));
+                    _currentSourceFile = sourceFile;
+                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast, FileNameToIdent(sourceFile.Name), BeforeAdd);
                 }
 
                 BundlerHelpers.WrapByIIFE(topLevelAst);
@@ -109,6 +111,12 @@ namespace Njsast.Bundler
 
                 Ctx.WriteBundle(splitInfo.ShortName!, topLevelAst.PrintToString(OutputOptions));
             }
+        }
+
+        void BeforeAdd(AstToplevel top)
+        {
+            var transformer = new BundlerTreeTransformer(this);
+            transformer.Transform(top);
         }
 
         void MarkRequiredAs(SourceFile sourceFile, string fromSplitName)
@@ -213,5 +221,63 @@ namespace Njsast.Bundler
             return fn;
         }
 
+    }
+
+    class BundlerTreeTransformer: TreeTransformer
+    {
+        readonly BundlerImpl _bundlerImpl;
+        readonly Dictionary<SymbolDef, SourceFile> _reqSymbolDefMap = new Dictionary<SymbolDef, SourceFile>();
+
+        public BundlerTreeTransformer(BundlerImpl bundlerImpl)
+        {
+            _bundlerImpl = bundlerImpl;
+        }
+
+        protected override AstNode? Before(AstNode node, bool inList)
+        {
+            if (node is AstLabel)
+                return node;
+            if (node is AstVarDef varDef)
+            {
+                if (varDef.Value.IsRequireCall() is { } reqName)
+                {
+                    var reqSymbolDef = varDef.Name.IsSymbolDef()!;
+                    var resolvedName = _bundlerImpl.Ctx.ResolveRequire(reqName, _bundlerImpl._currentSourceFile!.Name);
+                    if (!_bundlerImpl._cache.TryGetValue(resolvedName, out var reqSource))
+                        throw new ApplicationException("Cannot find "+resolvedName+" imported from "+_bundlerImpl._currentSourceFile!.Name);
+                    _reqSymbolDefMap[reqSymbolDef] = reqSource;
+                    return Remove;
+                }
+            }
+            if (node is AstPropAccess propAccess)
+            {
+                if (propAccess.Expression.IsSymbolDef() is {} symbolDef)
+                {
+                    if (!_reqSymbolDefMap.TryGetValue(symbolDef, out var sourceFile))
+                        return null;
+                    var propName = propAccess.PropertyAsString;
+                    if (propName != null)
+                    {
+                        if (sourceFile.Exports!.TryGetValue(propName, out var exportedSymbol))
+                        {
+                            return exportedSymbol;
+                        }
+                        // This is not error because it could be just TypeScript interface
+                        return new AstSymbolRef("undefined");
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        protected override AstNode After(AstNode node, bool inList)
+        {
+            if (node is AstSimpleStatement simple && simple.Body == Remove)
+                return Remove;
+            if (node is AstVar @var && @var.Definitions.Count == 0)
+                return Remove;
+            return node;
+        }
     }
 }

@@ -55,20 +55,29 @@ namespace Njsast.Bundler
             return sourceFile;
         }
 
-        public static void AppendToplevelWithRename(AstToplevel main, AstToplevel add, string suffix)
+        public static void AppendToplevelWithRename(AstToplevel main, AstToplevel add, string suffix, Action<AstToplevel>? beforeAdd = null)
         {
             if (main.Body.Count == 0)
             {
+                beforeAdd?.Invoke(add);
                 main.Body.AddRange(add.Body.AsSpan());
                 main.Variables = add.Variables;
+                main.Globals = add.Globals;
                 return;
             }
             var renameWalker = new ToplevelRenameWalker(main.Variables!, suffix);
             renameWalker.Walk(add);
+
+            beforeAdd?.Invoke(add);
             main.Body.AddRange(add.Body.AsSpan());
             foreach (var (_, symbolDef) in add.Variables!)
             {
                 main.Variables!.Add(symbolDef.Name, symbolDef);
+            }
+
+            foreach (var (_, symbolDef) in add.Globals!)
+            {
+                main.Globals!.TryAdd(symbolDef.Name, symbolDef);
             }
         }
 
