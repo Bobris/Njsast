@@ -10,7 +10,7 @@ Toplevel 1:1 - 4:2
       Name: c
     Var 1:1 - 1:1
       VarDef 2:14 - 2:15
-        SymbolVar 2:14 - 2:15
+        SymbolVar 2:14 - 2:15 [Write]
           Name: d
     ForIn 2:5 - 2:95
       SymbolRef 2:14 - 2:15
