@@ -2,20 +2,15 @@ using Njsast.Ast;
 
 namespace Njsast.Compress
 {
-    public class UnreachableSwitchCodeEliminationTreeTransformer : UnreachableAfterJumpCodeEliminationTreeTransformerBase
+    public class UnreachableSwitchCodeEliminationTreeTransformer : UnreachableAfterJumpCodeEliminationTreeTransformerBase<AstSwitch, AstBreak>
     {
-        bool _isAfterBreak;
         public UnreachableSwitchCodeEliminationTreeTransformer(ICompressOptions options) : base(options)
         {
         }
 
-        protected override void ResetState()
-        {
-            _isAfterBreak = false;
-        }
-
         protected override AstNode? Before(AstNode node, bool inList)
         {
+            // TODO there should be possible very similar logic to base class => refactor this
             if (node is AstSwitch astSwitch &&
                 astSwitch.Body.Count > 0 &&
                 astSwitch.Body.Last is AstCase astCase &&
@@ -29,25 +24,20 @@ namespace Njsast.Compress
 
             if (node is AstSwitchBranch)
             {
-                _isAfterBreak = false;
+                IsAfterJump = false;
                 // return node;
             }
 
-            if (inList && _isAfterBreak)
+            if (inList && IsAfterJump)
             {
                 return TryRemoveNode(node);
             }
 
             if (node is AstBreak)
             {
-                _isAfterBreak = true;
+                IsAfterJump = true;
             }
 
-            return null;
-        }
-
-        protected override AstNode? After(AstNode node, bool inList)
-        {
             return null;
         }
 
