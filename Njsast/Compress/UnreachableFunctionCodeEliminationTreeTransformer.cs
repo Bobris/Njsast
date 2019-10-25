@@ -5,6 +5,7 @@ namespace Njsast.Compress
     public class UnreachableFunctionCodeEliminationTreeTransformer : UnreachableAfterJumpCodeEliminationTreeTransformerBase
     {
         bool _isAfterExit;
+        bool _isProcessingLambda;
         
         public UnreachableFunctionCodeEliminationTreeTransformer(ICompressOptions options) : base(options)
         {
@@ -24,37 +25,56 @@ namespace Njsast.Compress
         {
             return null;
         }
-
+        
         protected override AstNode? Before(AstNode node, bool inList)
         {
-            if (inList && _isAfterExit)
-            {
+            if (node is AstLambda astLambda)
+                return ProcessLambda(astLambda);
+
+            if (inList && _isAfterExit) // TODO try to call this without inList restriction
                 return TryRemoveNode(node);
-            }
 
-            if (node is AstStatementWithBody)
+            switch (node)
             {
-                var safeIsAfterExit = _isAfterExit;
-                if (node is AstIf astIf && astIf.Alternative != null)
-                {
-                    astIf.Body.Transform(this);
-                    _isAfterExit = safeIsAfterExit;
-                    astIf.Alternative.Transform(this);
-                    _isAfterExit = safeIsAfterExit;
-                    return astIf;
-                }
-                Descend();
+                case AstStatementWithBody astStatementWithBody:
+                    return ProcessStatementWithBody(astStatementWithBody);
+                case AstExit astExit:
+                    return ProcessExit(astExit);
+                default:
+                    return null;
+            }
+        }
+
+        AstLambda ProcessLambda(AstLambda astLambda)
+        {
+            if (_isProcessingLambda)
+                return astLambda;
+            _isProcessingLambda = true;
+            Descend();
+            _isProcessingLambda = false;
+            return astLambda;
+        }
+
+        AstStatementWithBody ProcessStatementWithBody(AstStatementWithBody statementWithBody)
+        {
+            var safeIsAfterExit = _isAfterExit;
+            if (statementWithBody is AstIf astIf && astIf.Alternative != null)
+            {
+                astIf.Body.Transform(this);
                 _isAfterExit = safeIsAfterExit;
-                return node;
+                astIf.Alternative.Transform(this);
+                _isAfterExit = safeIsAfterExit;
+                return astIf;
             }
+            Descend();
+            _isAfterExit = safeIsAfterExit;
+            return statementWithBody;
+        }
 
-            if (node is AstExit)
-            {
-                _isAfterExit = true;
-                return node;
-            }
-
-            return null;
+        AstExit ProcessExit(AstExit astExit)
+        {
+            _isAfterExit = true;
+            return astExit;   
         }
     }
 }
