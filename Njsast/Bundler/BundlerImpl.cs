@@ -93,7 +93,8 @@ namespace Njsast.Bundler
                 {
                     if (sourceFile.PartOfBundle != splitName) continue;
                     _currentSourceFile = sourceFile;
-                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast, FileNameToIdent(sourceFile.Name), BeforeAdd);
+                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast,
+                        FileNameToIdent(sourceFile.Name), BeforeAdd);
                 }
 
                 BundlerHelpers.WrapByIIFE(topLevelAst);
@@ -106,7 +107,7 @@ namespace Njsast.Bundler
                 if (Mangle)
                 {
                     topLevelAst.FigureOutScope();
-                    topLevelAst.Mangle(new ScopeOptions { FrequencyCounting = MangleWithFrequencyCounting });
+                    topLevelAst.Mangle(new ScopeOptions {FrequencyCounting = MangleWithFrequencyCounting});
                 }
 
                 Ctx.WriteBundle(splitInfo.ShortName!, topLevelAst.PrintToString(OutputOptions));
@@ -115,7 +116,7 @@ namespace Njsast.Bundler
 
         void BeforeAdd(AstToplevel top)
         {
-            var transformer = new BundlerTreeTransformer(this);
+            var transformer = new BundlerTreeTransformer(_cache, Ctx, _currentSourceFile!);
             transformer.Transform(top);
         }
 
@@ -214,70 +215,12 @@ namespace Njsast.Bundler
             _order.Add(cached);
         }
 
-        string FileNameToIdent(string fn) {
+        string FileNameToIdent(string fn)
+        {
             if (fn.LastIndexOf('/') >= 0) fn = fn.Substring(fn.LastIndexOf('/') + 1);
             if (fn.IndexOf('.') >= 0) fn = fn.Substring(0, fn.IndexOf('.'));
             fn = fn.Replace('-', '_');
             return fn;
-        }
-
-    }
-
-    class BundlerTreeTransformer: TreeTransformer
-    {
-        readonly BundlerImpl _bundlerImpl;
-        readonly Dictionary<SymbolDef, SourceFile> _reqSymbolDefMap = new Dictionary<SymbolDef, SourceFile>();
-
-        public BundlerTreeTransformer(BundlerImpl bundlerImpl)
-        {
-            _bundlerImpl = bundlerImpl;
-        }
-
-        protected override AstNode? Before(AstNode node, bool inList)
-        {
-            if (node is AstLabel)
-                return node;
-            if (node is AstVarDef varDef)
-            {
-                if (varDef.Value.IsRequireCall() is { } reqName)
-                {
-                    var reqSymbolDef = varDef.Name.IsSymbolDef()!;
-                    var resolvedName = _bundlerImpl.Ctx.ResolveRequire(reqName, _bundlerImpl._currentSourceFile!.Name);
-                    if (!_bundlerImpl._cache.TryGetValue(resolvedName, out var reqSource))
-                        throw new ApplicationException("Cannot find "+resolvedName+" imported from "+_bundlerImpl._currentSourceFile!.Name);
-                    _reqSymbolDefMap[reqSymbolDef] = reqSource;
-                    return Remove;
-                }
-            }
-            if (node is AstPropAccess propAccess)
-            {
-                if (propAccess.Expression.IsSymbolDef() is {} symbolDef)
-                {
-                    if (!_reqSymbolDefMap.TryGetValue(symbolDef, out var sourceFile))
-                        return null;
-                    var propName = propAccess.PropertyAsString;
-                    if (propName != null)
-                    {
-                        if (sourceFile.Exports!.TryGetValue(propName, out var exportedSymbol))
-                        {
-                            return exportedSymbol;
-                        }
-                        // This is not error because it could be just TypeScript interface
-                        return new AstSymbolRef("undefined");
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        protected override AstNode After(AstNode node, bool inList)
-        {
-            if (node is AstSimpleStatement simple && simple.Body == Remove)
-                return Remove;
-            if (node is AstVar @var && @var.Definitions.Count == 0)
-                return Remove;
-            return node;
         }
     }
 }

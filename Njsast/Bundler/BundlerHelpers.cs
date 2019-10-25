@@ -35,6 +35,7 @@ namespace Njsast.Bundler
             if (PathUtils.GetExtension(name) == "json")
             {
                 (toplevel, symbol) = Helpers.EmitVarDefineJson(content, name);
+                toplevel.FigureOutScope();
                 return new SourceFile(name, toplevel) {WholeExport = symbol};
             }
 
@@ -47,6 +48,7 @@ namespace Njsast.Bundler
             if (toplevel.Globals!.ContainsKey("module"))
             {
                 (toplevel, symbol) = Helpers.EmitCommonJsWrapper(toplevel);
+                toplevel.FigureOutScope();
                 return new SourceFile(name, toplevel) {WholeExport = symbol};
             }
 
