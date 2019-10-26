@@ -17,5 +17,12 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    __export_default = 1;
+    __export_default_lib2 = __export_default + 2;
+    console.log(__export_default_lib2);
 }();
 

@@ -4,7 +4,6 @@ using Njsast.Bundler;
 using Njsast.Compress;
 using Njsast.Output;
 using Njsast.Utils;
-using Test.ConstEval;
 using Xunit;
 
 namespace Test.Bundler

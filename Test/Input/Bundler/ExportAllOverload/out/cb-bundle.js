@@ -17,5 +17,13 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    function fn_lib2() {
+        return "OK";
+    }
+    console.log(fn_lib2());
 }();
 

@@ -1,21 +1,46 @@
 !function(_) {
     "use strict";
-    var t, n, r, e, o, p, s, i, a, f, c, u, b, d;
-    t = Object.setPrototypeOf || {
+    var n, t, o, e, r, f, p, s, a, i, c, x, u, l;
+    n = Object.setPrototypeOf || {
         __proto__: []
-    } instanceof Array && function(_, t) {
-        _.__proto__ = t;
-    } || function(_, t) {
-        var n;
-        for (n in t) if (t.hasOwnProperty(n)) _[n] = t[n];
+    } instanceof Array && function(_, n) {
+        _.__proto__ = n;
+    } || function(_, n) {
+        var t;
+        for (t in n) if (n.hasOwnProperty(t)) _[t] = n[t];
     };
-    n = Object.assign || function(_) {
-        var t, n, r, e;
-        for (t = 1, n = arguments.length; t < n; t++) {
-            r = arguments[t];
-            for (e in r) if (Object.prototype.hasOwnProperty.call(r, e)) _[e] = r[e];
+    t = Object.assign || function(_) {
+        var n, t, o, e;
+        for (n = 1, t = arguments.length; n < t; n++) {
+            o = arguments[n];
+            for (e in o) if (Object.prototype.hasOwnProperty.call(o, e)) _[e] = o[e];
         }
         return _;
     };
+    o;
+    e;
+    r;
+    f = !1;
+    function g() {
+        return {
+            f1: function() {
+                return "a";
+            },
+            f2: function() {
+                return "b";
+            },
+            f3: function() {
+                return "c";
+            }
+        };
+    }
+    p = (u = g(), u.f1), s = u.f2, a = u.f3;
+    i = (l = g(), l.f1), c = l.f2, x = l.f3;
+    console.log(p());
+    console.log(s());
+    console.log(a());
+    console.log(i());
+    console.log(c());
+    console.log(x());
 }();
 

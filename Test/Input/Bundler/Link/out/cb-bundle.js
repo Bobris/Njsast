@@ -17,5 +17,17 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    function link(name) {
+        return name;
+    }
+    function doit() {
+        var link_index = link("hello");
+        console.log(link_index);
+    }
+    doit();
 }();
 

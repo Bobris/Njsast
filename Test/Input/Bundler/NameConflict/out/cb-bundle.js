@@ -17,5 +17,18 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    a = 1;
+    function fn(a, b) {
+        return a + b;
+    }
+    function fn_index(a_index, b) {
+        return a_index - b;
+    }
+    a_index = 2;
+    console.log(fn(fn_index(a_index, 1), a_index));
 }();
 
