@@ -42,6 +42,7 @@ namespace Njsast.Bundler
         internal Dictionary<string, SourceFile> _cache = new Dictionary<string, SourceFile>();
         Dictionary<string, SplitInfo> _splitMap = new Dictionary<string, SplitInfo>();
         internal SourceFile? _currentSourceFile;
+        internal string? _currentFileIdent;
 
         public void Run()
         {
@@ -93,8 +94,9 @@ namespace Njsast.Bundler
                 {
                     if (sourceFile.PartOfBundle != splitName) continue;
                     _currentSourceFile = sourceFile;
-                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast,
-                        FileNameToIdent(sourceFile.Name), BeforeAdd);
+                    _currentFileIdent = FileNameToIdent(sourceFile.Name);
+                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast, _currentFileIdent
+                        , BeforeAdd);
                 }
 
                 BundlerHelpers.WrapByIIFE(topLevelAst);
@@ -116,7 +118,7 @@ namespace Njsast.Bundler
 
         void BeforeAdd(AstToplevel top)
         {
-            var transformer = new BundlerTreeTransformer(_cache, Ctx, _currentSourceFile!);
+            var transformer = new BundlerTreeTransformer(_cache, Ctx, _currentSourceFile!, top.Variables!, _currentFileIdent!);
             transformer.Transform(top);
         }
 

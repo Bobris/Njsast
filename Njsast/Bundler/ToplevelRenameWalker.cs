@@ -41,16 +41,7 @@ namespace Njsast.Bundler
                     if (index > 1) newName += index.ToString();
                 } while (_untouchables.ContainsKey(newName));
 
-                symbol.Name = newName;
-                foreach (var orig in symbol.Orig)
-                {
-                    orig.Name = newName;
-                }
-
-                foreach (var reference in symbol.References)
-                {
-                    reference.Name = newName;
-                }
+                Helpers.RenameSymbol(symbol, newName);
             }
         }
     }

@@ -18,7 +18,15 @@ namespace Njsast.Ast
         {
         }
 
-        public AstSymbolRef(Parser parser, Position startPos, Position endPos, string name) : base(parser, startPos, endPos, name)
+        public AstSymbolRef(AstNode from, SymbolDef def, SymbolUsage usage) : base(from, def.Name)
+        {
+            Thedef = def;
+            def.References.Add(this);
+            Usage = usage;
+        }
+
+        public AstSymbolRef(Parser parser, Position startPos, Position endPos, string name) : base(parser, startPos,
+            endPos, name)
         {
         }
 
@@ -38,11 +46,13 @@ namespace Njsast.Ast
                 if (Name == "undefined") return AstUndefined.Instance;
                 return null;
             }
+
             if (Thedef.IsSingleInit)
             {
                 if (Thedef.VarInit == null) return IsVarLetConst(Thedef.Orig[0]) ? AstUndefined.Instance : null;
                 return Thedef.VarInit.ConstValue(ctx);
             }
+
             return null;
         }
     }

@@ -9,14 +9,18 @@ namespace Njsast.Bundler
         readonly Dictionary<string, SourceFile> _cache;
         readonly IBundlerCtx _ctx;
         readonly SourceFile _currentSourceFile;
+        readonly Dictionary<string, SymbolDef> _rootVariables;
+        readonly string _suffix;
         readonly Dictionary<SymbolDef, SourceFile> _reqSymbolDefMap = new Dictionary<SymbolDef, SourceFile>();
 
         public BundlerTreeTransformer(Dictionary<string, SourceFile> cache, IBundlerCtx ctx,
-            SourceFile currentSourceFile)
+            SourceFile currentSourceFile, Dictionary<string, SymbolDef> rootVariables, string suffix)
         {
             _cache = cache;
             _ctx = ctx;
             _currentSourceFile = currentSourceFile;
+            _rootVariables = rootVariables;
+            _suffix = "_" + suffix;
         }
 
         protected override AstNode? Before(AstNode node, bool inList)
@@ -47,7 +51,8 @@ namespace Njsast.Bundler
             {
                 if (!_reqSymbolDefMap.TryGetValue(wholeImport, out var sourceFile))
                     return null;
-                return sourceFile.WholeExport;
+                CheckIfNewlyUsedSymbolIsUnique(sourceFile.WholeExport!);
+                return new AstSymbolRef(node, sourceFile.WholeExport!.Thedef!, SymbolUsage.Read);
             }
 
             if (node is AstPropAccess propAccess)
@@ -61,6 +66,11 @@ namespace Njsast.Bundler
                     {
                         if (sourceFile.Exports!.TryGetValue(propName, out var exportedSymbol))
                         {
+                            if (exportedSymbol is AstSymbol trueSymbol)
+                            {
+                                CheckIfNewlyUsedSymbolIsUnique(trueSymbol);
+                                return new AstSymbolRef(node, trueSymbol.Thedef!, SymbolUsage.Read);
+                            }
                             return exportedSymbol;
                         }
 
@@ -71,6 +81,18 @@ namespace Njsast.Bundler
             }
 
             return null;
+        }
+
+        void CheckIfNewlyUsedSymbolIsUnique(AstSymbol astSymbol)
+        {
+            var astSymbolDef = astSymbol.Thedef!;
+            var oldName = astSymbolDef.Name;
+            if (!_rootVariables.TryGetValue(oldName, out var rootSymbol))
+                return;
+            var newName = BundlerHelpers.MakeUniqueName(oldName, _rootVariables, _suffix);
+            _rootVariables[oldName] = astSymbolDef;
+            _rootVariables[newName] = rootSymbol;
+            Helpers.RenameSymbol(rootSymbol, newName);
         }
 
         protected override AstNode After(AstNode node, bool inList)
