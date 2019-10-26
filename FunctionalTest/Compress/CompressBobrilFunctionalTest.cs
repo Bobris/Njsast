@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.IO;
 using Njsast.Compress;
 using Njsast.Output;
@@ -10,17 +11,18 @@ namespace FunctionalTest.Compress
 {
     public class CompressBobrilFunctionalTest : TwoPagesBrowserTestBase
     {
-        readonly ICompressOptions _bobrilTestCompressOptions = new CompressOptions
-        {
-            EnableBlockElimination = false,
-            EnableBooleanCompress = false,
-            EnableEmptyStatementElimination = false,
-            EnableFunctionReturnCompress = false,
-            EnableUnreachableCodeElimination = false,
-            EnableVariableHoisting = true,
-            EnableUnusedFunctionElimination = false,
-            MaxPasses = 1
-        };
+        readonly ICompressOptions _bobrilTestCompressOptions = CompressOptions.Default;
+//        readonly ICompressOptions _bobrilTestCompressOptions = new CompressOptions
+//        {
+//            EnableBlockElimination = true,
+//            EnableBooleanCompress = true,
+//            EnableEmptyStatementElimination = true,
+//            EnableFunctionReturnCompress = true,
+//            EnableUnreachableCodeElimination = true,
+//            EnableVariableHoisting = true,
+//            EnableUnusedFunctionElimination = true,
+//            MaxPasses = 10
+//        };
         
         readonly NavigationOptions _navigationOptions = new NavigationOptions
         {
