@@ -259,6 +259,7 @@
         });
         return cooked;
     };
+    var DEBUG = false;
     function hello() {
         return "Hello";
     }

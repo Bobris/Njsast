@@ -15,5 +15,5 @@ obj
 launchSettings.json
 /Test/Sample/node_modules
 /Test/Sample/tsconfig.json
-
+/Test/Wrong
 **/node_modules/**

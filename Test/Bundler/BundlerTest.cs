@@ -28,38 +28,41 @@ namespace Test.Bundler
         {
             var output = new Dictionary<string, string>();
             var bundler = new BundlerImpl(new BundlerCtx(testData, output, "cbm-"));
-            bundler.PartToMainFilesMap =
-                new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
+            InitCommonParts();
             bundler.Mangle = true;
             bundler.CompressOptions = CompressOptions.Default;
             bundler.OutputOptions = new OutputOptions {Beautify = true};
             bundler.Run();
 
             bundler = new BundlerImpl(new BundlerCtx(testData, output, "cm-"));
-            bundler.PartToMainFilesMap =
-                new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
+            InitCommonParts();
             bundler.Mangle = true;
             bundler.CompressOptions = CompressOptions.Default;
             bundler.OutputOptions = new OutputOptions {Beautify = false};
             bundler.Run();
 
             bundler = new BundlerImpl(new BundlerCtx(testData, output, "cb-"));
-            bundler.PartToMainFilesMap =
-                new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
+            InitCommonParts();
             bundler.Mangle = false;
             bundler.CompressOptions = CompressOptions.Default;
             bundler.OutputOptions = new OutputOptions {Beautify = true};
             bundler.Run();
 
             bundler = new BundlerImpl(new BundlerCtx(testData, output, "b-"));
-            bundler.PartToMainFilesMap =
-                new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
+            InitCommonParts();
             bundler.Mangle = false;
             bundler.CompressOptions = null;
             bundler.OutputOptions = new OutputOptions {Beautify = true};
             bundler.Run();
 
             return output;
+
+            void InitCommonParts()
+            {
+                bundler.PartToMainFilesMap =
+                    new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
+                bundler.GlobalDefines = new Dictionary<string, object> {{"DEBUG", false}};
+            }
         }
 
         public class BundlerCtx : IBundlerCtx

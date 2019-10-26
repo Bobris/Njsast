@@ -259,6 +259,7 @@
         });
         return cooked;
     };
+    var DEBUG = false;
     console.log("lib");
     console.log("main");
 }();

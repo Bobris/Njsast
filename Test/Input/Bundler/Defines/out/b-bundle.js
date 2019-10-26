@@ -260,10 +260,9 @@
         return cooked;
     };
     var DEBUG = false;
-    out: while (true) {
-        while (true) {
-            if (Math.random() > 0.5) break out;
-        }
+    function assert(shouldBeTrue, messageIfFalse) {
+        if (DEBUG && !shouldBeTrue) throw Error(messageIfFalse || "assertion failed");
     }
+    assert(false, "bad");
 }();
 
