@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Njsast.Ast;
 
 namespace Njsast.Scope
 {
@@ -10,6 +12,7 @@ namespace Njsast.Scope
         public bool TopLevel;
         public bool IgnoreEval;
         public HashSet<string> Reserved = new HashSet<string>();
+        public Action<AstNode>? BeforeMangling = null;
 
         public ScopeOptions()
         {

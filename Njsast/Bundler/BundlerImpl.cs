@@ -108,17 +108,47 @@ namespace Njsast.Bundler
 
                 if (Mangle)
                 {
-                    topLevelAst.FigureOutScope();
-                    topLevelAst.Mangle(new ScopeOptions {FrequencyCounting = MangleWithFrequencyCounting});
+                    topLevelAst.Mangle(new ScopeOptions
+                        {FrequencyCounting = MangleWithFrequencyCounting, BeforeMangling = IgnoreEvalInTwoScopes});
                 }
 
                 Ctx.WriteBundle(splitInfo.ShortName!, topLevelAst.PrintToString(OutputOptions));
             }
         }
 
+        void IgnoreEvalInTwoScopes(AstNode astNode)
+        {
+            if (astNode is AstToplevel topLevel)
+                if (topLevel.UsesEval || topLevel.UsesWith)
+                {
+                    new EvalIgnoreWalker().Walk(topLevel);
+                }
+        }
+
+        class EvalIgnoreWalker : TreeWalker
+        {
+            protected override void Visit(AstNode node)
+            {
+                switch (node)
+                {
+                    case AstToplevel top:
+                        top.UsesEval = false;
+                        top.UsesWith = false;
+                        DescendOnce();
+                        break;
+                    case AstScope scope:
+                        scope.UsesEval = false;
+                        scope.UsesWith = false;
+                        StopDescending();
+                        break;
+                }
+            }
+        }
+
         void BeforeAdd(AstToplevel top)
         {
-            var transformer = new BundlerTreeTransformer(_cache, Ctx, _currentSourceFile!, top.Variables!, _currentFileIdent!);
+            var transformer =
+                new BundlerTreeTransformer(_cache, Ctx, _currentSourceFile!, top.Variables!, _currentFileIdent!);
             transformer.Transform(top);
         }
 
