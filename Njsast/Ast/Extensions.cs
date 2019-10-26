@@ -128,8 +128,7 @@ namespace Njsast.Ast
             var def = node.IsSymbolDef();
             if (def == null) return false;
             if (def.Undeclared) return false;
-            if (def.Orig.Count != 1) return false;
-            return def.References.All(symb => !symb.Usage.HasFlag(SymbolUsage.Write));
+            return def.IsSingleInit;
         }
     }
 }

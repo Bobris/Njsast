@@ -38,5 +38,19 @@ namespace Njsast.Ast
             mainFunc.Body.InsertRange(^1, code.Body.AsSpan());
             return (toplevel, (AstSymbolVar) ((AstVar) toplevel.Body[0]).Definitions[0].Name);
         }
+
+        public static void RenameSymbol(SymbolDef symbol, string newName)
+        {
+            symbol.Name = newName;
+            foreach (var orig in symbol.Orig)
+            {
+                orig.Name = newName;
+            }
+
+            foreach (var reference in symbol.References)
+            {
+                reference.Name = newName;
+            }
+        }
     }
 }

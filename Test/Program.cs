@@ -125,6 +125,7 @@ namespace Test
             foreach (var bundlerTestData in new BundlerDataProviderAttribute("Input/Bundler").GetTypedData())
             {
                 var outFiles = BundlerTest.BundlerTestCore(bundlerTestData);
+                tests++;
                 foreach (var pair in outFiles)
                 {
                     CheckError(

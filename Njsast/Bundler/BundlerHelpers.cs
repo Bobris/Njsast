@@ -74,7 +74,7 @@ namespace Njsast.Bundler
             main.Body.AddRange(add.Body.AsSpan());
             foreach (var (_, symbolDef) in add.Variables!)
             {
-                main.Variables!.Add(symbolDef.Name, symbolDef);
+                main.Variables!.TryAdd(symbolDef.Name, symbolDef);
             }
 
             foreach (var (_, symbolDef) in add.Globals!)
