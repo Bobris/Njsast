@@ -90,6 +90,14 @@ namespace Njsast.Bundler
                 if (GlobalDefines != null && GlobalDefines.Count > 0)
                     topLevelAst.Body.Add(Helpers.EmitVarDefines(GlobalDefines));
                 topLevelAst.FigureOutScope();
+                foreach (var jsDependency in splitInfo.PlainJsDependencies)
+                {
+                    var jsAst = new Parser(new Options(), Ctx.ReadContent(jsDependency)!).Parse();
+                    jsAst.FigureOutScope();
+                    _currentFileIdent = FileNameToIdent(jsDependency);
+                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, jsAst, _currentFileIdent);
+                }
+
                 foreach (var sourceFile in _order)
                 {
                     if (sourceFile.PartOfBundle != splitName) continue;

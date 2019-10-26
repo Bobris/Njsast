@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Njsast.Bundler;
 using Njsast.Compress;
 using Njsast.Output;
@@ -85,7 +86,8 @@ namespace Test.Bundler
 
             public IReadOnlyList<string> GetPlainJsDependencies(string fileName)
             {
-                return Array.Empty<string>();
+                var dir = PathUtils.WithoutExtension(fileName) + "/";
+                return _testData.InputContent.Keys.Where(n => n.StartsWith(dir, StringComparison.Ordinal)).ToArray();
             }
 
             public string GenerateBundleName(string forName)
