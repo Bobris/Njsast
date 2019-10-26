@@ -10,3 +10,11 @@ Toplevel 1:1 - 7:1
             Return 3:5 - 3:20
               String 3:12 - 3:19
                 Value: Hello
+          SimpleStatement 5:3 - 5:37
+            Call 5:3 - 5:36
+              Dot 5:3 - 5:14
+                Property: log
+                SymbolRef 5:3 - 5:10 [Read]
+                  Name: console
+              String 5:15 - 5:35
+                Value: I am not dead code

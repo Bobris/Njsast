@@ -17,5 +17,15 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    __export_ddd = undefined;
+    function setDdd(addd) {
+        __export_ddd = addd;
+    }
+    setDdd(function() {});
+    if (__export_ddd) __export_ddd();
 }();
 

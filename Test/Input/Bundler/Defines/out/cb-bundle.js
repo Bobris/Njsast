@@ -17,5 +17,11 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    function assert(shouldBeTrue, messageIfFalse) {}
+    assert(!1, "bad");
 }();
 

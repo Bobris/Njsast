@@ -17,5 +17,11 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    content = [ 1, 2, 3 ];
+    console.log(content[0]);
 }();
 

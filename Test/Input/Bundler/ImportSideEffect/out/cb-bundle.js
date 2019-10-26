@@ -17,5 +17,11 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    console.log("lib");
+    console.log("main");
 }();
 

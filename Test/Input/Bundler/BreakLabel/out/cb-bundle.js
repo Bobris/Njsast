@@ -17,5 +17,14 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    out: while (!0) {
+        while (!0) {
+            if (Math.random() > 0.5) break out;
+        }
+    }
 }();
 

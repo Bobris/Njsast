@@ -17,5 +17,13 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    function fn(a, b) {
+        return a + b;
+    }
+    console.log(fn(1, 2));
 }();
 

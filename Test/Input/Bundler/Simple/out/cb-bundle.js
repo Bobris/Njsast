@@ -17,5 +17,13 @@
         }
         return t;
     };
+    __values;
+    __read;
+    __await;
+    DEBUG = !1;
+    function hello() {
+        return "Hello";
+    }
+    console.log(hello());
 }();
 
