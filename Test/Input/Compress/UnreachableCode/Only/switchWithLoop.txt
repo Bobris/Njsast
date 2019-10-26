@@ -36,4 +36,3 @@ Toplevel 1:1 - 14:2
         Call 12:9 - 12:15
           SymbolRef 12:9 - 12:13 [Read]
             Name: call
-      Break 13:9 - 13:15

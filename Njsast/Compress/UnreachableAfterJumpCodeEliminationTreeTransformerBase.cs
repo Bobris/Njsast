@@ -4,7 +4,7 @@ namespace Njsast.Compress
 {
     public abstract class UnreachableAfterJumpCodeEliminationTreeTransformerBase<TRootNodeType, TJumpNodeType> : CompressModuleTreeTransformerBase where TRootNodeType : AstStatement where TJumpNodeType : AstJump
     {
-        protected bool IsProcessingSwitchStatement { get; private set; }
+        protected bool IsProcessingSwitchStatement { get; set; }
         protected bool IsAfterJump { get; set; }
         bool IsProcessingRootNode { get; set; }
         
@@ -37,7 +37,7 @@ namespace Njsast.Compress
             if (node is TRootNodeType rootNode)
                 return ProcessRootNode(rootNode);
             
-            if (IsLastIfAlternative(node)) 
+            if (IsLastCaseExpression(node)) 
                 IsAfterJump = false;
 
             if (IsLastTryCatch(node) || IsLastTryFinally(node))
@@ -73,7 +73,7 @@ namespace Njsast.Compress
             return null;
         }
 
-        TRootNodeType ProcessRootNode(TRootNodeType node)
+        protected virtual TRootNodeType ProcessRootNode(TRootNodeType node)
         {
             if (IsProcessingRootNode)
                 return node;
@@ -146,6 +146,11 @@ namespace Njsast.Compress
             return node == _lastIfAlternative;
         }
 
+        bool IsLastCaseExpression(AstNode node)
+        {
+            return node == _lastCaseExpression;
+        }
+
         AstTry ProcessTry(AstTry astTry)
         {
             var safeLastTryCatch = _lastTryCatch;
@@ -196,7 +201,7 @@ namespace Njsast.Compress
             return astDefault;
         }
 
-        AstSwitch ProcessSwitch(AstSwitch astSwitch)
+        protected virtual AstSwitch ProcessSwitch(AstSwitch astSwitch)
         {
             var safeIsProcessingSwitch = IsProcessingSwitchStatement;
             IsProcessingSwitchStatement = true;

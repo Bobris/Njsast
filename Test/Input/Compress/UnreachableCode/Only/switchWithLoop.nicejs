@@ -10,6 +10,5 @@ switch (a) {
 
   default:
     call();
-    break;
 }
 

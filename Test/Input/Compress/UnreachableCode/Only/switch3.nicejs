@@ -5,6 +5,5 @@ switch (a) {
 
   case 2:
     a++;
-    break;
 }
 

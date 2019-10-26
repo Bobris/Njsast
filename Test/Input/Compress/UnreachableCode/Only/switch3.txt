@@ -18,7 +18,6 @@ Toplevel 1:1 - 9:2
           Operator: IncrementPostfix
           SymbolRef 6:9 - 6:10 [Read] [Write]
             Name: a
-      Break 7:9 - 7:15
       Number 5:10 - 5:11
         Value: 2
         Literal: 2
