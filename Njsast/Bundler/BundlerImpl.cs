@@ -167,7 +167,7 @@ namespace Njsast.Bundler
                 if (_cache.TryGetValue(r, out var rCached))
                 {
                     MarkRequiredAs(rCached, cached.PartOfBundle);
-                    return;
+                    continue;
                 }
 
                 Check(r, cached.PartOfBundle);
@@ -178,7 +178,7 @@ namespace Njsast.Bundler
                 if (_cache.TryGetValue(r, out var rCached))
                 {
                     MarkRequiredAs(rCached, r);
-                    return;
+                    continue;
                 }
 
                 Check(r, r);
