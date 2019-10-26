@@ -10,6 +10,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstSymbolRef(string name) : base(name)
+        {
+        }
+
         public AstSymbolRef(AstNode from, string name) : base(from, name)
         {
         }

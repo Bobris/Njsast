@@ -39,8 +39,9 @@ namespace Njsast.Bundler
         public IBundlerCtx Ctx;
 
         StructList<SourceFile> _order = new StructList<SourceFile>();
-        Dictionary<string, SourceFile> _cache = new Dictionary<string, SourceFile>();
+        internal Dictionary<string, SourceFile> _cache = new Dictionary<string, SourceFile>();
         Dictionary<string, SplitInfo> _splitMap = new Dictionary<string, SplitInfo>();
+        internal SourceFile? _currentSourceFile;
 
         public void Run()
         {
@@ -87,10 +88,13 @@ namespace Njsast.Bundler
                 var topLevelAst = new Parser(new Options(), Ctx.JsHeaders(splitName, lazySplitCounter > 0)).Parse();
                 if (GlobalDefines != null && GlobalDefines.Count > 0)
                     topLevelAst.Body.Add(Helpers.EmitVarDefines(GlobalDefines));
+                topLevelAst.FigureOutScope();
                 foreach (var sourceFile in _order)
                 {
                     if (sourceFile.PartOfBundle != splitName) continue;
-                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast, FileNameToIdent(sourceFile.Name));
+                    _currentSourceFile = sourceFile;
+                    BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast,
+                        FileNameToIdent(sourceFile.Name), BeforeAdd);
                 }
 
                 BundlerHelpers.WrapByIIFE(topLevelAst);
@@ -103,11 +107,17 @@ namespace Njsast.Bundler
                 if (Mangle)
                 {
                     topLevelAst.FigureOutScope();
-                    topLevelAst.Mangle(new ScopeOptions { FrequencyCounting = MangleWithFrequencyCounting });
+                    topLevelAst.Mangle(new ScopeOptions {FrequencyCounting = MangleWithFrequencyCounting});
                 }
 
                 Ctx.WriteBundle(splitInfo.ShortName!, topLevelAst.PrintToString(OutputOptions));
             }
+        }
+
+        void BeforeAdd(AstToplevel top)
+        {
+            var transformer = new BundlerTreeTransformer(_cache, Ctx, _currentSourceFile!);
+            transformer.Transform(top);
         }
 
         void MarkRequiredAs(SourceFile sourceFile, string fromSplitName)
@@ -146,7 +156,7 @@ namespace Njsast.Bundler
                 ? SourceMap.SourceMap.Parse(sourceMapContent, ".")
                 : SourceMap.SourceMap.Identity(content, fileName);
             var cached = BundlerHelpers.BuildSourceFile(fileName, content, sourceMap,
-                (name, from) => Ctx.ResolveRequire(name, from));
+                (from, name) => Ctx.ResolveRequire(name, from));
             cached.PartOfBundle = splitName;
             cached.PlainJsDependencies.AddRange(Ctx.GetPlainJsDependencies(fileName).ToArray());
             _cache[fileName] = cached;
@@ -205,12 +215,12 @@ namespace Njsast.Bundler
             _order.Add(cached);
         }
 
-        string FileNameToIdent(string fn) {
+        string FileNameToIdent(string fn)
+        {
             if (fn.LastIndexOf('/') >= 0) fn = fn.Substring(fn.LastIndexOf('/') + 1);
             if (fn.IndexOf('.') >= 0) fn = fn.Substring(0, fn.IndexOf('.'));
             fn = fn.Replace('-', '_');
             return fn;
         }
-
     }
 }

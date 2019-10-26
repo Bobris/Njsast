@@ -35,6 +35,7 @@ namespace Njsast.Bundler
             if (PathUtils.GetExtension(name) == "json")
             {
                 (toplevel, symbol) = Helpers.EmitVarDefineJson(content, name);
+                toplevel.FigureOutScope();
                 return new SourceFile(name, toplevel) {WholeExport = symbol};
             }
 
@@ -47,6 +48,7 @@ namespace Njsast.Bundler
             if (toplevel.Globals!.ContainsKey("module"))
             {
                 (toplevel, symbol) = Helpers.EmitCommonJsWrapper(toplevel);
+                toplevel.FigureOutScope();
                 return new SourceFile(name, toplevel) {WholeExport = symbol};
             }
 
@@ -55,14 +57,29 @@ namespace Njsast.Bundler
             return sourceFile;
         }
 
-        public static void AppendToplevelWithRename(AstToplevel main, AstToplevel add, string suffix)
+        public static void AppendToplevelWithRename(AstToplevel main, AstToplevel add, string suffix, Action<AstToplevel>? beforeAdd = null)
         {
+            if (main.Body.Count == 0)
+            {
+                beforeAdd?.Invoke(add);
+                main.Body.AddRange(add.Body.AsSpan());
+                main.Variables = add.Variables;
+                main.Globals = add.Globals;
+                return;
+            }
             var renameWalker = new ToplevelRenameWalker(main.Variables!, suffix);
             renameWalker.Walk(add);
+
+            beforeAdd?.Invoke(add);
             main.Body.AddRange(add.Body.AsSpan());
             foreach (var (_, symbolDef) in add.Variables!)
             {
                 main.Variables!.Add(symbolDef.Name, symbolDef);
+            }
+
+            foreach (var (_, symbolDef) in add.Globals!)
+            {
+                main.Globals!.TryAdd(symbolDef.Name, symbolDef);
             }
         }
 
@@ -105,7 +122,7 @@ namespace Njsast.Bundler
             func.ArgNames.Add(new AstSymbolFunarg("undefined"));
             func.HasUseStrictDirective = true;
             func.Body.TransferFrom(ref topLevelAst.Body);
-            topLevelAst.Body.Add(new AstCall(func));
+            topLevelAst.Body.Add(new AstSimpleStatement(new AstUnaryPrefix(Operator.LogicalNot,new AstCall(func))));
         }
     }
 }

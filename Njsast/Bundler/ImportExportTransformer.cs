@@ -64,6 +64,7 @@ namespace Njsast.Bundler
                     {
                         return Remove;
                     }
+
                     if (_exportName2VarNameMap.TryGetValue(pea.Value.name, out var varName))
                     {
                         ((AstAssign) stmBody).Left = new AstSymbolRef(((AstAssign) stmBody).Left, varName);
@@ -80,7 +81,7 @@ namespace Njsast.Bundler
 
                     var newVar = new AstVar(stmBody);
                     var astSymbolVar = new AstSymbolVar(stmBody, newName);
-                    newVar.Definitions.Add(new AstVarDef(astSymbolVar, pea.Value.value));
+                    newVar.Definitions.Add(new AstVarDef(astSymbolVar, Transform(pea.Value.value!)));
                     _exportName2VarNameMap[pea.Value.name] = newName;
                     _sourceFile.SelfExports.Add(new SimpleSelfExport(pea.Value.name, astSymbolVar));
                     return newVar;
