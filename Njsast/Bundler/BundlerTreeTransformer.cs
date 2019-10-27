@@ -37,6 +37,12 @@ namespace Njsast.Bundler
                         throw new ApplicationException("Cannot find " + resolvedName + " imported from " +
                                                        _currentSourceFile!.Name);
                     _reqSymbolDefMap[reqSymbolDef] = reqSource;
+                    if (_currentSourceFile!.NeedsWholeImportsFrom.IndexOf(resolvedName) >= 0)
+                    {
+                        CheckIfNewlyUsedSymbolIsUnique(reqSource.WholeExport!);
+                        return new AstVarDef(varDef, varDef.Name, new AstSymbolRef(node, reqSource.WholeExport!.Thedef!, SymbolUsage.Read));
+                    }
+
                     return Remove;
                 }
             }
@@ -71,6 +77,7 @@ namespace Njsast.Bundler
                                 CheckIfNewlyUsedSymbolIsUnique(trueSymbol);
                                 return new AstSymbolRef(node, trueSymbol.Thedef!, SymbolUsage.Read);
                             }
+
                             return exportedSymbol;
                         }
 

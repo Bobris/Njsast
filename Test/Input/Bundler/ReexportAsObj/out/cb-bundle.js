@@ -1,6 +1,6 @@
 !function(undefined) {
     "use strict";
-    var __extendStatics, __assign, __values, __read, __await, DEBUG, __export_aaa, __export_bbb;
+    var __extendStatics, __assign, __values, __read, __await, DEBUG, __export_$, lib;
     __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -21,8 +21,13 @@
     __read;
     __await;
     DEBUG = !1;
-    __export_aaa = 42;
-    __export_bbb = __export_aaa;
-    console.log(__export_bbb);
+    function fn(a, b) {
+        return a + b;
+    }
+    __export_$ = {
+        fn: fn
+    };
+    lib = __export_$;
+    console.log(lib.fn(1, 2));
 }();
 

@@ -25,6 +25,12 @@ namespace Njsast.Ast
             Value = value;
         }
 
+        public AstVarDef(AstNode from, AstNode name, AstNode? value = null): base(from)
+        {
+            Name = name;
+            Value = value;
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);

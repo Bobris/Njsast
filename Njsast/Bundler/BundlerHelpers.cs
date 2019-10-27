@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using Njsast.Ast;
+using Njsast.Bobril;
 using Njsast.Reader;
 using Njsast.Utils;
 
@@ -39,7 +40,7 @@ namespace Njsast.Bundler
                 return new SourceFile(name, toplevel) {WholeExport = symbol};
             }
 
-            var commentListener = new Bobril.CommentListener();
+            var commentListener = new CommentListener();
             toplevel =
                 new Parser(new Options {SourceFile = name, OnComment = commentListener.OnComment}, content).Parse();
             commentListener.Walk(toplevel);
@@ -123,6 +124,14 @@ namespace Njsast.Bundler
             func.HasUseStrictDirective = true;
             func.Body.TransferFrom(ref topLevelAst.Body);
             topLevelAst.Body.Add(new AstSimpleStatement(new AstUnaryPrefix(Operator.LogicalNot,new AstCall(func))));
+        }
+
+        public static string FileNameToIdent(string fn)
+        {
+            if (fn.LastIndexOf('/') >= 0) fn = fn.Substring(fn.LastIndexOf('/') + 1);
+            if (fn.IndexOf('.') >= 0) fn = fn.Substring(0, fn.IndexOf('.'));
+            fn = fn.Replace('-', '_');
+            return fn;
         }
     }
 }

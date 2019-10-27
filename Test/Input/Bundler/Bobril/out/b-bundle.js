@@ -5053,7 +5053,6 @@
             return res_1;
         }
     }
-    var __export___spread = __export_assign;
     init(function() {
         return "hello";
     });

@@ -261,6 +261,7 @@
     };
     var DEBUG = false;
     var content = [ 1, 2, 3 ];
+    var j = content;
     console.log(content[0]);
 }();
 

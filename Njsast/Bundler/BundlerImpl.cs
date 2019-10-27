@@ -24,7 +24,7 @@ namespace Njsast.Bundler
     {
         public BundlerImpl(IBundlerCtx ctx)
         {
-            Ctx = ctx;
+            _ctx = ctx;
             PartToMainFilesMap = new Dictionary<string, IReadOnlyList<string>>();
             MangleWithFrequencyCounting = true;
             GlobalDefines = new Dictionary<string, object>();
@@ -36,13 +36,13 @@ namespace Njsast.Bundler
         public bool MangleWithFrequencyCounting;
         public OutputOptions? OutputOptions;
         public IReadOnlyDictionary<string, object> GlobalDefines;
-        public IBundlerCtx Ctx;
+        readonly IBundlerCtx _ctx;
 
         StructList<SourceFile> _order = new StructList<SourceFile>();
-        internal Dictionary<string, SourceFile> _cache = new Dictionary<string, SourceFile>();
-        Dictionary<string, SplitInfo> _splitMap = new Dictionary<string, SplitInfo>();
-        internal SourceFile? _currentSourceFile;
-        internal string? _currentFileIdent;
+        readonly Dictionary<string, SourceFile> _cache = new Dictionary<string, SourceFile>();
+        readonly Dictionary<string, SplitInfo> _splitMap = new Dictionary<string, SplitInfo>();
+        SourceFile? _currentSourceFile;
+        string? _currentFileIdent;
 
         public void Run()
         {
@@ -60,7 +60,15 @@ namespace Njsast.Bundler
                 }
 
                 _splitMap[splitName] = new SplitInfo(splitName)
-                    {ShortName = Ctx.GenerateBundleName(splitName), PropName = "ERROR"};
+                    {ShortName = _ctx.GenerateBundleName(splitName), PropName = "ERROR"};
+            }
+
+            foreach (var (_, sourceFile) in _cache)
+            {
+                if (sourceFile.NeedsWholeExport && sourceFile.WholeExport == null)
+                {
+                    sourceFile.CreateWholeExport();
+                }
             }
 
             var lazySplitCounter = 0;
@@ -69,7 +77,7 @@ namespace Njsast.Bundler
                 var fullBundleName = f.PartOfBundle!;
                 if (!_splitMap.TryGetValue(fullBundleName, out var split))
                 {
-                    var shortenedBundleName = Ctx.GenerateBundleName(fullBundleName);
+                    var shortenedBundleName = _ctx.GenerateBundleName(fullBundleName);
                     split = new SplitInfo(fullBundleName)
                     {
                         ShortName = shortenedBundleName,
@@ -86,15 +94,15 @@ namespace Njsast.Bundler
 
             foreach (var (splitName, splitInfo) in _splitMap)
             {
-                var topLevelAst = new Parser(new Options(), Ctx.JsHeaders(splitName, lazySplitCounter > 0)).Parse();
+                var topLevelAst = new Parser(new Options(), _ctx.JsHeaders(splitName, lazySplitCounter > 0)).Parse();
                 if (GlobalDefines != null && GlobalDefines.Count > 0)
                     topLevelAst.Body.Add(Helpers.EmitVarDefines(GlobalDefines));
                 topLevelAst.FigureOutScope();
                 foreach (var jsDependency in splitInfo.PlainJsDependencies)
                 {
-                    var jsAst = new Parser(new Options(), Ctx.ReadContent(jsDependency)!).Parse();
+                    var jsAst = new Parser(new Options(), _ctx.ReadContent(jsDependency)!).Parse();
                     jsAst.FigureOutScope();
-                    _currentFileIdent = FileNameToIdent(jsDependency);
+                    _currentFileIdent = BundlerHelpers.FileNameToIdent(jsDependency);
                     BundlerHelpers.AppendToplevelWithRename(topLevelAst, jsAst, _currentFileIdent);
                 }
 
@@ -102,7 +110,7 @@ namespace Njsast.Bundler
                 {
                     if (sourceFile.PartOfBundle != splitName) continue;
                     _currentSourceFile = sourceFile;
-                    _currentFileIdent = FileNameToIdent(sourceFile.Name);
+                    _currentFileIdent = BundlerHelpers.FileNameToIdent(sourceFile.Name);
                     BundlerHelpers.AppendToplevelWithRename(topLevelAst, sourceFile.Ast, _currentFileIdent
                         , BeforeAdd);
                 }
@@ -120,7 +128,7 @@ namespace Njsast.Bundler
                         {FrequencyCounting = MangleWithFrequencyCounting, BeforeMangling = IgnoreEvalInTwoScopes});
                 }
 
-                Ctx.WriteBundle(splitInfo.ShortName!, topLevelAst.PrintToString(OutputOptions));
+                _ctx.WriteBundle(splitInfo.ShortName!, topLevelAst.PrintToString(OutputOptions));
             }
         }
 
@@ -156,7 +164,7 @@ namespace Njsast.Bundler
         void BeforeAdd(AstToplevel top)
         {
             var transformer =
-                new BundlerTreeTransformer(_cache, Ctx, _currentSourceFile!, top.Variables!, _currentFileIdent!);
+                new BundlerTreeTransformer(_cache, _ctx, _currentSourceFile!, top.Variables!, _currentFileIdent!);
             transformer.Transform(top);
         }
 
@@ -189,16 +197,16 @@ namespace Njsast.Bundler
 
         void Check(string fileName, string splitName)
         {
-            var content = Ctx.ReadContent(fileName);
+            var content = _ctx.ReadContent(fileName);
             if (content is null) throw new ApplicationException($"Content for {fileName} not found");
-            var sourceMapContent = Ctx.ReadContent(fileName + ".map");
+            var sourceMapContent = _ctx.ReadContent(fileName + ".map");
             var sourceMap = sourceMapContent != null
                 ? SourceMap.SourceMap.Parse(sourceMapContent, ".")
                 : SourceMap.SourceMap.Identity(content, fileName);
             var cached = BundlerHelpers.BuildSourceFile(fileName, content, sourceMap,
-                (from, name) => Ctx.ResolveRequire(name, from));
+                (from, name) => _ctx.ResolveRequire(name, from));
             cached.PartOfBundle = splitName;
-            cached.PlainJsDependencies.AddRange(Ctx.GetPlainJsDependencies(fileName).ToArray());
+            cached.PlainJsDependencies.AddRange(_ctx.GetPlainJsDependencies(fileName).ToArray());
             _cache[fileName] = cached;
             foreach (var r in cached.Requires)
             {
@@ -220,6 +228,11 @@ namespace Njsast.Bundler
                 }
 
                 Check(r, r);
+            }
+
+            foreach (var r in cached.NeedsWholeImportsFrom)
+            {
+                _cache[r].NeedsWholeExport = true;
             }
 
             cached.Exports = new Dictionary<string, AstNode>();
@@ -253,14 +266,6 @@ namespace Njsast.Bundler
             }
 
             _order.Add(cached);
-        }
-
-        string FileNameToIdent(string fn)
-        {
-            if (fn.LastIndexOf('/') >= 0) fn = fn.Substring(fn.LastIndexOf('/') + 1);
-            if (fn.IndexOf('.') >= 0) fn = fn.Substring(0, fn.IndexOf('.'));
-            fn = fn.Replace('-', '_');
-            return fn;
         }
     }
 }

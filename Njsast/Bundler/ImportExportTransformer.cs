@@ -11,6 +11,7 @@ namespace Njsast.Bundler
         readonly Dictionary<string, SymbolDef> _exportName2VarNameMap = new Dictionary<string, SymbolDef>();
         StructList<AstNode> _bodyPrepend = new StructList<AstNode>();
         SymbolDef? _reexportSymbol;
+        readonly Dictionary<SymbolDef, string> _reqSymbolDefMap = new Dictionary<SymbolDef, string>();
 
         public ImportExportTransformer(SourceFile sourceFile, Func<string, string, string> resolver)
         {
@@ -32,6 +33,27 @@ namespace Njsast.Bundler
             {
                 _sourceFile.LazyRequires.Add(_resolver.Invoke(_sourceFile.Name, req));
                 return node;
+            }
+
+            if (node is AstVarDef varDef)
+            {
+                if (varDef.Value.IsRequireCall() is { } reqName)
+                {
+                    var reqSymbolDef = varDef.Name.IsSymbolDef()!;
+                    var resolvedName = _resolver(_sourceFile.Name, reqName);
+                    _sourceFile.Requires.Add(resolvedName);
+                    _reqSymbolDefMap[reqSymbolDef] = resolvedName;
+                    return node;
+                }
+            }
+
+            if (node is AstSymbolRef symbRef && _reqSymbolDefMap.TryGetValue(symbRef.Thedef!, out var wholeImportFile))
+            {
+                if (Parent() is AstPropAccess propAccess2 && propAccess2.Expression == symbRef &&
+                    propAccess2.PropertyAsString is {})
+                    return node;
+                _sourceFile.NeedsWholeImportsFrom.AddUnique(wholeImportFile);
+                return null;
             }
 
             if (node is AstSimpleStatement {Body: var stmBody })
@@ -65,6 +87,7 @@ namespace Njsast.Bundler
                         return Remove;
                     }
 
+                    var trueValue = pea.Value.value != null ? Transform(pea.Value.value) : null;
                     if (_exportName2VarNameMap.TryGetValue(pea.Value.name, out var varName))
                     {
                         ((AstAssign) stmBody).Left =
@@ -72,20 +95,20 @@ namespace Njsast.Bundler
                         return node;
                     }
 
-                    if (pea.Value.value.IsConstantSymbolRef())
+                    if (trueValue.IsConstantSymbolRef())
                     {
-                        _exportName2VarNameMap[pea.Value.name] = pea.Value.value.IsSymbolDef()!;
-                        _sourceFile.SelfExports.Add(new SimpleSelfExport(pea.Value.name, (AstSymbol) pea.Value.value!));
+                        _exportName2VarNameMap[pea.Value.name] = trueValue.IsSymbolDef()!;
+                        _sourceFile.SelfExports.Add(new SimpleSelfExport(pea.Value.name, (AstSymbol) trueValue!));
                         return Remove;
                     }
 
-                    var newName = BundlerHelpers.MakeUniqueName("__export_" + pea.Value.name, _sourceFile.Ast.Variables!, "");
+                    var newName =
+                        BundlerHelpers.MakeUniqueName("__export_" + pea.Value.name, _sourceFile.Ast.Variables!, "");
                     var newVar = new AstVar(stmBody);
                     var astSymbolVar = new AstSymbolVar(stmBody, newName);
-                    var init = Transform(pea.Value.value!);
-                    astSymbolVar.Thedef = new SymbolDef(_sourceFile.Ast, astSymbolVar, init);
+                    astSymbolVar.Thedef = new SymbolDef(_sourceFile.Ast, astSymbolVar, trueValue);
                     _sourceFile.Ast.Variables!.Add(newName, astSymbolVar.Thedef);
-                    newVar.Definitions.Add(new AstVarDef(astSymbolVar, init));
+                    newVar.Definitions.Add(new AstVarDef(astSymbolVar, trueValue));
                     _exportName2VarNameMap[pea.Value.name] = astSymbolVar.Thedef;
                     _sourceFile.SelfExports.Add(new SimpleSelfExport(pea.Value.name, astSymbolVar));
                     return newVar;

@@ -22,6 +22,10 @@ namespace Njsast.Ast
             Properties = new StructList<AstObjectProperty>();
         }
 
+        public AstObject(AstNode from): base(from)
+        {
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);

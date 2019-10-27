@@ -260,8 +260,21 @@
         return cooked;
     };
     var DEBUG = false;
-    var __export_aaa = 42;
-    var __export_bbb = __export_aaa;
-    console.log(__export_bbb);
+    function fn(a, b) {
+        return a + b;
+    }
+    var __export_$ = {
+        fn: fn
+    };
+    function fn_libb(a, b) {
+        return a - b;
+    }
+    var __export_$_libb = {
+        fn: fn_libb
+    };
+    var liba = __export_$;
+    var libb = __export_$_libb;
+    var lib = Math.random() > 0.5 ? __export_$ : __export_$_libb;
+    console.log(lib.fn(1, 2));
 }();
 

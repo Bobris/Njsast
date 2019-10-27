@@ -260,8 +260,13 @@
         return cooked;
     };
     var DEBUG = false;
-    var __export_aaa = 42;
-    var __export_bbb = __export_aaa;
-    console.log(__export_bbb);
+    function fn(a, b) {
+        return a + b;
+    }
+    var __export_$ = {
+        fn: fn
+    };
+    var lib = __export_$;
+    console.log(lib.fn(1, 2));
 }();
 
