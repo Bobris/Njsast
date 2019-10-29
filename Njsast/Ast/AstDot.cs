@@ -11,6 +11,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstDot(AstNode expression, string propName) : base(expression, propName)
+        {
+        }
+
         public override void CodeGen(OutputContext output)
         {
             Expression.Print(output, Expression is AstBinary && output.NeedNodeParens(Expression));

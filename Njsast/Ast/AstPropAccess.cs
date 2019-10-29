@@ -23,6 +23,12 @@ namespace Njsast.Ast
             Property = property;
         }
 
+        protected AstPropAccess(AstNode expression, object property)
+        {
+            Expression = expression;
+            Property = property;
+        }
+
         public string? PropertyAsString
         {
             get

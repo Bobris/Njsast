@@ -26,6 +26,13 @@ namespace Njsast.Ast
             Operator = op;
         }
 
+        protected AstBinary(AstNode left, AstNode right, Operator op)
+        {
+            Left = left;
+            Right = right;
+            Operator = op;
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);

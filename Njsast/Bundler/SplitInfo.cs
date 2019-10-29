@@ -15,7 +15,7 @@ namespace Njsast.Bundler
             DirectSplitsForcedLazy = new HashSet<SplitInfo>();
             PlainJsDependencies = new OrderedHashSet<string>();
         }
-        /// lower cased file path
+        /// file path
         public string FullName;
         /// shortened output name
         public string? ShortName;
@@ -30,6 +30,7 @@ namespace Njsast.Bundler
         public ISet<SplitInfo> DirectSplitsForcedLazy;
         public StructList<SplitInfo> ExpandedSplitsForcedLazy;
         public OrderedHashSet<string> PlainJsDependencies;
+        public bool IsMainSplit;
     }
 
     public class ImportFromOtherBundle

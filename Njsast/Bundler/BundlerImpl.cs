@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using System.Linq;
 using Njsast.Ast;
 using Njsast.Compress;
@@ -60,7 +59,7 @@ namespace Njsast.Bundler
                 }
 
                 _splitMap[splitName] = new SplitInfo(splitName)
-                    {ShortName = _ctx.GenerateBundleName(splitName), PropName = "ERROR"};
+                    {ShortName = _ctx.GenerateBundleName(splitName), PropName = "ERROR", IsMainSplit = true};
             }
 
             foreach (var (_, sourceFile) in _cache)
@@ -92,6 +91,11 @@ namespace Njsast.Bundler
                 }
             }
 
+            if (lazySplitCounter > 0)
+            {
+                DetectBundleExportsImports(ref lazySplitCounter);
+            }
+
             foreach (var (splitName, splitInfo) in _splitMap)
             {
                 var topLevelAst = new Parser(new Options(), _ctx.JsHeaders(splitName, lazySplitCounter > 0)).Parse();
@@ -115,7 +119,16 @@ namespace Njsast.Bundler
                         , BeforeAdd);
                 }
 
+                AddExportsFromLazyBundle(splitInfo, topLevelAst);
+
                 BundlerHelpers.WrapByIIFE(topLevelAst);
+                if (lazySplitCounter > 0 && PartToMainFilesMap.ContainsKey(splitName))
+                {
+                    var astVar = new AstVar(topLevelAst);
+                    astVar.Definitions.Add(new AstVarDef(new AstSymbolVar("__bbb"), new AstObject()));
+                    topLevelAst.Body.Insert(0) = astVar;
+                }
+
                 if (CompressOptions != null)
                 {
                     topLevelAst.FigureOutScope();
@@ -125,10 +138,83 @@ namespace Njsast.Bundler
                 if (Mangle)
                 {
                     topLevelAst.Mangle(new ScopeOptions
-                        {FrequencyCounting = MangleWithFrequencyCounting, BeforeMangling = IgnoreEvalInTwoScopes});
+                    {
+                        FrequencyCounting = MangleWithFrequencyCounting, TopLevel = false,
+                        BeforeMangling = IgnoreEvalInTwoScopes
+                    });
                 }
 
                 _ctx.WriteBundle(splitInfo.ShortName!, topLevelAst.PrintToString(OutputOptions));
+            }
+        }
+
+        void DetectBundleExportsImports(ref int lazySplitCounter)
+        {
+            foreach (var f in _order)
+            {
+                var sourceSplit = _splitMap[f.PartOfBundle!];
+                foreach (var lazyRequire in f.LazyRequires)
+                {
+                    var targetFile = _cache[lazyRequire];
+                    if (targetFile.WholeExport == null)
+                    {
+                        targetFile.CreateWholeExport();
+                    }
+
+                    var targetSplit = _splitMap[targetFile.PartOfBundle!];
+                    if (targetSplit.ExportsAllUsedFromLazyBundles.ContainsKey(lazyRequire)) continue;
+                    if (targetSplit.FullName == lazyRequire)
+                    {
+                        targetSplit.ExportsAllUsedFromLazyBundles[lazyRequire] = targetSplit.PropName!;
+                    }
+                    else if (PartToMainFilesMap.ContainsKey(targetSplit.FullName))
+                    {
+                        targetSplit.ExportsAllUsedFromLazyBundles[lazyRequire] =
+                            BundlerHelpers.NumberToIdent(lazySplitCounter++);
+                    }
+                }
+
+                foreach (var require in f.Requires)
+                {
+                    var targetSplit = _splitMap[_cache[require].PartOfBundle!];
+                    if (targetSplit != sourceSplit && !PartToMainFilesMap.ContainsKey(targetSplit.FullName))
+                    {
+                        sourceSplit.DirectSplitsForcedLazy.Add(targetSplit);
+                    }
+                }
+            }
+
+            foreach (var (_, split) in _splitMap)
+            {
+                if (PartToMainFilesMap.ContainsKey(split.FullName)) continue;
+                ExpandDirectSplitsForcedLazy(split, split, new HashSet<SplitInfo> {split});
+            }
+        }
+
+        static void ExpandDirectSplitsForcedLazy(SplitInfo split, SplitInfo rootSplit, ISet<SplitInfo> visited)
+        {
+            foreach (var targetSplit in split.DirectSplitsForcedLazy)
+            {
+                if (!visited.Add(targetSplit)) continue;
+                ExpandDirectSplitsForcedLazy(targetSplit, rootSplit, visited);
+            }
+
+            if (split != rootSplit) rootSplit.ExpandedSplitsForcedLazy.Add(split);
+        }
+
+        void AddExportsFromLazyBundle(SplitInfo splitInfo, AstToplevel topLevelAst)
+        {
+            foreach (var (fromSourceName, propName) in splitInfo.ExportsAllUsedFromLazyBundles)
+            {
+                var fromSourceFile = _cache[fromSourceName];
+                topLevelAst.Body.Add(new AstSimpleStatement(
+                    new AstAssign(new AstDot(new AstSymbolRef("__bbb"), propName), fromSourceFile.WholeExport!)));
+            }
+
+            foreach (var (node, propName) in splitInfo.ExportsUsedFromLazyBundles)
+            {
+                topLevelAst.Body.Add(new AstSimpleStatement(
+                    new AstAssign(new AstDot(new AstSymbolRef("__bbb"), propName), node)));
             }
         }
 
@@ -164,7 +250,8 @@ namespace Njsast.Bundler
         void BeforeAdd(AstToplevel top)
         {
             var transformer =
-                new BundlerTreeTransformer(_cache, _ctx, _currentSourceFile!, top.Variables!, _currentFileIdent!);
+                new BundlerTreeTransformer(_cache, _ctx, _currentSourceFile!, top.Variables!, _currentFileIdent!,
+                    _splitMap);
             transformer.Transform(top);
         }
 

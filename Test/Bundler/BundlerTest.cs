@@ -92,7 +92,7 @@ namespace Test.Bundler
 
             public string GenerateBundleName(string forName)
             {
-                return _outputPrefix + forName + ".js";
+                return _outputPrefix + PathUtils.ChangeExtension(forName, ".js");
             }
 
             public string ResolveRequire(string name, string @from)

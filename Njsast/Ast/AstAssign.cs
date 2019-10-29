@@ -11,6 +11,10 @@ namespace Njsast.Ast
         {
         }
 
+        public AstAssign(AstNode left, AstNode right, Operator op = Operator.Assignment) : base(left, right, op)
+        {
+        }
+
         public override bool NeedParens(OutputContext output)
         {
             var p = output.Parent();

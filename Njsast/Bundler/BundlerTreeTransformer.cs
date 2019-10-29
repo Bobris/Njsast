@@ -10,16 +10,18 @@ namespace Njsast.Bundler
         readonly IBundlerCtx _ctx;
         readonly SourceFile _currentSourceFile;
         readonly Dictionary<string, SymbolDef> _rootVariables;
+        readonly Dictionary<string, SplitInfo> _splitMap;
         readonly string _suffix;
         readonly Dictionary<SymbolDef, SourceFile> _reqSymbolDefMap = new Dictionary<SymbolDef, SourceFile>();
 
         public BundlerTreeTransformer(Dictionary<string, SourceFile> cache, IBundlerCtx ctx,
-            SourceFile currentSourceFile, Dictionary<string, SymbolDef> rootVariables, string suffix)
+            SourceFile currentSourceFile, Dictionary<string, SymbolDef> rootVariables, string suffix, Dictionary<string, SplitInfo> splitMap)
         {
             _cache = cache;
             _ctx = ctx;
             _currentSourceFile = currentSourceFile;
             _rootVariables = rootVariables;
+            _splitMap = splitMap;
             _suffix = "_" + suffix;
         }
 
@@ -51,6 +53,38 @@ namespace Njsast.Bundler
             {
                 if (simpleStatement.Body.IsRequireCall() is {})
                     return Remove;
+            }
+
+            if (node.IsLazyImportCall() is {} lazyReqName)
+            {
+                var resolvedName = _ctx.ResolveRequire(lazyReqName, _currentSourceFile!.Name);
+                if (!_cache.TryGetValue(resolvedName, out var reqSource))
+                    throw new ApplicationException("Cannot find " + resolvedName + " lazy imported from " +
+                                                   _currentSourceFile!.Name);
+                var splitInfo = _splitMap[reqSource.PartOfBundle!];
+                var propName = splitInfo.ExportsAllUsedFromLazyBundles[resolvedName];
+                if (splitInfo.IsMainSplit)
+                {
+                    var call = new AstCall(new AstSymbolRef("__import"));
+                    call.Args.Add(new AstSymbolRef("undefined"));
+                    call.Args.Add(new AstString(propName));
+                    return call;
+                }
+                var result = new AstCall(new AstSymbolRef("__import"));
+                result.Args.Add(new AstString(splitInfo.ShortName!));
+                result.Args.Add(new AstString(propName));
+                for (var i = splitInfo.ExpandedSplitsForcedLazy.Count; i-->0;) {
+                    var usedSplit = splitInfo.ExpandedSplitsForcedLazy[i];
+                    var call = new AstCall(new AstSymbolRef("__import"));
+                    call.Args.Add(new AstString(usedSplit.ShortName!));
+                    call.Args.Add(new AstString(usedSplit.PropName!));
+                    call = new AstCall(new AstDot(call, "then"));
+                    var func = new AstFunction();
+                    func.Body.Add(new AstReturn(result));
+                    call.Args.Add(func);
+                    result = call;
+                }
+                return result;
             }
 
             if (node is AstSymbolRef symbolRef && symbolRef.IsSymbolDef() is {} wholeImport)

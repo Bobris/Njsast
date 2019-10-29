@@ -15,6 +15,11 @@ namespace Njsast.Ast
             Value = value;
         }
 
+        protected AstExit(AstNode? value)
+        {
+            Value = value;
+        }
+
         public override void Visit(TreeWalker w)
         {
             base.Visit(w);
