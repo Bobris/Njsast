@@ -110,7 +110,8 @@ namespace Njsast.Bundler
             do
             {
                 num--;
-                ret[pos++] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789"[Math.DivRem(num, @base, out num)];
+                num = Math.DivRem(num, @base, out var rem);
+                ret[pos++] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_0123456789"[rem];
                 @base = 64;
             } while (num > 0);
 
