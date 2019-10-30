@@ -50,10 +50,13 @@ namespace Njsast.Bundler
             if (node is AstSymbolRef symbRef && _reqSymbolDefMap.TryGetValue(symbRef.Thedef!, out var wholeImportFile))
             {
                 if (Parent() is AstPropAccess propAccess2 && propAccess2.Expression == symbRef &&
-                    propAccess2.PropertyAsString is {})
+                    propAccess2.PropertyAsString is {} propName)
+                {
+                    _sourceFile.NeedsImports.AddUnique((wholeImportFile, propName));
                     return node;
+                }
                 _sourceFile.NeedsWholeImportsFrom.AddUnique(wholeImportFile);
-                return null;
+                return node;
             }
 
             if (node is AstSimpleStatement {Body: var stmBody })

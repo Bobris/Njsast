@@ -110,6 +110,7 @@ namespace Njsast.Bundler
                     BundlerHelpers.AppendToplevelWithRename(topLevelAst, jsAst, _currentFileIdent);
                 }
 
+                AddExternallyImportedFromOtherBundles(topLevelAst, splitInfo);
                 foreach (var sourceFile in _order)
                 {
                     if (sourceFile.PartOfBundle != splitName) continue;
@@ -182,6 +183,18 @@ namespace Njsast.Bundler
                         sourceSplit.DirectSplitsForcedLazy.Add(targetSplit);
                     }
                 }
+
+                foreach (var (fromName, exportName) in f.NeedsImports)
+                {
+                    var fromFile = _cache[fromName];
+                    var fromSplit = _splitMap[fromFile.PartOfBundle!];
+                    if (sourceSplit == fromSplit)
+                        continue;
+                    var astNode = fromFile.Exports![exportName];
+                    sourceSplit.ImportsFromOtherBundles[astNode] =
+                        new ImportFromOtherBundle(fromSplit, fromFile, exportName);
+                    fromSplit.ExportsUsedFromLazyBundles[astNode] = BundlerHelpers.NumberToIdent(lazySplitCounter++);
+                }
             }
 
             foreach (var (_, split) in _splitMap)
@@ -218,6 +231,24 @@ namespace Njsast.Bundler
             }
         }
 
+        void AddExternallyImportedFromOtherBundles(AstToplevel toplevel, SplitInfo split)
+        {
+            foreach (var (astNode, importFromOtherBundle) in split.ImportsFromOtherBundles)
+            {
+                var name = "__" + importFromOtherBundle.Name + "_" + BundlerHelpers.FileNameToIdent(importFromOtherBundle.FromFile.Name);
+                name = BundlerHelpers.MakeUniqueName(name, toplevel.Variables!, null);
+                var shortenedPropertyName = importFromOtherBundle.FromSplit.ExportsUsedFromLazyBundles[astNode];
+                var newVar = new AstVar(toplevel);
+                var astSymbolVar = new AstSymbolVar(toplevel, name);
+                var trueValue = new AstDot(new AstSymbolRef("__bbb"), shortenedPropertyName);
+                astSymbolVar.Thedef = new SymbolDef(toplevel, astSymbolVar, trueValue);
+                toplevel.Variables!.Add(name, astSymbolVar.Thedef);
+                newVar.Definitions.Add(new AstVarDef(astSymbolVar, trueValue));
+                toplevel.Body.Add(newVar);
+                importFromOtherBundle.Ref = new AstSymbolRef(toplevel, astSymbolVar.Thedef, SymbolUsage.Read);
+            }
+        }
+
         void IgnoreEvalInTwoScopes(AstNode astNode)
         {
             if (astNode is AstToplevel topLevel)
@@ -251,7 +282,7 @@ namespace Njsast.Bundler
         {
             var transformer =
                 new BundlerTreeTransformer(_cache, _ctx, _currentSourceFile!, top.Variables!, _currentFileIdent!,
-                    _splitMap);
+                    _splitMap, _splitMap[_currentSourceFile!.PartOfBundle!]);
             transformer.Transform(top);
         }
 
