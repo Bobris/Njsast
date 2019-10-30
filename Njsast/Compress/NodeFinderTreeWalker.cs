@@ -3,7 +3,7 @@ using Njsast.Ast;
 
 namespace Njsast.Compress
 {
-    public class NodeFinderTreeWalker<TNode> : TreeWalker
+    public class NodeFinderTreeWalker<TNode> : TreeWalker where TNode : AstNode
     {
         List<TNode> _foundNodes = new List<TNode>(); 
         protected override void Visit(AstNode node)

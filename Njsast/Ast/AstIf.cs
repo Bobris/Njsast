@@ -33,7 +33,7 @@ namespace Njsast.Ast
             if (Alternative != null)
             {
                 var alt = tt.Transform(Alternative);
-                Alternative = (AstStatement)alt;
+                Alternative = alt == TreeTransformer.Remove ? null : (AstStatement) alt;
             }
                 
         }
