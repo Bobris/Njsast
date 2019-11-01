@@ -35,7 +35,7 @@ namespace Njsast.Bundler
 
     public class ImportFromOtherBundle
     {
-        public ImportFromOtherBundle(SplitInfo fromSplit, SourceFile fromFile, string name)
+        public ImportFromOtherBundle(SplitInfo fromSplit, SourceFile fromFile, string? name)
         {
             FromSplit = fromSplit;
             FromFile = fromFile;
@@ -44,7 +44,8 @@ namespace Njsast.Bundler
 
         public SplitInfo FromSplit;
         public SourceFile FromFile;
-        public string Name;
+        // Name is null when whole module import
+        public string? Name;
         public AstSymbolRef? Ref;
     }
 }

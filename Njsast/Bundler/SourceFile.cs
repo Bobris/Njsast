@@ -27,6 +27,7 @@ namespace Njsast.Bundler
 
         public void CreateWholeExport()
         {
+            if (WholeExport != null) return;
             var wholeExportName = BundlerHelpers.MakeUniqueName("__export_$", Ast.Variables!,
                 "_" + BundlerHelpers.FileNameToIdent(Name));
             var init = new AstObject(Ast);

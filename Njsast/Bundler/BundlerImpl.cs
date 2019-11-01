@@ -195,6 +195,20 @@ namespace Njsast.Bundler
                         new ImportFromOtherBundle(fromSplit, fromFile, exportName);
                     fromSplit.ExportsUsedFromLazyBundles[astNode] = BundlerHelpers.NumberToIdent(lazySplitCounter++);
                 }
+
+                foreach (var fromName in f.NeedsWholeImportsFrom)
+                {
+                    var fromFile = _cache[fromName];
+                    var fromSplit = _splitMap[fromFile.PartOfBundle!];
+                    if (sourceSplit == fromSplit)
+                        continue;
+                    fromFile.CreateWholeExport();
+                    var astNode = fromFile.WholeExport!;
+                    sourceSplit.ImportsFromOtherBundles[astNode] =
+                        new ImportFromOtherBundle(fromSplit, fromFile, null);
+                    fromSplit.ExportsUsedFromLazyBundles[astNode] = BundlerHelpers.NumberToIdent(lazySplitCounter++);
+                }
+
             }
 
             foreach (var (_, split) in _splitMap)
