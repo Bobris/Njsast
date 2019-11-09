@@ -40,7 +40,12 @@ namespace Njsast.Reader
         bool _canBeDirective;
         bool _wasImportKeyword;
 
-        public Parser(Options options, string input, int? startPos = null)
+        public static AstToplevel Parse(string input, Options? options = null)
+        {
+            return new Parser(options, input).Parse();
+        }
+
+        public Parser(Options? options, string input, int? startPos = null)
         {
             Options = options = Options.GetOptions(options);
             SourceFile = options.SourceFile;

@@ -15,6 +15,8 @@ namespace Njsast.Ast
 
         public static bool IsPromiseSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "Promise");
 
+        public static bool IsProcessSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "process");
+
         public static bool IsTsReexportSymbol(this SymbolDef? symbol) => IsGlobalSymbol(symbol, "__exportStar");
 
         public static bool IsParentScopeFor(this AstScope parentScope, AstScope? potentiallyNestedScope)
@@ -37,6 +39,18 @@ namespace Njsast.Ast
             var arg = call.Args[0];
             if (arg is AstString str)
                 return str.Value;
+
+            return null;
+        }
+
+        /// Detects process.env.RESULT pattern
+        public static string? IsProcessEnv(this AstNode? node)
+        {
+            if (node is AstPropAccess propAccess && propAccess.Expression is AstDot dot &&
+                dot.Expression.IsSymbolDef().IsProcessSymbol() && dot.PropertyAsString == "env")
+            {
+                return propAccess.PropertyAsString;
+            }
 
             return null;
         }

@@ -20,6 +20,17 @@ namespace Njsast.Bobril
 
         public List<Diagnostic>? Diagnostics { get; set; }
 
+        public class ProcessEnv
+        {
+            public int StartCol { get; set; }
+            public int StartLine { get; set; }
+            public int EndCol { get; set; }
+            public int EndLine { get; set; }
+            public string? Name { get; set; }
+        }
+
+        public List<ProcessEnv>? ProcessEnvs { get; set; }
+
         public class Import
         {
             public int StartCol { get; set; }

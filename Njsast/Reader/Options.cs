@@ -43,8 +43,7 @@ namespace Njsast.Reader
         public bool StartInFunction;
         public OnCommentAction? OnComment;
 
-        [NotNull]
-        public static Options GetOptions([CanBeNull] Options options)
+        public static Options GetOptions(Options? options)
         {
             if (options == null)
                 options = new Options();
