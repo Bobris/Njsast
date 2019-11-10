@@ -144,5 +144,11 @@ namespace Njsast.Ast
             if (def.Undeclared) return false;
             return def.IsSingleInit;
         }
+
+        public static AstNode DeepClone(this AstNode node)
+        {
+            var tr = new DeepCloneTransformer();
+            return tr.Transform(node);
+        }
     }
 }

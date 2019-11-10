@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Njsast.Ast;
 using Njsast.AstDump;
 using Njsast.Bobril;
 using Njsast.Output;
@@ -88,6 +90,22 @@ namespace Test.Reader
                     $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "nicejs.map")}");
                 outNiceJs = outNiceJsBuilder.Content();
                 outNiceJsMap = outNiceJsBuilder.Build(".", ".").ToString();
+
+                strSink = new StringLineSink();
+                toplevel.FigureOutScope();
+                dumper = new DumpAst(new AstDumpWriter(strSink));
+                dumper.Walk(toplevel);
+                var beforeClone = strSink.ToString();
+                toplevel = (AstToplevel) toplevel.DeepClone();
+                strSink = new StringLineSink();
+                toplevel.FigureOutScope();
+                dumper = new DumpAst(new AstDumpWriter(strSink));
+                dumper.Walk(toplevel);
+                var afterClone = strSink.ToString();
+                if (beforeClone != afterClone)
+                {
+                    throw new Exception("Dump of clone is not identical");
+                }
                 toplevel.Mangle();
             }
             catch (SyntaxError e)
