@@ -1,6 +1,6 @@
 !function(e) {
     "use strict";
-    var t, n, s, r, a, i, o, _;
+    var t, n, s, r, a, i, o;
     t = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(e, t) {
@@ -19,13 +19,12 @@
     };
     s;
     r;
-    a;
-    i = !1;
-    o = /([A-Z])/g;
-    _ = /^ms-/;
+    a = !1;
+    i = /([A-Z])/g;
+    o = /^ms-/;
     function p(e) {
         if (e === "cssFloat") return "float";
-        return e.replace(o, "-$1").toLowerCase().replace(_, "-ms-");
+        return e.replace(i, "-$1").toLowerCase().replace(o, "-ms-");
     }
     function c(t) {
         var n = "", s, r;

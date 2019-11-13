@@ -1,6 +1,6 @@
 !function(e) {
     "use strict";
-    var t, n, r, o, s, i, _, a, u, p;
+    var t, n, r, o, s, i, _, a, u;
     t = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(e, t) {
@@ -26,16 +26,15 @@
     };
     o;
     s;
-    i;
-    _ = !1;
-    a = function() {
+    i = !1;
+    _ = function() {
         function e() {}
         e.prototype.hello = function() {
             console.log("Base");
         };
         return e;
     }();
-    u = function(e) {
+    a = function(e) {
         n(t, e);
         function t() {
             return e !== null && e.apply(this, arguments) || this;
@@ -44,8 +43,8 @@
             console.log("Derived");
         };
         return t;
-    }(a);
-    p = function(e) {
+    }(_);
+    u = function(e) {
         n(t, e);
         function t() {
             return e !== null && e.apply(this, arguments) || this;
@@ -54,7 +53,7 @@
             console.log("Main");
         };
         return t;
-    }(a);
-    new p().hello();
+    }(_);
+    new u().hello();
 }();
 

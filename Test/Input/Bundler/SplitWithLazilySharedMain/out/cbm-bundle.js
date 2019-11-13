@@ -2,7 +2,7 @@ var __bbb = {};
 
 !function(r) {
     "use strict";
-    var e, t, n, o, s, i, _, p;
+    var e, t, n, o, s, i, p;
     e = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(r, e) {
@@ -21,8 +21,7 @@ var __bbb = {};
     };
     n;
     o;
-    s;
-    i = function(e, t) {
+    s = function(e, t) {
         var n, o;
         n = __bbb;
         o = n[t];
@@ -31,37 +30,37 @@ var __bbb = {};
             return Promise.resolve(o);
         }
         o = new Promise(function(s, i) {
-            var _, p;
-            _ = document.createElement("script");
-            p = setTimeout(a, 120000);
-            function a() {
-                _.onload = _.onerror = r;
-                clearTimeout(p);
+            var p, _;
+            p = document.createElement("script");
+            _ = setTimeout(b, 120000);
+            function b() {
+                p.onload = p.onerror = r;
+                clearTimeout(_);
                 if (n[t] === o) {
                     n[t] = r;
                     i(new Error("Fail to load " + e));
                 } else s(n[t]);
             }
-            _.charset = "utf-8";
-            _.onload = _.onerror = a;
-            _.src = e;
-            document.head.appendChild(_);
+            p.charset = "utf-8";
+            p.onload = p.onerror = b;
+            p.src = e;
+            document.head.appendChild(p);
         });
         return n[t] = o;
     };
-    _ = !1;
-    function a() {
+    i = !1;
+    function _() {
         console.log("shared");
     }
     function b() {
         return "unused";
     }
     p = {
-        shared: a,
+        shared: _,
         unused: b
     };
-    a();
-    i("cbm-lib.js", "a").then(function(r) {
+    _();
+    s("cbm-lib.js", "a").then(function(r) {
         console.log(r.hello());
     });
     __bbb.b = p;

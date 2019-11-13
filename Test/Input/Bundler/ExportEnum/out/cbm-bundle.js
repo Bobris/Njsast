@@ -1,6 +1,6 @@
 !function(t) {
     "use strict";
-    var _, s, p, n, r, e, o, a;
+    var _, s, p, n, r, o, e;
     _ = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(t, _) {
@@ -19,12 +19,11 @@
     };
     p;
     n;
-    r;
-    e = !1;
+    r = !1;
     (function(t) {
         t[t["Start"] = 0] = "Start";
         t[t["Stop"] = 1] = "Stop";
-    })(o = a || (a = {}));
-    console.log(a.Start);
+    })(o = e || (e = {}));
+    console.log(e.Start);
 }();
 
