@@ -4,6 +4,7 @@ using System.Linq;
 using Njsast.Bundler;
 using Njsast.Compress;
 using Njsast.Output;
+using Njsast.SourceMap;
 using Njsast.Utils;
 using Xunit;
 
@@ -78,13 +79,13 @@ namespace Test.Bundler
                 _outputPrefix = outputPrefix;
             }
 
-            public string? ReadContent(string fileName)
+            (string?, SourceMap?) IBundlerCtx.ReadContent(string fileName)
             {
                 _testData.InputContent.TryGetValue(fileName, out var res);
-                return res;
+                return (res, null);
             }
 
-            public IReadOnlyList<string> GetPlainJsDependencies(string fileName)
+            public IEnumerable<string> GetPlainJsDependencies(string fileName)
             {
                 var dir = PathUtils.WithoutExtension(fileName) + "/";
                 return _testData.InputContent.Keys.Where(n => n.StartsWith(dir, StringComparison.Ordinal)).ToArray();
@@ -111,6 +112,16 @@ namespace Test.Bundler
             public void WriteBundle(string name, string content)
             {
                 _output[name] = content;
+            }
+
+            public void WriteBundle(string name, SourceMapBuilder content)
+            {
+                throw new InvalidOperationException();
+            }
+
+            public void ReportTime(string name, TimeSpan duration)
+            {
+                throw new NotImplementedException();
             }
         }
     }
