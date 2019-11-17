@@ -121,7 +121,6 @@ namespace Test.Bundler
 
             public void ReportTime(string name, TimeSpan duration)
             {
-                throw new NotImplementedException();
             }
         }
     }

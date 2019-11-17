@@ -48,6 +48,8 @@ namespace Njsast
             }
         }
 
+        public bool OnlyDeclared => Orig.Count == 1 && References.Count == 1;
+
         public SymbolDef? Redefined()
         {
             return Defun?.Variables?.GetOrDefault(Name);
