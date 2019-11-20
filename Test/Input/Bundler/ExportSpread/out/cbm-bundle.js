@@ -1,6 +1,6 @@
 !function(_) {
     "use strict";
-    var n, t, o, e, r, f, p, s, i, a, c, x, u;
+    var n, t, o, e, r, f, p, s, i, c, a;
     n = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(_, n) {
@@ -17,10 +17,8 @@
         }
         return _;
     };
-    o;
-    e;
-    r = !1;
-    function l() {
+    o = !1;
+    function x() {
         return {
             f1: function() {
                 return "a";
@@ -33,13 +31,13 @@
             }
         };
     }
-    f = (x = l(), x.f1), p = x.f2, s = x.f3;
-    i = (u = l(), u.f1), a = u.f2, c = u.f3;
+    e = (c = x(), c.f1), r = c.f2, f = c.f3;
+    p = (a = x(), a.f1), s = a.f2, i = a.f3;
+    console.log(e());
+    console.log(r());
     console.log(f());
     console.log(p());
     console.log(s());
     console.log(i());
-    console.log(a());
-    console.log(c());
 }();
 

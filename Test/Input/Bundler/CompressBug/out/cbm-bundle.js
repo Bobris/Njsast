@@ -1,6 +1,6 @@
 !function(e) {
     "use strict";
-    var t, n, s, r, a, i, o;
+    var t, n, s, r, a;
     t = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(e, t) {
@@ -17,26 +17,24 @@
         }
         return e;
     };
-    s;
-    r;
-    a = !1;
-    i = /([A-Z])/g;
-    o = /^ms-/;
-    function p(e) {
+    s = !1;
+    r = /([A-Z])/g;
+    a = /^ms-/;
+    function i(e) {
         if (e === "cssFloat") return "float";
-        return e.replace(i, "-$1").toLowerCase().replace(o, "-ms-");
+        return e.replace(r, "-$1").toLowerCase().replace(a, "-ms-");
     }
-    function c(t) {
+    function o(t) {
         var n = "", s, r;
         for (r in t) {
             s = t[r];
             if (s === e) continue;
-            n += p(r) + ":" + (s === "" ? "\"\"" : s) + ";";
+            n += i(r) + ":" + (s === "" ? "\"\"" : s) + ";";
         }
         n = n.slice(0, -1);
         return n;
     }
-    console.log(c({
+    console.log(o({
         a: 1,
         b: 2
     }));

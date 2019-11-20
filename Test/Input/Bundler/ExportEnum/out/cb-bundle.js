@@ -1,6 +1,6 @@
 !function(undefined) {
     "use strict";
-    var __extendStatics, __assign, __values, __await, DEBUG, Opts, __export_Opts;
+    var __extendStatics, __assign, DEBUG, Opts, __export_Opts;
     __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -17,8 +17,6 @@
         }
         return t;
     };
-    __values;
-    __await;
     DEBUG = !1;
     (function(Opts) {
         Opts[Opts["Start"] = 0] = "Start";

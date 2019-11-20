@@ -2,7 +2,7 @@ var __bbb = {};
 
 !function(r) {
     "use strict";
-    var e, t, n, o, i, s;
+    var e, t, n, o;
     e = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(r, e) {
@@ -19,9 +19,7 @@ var __bbb = {};
         }
         return r;
     };
-    n;
-    o;
-    i = function(e, t) {
+    n = function(e, t) {
         var n, o;
         n = __bbb;
         o = n[t];
@@ -32,8 +30,8 @@ var __bbb = {};
         o = new Promise(function(i, s) {
             var p, b;
             p = document.createElement("script");
-            b = setTimeout(a, 120000);
-            function a() {
+            b = setTimeout(c, 120000);
+            function c() {
                 p.onload = p.onerror = r;
                 clearTimeout(b);
                 if (n[t] === o) {
@@ -42,20 +40,20 @@ var __bbb = {};
                 } else i(n[t]);
             }
             p.charset = "utf-8";
-            p.onload = p.onerror = a;
+            p.onload = p.onerror = c;
             p.src = e;
             document.head.appendChild(p);
         });
         return n[t] = o;
     };
-    s = !1;
-    function p() {
+    o = !1;
+    function i() {
         console.log("shared");
     }
-    p();
-    i("cbm-lib.js", "a").then(function(r) {
+    i();
+    n("cbm-lib.js", "a").then(function(r) {
         console.log(r.hello());
     });
-    __bbb.b = p;
+    __bbb.b = i;
 }();
 

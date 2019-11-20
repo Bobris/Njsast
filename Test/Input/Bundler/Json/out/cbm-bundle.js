@@ -1,6 +1,6 @@
 !function(t) {
     "use strict";
-    var n, e, s, o, _, i;
+    var n, e, o, s;
     n = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(t, n) {
@@ -10,19 +10,17 @@
         for (e in n) if (n.hasOwnProperty(e)) t[e] = n[e];
     };
     e = Object.assign || function(t) {
-        var n, e, s, o;
+        var n, e, o, s;
         for (n = 1, e = arguments.length; n < e; n++) {
-            s = arguments[n];
-            for (o in s) if (Object.prototype.hasOwnProperty.call(s, o)) t[o] = s[o];
+            o = arguments[n];
+            for (s in o) if (Object.prototype.hasOwnProperty.call(o, s)) t[s] = o[s];
         }
         return t;
     };
-    s;
-    o;
-    _ = !1;
-    i = {
+    o = !1;
+    s = {
         test: "ok"
     };
-    console.log(i.test);
+    console.log(s.test);
 }();
 

@@ -16,13 +16,13 @@ namespace Test.Compress
             EnableUnreachableCodeElimination = true,
             MaxPasses = 3
         };
-        
+
         public static readonly ICompressOptions UnreachableCodeBlocksCompressOptions = new CompressOptions
         {
             EnableUnreachableCodeElimination = true,
             MaxPasses = 1
         };
-        
+
         public static readonly ICompressOptions BlockEliminationCompressOptions = new CompressOptions
         {
             EnableBlockElimination = true,
@@ -47,12 +47,18 @@ namespace Test.Compress
             MaxPasses = 1
         };
 
+        public static readonly ICompressOptions RemoveSideEffectFreeCodeCompressOptions = new CompressOptions
+        {
+            EnableRemoveSideEffectFreeCode = true,
+            MaxPasses = 1
+        };
+
         public static readonly ICompressOptions VariableHostingCompressOptions = new CompressOptions
         {
             EnableVariableHoisting = true,
             MaxPasses = 1
         };
-        
+
         public static readonly ICompressOptions VariableHosting2PassesCompressOptions = new CompressOptions
         {
             EnableVariableHoisting = true,
@@ -64,7 +70,7 @@ namespace Test.Compress
             EnableUnusedFunctionElimination = true,
             MaxPasses = 3
         };
-        
+
         [Theory]
         [CompressDataProvider("Input/Compress/UnreachableCode/AnotherOptimizationsEnabled")]
         public void ShouldRemoveUnreachableCodeUnnecessaryBlocksAndEmptyStatements(CompressTestData testData)
@@ -129,10 +135,17 @@ namespace Test.Compress
             RunAndAssert(testData, UnusedFunctionEliminationCompressOptions);
         }
 
+        [Theory]
+        [CompressDataProvider("Input/Compress/RemoveSideEffectFreeCode")]
+        public void ShouldRemoveSideEffectFreeCode(CompressTestData testData)
+        {
+            RunAndAssert(testData, RemoveSideEffectFreeCodeCompressOptions);
+        }
+
         void RunAndAssert(CompressTestData testData, ICompressOptions options)
         {
             var (outAst, outMinJs, outNiceJs) = CompressTestCore(testData, options);
-            
+
             Assert.Equal(testData.ExpectedAst, outAst);
             Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
             Assert.Equal(testData.ExpectedMinJs, outMinJs);

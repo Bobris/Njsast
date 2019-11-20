@@ -1,6 +1,6 @@
 !function(_) {
     "use strict";
-    var t, n, i, r, b, e, o, a, p, s;
+    var t, n, i, r, b, o, e, p;
     t = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(_, t) {
@@ -17,24 +17,22 @@
         }
         return _;
     };
-    i;
-    r;
-    b = !1;
-    function f(_, t) {
+    i = !1;
+    function a(_, t) {
         return _ + t;
     }
-    e = {
-        fn: f
+    r = {
+        fn: a
     };
-    function l(_, t) {
+    function s(_, t) {
         return _ - t;
     }
-    o = {
-        fn: l
+    b = {
+        fn: s
     };
-    a = e;
-    p = o;
-    s = Math.random() > 0.5 ? e : o;
-    console.log(s.fn(1, 2));
+    o = r;
+    e = b;
+    p = Math.random() > 0.5 ? r : b;
+    console.log(p.fn(1, 2));
 }();
 

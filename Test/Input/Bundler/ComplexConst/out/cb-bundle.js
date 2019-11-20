@@ -1,6 +1,6 @@
 !function(undefined) {
     "use strict";
-    var __extendStatics, __assign, __values, __await, DEBUG, __export_aaa, __export_bbb;
+    var __extendStatics, __assign, DEBUG, __export_aaa, __export_bbb;
     __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -17,8 +17,6 @@
         }
         return t;
     };
-    __values;
-    __await;
     DEBUG = !1;
     __export_aaa = 42;
     __export_bbb = __export_aaa;

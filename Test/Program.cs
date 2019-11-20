@@ -122,6 +122,14 @@ namespace Test
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
 
+            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/RemoveSideEffectFreeCode")
+                .GetTypedData())
+            {
+                var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
+                    CompressTest.RemoveSideEffectFreeCodeCompressOptions);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
+            }
+
             foreach (var bundlerTestData in new BundlerDataProviderAttribute("Input/Bundler").GetTypedData())
             {
                 var outFiles = BundlerTest.BundlerTestCore(bundlerTestData);

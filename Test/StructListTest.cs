@@ -96,11 +96,10 @@ namespace Test
         {
             var list = GetNewList(10);
             Assert.Equal(10, (int)list.Count);
-            var originalItem = list[3];
             var newItem = new DummyClass {Value = 60};
             var replaceList = new StructList<DummyClass>();
             replaceList.Add(newItem);
-            list.ReplaceItem(originalItem, replaceList);
+            list.ReplaceItemAt(3, replaceList);
             Assert.Equal(10, (int)list.Count);
             Assert.Equal(newItem, list[3]);
             Assert.Equal(2, list[2].Value);
@@ -113,9 +112,8 @@ namespace Test
         {
             var list = GetNewList(10);
             Assert.Equal(10, (int)list.Count);
-            var originalItem = list[3];
             var replaceList = new StructList<DummyClass>();
-            list.ReplaceItem(originalItem, replaceList);
+            list.ReplaceItemAt(3, replaceList);
             Assert.Equal(9, (int)list.Count);
             Assert.Equal(2, list[2].Value);
             Assert.Equal(4, list[3].Value);
@@ -131,9 +129,8 @@ namespace Test
         {
             var list = GetNewList(items);
             Assert.Equal(items, list.Count);
-            var originalItem = list[replaceIndex];
             var replaceList = GetNewList(newItems, 60);
-            list.ReplaceItem(originalItem, replaceList);
+            list.ReplaceItemAt((int)replaceIndex, replaceList);
 
             foreach (var (index, expectedValue) in GetExpectedIndexAndValue())
             {
@@ -162,9 +159,8 @@ namespace Test
         public void ReplaceItem_ShouldThrowIfItemDoesNotExistInCollection()
         {
             var list = GetNewList(10);
-            var item = new DummyClass {Value = 60};
             var replaceList = new StructList<DummyClass>();
-            Assert.Throws<ArgumentOutOfRangeException>(() => list.ReplaceItem(item, replaceList));
+            Assert.Throws<ArgumentOutOfRangeException>(() => list.ReplaceItemAt(11, replaceList));
         }
 
         static StructList<DummyClass> GetNewList(uint items, int valueOffset = 0)

@@ -48,7 +48,7 @@ namespace Njsast
             }
         }
 
-        public bool OnlyDeclared => Orig.Count == 1 && References.Count == 1;
+        public bool OnlyDeclared => Orig.Count == 1 && References.Count == 0;
 
         public SymbolDef? Redefined()
         {
