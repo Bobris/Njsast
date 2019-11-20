@@ -1,238 +1,218 @@
 Toplevel 1:1 - 55:1
   SimpleStatement 1:1 - 54:6
-    UnaryPrefix 1:1 - 54:5
-      Operator: LogicalNot
-      Call 1:2 - 54:5
-        Function 1:3 - 54:2 [HasUseStrictDirective]
-          SymbolFunarg 1:12 - 1:21 [Write]
-            Name: undefined
-          Var 3:3 - 22:26
-            VarDef 3:7 - 3:22
-              SymbolVar 3:7 - 3:22
-                Name: __extendStatics
-            VarDef 4:5 - 4:13
-              SymbolVar 4:5 - 4:13
-                Name: __assign
-            VarDef 5:5 - 5:13
-              SymbolVar 5:5 - 5:13
-                Name: __values
-            VarDef 6:5 - 6:12
-              SymbolVar 6:5 - 6:12
-                Name: __await
-            VarDef 7:5 - 7:10
-              SymbolVar 7:5 - 7:10
-                Name: DEBUG
-          SimpleStatement 23:3 - 34:7
-            Assign 23:3 - 34:6
-              Operator: Assignment
-              SymbolRef 23:3 - 23:18 [Write]
-                Name: __extendStatics
-              Binary 24:5 - 34:6
-                Operator: LogicalOr
-                Binary 24:5 - 30:9
-                  Operator: LogicalOr
-                  Dot 24:5 - 24:26
-                    Property: setPrototypeOf
-                    SymbolRef 24:5 - 24:11 [Read]
-                      Name: Object
-                  Binary 25:6 - 30:8
-                    Operator: LogicalAnd
-                    Binary 25:6 - 27:23
-                      Operator: InstanceOf
-                      Object 25:6 - 27:6
-                        ObjectKeyVal 26:7 - 26:20
-                          SymbolProperty 26:7 - 26:16 [Write]
-                            Name: __proto__
-                          Array 26:18 - 26:20
-                      SymbolRef 27:18 - 27:23 [Read]
-                        Name: Array
-                    Function 28:7 - 30:8
-                      SymbolFunarg 28:16 - 28:17 [Write]
-                        Name: d
-                      SymbolFunarg 28:19 - 28:20 [Write]
-                        Name: b
-                      SimpleStatement 29:9 - 29:25
-                        Assign 29:9 - 29:24
-                          Operator: Assignment
-                          Dot 29:9 - 29:20
-                            Property: __proto__
-                            SymbolRef 29:9 - 29:10 [Read]
-                              Name: d
-                          SymbolRef 29:23 - 29:24 [Read]
-                            Name: b
-                Function 31:5 - 34:6
-                  SymbolFunarg 31:14 - 31:15 [Write]
+    Call 1:2 - 54:5
+      Function 1:3 - 54:2 [HasUseStrictDirective]
+        SymbolFunarg 1:12 - 1:21 [Write]
+          Name: undefined
+        Var 3:3 - 22:26
+          VarDef 3:7 - 3:22
+            SymbolVar 3:7 - 3:22
+              Name: __extendStatics
+          VarDef 4:5 - 4:13
+            SymbolVar 4:5 - 4:13
+              Name: __assign
+          VarDef 5:5 - 5:13
+            SymbolVar 5:5 - 5:13
+              Name: __values
+          VarDef 6:5 - 6:12
+            SymbolVar 6:5 - 6:12
+              Name: __await
+          VarDef 7:5 - 7:10
+            SymbolVar 7:5 - 7:10
+              Name: DEBUG
+        SimpleStatement 23:3 - 34:7
+          Binary 24:5 - 34:6
+            Operator: LogicalOr
+            Binary 24:5 - 30:9
+              Operator: LogicalOr
+              Dot 24:5 - 24:26
+                Property: setPrototypeOf
+                SymbolRef 24:5 - 24:11 [Read]
+                  Name: Object
+              Binary 25:6 - 30:8
+                Operator: LogicalAnd
+                Binary 25:6 - 27:23
+                  Operator: InstanceOf
+                  Object 25:6 - 27:6
+                    ObjectKeyVal 26:7 - 26:20
+                      SymbolProperty 26:7 - 26:16 [Write]
+                        Name: __proto__
+                      Array 26:18 - 26:20
+                  SymbolRef 27:18 - 27:23 [Read]
+                    Name: Array
+                Function 28:7 - 30:8
+                  SymbolFunarg 28:16 - 28:17 [Write]
                     Name: d
-                  SymbolFunarg 31:17 - 31:18 [Write]
+                  SymbolFunarg 28:19 - 28:20 [Write]
                     Name: b
-                  Var 32:7 - 32:13
-                    VarDef 32:11 - 32:12
-                      SymbolVar 32:11 - 32:12
-                        Name: p
-                  ForIn 33:7 - 33:57
-                    SymbolRef 33:12 - 33:13 [Write]
+                  SimpleStatement 29:9 - 29:25
+                    Assign 29:9 - 29:24
+                      Operator: Assignment
+                      Dot 29:9 - 29:20
+                        Property: __proto__
+                        SymbolRef 29:9 - 29:10 [Read]
+                          Name: d
+                      SymbolRef 29:23 - 29:24 [Read]
+                        Name: b
+            Function 31:5 - 34:6
+              SymbolFunarg 31:14 - 31:15 [Write]
+                Name: d
+              SymbolFunarg 31:17 - 31:18 [Write]
+                Name: b
+              Var 32:7 - 32:13
+                VarDef 32:11 - 32:12
+                  SymbolVar 32:11 - 32:12
+                    Name: p
+              ForIn 33:7 - 33:57
+                SymbolRef 33:12 - 33:13 [Write]
+                  Name: p
+                SymbolRef 33:17 - 33:18 [Read]
+                  Name: b
+                If 33:20 - 33:57
+                  Call 33:24 - 33:43
+                    Dot 33:24 - 33:40
+                      Property: hasOwnProperty
+                      SymbolRef 33:24 - 33:25 [Read]
+                        Name: b
+                    SymbolRef 33:41 - 33:42 [Read]
                       Name: p
-                    SymbolRef 33:17 - 33:18 [Read]
-                      Name: b
-                    If 33:20 - 33:57
-                      Call 33:24 - 33:43
-                        Dot 33:24 - 33:40
-                          Property: hasOwnProperty
-                          SymbolRef 33:24 - 33:25 [Read]
-                            Name: b
-                        SymbolRef 33:41 - 33:42 [Read]
+                  SimpleStatement 33:45 - 33:57
+                    Assign 33:45 - 33:56
+                      Operator: Assignment
+                      Sub 33:45 - 33:49
+                        SymbolRef 33:47 - 33:48 [Read]
                           Name: p
-                      SimpleStatement 33:45 - 33:57
-                        Assign 33:45 - 33:56
-                          Operator: Assignment
-                          Sub 33:45 - 33:49
-                            SymbolRef 33:47 - 33:48 [Read]
-                              Name: p
-                            SymbolRef 33:45 - 33:46 [Read]
-                              Name: d
-                          Sub 33:52 - 33:56
-                            SymbolRef 33:54 - 33:55 [Read]
-                              Name: p
-                            SymbolRef 33:52 - 33:53 [Read]
-                              Name: b
-          SimpleStatement 35:3 - 45:7
-            Assign 35:3 - 45:6
-              Operator: Assignment
-              SymbolRef 35:3 - 35:11 [Write]
-                Name: __assign
-              Binary 36:5 - 45:6
-                Operator: LogicalOr
-                Dot 36:5 - 36:18
-                  Property: assign
-                  SymbolRef 36:5 - 36:11 [Read]
-                    Name: Object
-                Function 37:5 - 45:6
-                  SymbolFunarg 37:14 - 37:15 [Write]
-                    Name: t
-                  Var 38:7 - 38:22
-                    VarDef 38:11 - 38:12
-                      SymbolVar 38:11 - 38:12
-                        Name: i
-                    VarDef 38:14 - 38:15
-                      SymbolVar 38:14 - 38:15
-                        Name: n
-                    VarDef 38:17 - 38:18
-                      SymbolVar 38:17 - 38:18
+                        SymbolRef 33:45 - 33:46 [Read]
+                          Name: d
+                      Sub 33:52 - 33:56
+                        SymbolRef 33:54 - 33:55 [Read]
+                          Name: p
+                        SymbolRef 33:52 - 33:53 [Read]
+                          Name: b
+        SimpleStatement 35:3 - 45:7
+          Binary 36:5 - 45:6
+            Operator: LogicalOr
+            Dot 36:5 - 36:18
+              Property: assign
+              SymbolRef 36:5 - 36:11 [Read]
+                Name: Object
+            Function 37:5 - 45:6
+              SymbolFunarg 37:14 - 37:15 [Write]
+                Name: t
+              Var 38:7 - 38:22
+                VarDef 38:11 - 38:12
+                  SymbolVar 38:11 - 38:12
+                    Name: i
+                VarDef 38:14 - 38:15
+                  SymbolVar 38:14 - 38:15
+                    Name: n
+                VarDef 38:17 - 38:18
+                  SymbolVar 38:17 - 38:18
+                    Name: s
+                VarDef 38:20 - 38:21
+                  SymbolVar 38:20 - 38:21
+                    Name: p
+              For 39:7 - 43:8
+                Sequence 39:12 - 39:39
+                  Assign 39:12 - 39:17
+                    Operator: Assignment
+                    SymbolRef 39:12 - 39:13 [Write]
+                      Name: i
+                    Number 39:16 - 39:17
+                      Value: 1
+                      Literal: 1
+                  Assign 39:19 - 39:39
+                    Operator: Assignment
+                    SymbolRef 39:19 - 39:20 [Write]
+                      Name: n
+                    Dot 39:23 - 39:39
+                      Property: length
+                      SymbolRef 39:23 - 39:32 [Read]
+                        Name: arguments
+                Binary 39:41 - 39:46
+                  Operator: LessThan
+                  SymbolRef 39:41 - 39:42 [Read]
+                    Name: i
+                  SymbolRef 39:45 - 39:46 [Read]
+                    Name: n
+                UnaryPostfix 39:48 - 39:51
+                  Operator: IncrementPostfix
+                  SymbolRef 39:48 - 39:49 [Read] [Write]
+                    Name: i
+                Block 39:53 - 43:8
+                  SimpleStatement 40:9 - 40:26
+                    Assign 40:9 - 40:25
+                      Operator: Assignment
+                      SymbolRef 40:9 - 40:10 [Write]
                         Name: s
-                    VarDef 38:20 - 38:21
-                      SymbolVar 38:20 - 38:21
-                        Name: p
-                  For 39:7 - 43:8
-                    Sequence 39:12 - 39:39
-                      Assign 39:12 - 39:17
-                        Operator: Assignment
-                        SymbolRef 39:12 - 39:13 [Write]
+                      Sub 40:13 - 40:25
+                        SymbolRef 40:23 - 40:24 [Read]
                           Name: i
-                        Number 39:16 - 39:17
-                          Value: 1
-                          Literal: 1
-                      Assign 39:19 - 39:39
-                        Operator: Assignment
-                        SymbolRef 39:19 - 39:20 [Write]
-                          Name: n
-                        Dot 39:23 - 39:39
-                          Property: length
-                          SymbolRef 39:23 - 39:32 [Read]
-                            Name: arguments
-                    Binary 39:41 - 39:46
-                      Operator: LessThan
-                      SymbolRef 39:41 - 39:42 [Read]
-                        Name: i
-                      SymbolRef 39:45 - 39:46 [Read]
-                        Name: n
-                    UnaryPostfix 39:48 - 39:51
-                      Operator: IncrementPostfix
-                      SymbolRef 39:48 - 39:49 [Read] [Write]
-                        Name: i
-                    Block 39:53 - 43:8
-                      SimpleStatement 40:9 - 40:26
-                        Assign 40:9 - 40:25
-                          Operator: Assignment
-                          SymbolRef 40:9 - 40:10 [Write]
-                            Name: s
-                          Sub 40:13 - 40:25
-                            SymbolRef 40:23 - 40:24 [Read]
-                              Name: i
-                            SymbolRef 40:13 - 40:22 [Read]
-                              Name: arguments
-                      ForIn 41:9 - 42:71
-                        SymbolRef 41:14 - 41:15 [Write]
-                          Name: p
-                        SymbolRef 41:19 - 41:20 [Read]
+                        SymbolRef 40:13 - 40:22 [Read]
+                          Name: arguments
+                  ForIn 41:9 - 42:71
+                    SymbolRef 41:14 - 41:15 [Write]
+                      Name: p
+                    SymbolRef 41:19 - 41:20 [Read]
+                      Name: s
+                    If 42:11 - 42:71
+                      Call 42:15 - 42:57
+                        Dot 42:15 - 42:51
+                          Property: call
+                          Dot 42:15 - 42:46
+                            Property: hasOwnProperty
+                            Dot 42:15 - 42:31
+                              Property: prototype
+                              SymbolRef 42:15 - 42:21 [Read]
+                                Name: Object
+                        SymbolRef 42:52 - 42:53 [Read]
                           Name: s
-                        If 42:11 - 42:71
-                          Call 42:15 - 42:57
-                            Dot 42:15 - 42:51
-                              Property: call
-                              Dot 42:15 - 42:46
-                                Property: hasOwnProperty
-                                Dot 42:15 - 42:31
-                                  Property: prototype
-                                  SymbolRef 42:15 - 42:21 [Read]
-                                    Name: Object
-                            SymbolRef 42:52 - 42:53 [Read]
-                              Name: s
-                            SymbolRef 42:55 - 42:56 [Read]
+                        SymbolRef 42:55 - 42:56 [Read]
+                          Name: p
+                      SimpleStatement 42:59 - 42:71
+                        Assign 42:59 - 42:70
+                          Operator: Assignment
+                          Sub 42:59 - 42:63
+                            SymbolRef 42:61 - 42:62 [Read]
                               Name: p
-                          SimpleStatement 42:59 - 42:71
-                            Assign 42:59 - 42:70
-                              Operator: Assignment
-                              Sub 42:59 - 42:63
-                                SymbolRef 42:61 - 42:62 [Read]
-                                  Name: p
-                                SymbolRef 42:59 - 42:60 [Read]
-                                  Name: t
-                              Sub 42:66 - 42:70
-                                SymbolRef 42:68 - 42:69 [Read]
-                                  Name: p
-                                SymbolRef 42:66 - 42:67 [Read]
-                                  Name: s
-                  Return 44:7 - 44:16
-                    SymbolRef 44:14 - 44:15 [Read]
-                      Name: t
-          SimpleStatement 48:3 - 48:14
-            Assign 48:3 - 48:13
-              Operator: Assignment
-              SymbolRef 48:3 - 48:8 [Write]
-                Name: DEBUG
-              UnaryPrefix 48:11 - 48:13
-                Operator: LogicalNot
-                Number 48:12 - 48:13
-                  Value: 1
-                  Literal: 1
-          LabeledStatement 49:3 - 53:4
-            Label 49:3 - 49:7 [IsLoop]
-              Name: out
-            While 49:8 - 53:4
-              UnaryPrefix 49:15 - 49:17
-                Operator: LogicalNot
-                Number 49:16 - 49:17
-                  Value: 0
-                  Literal: 0
-              Block 49:19 - 53:4
-                While 50:5 - 52:6
-                  UnaryPrefix 50:12 - 50:14
-                    Operator: LogicalNot
-                    Number 50:13 - 50:14
-                      Value: 0
-                      Literal: 0
-                  Block 50:16 - 52:6
-                    If 51:7 - 51:42
-                      Binary 51:11 - 51:30
-                        Operator: GreaterThan
-                        Call 51:11 - 51:24
-                          Dot 51:11 - 51:22
-                            Property: random
-                            SymbolRef 51:11 - 51:15 [Read]
-                              Name: Math
-                        Number 51:27 - 51:30
-                          Value: 0.5
-                          Literal: 0.5
-                      Break 51:32 - 51:42
-                        LabelRef 51:38 - 51:41
-                          Name: out
+                            SymbolRef 42:59 - 42:60 [Read]
+                              Name: t
+                          Sub 42:66 - 42:70
+                            SymbolRef 42:68 - 42:69 [Read]
+                              Name: p
+                            SymbolRef 42:66 - 42:67 [Read]
+                              Name: s
+              Return 44:7 - 44:16
+                SymbolRef 44:14 - 44:15 [Read]
+                  Name: t
+        LabeledStatement 49:3 - 53:4
+          Label 49:3 - 49:7 [IsLoop]
+            Name: out
+          While 49:8 - 53:4
+            UnaryPrefix 49:15 - 49:17
+              Operator: LogicalNot
+              Number 49:16 - 49:17
+                Value: 0
+                Literal: 0
+            Block 49:19 - 53:4
+              While 50:5 - 52:6
+                UnaryPrefix 50:12 - 50:14
+                  Operator: LogicalNot
+                  Number 50:13 - 50:14
+                    Value: 0
+                    Literal: 0
+                Block 50:16 - 52:6
+                  If 51:7 - 51:42
+                    Binary 51:11 - 51:30
+                      Operator: GreaterThan
+                      Call 51:11 - 51:24
+                        Dot 51:11 - 51:22
+                          Property: random
+                          SymbolRef 51:11 - 51:15 [Read]
+                            Name: Math
+                      Number 51:27 - 51:30
+                        Value: 0.5
+                        Literal: 0.5
+                    Break 51:32 - 51:42
+                      LabelRef 51:38 - 51:41
+                        Name: out

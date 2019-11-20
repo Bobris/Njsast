@@ -1,30 +1,29 @@
-!function(t) {
+(function(n) {
     "use strict";
-    var n, r, _, o, i;
-    n = Object.setPrototypeOf || {
+    var t, r;
+    Object.setPrototypeOf || {
         __proto__: []
-    } instanceof Array && function(t, n) {
-        t.__proto__ = n;
-    } || function(t, n) {
+    } instanceof Array && function(n, t) {
+        n.__proto__ = t;
+    } || function(n, t) {
         var r;
-        for (r in n) if (n.hasOwnProperty(r)) t[r] = n[r];
+        for (r in t) if (t.hasOwnProperty(r)) n[r] = t[r];
     };
-    r = Object.assign || function(t) {
-        var n, r, _, o;
-        for (n = 1, r = arguments.length; n < r; n++) {
-            _ = arguments[n];
-            for (o in _) if (Object.prototype.hasOwnProperty.call(_, o)) t[o] = _[o];
+    Object.assign || function(n) {
+        var t, r, o, i;
+        for (t = 1, r = arguments.length; t < r; t++) {
+            o = arguments[t];
+            for (i in o) if (Object.prototype.hasOwnProperty.call(o, i)) n[i] = o[i];
         }
-        return t;
+        return n;
     };
-    _ = !1;
-    function e(t, n) {
-        return t + n;
+    function o(n, t) {
+        return n + t;
     }
-    o = {
-        fn: e
+    t = {
+        fn: o
     };
-    i = o;
-    console.log(i.fn(1, 2));
-}();
+    r = t;
+    console.log(r.fn(1, 2));
+})();
 

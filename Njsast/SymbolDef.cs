@@ -48,7 +48,8 @@ namespace Njsast
             }
         }
 
-        public bool OnlyDeclared => Orig.Count == 1 && References.Count == 0;
+        public bool OnlyDeclared => References.Count == 0;
+        public bool NeverRead => References.All(s => s.Usage.HasFlag(SymbolUsage.Write) && !s.Usage.HasFlag(SymbolUsage.Read));
 
         public SymbolDef? Redefined()
         {

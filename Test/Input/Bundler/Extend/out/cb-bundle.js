@@ -1,6 +1,6 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
-    var __extendStatics, __extends, __assign, DEBUG, Base, Derived, Main;
+    var __extendStatics, __extends, Base, Main;
     __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -16,7 +16,7 @@
         }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    __assign = Object.assign || function(t) {
+    Object.assign || function(t) {
         var i, n, s, p;
         for (i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
@@ -24,7 +24,6 @@
         }
         return t;
     };
-    DEBUG = !1;
     Base = function() {
         function Base() {}
         Base.prototype.hello = function() {
@@ -32,7 +31,7 @@
         };
         return Base;
     }();
-    Derived = function(_super) {
+    (function(_super) {
         __extends(Derived, _super);
         function Derived() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -41,7 +40,7 @@
             console.log("Derived");
         };
         return Derived;
-    }(Base);
+    })(Base);
     Main = function(_super) {
         __extends(Main, _super);
         function Main() {
@@ -53,5 +52,5 @@
         return Main;
     }(Base);
     new Main().hello();
-}();
+})();
 

@@ -1,33 +1,31 @@
-!function(_) {
+(function(r) {
     "use strict";
-    var e, t, r, s, n, a, o;
-    e = Object.setPrototypeOf || {
+    var t, e;
+    Object.setPrototypeOf || {
         __proto__: []
-    } instanceof Array && function(_, e) {
-        _.__proto__ = e;
-    } || function(_, e) {
-        var t;
-        for (t in e) if (e.hasOwnProperty(t)) _[t] = e[t];
+    } instanceof Array && function(r, t) {
+        r.__proto__ = t;
+    } || function(r, t) {
+        var e;
+        for (e in t) if (t.hasOwnProperty(e)) r[e] = t[e];
     };
-    t = Object.assign || function(_) {
-        var e, t, r, s;
-        for (e = 1, t = arguments.length; e < t; e++) {
-            r = arguments[e];
-            for (s in r) if (Object.prototype.hasOwnProperty.call(r, s)) _[s] = r[s];
+    Object.assign || function(r) {
+        var t, e, n, _;
+        for (t = 1, e = arguments.length; t < e; t++) {
+            n = arguments[t];
+            for (_ in n) if (Object.prototype.hasOwnProperty.call(n, _)) r[_] = n[_];
         }
-        return _;
+        return r;
     };
-    r = !1;
-    s = __bbb.b;
-    n = s;
-    a = s;
-    a.shared();
-    function i() {
+    t = __bbb.b;
+    e = t;
+    e.shared();
+    function n() {
         return "Hello";
     }
-    o = {
-        hello: i
-    };
-    __bbb.a = o;
-}();
+    ({
+        hello: n
+    });
+    __bbb.a = _;
+})();
 

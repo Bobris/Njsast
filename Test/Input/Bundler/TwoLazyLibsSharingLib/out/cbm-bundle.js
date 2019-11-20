@@ -1,9 +1,9 @@
 var __bbb = {};
 
-!function(r) {
+(function(r) {
     "use strict";
-    var e, t, n, o;
-    e = Object.setPrototypeOf || {
+    var e;
+    Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(r, e) {
         r.__proto__ = e;
@@ -11,7 +11,7 @@ var __bbb = {};
         var t;
         for (t in e) if (e.hasOwnProperty(t)) r[t] = e[t];
     };
-    t = Object.assign || function(r) {
+    Object.assign || function(r) {
         var e, t, n, o;
         for (e = 1, t = arguments.length; e < t; e++) {
             n = arguments[e];
@@ -19,7 +19,7 @@ var __bbb = {};
         }
         return r;
     };
-    n = function(e, t) {
+    e = function(e, t) {
         var n, o;
         n = __bbb;
         o = n[t];
@@ -46,16 +46,15 @@ var __bbb = {};
         });
         return n[t] = o;
     };
-    o = !1;
-    n("cbm-shared.js", "a").then(function() {
-        return n("cbm-lib.js", "b");
+    e("cbm-shared.js", "a").then(function() {
+        return e("cbm-lib.js", "b");
     }).then(function(r) {
         console.log(r.hello());
     });
-    n("cbm-shared.js", "a").then(function() {
-        return n("cbm-lib2.js", "c");
+    e("cbm-shared.js", "a").then(function() {
+        return e("cbm-lib2.js", "c");
     }).then(function(r) {
         console.log(r.world());
     });
-}();
+})();
 

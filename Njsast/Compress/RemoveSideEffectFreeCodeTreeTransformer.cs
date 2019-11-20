@@ -1,5 +1,6 @@
-using System.Security.Cryptography;
 using Njsast.Ast;
+using Njsast.Reader;
+using Njsast.Runtime;
 
 namespace Njsast.Compress
 {
@@ -16,6 +17,49 @@ namespace Njsast.Compress
                     case AstEmptyStatement _:
                     {
                         return inList ? Remove : node;
+                    }
+                    case AstAssign assign:
+                    {
+                        if (assign.Operator == Operator.Assignment)
+                        {
+                            if (assign.Left.IsSymbolDef()?.NeverRead ?? false)
+                            {
+                                return Transform(assign.Right);
+                            }
+                        }
+
+                        return null;
+                    }
+                    case AstBinary binary:
+                    {
+                        if (binary.Operator == Operator.LogicalOr)
+                        {
+                            var b = binary.Left.ConstValue();
+                            if (b != null)
+                            {
+                                if (TypeConverter.ToBoolean(b))
+                                {
+                                    return Transform(binary.Left);
+                                }
+
+                                return Transform(binary.Right);
+                            }
+                        }
+                        if (binary.Operator == Operator.LogicalAnd)
+                        {
+                            var b = binary.Left.ConstValue();
+                            if (b != null)
+                            {
+                                if (!TypeConverter.ToBoolean(b))
+                                {
+                                    return Transform(binary.Left);
+                                }
+
+                                return Transform(binary.Right);
+                            }
+                        }
+
+                        return null;
                     }
                     case AstSimpleStatement simple:
                     {
@@ -116,6 +160,42 @@ namespace Njsast.Compress
                         return Remove;
                     case AstSymbolRef _:
                         return Remove;
+                    case AstUnaryPrefix unaryPrefix:
+                    {
+                        if (unaryPrefix.Operator == Operator.TypeOf || unaryPrefix.Operator == Operator.LogicalNot || unaryPrefix.Operator == Operator.BitwiseNot || unaryPrefix.Operator == Operator.Void)
+                        {
+                            node = unaryPrefix.Expression;
+                            continue;
+                        }
+
+                        return node;
+                    }
+                    case AstFunction function:
+                    {
+                        if (function.Name == null || function.Name.Thedef!.OnlyDeclared)
+                        {
+                            return Remove;
+                        }
+
+                        return node;
+                    }
+                    case AstAssign assign:
+                    {
+                        if (assign.Operator == Operator.Assignment)
+                        {
+                            if (assign.Left.IsSymbolDef()?.NeverRead ?? false)
+                            {
+                                node = assign.Right;
+                                continue;
+                            }
+                        }
+
+                        NeedValue = true;
+                        assign.Right = Transform(assign.Right);
+                        NeedValue = false;
+
+                        return node;
+                    }
                     case AstVarDef varDef:
                     {
                         if (varDef.Name.IsSymbolDef()?.OnlyDeclared ?? false)

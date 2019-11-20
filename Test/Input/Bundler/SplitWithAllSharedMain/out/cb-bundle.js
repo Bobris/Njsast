@@ -1,9 +1,9 @@
 var __bbb = {};
 
-!function(undefined) {
+(function(undefined) {
     "use strict";
-    var __extendStatics, __assign, __import, DEBUG, __export_$;
-    __extendStatics = Object.setPrototypeOf || {
+    var __import;
+    Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
         d.__proto__ = b;
@@ -11,7 +11,7 @@ var __bbb = {};
         var p;
         for (p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
-    __assign = Object.assign || function(t) {
+    Object.assign || function(t) {
         var i, n, s, p;
         for (i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
@@ -46,21 +46,20 @@ var __bbb = {};
         });
         return bbb[prop] = res;
     };
-    DEBUG = !1;
     function shared() {
         console.log("shared");
     }
     function unused() {
         return "unused";
     }
-    __export_$ = {
+    ({
         shared: shared,
         unused: unused
-    };
+    });
     shared();
     __import("cb-lib.js", "a").then(function(lib) {
         console.log(lib.hello());
     });
     __bbb.b = __export_$;
-}();
+})();
 

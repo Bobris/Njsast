@@ -1,57 +1,56 @@
-!function(e) {
+(function(e) {
     "use strict";
-    var n, t, r, o, s, i, p;
-    n = Object.setPrototypeOf || {
+    var t, n, o, r;
+    t = Object.setPrototypeOf || {
         __proto__: []
-    } instanceof Array && function(e, n) {
-        e.__proto__ = n;
-    } || function(e, n) {
-        var t;
-        for (t in n) if (n.hasOwnProperty(t)) e[t] = n[t];
+    } instanceof Array && function(e, t) {
+        e.__proto__ = t;
+    } || function(e, t) {
+        var n;
+        for (n in t) if (t.hasOwnProperty(n)) e[n] = t[n];
     };
-    t = function(e, t) {
-        n(e, t);
-        function r() {
+    n = function(e, n) {
+        t(e, n);
+        function o() {
             this.constructor = e;
         }
-        e.prototype = t === null ? Object.create(t) : (r.prototype = t.prototype, new r());
+        e.prototype = n === null ? Object.create(n) : (o.prototype = n.prototype, new o());
     };
-    r = Object.assign || function(e) {
-        var n, t, r, o;
-        for (n = 1, t = arguments.length; n < t; n++) {
-            r = arguments[n];
-            for (o in r) if (Object.prototype.hasOwnProperty.call(r, o)) e[o] = r[o];
+    Object.assign || function(e) {
+        var t, n, o, r;
+        for (t = 1, n = arguments.length; t < n; t++) {
+            o = arguments[t];
+            for (r in o) if (Object.prototype.hasOwnProperty.call(o, r)) e[r] = o[r];
         }
         return e;
     };
-    o = !1;
-    s = function() {
+    o = function() {
         function e() {}
         e.prototype.hello = function() {
             console.log("Base");
         };
         return e;
     }();
-    i = function(e) {
-        t(n, e);
-        function n() {
+    (function(e) {
+        n(t, e);
+        function t() {
             return e !== null && e.apply(this, arguments) || this;
         }
-        n.prototype.hello = function() {
+        t.prototype.hello = function() {
             console.log("Derived");
         };
-        return n;
-    }(s);
-    p = function(e) {
-        t(n, e);
-        function n() {
+        return t;
+    })(o);
+    r = function(e) {
+        n(t, e);
+        function t() {
             return e !== null && e.apply(this, arguments) || this;
         }
-        n.prototype.hello = function() {
+        t.prototype.hello = function() {
             console.log("Main");
         };
-        return n;
-    }(s);
-    new p().hello();
-}();
+        return t;
+    }(o);
+    new r().hello();
+})();
 

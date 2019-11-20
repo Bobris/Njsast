@@ -1,9 +1,9 @@
 var __bbb = {};
 
-!function(r) {
+(function(r) {
     "use strict";
-    var e, t, n, o, s;
-    e = Object.setPrototypeOf || {
+    var e;
+    Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(r, e) {
         r.__proto__ = e;
@@ -11,7 +11,7 @@ var __bbb = {};
         var t;
         for (t in e) if (e.hasOwnProperty(t)) r[t] = e[t];
     };
-    t = Object.assign || function(r) {
+    Object.assign || function(r) {
         var e, t, n, o;
         for (e = 1, t = arguments.length; e < t; e++) {
             n = arguments[e];
@@ -19,7 +19,7 @@ var __bbb = {};
         }
         return r;
     };
-    n = function(e, t) {
+    e = function(e, t) {
         var n, o;
         n = __bbb;
         o = n[t];
@@ -27,7 +27,7 @@ var __bbb = {};
             if (o instanceof Promise) return o;
             return Promise.resolve(o);
         }
-        o = new Promise(function(s, i) {
+        o = new Promise(function(i, s) {
             var p, b;
             p = document.createElement("script");
             b = setTimeout(u, 120000);
@@ -36,8 +36,8 @@ var __bbb = {};
                 clearTimeout(b);
                 if (n[t] === o) {
                     n[t] = r;
-                    i(new Error("Fail to load " + e));
-                } else s(n[t]);
+                    s(new Error("Fail to load " + e));
+                } else i(n[t]);
             }
             p.charset = "utf-8";
             p.onload = p.onerror = u;
@@ -46,21 +46,20 @@ var __bbb = {};
         });
         return n[t] = o;
     };
-    o = !1;
-    function i() {
+    function t() {
         console.log("shared");
     }
-    function p() {
+    function n() {
         return "unused";
     }
-    s = {
-        shared: i,
-        unused: p
-    };
-    i();
-    n("cbm-lib.js", "a").then(function(r) {
+    ({
+        shared: t,
+        unused: n
+    });
+    t();
+    e("cbm-lib.js", "a").then(function(r) {
         console.log(r.hello());
     });
-    __bbb.b = s;
-}();
+    __bbb.b = o;
+})();
 

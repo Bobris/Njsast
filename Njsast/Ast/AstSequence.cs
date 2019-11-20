@@ -15,7 +15,7 @@ namespace Njsast.Ast
             Expressions.TransferFrom(ref expressions);
         }
 
-        AstSequence(string? source, Position startLoc, Position endLoc) :
+        public AstSequence(string? source, Position startLoc, Position endLoc) :
             base(source, startLoc, endLoc)
         {
         }

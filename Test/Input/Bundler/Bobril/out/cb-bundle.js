@@ -1,7 +1,7 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
-    var __extendStatics, __assign, DEBUG, BobrilCtx, __export_isArray, emptyComponent, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, hasNativeRaf, nativeRaf, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, uptimeMs, frameCounter, lastFrameDurationMs, renderFrameBegin, regEvents, listeningEventDeepness, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, emptyObject, media, breaks, events, i, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name, j, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack, callbacks, isHtml, isScrollOrAuto, CSSMatrix, lastDndId, dnds, systemDnd, rootId, shimmedStyle, shimedStyleKeys, userSelectPropName, DndCtx, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, myAppHistoryDeepness, programPath, nameRouteMap, paramCompileMatcher, paramInjectMatcher, compiledPatterns, activeRoutes, activeParams, nodesArray, setterOfNodesArray, urlRegex, firstRouting, currentTransition, nextTransition, transitionState, __export_transitionRunCount, allStyles, allSprites, allNameHints, dynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, globalCounter, isIE9, chainedBeforeFrame, cssSubRuleDelimiter, firstStyles, uppercasePattern, msPattern, rgbaRegex, lastFuncId, funcIdName, imagesWithCredentials, bundlePath, currentCtx, registryEvents, rootIds, weirdPortrait, invokingOwner, lastMouseEv, bodyCursorBackup, userSelectBackup;
-    __extendStatics = Object.setPrototypeOf || {
+    var __export_isArray, emptyComponent, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, hasNativeRaf, nativeRaf, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, uptimeMs, frameCounter, renderFrameBegin, regEvents, listeningEventDeepness, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events, i, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name, j, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack, callbacks, lastDndId, dnds, systemDnd, rootId, shimmedStyle, shimedStyleKeys, userSelectPropName, DndCtx, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, dynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, isIE9, chainedBeforeFrame, cssSubRuleDelimiter, firstStyles, uppercasePattern, msPattern, rgbaRegex, currentCtx, registryEvents, rootIds, weirdPortrait, bodyCursorBackup, userSelectBackup;
+    Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
         d.__proto__ = b;
@@ -9,7 +9,7 @@
         var p;
         for (p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
-    __assign = Object.assign || function(t) {
+    Object.assign || function(t) {
         var i, n, s, p;
         for (i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
@@ -17,8 +17,7 @@
         }
         return t;
     };
-    DEBUG = !1;
-    BobrilCtx = function() {
+    (function() {
         function BobrilCtx(data, me) {
             this.data = data;
             this.me = me;
@@ -28,7 +27,7 @@
             this.$bobxCtx = undefined;
         }
         return BobrilCtx;
-    }();
+    })();
     function assert(shouldBeTrue, messageIfFalse) {}
     __export_isArray = Array.isArray;
     emptyComponent = {};
@@ -1207,7 +1206,6 @@
     initializing = !0;
     uptimeMs = 0;
     frameCounter = 0;
-    lastFrameDurationMs = 0;
     renderFrameBegin = 0;
     regEvents = {};
     function addEvent(name, priority, callback) {
@@ -1398,7 +1396,7 @@
         callPostCallbacks();
         r0 = roots["0"];
         afterFrameCallback(r0 ? r0.c : null);
-        lastFrameDurationMs = __export_now() - renderFrameBegin;
+        __export_now() - renderFrameBegin;
     }
     nextIgnoreShouldChange = !1;
     ignoringShouldChange = !1;
@@ -1538,7 +1536,7 @@
         }
         return undefined;
     }
-    emptyObject = {};
+    ({});
     function preventDefault(event) {
         var pd = event.preventDefault;
         if (pd) pd.call(event); else event.returnValue = !1;
@@ -2194,9 +2192,7 @@
         if (!handler) {
             return !1;
         }
-        invokingOwner = !0;
         stop = handler(ownerCtx, param);
-        invokingOwner = !1;
         return stop;
     }
     function hasPointerEventsNoneB(node) {
@@ -2418,7 +2414,6 @@
     prevMousePath = [];
     function mouseEnterAndLeave(ev) {
         var t, toPath, node, fixed, common, i, n, c;
-        lastMouseEv = ev;
         t = document.elementFromPoint(ev.x, ev.y);
         toPath = vdomPath(t);
         node = toPath.length == 0 ? undefined : toPath[toPath.length - 1];
@@ -2762,9 +2757,7 @@
         return !1;
     }
     addEvent("^scroll", 10, emitOnScroll);
-    isHtml = /^(?:html)$/i;
-    isScrollOrAuto = /^(?:auto)$|^(?:scroll)$/i;
-    CSSMatrix = function() {
+    (function() {
         function CSSMatrix(data) {
             this.data = data;
         }
@@ -2798,7 +2791,7 @@
             return [ m[0] * x + m[1] * y + m[3], m[4] * x + m[5] * y + m[7] ];
         };
         return CSSMatrix;
-    }();
+    })();
     lastDndId = 0;
     dnds = [];
     systemDnd = null;
@@ -3301,31 +3294,20 @@
         return !1;
     }
     addEvent("hashchange", 10, emitOnHashChange);
-    myAppHistoryDeepness = 0;
-    programPath = "";
-    nameRouteMap = {};
-    paramCompileMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|[*.()\[\]\\+|{}^$]/g;
-    paramInjectMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$?]*[?]?)|[*]/g;
-    compiledPatterns = {};
-    activeRoutes = [];
-    activeParams = newHashObj();
-    nodesArray = [];
-    setterOfNodesArray = [];
-    urlRegex = /.*(?:\:|\/).*/;
-    firstRouting = !0;
-    currentTransition = null;
-    nextTransition = null;
-    transitionState = 0;
-    __export_transitionRunCount = 1;
+    ({});
+    ({});
+    [];
+    newHashObj();
+    [];
+    [];
     allStyles = newHashObj();
-    allSprites = newHashObj();
-    allNameHints = newHashObj();
+    newHashObj();
+    newHashObj();
     dynamicSprites = [];
     imageCache = newHashObj();
     injectedCss = "";
     rebuildStyles = !1;
     htmlStyle = null;
-    globalCounter = 0;
     isIE9 = ieVersion() === 9;
     chainedBeforeFrame = setBeforeFrame(beforeFrame);
     cssSubRuleDelimiter = /\:|\ |\>/;
@@ -3556,10 +3538,7 @@
         ctx.putImageData(imgData, 0, 0);
         return canvas.toDataURL();
     }
-    lastFuncId = 0;
-    funcIdName = "b@funcId";
-    imagesWithCredentials = !1;
-    bundlePath = window["bobrilBPath"] || "bundle.png";
+    window["bobrilBPath"] || "bundle.png";
     function createVirtualComponent(component) {
         return function(data, children) {
             if (children !== undefined) {
@@ -3586,5 +3565,5 @@
     init(function() {
         return "hello";
     });
-}();
+})();
 

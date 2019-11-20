@@ -1,7 +1,7 @@
-!function(r) {
+(function(r) {
     "use strict";
-    var e, t, n, o, i;
-    e = Object.setPrototypeOf || {
+    var e;
+    Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(r, e) {
         r.__proto__ = e;
@@ -9,7 +9,7 @@
         var t;
         for (t in e) if (e.hasOwnProperty(t)) r[t] = e[t];
     };
-    t = Object.assign || function(r) {
+    Object.assign || function(r) {
         var e, t, n, o;
         for (e = 1, t = arguments.length; e < t; e++) {
             n = arguments[e];
@@ -17,7 +17,7 @@
         }
         return r;
     };
-    n = function(e, t) {
+    e = function(e, t) {
         var n, o;
         n = __bbb;
         o = n[t];
@@ -28,8 +28,8 @@
         o = new Promise(function(i, s) {
             var p, b;
             p = document.createElement("script");
-            b = setTimeout(_, 120000);
-            function _() {
+            b = setTimeout(u, 120000);
+            function u() {
                 p.onload = p.onerror = r;
                 clearTimeout(b);
                 if (n[t] === o) {
@@ -38,22 +38,21 @@
                 } else i(n[t]);
             }
             p.charset = "utf-8";
-            p.onload = p.onerror = _;
+            p.onload = p.onerror = u;
             p.src = e;
             document.head.appendChild(p);
         });
         return n[t] = o;
     };
-    o = !1;
-    n(r, "b").then(function(r) {
+    e(r, "b").then(function(r) {
         return r.shared();
     });
-    function s() {
+    function t() {
         return "Hello";
     }
-    i = {
-        hello: s
-    };
-    __bbb.a = i;
-}();
+    ({
+        hello: t
+    });
+    __bbb.a = n;
+})();
 

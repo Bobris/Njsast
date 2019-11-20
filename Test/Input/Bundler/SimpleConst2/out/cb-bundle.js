@@ -1,7 +1,7 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
-    var __extendStatics, __assign, DEBUG, a;
-    __extendStatics = Object.setPrototypeOf || {
+    var a = 42;
+    Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
         d.__proto__ = b;
@@ -9,7 +9,7 @@
         var p;
         for (p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     };
-    __assign = Object.assign || function(t) {
+    Object.assign || function(t) {
         var i, n, s, p;
         for (i = 1, n = arguments.length; i < n; i++) {
             s = arguments[i];
@@ -17,8 +17,6 @@
         }
         return t;
     };
-    DEBUG = !1;
-    a = 42;
     console.log(a);
-}();
+})();
 
