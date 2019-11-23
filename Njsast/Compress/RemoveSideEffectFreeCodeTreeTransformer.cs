@@ -47,6 +47,7 @@ namespace Njsast.Compress
                                 return Transform(binary.Right);
                             }
                         }
+
                         if (binary.Operator == Operator.LogicalAnd)
                         {
                             var b = binary.Left.ConstValue();
@@ -216,11 +217,14 @@ namespace Njsast.Compress
                     }
                     case AstUnaryPrefix unaryPrefix:
                     {
-                        if (unaryPrefix.Operator == Operator.TypeOf || unaryPrefix.Operator == Operator.LogicalNot || unaryPrefix.Operator == Operator.BitwiseNot || unaryPrefix.Operator == Operator.Void || unaryPrefix.Operator == Operator.Subtraction || unaryPrefix.Operator == Operator.Addition)
+                        if (unaryPrefix.Operator == Operator.TypeOf || unaryPrefix.Operator == Operator.LogicalNot ||
+                            unaryPrefix.Operator == Operator.BitwiseNot || unaryPrefix.Operator == Operator.Void ||
+                            unaryPrefix.Operator == Operator.Subtraction || unaryPrefix.Operator == Operator.Addition)
                         {
                             node = unaryPrefix.Expression;
                             continue;
                         }
+
                         goto default;
                     }
                     case AstFunction function:
@@ -231,6 +235,28 @@ namespace Njsast.Compress
                         }
 
                         return node;
+                    }
+                    case AstCall call:
+                    {
+                        var symbol = call.Expression.IsSymbolDef();
+                        if (symbol != null && symbol.IsSingleInit && symbol.Init is AstLambda func &&
+                            func.Pure == true || IsWellKnownPureFunction(call.Expression))
+                        {
+                            var res = new AstSequence(node.Source, node.Start, node.End);
+                            foreach (var arg in call.Args)
+                            {
+                                res.AddIntelligently(Transform(arg));
+                            }
+
+                            return res.Expressions.Count switch
+                            {
+                                0 => Remove,
+                                1 => res.Expressions[0],
+                                _ => res
+                            };
+                        }
+
+                        goto default;
                     }
                     case AstAssign assign:
                     {
@@ -276,6 +302,7 @@ namespace Njsast.Compress
                             binary.Right = right;
                             return node;
                         }
+
                         if (binary.Operator == Operator.LogicalAnd)
                         {
                             var b = binary.Left.ConstValue();
@@ -301,6 +328,7 @@ namespace Njsast.Compress
                             binary.Right = right;
                             return node;
                         }
+
                         var res = new AstSequence(node.Source, node.Start, node.End);
                         res.AddIntelligently(Transform(binary.Left));
                         res.AddIntelligently(Transform(binary.Right));
@@ -331,6 +359,90 @@ namespace Njsast.Compress
                         return node;
                 }
             }
+        }
+
+        static bool IsWellKnownPureFunction(AstNode callExpression)
+        {
+            if (callExpression is AstPropAccess propAccess)
+            {
+                var globalSymbol = propAccess.Expression.IsSymbolDef().IsGlobalSymbol();
+                var propName = propAccess.PropertyAsString;
+                return IsWellKnownPureFunction(globalSymbol, propName);
+            }
+
+            return false;
+        }
+
+        static bool IsWellKnownPureFunction(string? globalSymbol, string? propName)
+        {
+            return globalSymbol switch
+            {
+                "Object" => (propName switch
+                {
+                    "constructor" => true,
+                    "create" => true,
+                    "entries" => true,
+                    "fromEntries" => true,
+                    "getOwnPropertyDescriptor" => true,
+                    "getOwnPropertyDescriptors" => true,
+                    "getOwnPropertyNames" => true,
+                    "getOwnPropertySymbols" => true,
+                    "getPrototypeOf" => true,
+                    "hasOwnProperty" => true,
+                    "is" => true,
+                    "isExtensible" => true,
+                    "isFrozen" => true,
+                    "isPrototypeOf" => true,
+                    "isSealed" => true,
+                    "keys" => true,
+                    "propertyIsEnumerable" => true,
+                    "prototype" => true,
+                    "toLocaleString" => true,
+                    "toString" => true,
+                    "valueOf" => true,
+                    "values" => true,
+                    _ => false
+                }),
+                "Math" => (propName switch
+                {
+                    "abs" => true,
+                    "acos" => true,
+                    "acosh" => true,
+                    "asin" => true,
+                    "asinh" => true,
+                    "atan" => true,
+                    "atan2" => true,
+                    "atanh" => true,
+                    "cbrt" => true,
+                    "ceil" => true,
+                    "clz32" => true,
+                    "cos" => true,
+                    "cosh" => true,
+                    "exp" => true,
+                    "expm1" => true,
+                    "floor" => true,
+                    "fround" => true,
+                    "hypot" => true,
+                    "imul" => true,
+                    "log" => true,
+                    "log1p" => true,
+                    "log2" => true,
+                    "log10" => true,
+                    "max" => true,
+                    "min" => true,
+                    "pow" => true,
+                    "round" => true,
+                    "sign" => true,
+                    "sin" => true,
+                    "sinh" => true,
+                    "sqrt" => true,
+                    "tan" => true,
+                    "tanh" => true,
+                    "trunc" => true,
+                    _ => false
+                }),
+                _ => false
+            };
         }
 
         static bool IsSideEffectFreePropertyAccess(string? globalSymbol, string? propName)

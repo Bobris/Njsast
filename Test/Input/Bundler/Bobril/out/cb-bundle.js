@@ -12,7 +12,6 @@
         }
         return BobrilCtx;
     })();
-    function assert(shouldBeTrue, messageIfFalse) {}
     __export_isArray = Array.isArray;
     emptyComponent = {};
     function createTextNode(content) {
@@ -989,7 +988,6 @@
             node = cachedChildren[cachedIndex];
             key = node.key;
             if (key != null) {
-                assert(!(key in cachedKeys));
                 cachedKeys[key] = cachedIndex;
             } else deltaKeyless--;
         }
@@ -998,7 +996,6 @@
             node = newChildren[newIndex];
             key = node.key;
             if (key != null) {
-                assert(!(key in newKeys));
                 newKeys[key] = newIndex;
             } else deltaKeyless++;
         }
@@ -1114,7 +1111,6 @@
                 continue;
             }
             if (key != null) {
-                assert(newIndex === cachedIndex);
                 if (keyLess === 0 && deltaKeyless < 0) {
                     while (!0) {
                         removeNode(cachedChildren[cachedIndex]);
@@ -1122,13 +1118,12 @@
                         cachedEnd--;
                         cachedLength--;
                         deltaKeyless++;
-                        assert(cachedIndex !== cachedEnd, "there still need to exist key node");
                         if (cachedChildren[cachedIndex].key != null) break;
                     }
                     continue;
                 }
                 while (cachedChildren[cachedIndex].key == null) cachedIndex++;
-                assert(key === cachedChildren[cachedIndex].key);
+                cachedChildren[cachedIndex].key;
                 cachedChildren.splice(newIndex, 0, cachedChildren[cachedIndex]);
                 cachedChildren.splice(cachedIndex + 1, 1);
                 reorderInUpdateChildren(cachedChildren, newIndex, cachedLength, createBefore, element);
@@ -1447,7 +1442,6 @@
         beforeInit = finishInitialize;
     }
     function init(factory, element) {
-        assert(rootIds == null, "init should not be called from render");
         removeRoot("0");
         roots["0"] = {
             f: factory,
@@ -3393,7 +3387,6 @@
                 }
                 if (isString(ssStyle) && ssPseudo == null) {
                     ss.realName = ssStyle;
-                    assert(name_1 != null, "Cannot link existing class to selector");
                     continue;
                 }
                 ss.realName = name_1;
