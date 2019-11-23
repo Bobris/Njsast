@@ -1,1 +1,1 @@
-(function(t){"use strict";var e=42;Object.setPrototypeOf;Object.assign;console.log(e)})()
+(function(_){"use strict";var o=42;console.log(o)})()

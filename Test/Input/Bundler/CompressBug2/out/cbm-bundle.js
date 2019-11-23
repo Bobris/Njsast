@@ -1,12 +1,10 @@
-(function(t) {
+(function(n) {
     "use strict";
-    var n;
-    Object.setPrototypeOf;
-    Object.assign;
-    n = Date.now;
-    function o() {
-        n();
+    var t;
+    t = Date.now;
+    function _() {
+        t();
     }
-    o();
+    _();
 })();
 

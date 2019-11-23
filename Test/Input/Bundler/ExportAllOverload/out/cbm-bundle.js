@@ -1,10 +1,8 @@
 (function(n) {
     "use strict";
-    Object.setPrototypeOf;
-    Object.assign;
-    function t() {
+    function i() {
         return "OK";
     }
-    console.log(t());
+    console.log(i());
 })();
 

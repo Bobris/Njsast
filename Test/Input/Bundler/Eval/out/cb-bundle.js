@@ -1,7 +1,5 @@
 (function(undefined) {
     "use strict";
-    Object.setPrototypeOf;
-    Object.assign;
     function functionUsingEval() {
         eval("return 1");
     }

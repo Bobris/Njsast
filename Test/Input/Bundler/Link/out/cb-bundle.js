@@ -1,7 +1,5 @@
 (function(undefined) {
     "use strict";
-    Object.setPrototypeOf;
-    Object.assign;
     function link(name) {
         return name;
     }

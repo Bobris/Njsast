@@ -1,8 +1,6 @@
 (function(undefined) {
     "use strict";
     var __export_Opts;
-    Object.setPrototypeOf;
-    Object.assign;
     (function(Opts) {
         Opts[Opts["Start"] = 0] = "Start";
         Opts[Opts["Stop"] = 1] = "Stop";

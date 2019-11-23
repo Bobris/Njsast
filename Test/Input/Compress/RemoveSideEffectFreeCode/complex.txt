@@ -20,16 +20,6 @@ Toplevel 1:1 - 55:1
           VarDef 7:5 - 7:10
             SymbolVar 7:5 - 7:10
               Name: DEBUG
-        SimpleStatement 23:3 - 34:7
-          Dot 24:5 - 24:26
-            Property: setPrototypeOf
-            SymbolRef 24:5 - 24:11 [Read]
-              Name: Object
-        SimpleStatement 35:3 - 45:7
-          Dot 36:5 - 36:18
-            Property: assign
-            SymbolRef 36:5 - 36:11 [Read]
-              Name: Object
         LabeledStatement 49:3 - 53:4
           Label 49:3 - 49:7 [IsLoop]
             Name: out

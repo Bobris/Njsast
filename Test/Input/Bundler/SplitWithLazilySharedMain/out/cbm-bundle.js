@@ -1,51 +1,49 @@
 var __bbb = {};
 
-(function(e) {
+(function(r) {
     "use strict";
-    var r, t;
-    Object.setPrototypeOf;
-    Object.assign;
-    r = function(r, t) {
-        var o, n;
-        o = __bbb;
-        n = o[t];
-        if (n !== e) {
-            if (n instanceof Promise) return n;
-            return Promise.resolve(n);
+    var e, o;
+    e = function(e, o) {
+        var n, t;
+        n = __bbb;
+        t = n[o];
+        if (t !== r) {
+            if (t instanceof Promise) return t;
+            return Promise.resolve(t);
         }
-        n = new Promise(function(s, i) {
-            var b, u;
-            b = document.createElement("script");
-            u = setTimeout(p, 120000);
+        t = new Promise(function(s, i) {
+            var u, b;
+            u = document.createElement("script");
+            b = setTimeout(p, 120000);
             function p() {
-                b.onload = b.onerror = e;
-                clearTimeout(u);
-                if (o[t] === n) {
-                    o[t] = e;
-                    i(new Error("Fail to load " + r));
-                } else s(o[t]);
+                u.onload = u.onerror = r;
+                clearTimeout(b);
+                if (n[o] === t) {
+                    n[o] = r;
+                    i(new Error("Fail to load " + e));
+                } else s(n[o]);
             }
-            b.charset = "utf-8";
-            b.onload = b.onerror = p;
-            b.src = r;
-            document.head.appendChild(b);
+            u.charset = "utf-8";
+            u.onload = u.onerror = p;
+            u.src = e;
+            document.head.appendChild(u);
         });
-        return o[t] = n;
+        return n[o] = t;
     };
-    function o() {
+    function n() {
         console.log("shared");
     }
-    function n() {
+    function t() {
         return "unused";
     }
-    t = {
-        shared: o,
-        unused: n
+    o = {
+        shared: n,
+        unused: t
     };
-    o();
-    r("cbm-lib.js", "a").then(function(e) {
-        console.log(e.hello());
+    n();
+    e("cbm-lib.js", "a").then(function(r) {
+        console.log(r.hello());
     });
-    __bbb.b = t;
+    __bbb.b = o;
 })();
 

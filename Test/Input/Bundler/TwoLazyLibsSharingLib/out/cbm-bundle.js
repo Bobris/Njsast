@@ -3,8 +3,6 @@ var __bbb = {};
 (function(r) {
     "use strict";
     var e;
-    Object.setPrototypeOf;
-    Object.assign;
     e = function(e, t) {
         var o, n;
         o = __bbb;

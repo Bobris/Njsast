@@ -1,1 +1,1 @@
-(function(_){"use strict";var e,r;Object.setPrototypeOf;Object.assign;e=__bbb.e;e();function t(){return"Hello"}r={hello:t};__bbb.b=r})()
+(function(_){"use strict";var e,r;e=__bbb.e;e();function o(){return"Hello"}r={hello:o};__bbb.b=r})()

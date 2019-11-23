@@ -1,8 +1,6 @@
 (function(e) {
     "use strict";
     var n, t, r, a, i, d, o, l, c, s, u, f, h, p, m, v, g, b, y, x, w, C, S, k, I, N, E, _, D, P, F, A, j, B, O, M, R, T, V, K, L, U, H, X, Y, z, G, q, W, $, Z, J, Q, ee, ne, te, re, ae, ie, de, oe, le, ce, se, ue, fe, he, pe, me, ve, ge, be, ye, xe, we, Ce, Se, ke, Ie, Ne, Ee, _e, De, Pe, Fe, Ae, je, Be, Oe, Me, Re, Te, Ve, Ke, Le, Ue, He, Xe, Ye, ze, Ge, qe, We, $e, Ze, Je, Qe, en, nn, tn, rn, an, dn, on, ln, cn, sn, un, fn, hn;
-    Object.setPrototypeOf;
-    Object.assign;
     (function() {
         function n(n, t) {
             this.data = n;
@@ -3517,7 +3515,6 @@
         o.putImageData(l, 0, 0);
         return d.toDataURL();
     }
-    window["bobrilBPath"];
     function Qr(n) {
         return function(t, r) {
             if (r !== e) {

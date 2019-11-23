@@ -1,12 +1,10 @@
-(function(t) {
+(function(r) {
     "use strict";
-    var e;
-    Object.setPrototypeOf;
-    Object.assign;
-    function r(t, e) {
-        return t + e;
+    var n;
+    function _(r, n) {
+        return r + n;
     }
-    e = r;
-    console.log(e(1, 2));
+    n = _;
+    console.log(n(1, 2));
 })();
 

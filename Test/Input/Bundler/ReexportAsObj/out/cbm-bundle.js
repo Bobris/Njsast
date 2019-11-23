@@ -1,15 +1,13 @@
-(function(t) {
+(function(n) {
     "use strict";
-    var n, e;
-    Object.setPrototypeOf;
-    Object.assign;
-    function o(t, n) {
-        return t + n;
+    var _, t;
+    function o(n, _) {
+        return n + _;
     }
-    n = {
+    _ = {
         fn: o
     };
-    e = n;
-    console.log(e.fn(1, 2));
+    t = _;
+    console.log(t.fn(1, 2));
 })();
 

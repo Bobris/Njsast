@@ -1,8 +1,6 @@
 (function(undefined) {
     "use strict";
     var __export_$, lib;
-    Object.setPrototypeOf;
-    Object.assign;
     function fn(a, b) {
         return a + b;
     }

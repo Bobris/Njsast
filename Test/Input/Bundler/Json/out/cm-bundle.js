@@ -1,1 +1,1 @@
-(function(t){"use strict";var e={test:"ok"};Object.setPrototypeOf;Object.assign;console.log(e.test)})()
+(function(t){"use strict";var n={test:"ok"};console.log(n.test)})()

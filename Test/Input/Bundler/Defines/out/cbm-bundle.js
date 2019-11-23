@@ -1,8 +1,6 @@
-(function(e) {
+(function(s) {
     "use strict";
-    Object.setPrototypeOf;
-    Object.assign;
-    function s(e, s) {}
-    s(!1, "bad");
+    function e(s, e) {}
+    e(!1, "bad");
 })();
 

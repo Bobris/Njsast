@@ -1,8 +1,6 @@
 (function(undefined) {
     "use strict";
     var ___shared, allshared, __export_$;
-    Object.setPrototypeOf;
-    Object.assign;
     ___shared = __bbb.b;
     allshared = ___shared;
     allshared.shared();

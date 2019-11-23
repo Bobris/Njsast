@@ -14,16 +14,6 @@ Toplevel 1:1 - 302:1
           VarDef 1:1 - 1:1
             SymbolVar 296:9 - 296:19
               Name: __export_$
-        SimpleStatement 3:9 - 9:6
-          Dot 3:27 - 3:48
-            Property: setPrototypeOf
-            SymbolRef 3:27 - 3:33 [Read]
-              Name: Object
-        SimpleStatement 17:9 - 23:6
-          Dot 17:20 - 17:33
-            Property: assign
-            SymbolRef 17:20 - 17:26 [Read]
-              Name: Object
         SimpleStatement 289:9 - 289:28
           Assign 289:9 - 289:28
             Operator: Assignment

@@ -1,21 +1,19 @@
 (function(_) {
     "use strict";
-    var n, t, b;
-    Object.setPrototypeOf;
-    Object.assign;
-    function e(_, n) {
+    var n, b, t;
+    function r(_, n) {
         return _ + n;
     }
     n = {
-        fn: e
+        fn: r
     };
     function o(_, n) {
         return _ - n;
     }
-    t = {
+    b = {
         fn: o
     };
-    b = Math.random() > 0.5 ? n : t;
-    console.log(b.fn(1, 2));
+    t = Math.random() > 0.5 ? n : b;
+    console.log(t.fn(1, 2));
 })();
 

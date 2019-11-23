@@ -1,8 +1,6 @@
 (function(undefined) {
     "use strict";
     var __export_$;
-    Object.setPrototypeOf;
-    Object.assign;
     function hello() {
         return "Hello";
     }

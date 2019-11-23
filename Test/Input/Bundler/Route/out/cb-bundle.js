@@ -1,8 +1,6 @@
 (function(undefined) {
     "use strict";
     var __export_page = "OK";
-    Object.setPrototypeOf;
-    Object.assign;
     function route(param) {
         return param;
     }

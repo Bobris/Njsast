@@ -1,13 +1,11 @@
 (function(d) {
     "use strict";
-    var t;
-    Object.setPrototypeOf;
-    Object.assign;
-    t = d;
-    function e(d) {
-        t = d;
+    var _;
+    _ = d;
+    function t(d) {
+        _ = d;
     }
-    e(function() {});
-    if (t) t();
+    t(function() {});
+    if (_) _();
 })();
 

@@ -16,7 +16,6 @@
         }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    Object.assign;
     Base = function() {
         function Base() {}
         Base.prototype.hello = function() {

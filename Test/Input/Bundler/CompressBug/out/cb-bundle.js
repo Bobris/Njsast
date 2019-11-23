@@ -1,8 +1,6 @@
 (function(undefined) {
     "use strict";
     var uppercasePattern = /([A-Z])/g, msPattern = /^ms-/;
-    Object.setPrototypeOf;
-    Object.assign;
     function hyphenateStyle(s) {
         if (s === "cssFloat") return "float";
         return s.replace(uppercasePattern, "-$1").toLowerCase().replace(msPattern, "-ms-");

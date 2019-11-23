@@ -1,8 +1,6 @@
 (function(undefined) {
     "use strict";
     var a_index = 2;
-    Object.setPrototypeOf;
-    Object.assign;
     function fn(a, b) {
         return a + b;
     }

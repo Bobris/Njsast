@@ -1,1 +1,1 @@
-(function(t){"use strict";var n,e;Object.setPrototypeOf;Object.assign;function o(t,n){return t+n}n={fn:o};e=n;console.log(e.fn(1,2))})()
+(function(n){"use strict";var _,t;function o(n,_){return n+_}_={fn:o};t=_;console.log(t.fn(1,2))})()

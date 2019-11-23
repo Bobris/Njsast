@@ -174,6 +174,26 @@ namespace Njsast.Compress
 
                         return res.Expressions.Count == 0 ? Remove : res;
                     }
+                    case AstPropAccess propAccess:
+                    {
+                        var globalSymbol = propAccess.Expression.IsSymbolDef().IsGlobalSymbol();
+                        var propName = propAccess.PropertyAsString;
+                        if (IsSideEffectFreePropertyAccess(globalSymbol, propName))
+                        {
+                            return Remove;
+                        }
+
+                        if (globalSymbol == "window")
+                        {
+                            node = propAccess.Property as AstNode ?? Remove;
+                            if (node == Remove)
+                                return Remove;
+                            continue;
+                        }
+
+                        goto default;
+                    }
+
                     case AstObject obj:
                     {
                         var res = new AstSequence(node.Source, node.Start, node.End);
@@ -311,6 +331,94 @@ namespace Njsast.Compress
                         return node;
                 }
             }
+        }
+
+        static bool IsSideEffectFreePropertyAccess(string? globalSymbol, string? propName)
+        {
+            return globalSymbol switch
+            {
+                "Object" => (propName switch
+                {
+                    "assign" => true,
+                    "constructor" => true,
+                    "create" => true,
+                    "defineProperties" => true,
+                    "defineProperty" => true,
+                    "entries" => true,
+                    "freeze" => true,
+                    "fromEntries" => true,
+                    "getOwnPropertyDescriptor" => true,
+                    "getOwnPropertyDescriptors" => true,
+                    "getOwnPropertyNames" => true,
+                    "getOwnPropertySymbols" => true,
+                    "getPrototypeOf" => true,
+                    "hasOwnProperty" => true,
+                    "is" => true,
+                    "isExtensible" => true,
+                    "isFrozen" => true,
+                    "isPrototypeOf" => true,
+                    "isSealed" => true,
+                    "keys" => true,
+                    "preventExtensions" => true,
+                    "propertyIsEnumerable" => true,
+                    "prototype" => true,
+                    "seal" => true,
+                    "setPrototypeOf" => true,
+                    "toLocaleString" => true,
+                    "toString" => true,
+                    "valueOf" => true,
+                    "values" => true,
+                    _ => false
+                }),
+                "Math" => (propName switch
+                {
+                    "E" => true,
+                    "LN10" => true,
+                    "LN2" => true,
+                    "LOG10E" => true,
+                    "LOG2E" => true,
+                    "PI" => true,
+                    "SQRT1_2" => true,
+                    "SQRT2" => true,
+                    "abs" => true,
+                    "acos" => true,
+                    "acosh" => true,
+                    "asin" => true,
+                    "asinh" => true,
+                    "atan" => true,
+                    "atan2" => true,
+                    "atanh" => true,
+                    "cbrt" => true,
+                    "ceil" => true,
+                    "clz32" => true,
+                    "cos" => true,
+                    "cosh" => true,
+                    "exp" => true,
+                    "expm1" => true,
+                    "floor" => true,
+                    "fround" => true,
+                    "hypot" => true,
+                    "imul" => true,
+                    "log" => true,
+                    "log1p" => true,
+                    "log2" => true,
+                    "log10" => true,
+                    "max" => true,
+                    "min" => true,
+                    "pow" => true,
+                    "random" => true,
+                    "round" => true,
+                    "sign" => true,
+                    "sin" => true,
+                    "sinh" => true,
+                    "sqrt" => true,
+                    "tan" => true,
+                    "tanh" => true,
+                    "trunc" => true,
+                    _ => false
+                }),
+                _ => false
+            };
         }
 
         protected override AstNode? After(AstNode node, bool inList)

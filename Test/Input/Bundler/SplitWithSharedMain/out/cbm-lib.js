@@ -1,15 +1,13 @@
 (function(_) {
     "use strict";
     var e, r;
-    Object.setPrototypeOf;
-    Object.assign;
     e = __bbb.b;
     e();
-    function t() {
+    function o() {
         return "Hello";
     }
     r = {
-        hello: t
+        hello: o
     };
     __bbb.a = r;
 })();

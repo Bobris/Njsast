@@ -1,8 +1,6 @@
-(function(t) {
+(function(u) {
     "use strict";
-    Object.setPrototypeOf;
-    Object.assign;
-    function e() {}
-    e();
+    function n() {}
+    n();
 })();
 

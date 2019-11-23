@@ -1,10 +1,8 @@
 (function(e) {
     "use strict";
-    Object.setPrototypeOf;
-    Object.assign;
-    function t() {
+    function n() {
         console.log("shared");
     }
-    __bbb.e = t;
+    __bbb.e = n;
 })();
 

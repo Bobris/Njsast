@@ -3,42 +3,40 @@ var __bbb = {};
 (function(r) {
     "use strict";
     var e;
-    Object.setPrototypeOf;
-    Object.assign;
-    e = function(e, t) {
-        var o, n;
-        o = __bbb;
-        n = o[t];
+    e = function(e, o) {
+        var t, n;
+        t = __bbb;
+        n = t[o];
         if (n !== r) {
             if (n instanceof Promise) return n;
             return Promise.resolve(n);
         }
         n = new Promise(function(i, s) {
-            var b, c;
+            var b, p;
             b = document.createElement("script");
-            c = setTimeout(p, 120000);
-            function p() {
+            p = setTimeout(c, 120000);
+            function c() {
                 b.onload = b.onerror = r;
-                clearTimeout(c);
-                if (o[t] === n) {
-                    o[t] = r;
+                clearTimeout(p);
+                if (t[o] === n) {
+                    t[o] = r;
                     s(new Error("Fail to load " + e));
-                } else i(o[t]);
+                } else i(t[o]);
             }
             b.charset = "utf-8";
-            b.onload = b.onerror = p;
+            b.onload = b.onerror = c;
             b.src = e;
             document.head.appendChild(b);
         });
-        return o[t] = n;
+        return t[o] = n;
     };
-    function t() {
+    function o() {
         console.log("shared");
     }
-    t();
+    o();
     e("cbm-lib.js", "a").then(function(r) {
         console.log(r.hello());
     });
-    __bbb.b = t;
+    __bbb.b = o;
 })();
 

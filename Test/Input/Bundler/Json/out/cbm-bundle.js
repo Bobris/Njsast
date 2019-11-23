@@ -1,10 +1,8 @@
 (function(t) {
     "use strict";
-    var e = {
+    var n = {
         test: "ok"
     };
-    Object.setPrototypeOf;
-    Object.assign;
-    console.log(e.test);
+    console.log(n.test);
 })();
 

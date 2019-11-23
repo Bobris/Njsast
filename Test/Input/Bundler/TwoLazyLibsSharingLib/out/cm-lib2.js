@@ -1,1 +1,1 @@
-(function(_){"use strict";var r,e;Object.setPrototypeOf;Object.assign;r=__bbb.e;r();function t(){return"World"}e={world:t};__bbb.c=e})()
+(function(_){"use strict";var r,e;r=__bbb.e;r();function d(){return"World"}e={world:d};__bbb.c=e})()

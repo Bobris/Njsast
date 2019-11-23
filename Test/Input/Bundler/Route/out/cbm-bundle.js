@@ -1,17 +1,15 @@
 (function(n) {
     "use strict";
     var e = "OK";
-    Object.setPrototypeOf;
-    Object.assign;
-    function t(n) {
-        return n;
-    }
     function o(n) {
         return n;
     }
-    t("KO");
+    function t(n) {
+        return n;
+    }
+    o("KO");
     function i() {
-        var n = o("hello");
+        var n = t("hello");
         console.log(n);
     }
     i();

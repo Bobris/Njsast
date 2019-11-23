@@ -1,8 +1,6 @@
 (function(undefined) {
     "use strict";
     var __import, __export_$;
-    Object.setPrototypeOf;
-    Object.assign;
     __import = function(url, prop) {
         var bbb, res;
         bbb = __bbb;

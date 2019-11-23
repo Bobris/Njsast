@@ -1,8 +1,6 @@
 (function(_) {
     "use strict";
-    var t = 42, e = t;
-    Object.setPrototypeOf;
-    Object.assign;
+    var o = 42, e = o;
     console.log(e);
 })();
 
