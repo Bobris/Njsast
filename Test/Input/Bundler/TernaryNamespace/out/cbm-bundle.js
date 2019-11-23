@@ -1,4 +1,4 @@
-(function(_) {
+!function(_) {
     "use strict";
     var n, b, t;
     function r(_, n) {
@@ -15,5 +15,5 @@
     };
     t = Math.random() > 0.5 ? n : b;
     console.log(t.fn(1, 2));
-})();
+}();
 

@@ -1,6 +1,6 @@
 var __bbb = {};
 
-(function(r) {
+!function(r) {
     "use strict";
     var e;
     e = function(e, o) {
@@ -38,5 +38,5 @@ var __bbb = {};
         console.log(r.hello());
     });
     __bbb.b = o;
-})();
+}();
 

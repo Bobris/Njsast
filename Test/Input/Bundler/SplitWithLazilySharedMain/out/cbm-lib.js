@@ -1,4 +1,4 @@
-(function(r) {
+!function(r) {
     "use strict";
     var e, t;
     e = function(e, t) {
@@ -38,5 +38,5 @@
         hello: o
     };
     __bbb.a = t;
-})();
+}();
 

@@ -1,4 +1,4 @@
-(function(undefined) {
+!function(undefined) {
     "use strict";
     function link(name) {
         return name;
@@ -8,5 +8,5 @@
         console.log(link_index);
     }
     doit();
-})();
+}();
 

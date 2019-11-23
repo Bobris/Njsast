@@ -1,4 +1,4 @@
-(function(undefined) {
+!function(undefined) {
     "use strict";
     var __export_$, lib;
     function fn(a, b) {
@@ -9,5 +9,5 @@
     };
     lib = __export_$;
     console.log(lib.fn(1, 2));
-})();
+}();
 

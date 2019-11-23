@@ -1,4 +1,4 @@
-(function(undefined) {
+!function(undefined) {
     "use strict";
     var __shared_shared, __export_$;
     __shared_shared = __bbb.e;
@@ -10,5 +10,5 @@
         world: world
     };
     __bbb.c = __export_$;
-})();
+}();
 

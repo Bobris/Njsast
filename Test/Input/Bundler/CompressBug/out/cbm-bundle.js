@@ -1,4 +1,4 @@
-(function(e) {
+!function(e) {
     "use strict";
     var t = /([A-Z])/g, n = /^ms-/;
     function s(e) {
@@ -19,5 +19,5 @@
         a: 1,
         b: 2
     }));
-})();
+}();
 

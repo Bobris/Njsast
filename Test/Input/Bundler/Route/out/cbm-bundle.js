@@ -1,4 +1,4 @@
-(function(n) {
+!function(n) {
     "use strict";
     var e = "OK";
     function o(n) {
@@ -14,5 +14,5 @@
     }
     i();
     console.log(e);
-})();
+}();
 

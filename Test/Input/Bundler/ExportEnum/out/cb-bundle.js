@@ -1,4 +1,4 @@
-(function(undefined) {
+!function(undefined) {
     "use strict";
     var __export_Opts;
     (function(Opts) {
@@ -6,5 +6,5 @@
         Opts[Opts["Stop"] = 1] = "Stop";
     })(__export_Opts || (__export_Opts = {}));
     console.log(__export_Opts.Start);
-})();
+}();
 

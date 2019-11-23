@@ -217,7 +217,15 @@ namespace Njsast.Compress
                     }
                     case AstUnaryPrefix unaryPrefix:
                     {
-                        if (unaryPrefix.Operator == Operator.TypeOf || unaryPrefix.Operator == Operator.LogicalNot ||
+                        if (unaryPrefix.Operator == Operator.LogicalNot)
+                        {
+                            if (unaryPrefix.Expression is AstCall call && call.Expression is AstFunction)
+                                goto default;
+                            node = unaryPrefix.Expression;
+                            continue;
+                        }
+
+                        if (unaryPrefix.Operator == Operator.TypeOf ||
                             unaryPrefix.Operator == Operator.BitwiseNot || unaryPrefix.Operator == Operator.Void ||
                             unaryPrefix.Operator == Operator.Subtraction || unaryPrefix.Operator == Operator.Addition)
                         {

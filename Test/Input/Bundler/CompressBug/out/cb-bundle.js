@@ -1,4 +1,4 @@
-(function(undefined) {
+!function(undefined) {
     "use strict";
     var uppercasePattern = /([A-Z])/g, msPattern = /^ms-/;
     function hyphenateStyle(s) {
@@ -19,5 +19,5 @@
         a: 1,
         b: 2
     }));
-})();
+}();
 

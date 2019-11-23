@@ -1,4 +1,4 @@
-(function(undefined) {
+!function(undefined) {
     "use strict";
     var __export_$;
     function hello() {
@@ -8,5 +8,5 @@
         hello: hello
     };
     __bbb.a = __export_$;
-})();
+}();
 

@@ -1,4 +1,4 @@
-(function(undefined) {
+!function(undefined) {
     "use strict";
     var __export_bar;
     function fn(a, b) {
@@ -6,5 +6,5 @@
     }
     __export_bar = fn;
     console.log(__export_bar(1, 2));
-})();
+}();
 

@@ -1,6 +1,6 @@
 var __bbb = {};
 
-(function(undefined) {
+!function(undefined) {
     "use strict";
     var __import;
     __import = function(url, prop) {
@@ -38,5 +38,5 @@ var __bbb = {};
         console.log(lib.hello());
     });
     __bbb.b = shared;
-})();
+}();
 

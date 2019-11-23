@@ -1,53 +1,55 @@
 Toplevel 1:1 - 55:1
   SimpleStatement 1:1 - 54:6
-    Call 1:2 - 54:5
-      Function 1:3 - 54:2 [HasUseStrictDirective]
-        SymbolFunarg 1:12 - 1:21 [Write]
-          Name: undefined
-        Var 3:3 - 22:26
-          VarDef 3:7 - 3:22
-            SymbolVar 3:7 - 3:22
-              Name: __extendStatics
-          VarDef 4:5 - 4:13
-            SymbolVar 4:5 - 4:13
-              Name: __assign
-          VarDef 5:5 - 5:13
-            SymbolVar 5:5 - 5:13
-              Name: __values
-          VarDef 6:5 - 6:12
-            SymbolVar 6:5 - 6:12
-              Name: __await
-          VarDef 7:5 - 7:10
-            SymbolVar 7:5 - 7:10
-              Name: DEBUG
-        LabeledStatement 49:3 - 53:4
-          Label 49:3 - 49:7 [IsLoop]
-            Name: out
-          While 49:8 - 53:4
-            UnaryPrefix 49:15 - 49:17
-              Operator: LogicalNot
-              Number 49:16 - 49:17
-                Value: 0
-                Literal: 0
-            Block 49:19 - 53:4
-              While 50:5 - 52:6
-                UnaryPrefix 50:12 - 50:14
-                  Operator: LogicalNot
-                  Number 50:13 - 50:14
-                    Value: 0
-                    Literal: 0
-                Block 50:16 - 52:6
-                  If 51:7 - 51:42
-                    Binary 51:11 - 51:30
-                      Operator: GreaterThan
-                      Call 51:11 - 51:24
-                        Dot 51:11 - 51:22
-                          Property: random
-                          SymbolRef 51:11 - 51:15 [Read]
-                            Name: Math
-                      Number 51:27 - 51:30
-                        Value: 0.5
-                        Literal: 0.5
-                    Break 51:32 - 51:42
-                      LabelRef 51:38 - 51:41
-                        Name: out
+    UnaryPrefix 1:1 - 54:5
+      Operator: LogicalNot
+      Call 1:2 - 54:5
+        Function 1:3 - 54:2 [HasUseStrictDirective]
+          SymbolFunarg 1:12 - 1:21 [Write]
+            Name: undefined
+          Var 3:3 - 22:26
+            VarDef 3:7 - 3:22
+              SymbolVar 3:7 - 3:22
+                Name: __extendStatics
+            VarDef 4:5 - 4:13
+              SymbolVar 4:5 - 4:13
+                Name: __assign
+            VarDef 5:5 - 5:13
+              SymbolVar 5:5 - 5:13
+                Name: __values
+            VarDef 6:5 - 6:12
+              SymbolVar 6:5 - 6:12
+                Name: __await
+            VarDef 7:5 - 7:10
+              SymbolVar 7:5 - 7:10
+                Name: DEBUG
+          LabeledStatement 49:3 - 53:4
+            Label 49:3 - 49:7 [IsLoop]
+              Name: out
+            While 49:8 - 53:4
+              UnaryPrefix 49:15 - 49:17
+                Operator: LogicalNot
+                Number 49:16 - 49:17
+                  Value: 0
+                  Literal: 0
+              Block 49:19 - 53:4
+                While 50:5 - 52:6
+                  UnaryPrefix 50:12 - 50:14
+                    Operator: LogicalNot
+                    Number 50:13 - 50:14
+                      Value: 0
+                      Literal: 0
+                  Block 50:16 - 52:6
+                    If 51:7 - 51:42
+                      Binary 51:11 - 51:30
+                        Operator: GreaterThan
+                        Call 51:11 - 51:24
+                          Dot 51:11 - 51:22
+                            Property: random
+                            SymbolRef 51:11 - 51:15 [Read]
+                              Name: Math
+                        Number 51:27 - 51:30
+                          Value: 0.5
+                          Literal: 0.5
+                      Break 51:32 - 51:42
+                        LabelRef 51:38 - 51:41
+                          Name: out

@@ -1,1 +1,1 @@
-(function(u){"use strict";function n(){}n()})()
+!function(u){"use strict";function n(){}n()}()

@@ -1,4 +1,4 @@
-(function(n) {
+!function(n) {
     "use strict";
     function i(n) {
         return n;
@@ -8,5 +8,5 @@
         console.log(n);
     }
     e();
-})();
+}();
 

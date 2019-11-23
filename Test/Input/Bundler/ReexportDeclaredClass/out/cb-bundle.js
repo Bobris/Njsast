@@ -1,6 +1,6 @@
-(function(undefined) {
+!function(undefined) {
     "use strict";
     function use() {}
     use();
-})();
+}();
 

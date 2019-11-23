@@ -1,2 +1,2 @@
-(function(n) {})();
+!function(n) {}();
 

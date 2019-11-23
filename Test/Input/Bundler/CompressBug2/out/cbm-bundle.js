@@ -1,4 +1,4 @@
-(function(n) {
+!function(n) {
     "use strict";
     var t;
     t = Date.now;
@@ -6,5 +6,5 @@
         t();
     }
     _();
-})();
+}();
 

@@ -1,4 +1,4 @@
-(function(e) {
+!function(e) {
     "use strict";
     var t, n, o, r;
     t = Object.setPrototypeOf || {
@@ -44,5 +44,5 @@
         return t;
     }(o);
     new r().hello();
-})();
+}();
 
