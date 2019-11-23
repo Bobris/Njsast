@@ -16,14 +16,7 @@
         }
         e.prototype = n === null ? Object.create(n) : (o.prototype = n.prototype, new o());
     };
-    Object.assign || function(e) {
-        var t, n, o, r;
-        for (t = 1, n = arguments.length; t < n; t++) {
-            o = arguments[t];
-            for (r in o) if (Object.prototype.hasOwnProperty.call(o, r)) e[r] = o[r];
-        }
-        return e;
-    };
+    Object.assign;
     o = function() {
         function e() {}
         e.prototype.hello = function() {

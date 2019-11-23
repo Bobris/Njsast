@@ -1,57 +1,43 @@
-(function(r) {
+(function(e) {
     "use strict";
-    var e, t;
-    Object.setPrototypeOf || {
-        __proto__: []
-    } instanceof Array && function(r, e) {
-        r.__proto__ = e;
-    } || function(r, e) {
-        var t;
-        for (t in e) if (e.hasOwnProperty(t)) r[t] = e[t];
-    };
-    Object.assign || function(r) {
-        var e, t, n, o;
-        for (e = 1, t = arguments.length; e < t; e++) {
-            n = arguments[e];
-            for (o in n) if (Object.prototype.hasOwnProperty.call(n, o)) r[o] = n[o];
+    var r, t;
+    Object.setPrototypeOf;
+    Object.assign;
+    r = function(r, t) {
+        var o, n;
+        o = __bbb;
+        n = o[t];
+        if (n !== e) {
+            if (n instanceof Promise) return n;
+            return Promise.resolve(n);
         }
-        return r;
-    };
-    e = function(e, t) {
-        var n, o;
-        n = __bbb;
-        o = n[t];
-        if (o !== r) {
-            if (o instanceof Promise) return o;
-            return Promise.resolve(o);
-        }
-        o = new Promise(function(i, p) {
-            var s, b;
-            s = document.createElement("script");
+        n = new Promise(function(i, s) {
+            var p, b;
+            p = document.createElement("script");
             b = setTimeout(u, 120000);
             function u() {
-                s.onload = s.onerror = r;
+                p.onload = p.onerror = e;
                 clearTimeout(b);
-                if (n[t] === o) {
-                    n[t] = r;
-                    p(new Error("Fail to load " + e));
-                } else i(n[t]);
+                if (o[t] === n) {
+                    o[t] = e;
+                    s(new Error("Fail to load " + r));
+                } else i(o[t]);
             }
-            s.charset = "utf-8";
-            s.onload = s.onerror = u;
-            s.src = e;
-            document.head.appendChild(s);
+            p.charset = "utf-8";
+            p.onload = p.onerror = u;
+            p.src = r;
+            document.head.appendChild(p);
         });
-        return n[t] = o;
+        return o[t] = n;
     };
-    e(r, "b").then(function(r) {
-        return r.shared();
+    r(e, "b").then(function(e) {
+        return e.shared();
     });
-    function n() {
+    function o() {
         return "Hello";
     }
     t = {
-        hello: n
+        hello: o
     };
     __bbb.a = t;
 })();

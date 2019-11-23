@@ -3,48 +3,34 @@ var __bbb = {};
 (function(r) {
     "use strict";
     var e;
-    Object.setPrototypeOf || {
-        __proto__: []
-    } instanceof Array && function(r, e) {
-        r.__proto__ = e;
-    } || function(r, e) {
-        var t;
-        for (t in e) if (e.hasOwnProperty(t)) r[t] = e[t];
-    };
-    Object.assign || function(r) {
-        var e, t, o, n;
-        for (e = 1, t = arguments.length; e < t; e++) {
-            o = arguments[e];
-            for (n in o) if (Object.prototype.hasOwnProperty.call(o, n)) r[n] = o[n];
-        }
-        return r;
-    };
+    Object.setPrototypeOf;
+    Object.assign;
     e = function(e, t) {
-        var o, n;
+        var o, i;
         o = __bbb;
-        n = o[t];
-        if (n !== r) {
-            if (n instanceof Promise) return n;
-            return Promise.resolve(n);
+        i = o[t];
+        if (i !== r) {
+            if (i instanceof Promise) return i;
+            return Promise.resolve(i);
         }
-        n = new Promise(function(i, s) {
-            var p, b;
-            p = document.createElement("script");
-            b = setTimeout(c, 120000);
+        i = new Promise(function(n, s) {
+            var b, p;
+            b = document.createElement("script");
+            p = setTimeout(c, 120000);
             function c() {
-                p.onload = p.onerror = r;
-                clearTimeout(b);
-                if (o[t] === n) {
+                b.onload = b.onerror = r;
+                clearTimeout(p);
+                if (o[t] === i) {
                     o[t] = r;
                     s(new Error("Fail to load " + e));
-                } else i(o[t]);
+                } else n(o[t]);
             }
-            p.charset = "utf-8";
-            p.onload = p.onerror = c;
-            p.src = e;
-            document.head.appendChild(p);
+            b.charset = "utf-8";
+            b.onload = b.onerror = c;
+            b.src = e;
+            document.head.appendChild(b);
         });
-        return o[t] = n;
+        return o[t] = i;
     };
     e("cbm-lib.js", "a").then(function(r) {
         console.log(r.hello());

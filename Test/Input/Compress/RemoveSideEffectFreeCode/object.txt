@@ -13,14 +13,10 @@ Toplevel 1:1 - 6:1
         Operator: DecrementPostfix
         SymbolRef 5:21 - 5:22 [Read] [Write]
           Name: i
-      Binary 5:27 - 5:40
-        Operator: Addition
-        String 5:27 - 5:29
-          Value: 
-        Assign 5:33 - 5:39
-          Operator: AdditionAssignment
-          SymbolRef 5:33 - 5:34 [Read] [Write]
-            Name: i
-          Number 5:38 - 5:39
-            Value: 2
-            Literal: 2
+      Assign 5:33 - 5:39
+        Operator: AdditionAssignment
+        SymbolRef 5:33 - 5:34 [Read] [Write]
+          Name: i
+        Number 5:38 - 5:39
+          Value: 2
+          Literal: 2

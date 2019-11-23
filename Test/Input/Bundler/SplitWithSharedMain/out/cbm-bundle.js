@@ -3,22 +3,8 @@ var __bbb = {};
 (function(r) {
     "use strict";
     var e;
-    Object.setPrototypeOf || {
-        __proto__: []
-    } instanceof Array && function(r, e) {
-        r.__proto__ = e;
-    } || function(r, e) {
-        var t;
-        for (t in e) if (e.hasOwnProperty(t)) r[t] = e[t];
-    };
-    Object.assign || function(r) {
-        var e, t, o, n;
-        for (e = 1, t = arguments.length; e < t; e++) {
-            o = arguments[e];
-            for (n in o) if (Object.prototype.hasOwnProperty.call(o, n)) r[n] = o[n];
-        }
-        return r;
-    };
+    Object.setPrototypeOf;
+    Object.assign;
     e = function(e, t) {
         var o, n;
         o = __bbb;
@@ -28,21 +14,21 @@ var __bbb = {};
             return Promise.resolve(n);
         }
         n = new Promise(function(i, s) {
-            var p, b;
-            p = document.createElement("script");
-            b = setTimeout(c, 120000);
-            function c() {
-                p.onload = p.onerror = r;
-                clearTimeout(b);
+            var b, c;
+            b = document.createElement("script");
+            c = setTimeout(p, 120000);
+            function p() {
+                b.onload = b.onerror = r;
+                clearTimeout(c);
                 if (o[t] === n) {
                     o[t] = r;
                     s(new Error("Fail to load " + e));
                 } else i(o[t]);
             }
-            p.charset = "utf-8";
-            p.onload = p.onerror = c;
-            p.src = e;
-            document.head.appendChild(p);
+            b.charset = "utf-8";
+            b.onload = b.onerror = p;
+            b.src = e;
+            document.head.appendChild(b);
         });
         return o[t] = n;
     };

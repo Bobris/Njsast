@@ -1,22 +1,8 @@
 (function(undefined) {
     "use strict";
-    var __export_isArray, emptyComponent, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, hasNativeRaf, nativeRaf, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, uptimeMs, frameCounter, renderFrameBegin, regEvents, listeningEventDeepness, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events, i, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name, j, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack, callbacks, lastDndId, dnds, systemDnd, rootId, shimmedStyle, shimedStyleKeys, userSelectPropName, DndCtx, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, dynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, isIE9, chainedBeforeFrame, cssSubRuleDelimiter, firstStyles, uppercasePattern, msPattern, rgbaRegex, currentCtx, registryEvents, rootIds, weirdPortrait, bodyCursorBackup, userSelectBackup;
-    Object.setPrototypeOf || {
-        __proto__: []
-    } instanceof Array && function(d, b) {
-        d.__proto__ = b;
-    } || function(d, b) {
-        var p;
-        for (p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-    Object.assign || function(t) {
-        var i, n, s, p;
-        for (i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
-    };
+    var __export_isArray, emptyComponent, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, hasNativeRaf, nativeRaf, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, uptimeMs, frameCounter, regEvents, listeningEventDeepness, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events, i, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name, j, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack, callbacks, lastDndId, dnds, systemDnd, rootId, shimmedStyle, shimedStyleKeys, userSelectPropName, DndCtx, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, dynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, isIE9, chainedBeforeFrame, cssSubRuleDelimiter, firstStyles, uppercasePattern, msPattern, rgbaRegex, currentCtx, registryEvents, rootIds, weirdPortrait, bodyCursorBackup, userSelectBackup;
+    Object.setPrototypeOf;
+    Object.assign;
     (function() {
         function BobrilCtx(data, me) {
             this.data = data;
@@ -1206,7 +1192,6 @@
     initializing = !0;
     uptimeMs = 0;
     frameCounter = 0;
-    renderFrameBegin = 0;
     regEvents = {};
     function addEvent(name, priority, callback) {
         var list;
@@ -1349,7 +1334,7 @@
     });
     function internalUpdate(time) {
         var fullRefresh, i, r, rc, insertBefore, j, rafter, node, r0;
-        renderFrameBegin = __export_now();
+        __export_now();
         initEvents();
         reallyBeforeFrameCallback();
         frameCounter++;
@@ -1396,7 +1381,7 @@
         callPostCallbacks();
         r0 = roots["0"];
         afterFrameCallback(r0 ? r0.c : null);
-        __export_now() - renderFrameBegin;
+        __export_now();
     }
     nextIgnoreShouldChange = !1;
     ignoringShouldChange = !1;
@@ -3532,7 +3517,7 @@
         ctx.putImageData(imgData, 0, 0);
         return canvas.toDataURL();
     }
-    window["bobrilBPath"] || "bundle.png";
+    window["bobrilBPath"];
     function createVirtualComponent(component) {
         return function(data, children) {
             if (children !== undefined) {

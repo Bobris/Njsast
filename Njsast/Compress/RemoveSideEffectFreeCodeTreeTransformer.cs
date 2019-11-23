@@ -1,4 +1,3 @@
-using System.Reflection.Metadata.Ecma335;
 using Njsast.Ast;
 using Njsast.Reader;
 using Njsast.Runtime;
@@ -188,17 +187,21 @@ namespace Njsast.Compress
                             }
                         }
 
-                        return res.Expressions.Count == 0 ? Remove : res;
+                        return res.Expressions.Count switch
+                        {
+                            0 => Remove,
+                            1 => res.Expressions[0],
+                            _ => res
+                        };
                     }
                     case AstUnaryPrefix unaryPrefix:
                     {
-                        if (unaryPrefix.Operator == Operator.TypeOf || unaryPrefix.Operator == Operator.LogicalNot || unaryPrefix.Operator == Operator.BitwiseNot || unaryPrefix.Operator == Operator.Void)
+                        if (unaryPrefix.Operator == Operator.TypeOf || unaryPrefix.Operator == Operator.LogicalNot || unaryPrefix.Operator == Operator.BitwiseNot || unaryPrefix.Operator == Operator.Void || unaryPrefix.Operator == Operator.Subtraction || unaryPrefix.Operator == Operator.Addition)
                         {
                             node = unaryPrefix.Expression;
                             continue;
                         }
-
-                        return node;
+                        goto default;
                     }
                     case AstFunction function:
                     {
@@ -225,6 +228,68 @@ namespace Njsast.Compress
                         NeedValue = false;
 
                         return node;
+                    }
+                    case AstBinary binary:
+                    {
+                        if (binary.Operator == Operator.LogicalOr)
+                        {
+                            var b = binary.Left.ConstValue();
+                            if (b != null)
+                            {
+                                if (TypeConverter.ToBoolean(b))
+                                {
+                                    node = binary.Left;
+                                    continue;
+                                }
+
+                                node = binary.Right;
+                                continue;
+                            }
+
+                            var right = Transform(binary.Right);
+                            if (right == Remove)
+                            {
+                                node = binary.Left;
+                                continue;
+                            }
+
+                            binary.Right = right;
+                            return node;
+                        }
+                        if (binary.Operator == Operator.LogicalAnd)
+                        {
+                            var b = binary.Left.ConstValue();
+                            if (b != null)
+                            {
+                                if (!TypeConverter.ToBoolean(b))
+                                {
+                                    node = binary.Left;
+                                    continue;
+                                }
+
+                                node = binary.Right;
+                                continue;
+                            }
+
+                            var right = Transform(binary.Right);
+                            if (right == Remove)
+                            {
+                                node = binary.Left;
+                                continue;
+                            }
+
+                            binary.Right = right;
+                            return node;
+                        }
+                        var res = new AstSequence(node.Source, node.Start, node.End);
+                        res.AddIntelligently(Transform(binary.Left));
+                        res.AddIntelligently(Transform(binary.Right));
+                        return res.Expressions.Count switch
+                        {
+                            0 => Remove,
+                            1 => res.Expressions[0],
+                            _ => res
+                        };
                     }
                     case AstVarDef varDef:
                     {
