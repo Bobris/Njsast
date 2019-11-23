@@ -1536,7 +1536,6 @@
         }
         return undefined;
     }
-    ({});
     function preventDefault(event) {
         var pd = event.preventDefault;
         if (pd) pd.call(event); else event.returnValue = !1;
@@ -3294,8 +3293,6 @@
         return !1;
     }
     addEvent("hashchange", 10, emitOnHashChange);
-    ({});
-    ({});
     [];
     newHashObj();
     [];

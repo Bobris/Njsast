@@ -2,7 +2,7 @@ var __bbb = {};
 
 (function(r) {
     "use strict";
-    var e;
+    var e, t;
     Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(r, e) {
@@ -46,20 +46,20 @@ var __bbb = {};
         });
         return n[t] = o;
     };
-    function t() {
+    function n() {
         console.log("shared");
     }
-    function n() {
+    function o() {
         return "unused";
     }
-    ({
-        shared: t,
-        unused: n
-    });
-    t();
+    t = {
+        shared: n,
+        unused: o
+    };
+    n();
     e("cbm-lib.js", "a").then(function(r) {
         console.log(r.hello());
     });
-    __bbb.b = o;
+    __bbb.b = t;
 })();
 

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using Njsast.Bobril;
+using Njsast.Compress;
 using Njsast.ConstEval;
 using Njsast.Output;
 using Njsast.Reader;
@@ -127,6 +128,14 @@ namespace Test
             {
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.RemoveSideEffectFreeCodeCompressOptions);
+                CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
+            }
+
+            foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/All")
+                .GetTypedData())
+            {
+                var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
+                    CompressOptions.Default);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
             }
 

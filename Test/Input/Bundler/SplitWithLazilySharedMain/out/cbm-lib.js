@@ -1,6 +1,6 @@
 (function(r) {
     "use strict";
-    var e;
+    var e, t;
     Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(r, e) {
@@ -25,34 +25,34 @@
             if (o instanceof Promise) return o;
             return Promise.resolve(o);
         }
-        o = new Promise(function(i, s) {
-            var p, b;
-            p = document.createElement("script");
+        o = new Promise(function(i, p) {
+            var s, b;
+            s = document.createElement("script");
             b = setTimeout(u, 120000);
             function u() {
-                p.onload = p.onerror = r;
+                s.onload = s.onerror = r;
                 clearTimeout(b);
                 if (n[t] === o) {
                     n[t] = r;
-                    s(new Error("Fail to load " + e));
+                    p(new Error("Fail to load " + e));
                 } else i(n[t]);
             }
-            p.charset = "utf-8";
-            p.onload = p.onerror = u;
-            p.src = e;
-            document.head.appendChild(p);
+            s.charset = "utf-8";
+            s.onload = s.onerror = u;
+            s.src = e;
+            document.head.appendChild(s);
         });
         return n[t] = o;
     };
     e(r, "b").then(function(r) {
         return r.shared();
     });
-    function t() {
+    function n() {
         return "Hello";
     }
-    ({
-        hello: t
-    });
-    __bbb.a = n;
+    t = {
+        hello: n
+    };
+    __bbb.a = t;
 })();
 

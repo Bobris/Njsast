@@ -18,6 +18,8 @@ namespace Njsast.Compress
                     {
                         return inList ? Remove : node;
                     }
+                    case AstWith _:
+                        return node;
                     case AstAssign assign:
                     {
                         if (assign.Operator == Operator.Assignment)
@@ -160,6 +162,23 @@ namespace Njsast.Compress
                         return Remove;
                     case AstSymbolRef _:
                         return Remove;
+                    case AstWith _:
+                        return node;
+                    case AstObject obj:
+                    {
+                        var res = new AstSequence(node.Source, node.Start, node.End);
+                        foreach (var objProperty in obj.Properties)
+                        {
+                            if (objProperty is AstObjectKeyVal kv)
+                            {
+                                if (!(kv.Key is AstSymbolProperty))
+                                    res.AddIntelligently(Transform(kv.Key));
+                                res.AddIntelligently(Transform(kv.Value));
+                            }
+                        }
+
+                        return res.Expressions.Count == 0 ? Remove : res;
+                    }
                     case AstUnaryPrefix unaryPrefix:
                     {
                         if (unaryPrefix.Operator == Operator.TypeOf || unaryPrefix.Operator == Operator.LogicalNot || unaryPrefix.Operator == Operator.BitwiseNot || unaryPrefix.Operator == Operator.Void)

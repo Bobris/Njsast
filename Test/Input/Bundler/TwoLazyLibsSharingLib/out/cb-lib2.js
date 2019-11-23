@@ -1,6 +1,6 @@
 (function(undefined) {
     "use strict";
-    var __shared_shared;
+    var __shared_shared, __export_$;
     Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -22,9 +22,9 @@
     function world() {
         return "World";
     }
-    ({
+    __export_$ = {
         world: world
-    });
+    };
     __bbb.c = __export_$;
 })();
 

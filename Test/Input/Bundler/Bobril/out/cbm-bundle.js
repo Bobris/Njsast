@@ -1536,7 +1536,6 @@
         }
         return e;
     }
-    ({});
     function At(e) {
         var n = e.preventDefault;
         if (n) n.call(e); else e.returnValue = !1;
@@ -3294,8 +3293,6 @@
         return !1;
     }
     ct("hashchange", 10, Yr);
-    ({});
-    ({});
     [];
     kn();
     [];

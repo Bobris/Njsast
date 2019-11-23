@@ -2,7 +2,7 @@ var __bbb = {};
 
 (function(undefined) {
     "use strict";
-    var __import;
+    var __import, __export_$;
     Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -52,10 +52,10 @@ var __bbb = {};
     function unused() {
         return "unused";
     }
-    ({
+    __export_$ = {
         shared: shared,
         unused: unused
-    });
+    };
     shared();
     __import("cb-lib.js", "a").then(function(lib) {
         console.log(lib.hello());

@@ -1,1 +1,1 @@
-var classExpression=class{[method](){}}
+var classExpression=class{method(){}}
