@@ -3293,10 +3293,7 @@
         return !1;
     }
     addEvent("hashchange", 10, emitOnHashChange);
-    [];
     newHashObj();
-    [];
-    [];
     allStyles = newHashObj();
     newHashObj();
     newHashObj();

@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using Njsast.Ast;
 using Njsast.Reader;
 using Njsast.Runtime;
@@ -164,6 +165,16 @@ namespace Njsast.Compress
                         return Remove;
                     case AstWith _:
                         return node;
+                    case AstArray arr:
+                    {
+                        var res = new AstSequence(node.Source, node.Start, node.End);
+                        foreach (var element in arr.Elements)
+                        {
+                            res.AddIntelligently(Transform(element));
+                        }
+
+                        return res.Expressions.Count == 0 ? Remove : res;
+                    }
                     case AstObject obj:
                     {
                         var res = new AstSequence(node.Source, node.Start, node.End);

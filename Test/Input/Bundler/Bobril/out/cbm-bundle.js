@@ -3293,10 +3293,7 @@
         return !1;
     }
     ct("hashchange", 10, Yr);
-    [];
     kn();
-    [];
-    [];
     We = kn();
     kn();
     kn();
