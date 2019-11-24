@@ -1,59 +1,59 @@
-parameters: 
+parameters:
   runtime: ""
   vmImage: ""
   name: ""
 
 jobs:
-- job: ${{ parameters.name }}
-  displayName: ${{ parameters.name }}
-  pool:
-    vmImage: ${{ parameters.vmImage }}
-  
-  steps:
-  - task: UseDotNet@2
-    inputs:
-      packageType: 'sdk'
-      version: '3.0.100'
+  - job: ${{ parameters.name }}
+    displayName: ${{ parameters.name }}
+    pool:
+      vmImage: ${{ parameters.vmImage }}
 
-  - task: DotNetCoreCLI@2
-    displayName: Restore
-    inputs:
-      command: 'restore'
-      projects: 'Njsast.sln'
-      feedsToUse: 'select'
-      arguments: '--runtime ${{ parameters.runtime }}'
+    steps:
+      - task: UseDotNet@2
+        inputs:
+          packageType: "sdk"
+          version: "3.0.100"
 
-  - task: DotNetCoreCLI@2
-    displayName: Build
-    inputs:
-      command: build
-      projects: 
-      arguments: '--configuration Release --no-restore --runtime ${{ parameters.runtime }}'
+      - task: DotNetCoreCLI@2
+        displayName: Restore
+        inputs:
+          command: "restore"
+          projects: "Njsast.sln"
+          feedsToUse: "select"
+          arguments: "--runtime ${{ parameters.runtime }}"
 
-  - task: DotNetCoreCLI@2
-    displayName: Test
-    inputs:
-      command: 'test'
-      projects: 'Test/Test.csproj'
-      arguments: '--no-build --no-restore --configuration Release --runtime ${{ parameters.runtime }} --logger trx --results-directory $(Common.TestResultsDirectory)'
-      feedsToUse: 'config'
-      publishTestResults: false
-    continueOnError: true
+      - task: DotNetCoreCLI@2
+        displayName: Build
+        inputs:
+          command: build
+          projects: "Njsast/Njsast.csproj"
+          arguments: "--configuration Release --no-restore --runtime ${{ parameters.runtime }}"
 
-  - task: DotNetCoreCLI@2
-    displayName: Functional Test
-    inputs:
-      command: 'test'
-      projects: 'FunctionalTest/FunctionalTest.csproj'
-      arguments: '--no-build --no-restore --configuration Release --runtime ${{ parameters.runtime }} --logger trx --results-directory $(Common.TestResultsDirectory)'
-      feedsToUse: 'config'
-      publishTestResults: false
-    continueOnError: true
+      - task: DotNetCoreCLI@2
+        displayName: Test
+        inputs:
+          command: "test"
+          projects: "Test/Test.csproj"
+          arguments: "--no-restore --configuration Release --runtime ${{ parameters.runtime }} --logger trx --results-directory $(Common.TestResultsDirectory)"
+          feedsToUse: "config"
+          publishTestResults: false
+        continueOnError: true
 
-  - task: PublishTestResults@2
-    inputs:
-      testResultsFormat: 'VSTest'
-      testResultsFiles: '**/*.trx' 
-      searchFolder: '$(Common.TestResultsDirectory)' 
-      failTaskOnFailedTests: true
-      testRunTitle: 'Njsast Tests ${{ parameters.runtime }}'
+      - task: DotNetCoreCLI@2
+        displayName: Functional Test
+        inputs:
+          command: "test"
+          projects: "FunctionalTest/FunctionalTest.csproj"
+          arguments: "--no-restore --configuration Release --runtime ${{ parameters.runtime }} --logger trx --results-directory $(Common.TestResultsDirectory)"
+          feedsToUse: "config"
+          publishTestResults: false
+        continueOnError: true
+
+      - task: PublishTestResults@2
+        inputs:
+          testResultsFormat: "VSTest"
+          testResultsFiles: "**/*.trx"
+          searchFolder: "$(Common.TestResultsDirectory)"
+          failTaskOnFailedTests: true
+          testRunTitle: "Njsast Tests ${{ parameters.runtime }}"
