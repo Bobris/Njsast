@@ -110,7 +110,7 @@ namespace Releaser
                 Console.WriteLine("Njsast repo id: " + NjsastRepo.Id);
                 File.WriteAllText(projDir + "/CHANGELOG.md", string.Join("", outputLogLines.Select(s => s + '\n')));
                 Commands.Stage(gitrepo, "CHANGELOG.md");
-                Commands.Stage(gitrepo, "Njast/Njsast.csproj");
+                Commands.Stage(gitrepo, "Njsast/Njsast.csproj");
                 var author = new LibGit2Sharp.Signature("Releaser", "boris.letocha@gmail.com", DateTime.Now);
                 var committer = author;
                 var commit = gitrepo.Commit("Released " + newVersion, author, committer);
