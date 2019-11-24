@@ -1,4 +1,3 @@
-using System;
 using Njsast.Ast;
 
 namespace Njsast.AstDump
