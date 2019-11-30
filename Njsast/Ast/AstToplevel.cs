@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Net;
 using Njsast.Compress;
 using Njsast.Output;
 using Njsast.Reader;
@@ -82,12 +84,11 @@ namespace Njsast.Ast
             _isScopeFigured = true;
         }
 
-        public void Mangle(ScopeOptions? options = null)
+        public void Mangle(ScopeOptions? options = null, OutputOptions? outputOptions = null)
         {
             options ??= new ScopeOptions();
             new ScopeParser(options).FigureOutScope(this);
-            options.BeforeMangling?.Invoke(this);
-            var m = new MangleTreeWalker(options);
+            var m = new MangleTreeWalker(options, outputOptions);
             m.Mangle(this);
         }
 
@@ -96,23 +97,44 @@ namespace Njsast.Ast
             compressOptions ??= CompressOptions.Default;
             scopeOptions ??= new ScopeOptions();
             var iteration = 0;
-
-            var treeTransformer = new CompressTreeTransformer(compressOptions);
             var transformed = this;
             bool shouldIterateAgain;
-            do
+
+            if (compressOptions.NotUsingCompressTreeTransformer)
             {
-                if (!transformed._isScopeFigured || iteration > 0)
-                    transformed.FigureOutScope(scopeOptions);
-                transformed = (AstToplevel) treeTransformer.Compress(transformed, out shouldIterateAgain);
-                if (compressOptions.EnableRemoveSideEffectFreeCode)
+                do
                 {
-                    transformed.FigureOutScope(scopeOptions);
-                    var tr = new RemoveSideEffectFreeCodeTreeTransformer();
-                    transformed = (AstToplevel)tr.Transform(transformed);
-                    if (tr.Modified) shouldIterateAgain = true;
-                }
-            } while (shouldIterateAgain && ++iteration < compressOptions.MaxPasses);
+                    shouldIterateAgain = false;
+                    if (!transformed._isScopeFigured)
+                        transformed.FigureOutScope(scopeOptions);
+                    if (compressOptions.EnableRemoveSideEffectFreeCode)
+                    {
+                        //File.WriteAllText("CompressIter" + iteration + ".js",
+                        //    transformed.PrintToString(new OutputOptions {Beautify = true}));
+                        var tr = new RemoveSideEffectFreeCodeTreeTransformer();
+                        transformed = (AstToplevel) tr.Transform(transformed);
+                        if (tr.Modified) shouldIterateAgain = true;
+                        transformed._isScopeFigured = false;
+                    }
+                } while (shouldIterateAgain && ++iteration < compressOptions.MaxPasses);
+            }
+            else
+            {
+                var treeTransformer = new CompressTreeTransformer(compressOptions);
+                do
+                {
+                    if (!transformed._isScopeFigured || iteration > 0)
+                        transformed.FigureOutScope(scopeOptions);
+                    transformed = (AstToplevel) treeTransformer.Compress(transformed, out shouldIterateAgain);
+                    if (compressOptions.EnableRemoveSideEffectFreeCode)
+                    {
+                        transformed.FigureOutScope(scopeOptions);
+                        var tr = new RemoveSideEffectFreeCodeTreeTransformer();
+                        transformed = (AstToplevel) tr.Transform(transformed);
+                        if (tr.Modified) shouldIterateAgain = true;
+                    }
+                } while (shouldIterateAgain && ++iteration < compressOptions.MaxPasses);
+            }
 
             return transformed;
         }

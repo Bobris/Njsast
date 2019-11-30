@@ -144,7 +144,11 @@ namespace Njsast.Bundler
                 {
                     stopwatch = Stopwatch.StartNew();
                     topLevelAst.FigureOutScope();
-                    topLevelAst = topLevelAst.Compress(CompressOptions);
+                    topLevelAst = topLevelAst.Compress(CompressOptions, new ScopeOptions
+                    {
+                        TopLevel = false,
+                        BeforeMangling = IgnoreEvalInTwoScopes
+                    });
                     stopwatch.Stop();
                     _ctx.ReportTime("Compress", stopwatch.Elapsed);
                 }
@@ -156,7 +160,7 @@ namespace Njsast.Bundler
                     {
                         FrequencyCounting = MangleWithFrequencyCounting, TopLevel = false,
                         BeforeMangling = IgnoreEvalInTwoScopes
-                    });
+                    }, OutputOptions);
                     stopwatch.Stop();
                     _ctx.ReportTime("Mangle", stopwatch.Elapsed);
                 }

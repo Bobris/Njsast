@@ -1,4 +1,6 @@
-﻿using Njsast.AstDump;
+﻿using System;
+using System.Runtime.CompilerServices;
+using Njsast.AstDump;
 using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Scope;
@@ -57,7 +59,15 @@ namespace Njsast.Ast
         {
             for (var s = Scope; s != null; s = s.ParentScope)
             {
-                s.Enclosed.AddUnique(Thedef!);
+                // Faster AddUnique
+                var span = s.Enclosed.AsReadOnlySpan();
+                var def = Thedef!;
+                foreach (var symb in span)
+                {
+                    if (symb == def) goto alreadyExists;
+                }
+                s.Enclosed.Add(Thedef!);
+                alreadyExists:
                 if (options.KeepFunctionNames)
                 {
                     foreach (var keyValuePair in s.Functions!)
@@ -74,16 +84,6 @@ namespace Njsast.Ast
         {
             Thedef!.References.Add(this);
             MarkEnclosed(options);
-        }
-
-        public bool Unreferenced()
-        {
-            return Thedef!.References.Count == 0 && !Thedef.Scope.Pinned();
-        }
-
-        public bool Global()
-        {
-            return Thedef!.Global;
         }
     }
 }
