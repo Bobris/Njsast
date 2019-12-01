@@ -1,0 +1,9 @@
+var c = !1;
+
+{
+    var canUse;
+    {
+        console.log("OK" + canUse);
+    }
+}
+
