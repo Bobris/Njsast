@@ -20,6 +20,13 @@ namespace Njsast.Compress
                     }
                     case AstWith _:
                         return node;
+                    case AstDefun defun:
+                    {
+                        if (defun.Name!.IsSymbolDef()!.OnlyDeclared)
+                            return Remove;
+                        if (defun.Body.Count == 0) defun.Pure = true;
+                        return null;
+                    }
                     case AstAssign assign:
                     {
                         if (assign.Operator == Operator.Assignment)

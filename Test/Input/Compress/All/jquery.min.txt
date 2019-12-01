@@ -10375,7 +10375,7 @@ Toplevel 1:1 - 5496:1
                             Name: he
                           SymbolRef 1156:60 - 1156:61 [Read]
                             Name: e
-                  Defun 1157:5 - 1157:21
+                  Defun 1157:5 - 1157:21 [Pure]
                     SymbolDefun 1157:14 - 1157:16 [Write]
                       Name: me
                   Defun 1158:5 - 1161:6
