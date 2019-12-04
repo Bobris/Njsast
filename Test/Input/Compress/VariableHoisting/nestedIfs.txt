@@ -12,7 +12,7 @@ Toplevel 1:1 - 7:3
   If 2:1 - 7:2
     SymbolRef 2:5 - 2:6 [Read]
       Name: k
-    Block 2:8 - 7:2
+    BlockStatement 2:8 - 7:2
       SimpleStatement 3:9 - 3:19
         Assign 3:9 - 3:19
           Operator: Assignment
@@ -34,7 +34,7 @@ Toplevel 1:1 - 7:3
               Name: k
             String 4:24 - 4:26
               Value: 
-        Block 4:33 - 6:6
+        BlockStatement 4:33 - 6:6
           If 5:9 - 5:61
             Binary 5:13 - 5:22
               Operator: Equals

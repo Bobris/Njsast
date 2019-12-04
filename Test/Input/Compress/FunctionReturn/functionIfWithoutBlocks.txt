@@ -12,7 +12,7 @@ Toplevel 1:1 - 11:2
     If 3:5 - 8:6
       SymbolRef 3:9 - 3:10 [Read]
         Name: a
-      Block 3:12 - 8:6
+      BlockStatement 3:12 - 8:6
         Var 4:9 - 4:25
           VarDef 4:13 - 4:24
             SymbolVar 4:13 - 4:14 [Write]
@@ -23,7 +23,7 @@ Toplevel 1:1 - 11:2
         If 5:9 - 7:33
           SymbolRef 5:13 - 5:14 [Read]
             Name: b
-          Block 5:16 - 7:10
+          BlockStatement 5:16 - 7:10
             If 6:13 - 6:41
               Binary 6:17 - 6:22
                 Operator: Addition

@@ -22,4 +22,4 @@ Toplevel 1:1 - 15:2
   If 5:1 - 15:2
     SymbolRef 5:5 - 5:6 [Read]
       Name: a
-    Block 5:8 - 15:2
+    BlockStatement 5:8 - 15:2

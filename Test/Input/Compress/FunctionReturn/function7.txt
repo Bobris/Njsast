@@ -10,7 +10,7 @@ Toplevel 1:1 - 9:2
     If 3:5 - 6:6
       SymbolRef 3:9 - 3:10 [Read]
         Name: a
-      Block 3:12 - 6:6
+      BlockStatement 3:12 - 6:6
         SimpleStatement 4:9 - 4:13
           UnaryPostfix 4:9 - 4:12
             Operator: IncrementPostfix

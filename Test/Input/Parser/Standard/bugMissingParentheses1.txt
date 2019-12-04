@@ -35,4 +35,4 @@ Toplevel 1:1 - 1:61
                 Property: next
                 SymbolRef 1:43 - 1:44 [Read]
                   Name: i
-    Block 1:59 - 1:61
+    BlockStatement 1:59 - 1:61

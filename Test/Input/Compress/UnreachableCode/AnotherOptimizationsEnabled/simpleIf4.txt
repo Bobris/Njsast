@@ -2,7 +2,7 @@ Toplevel 1:1 - 6:2
   If 1:1 - 6:2
     SymbolRef 1:5 - 1:6 [Read]
       Name: b
-    Block 1:8 - 3:2
+    BlockStatement 1:8 - 3:2
       SimpleStatement 2:5 - 2:11
         Assign 2:5 - 2:10
           Operator: Assignment
@@ -11,7 +11,7 @@ Toplevel 1:1 - 6:2
           Number 2:9 - 2:10
             Value: 1
             Literal: 1
-    Block 4:6 - 6:2
+    BlockStatement 4:6 - 6:2
       SimpleStatement 5:5 - 5:11
         Assign 5:5 - 5:10
           Operator: Assignment

@@ -13,7 +13,7 @@ Toplevel 1:1 - 9:1
       VarDef 5:7 - 5:13
         SymbolVar 5:7 - 5:13
           Name: canUse
-    Block 6:8 - 8:2
+    BlockStatement 6:8 - 8:2
       SimpleStatement 7:3 - 7:30
         Call 7:3 - 7:29
           Dot 7:3 - 7:14

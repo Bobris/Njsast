@@ -1,6 +1,6 @@
 Toplevel 1:1 - 8:2
   For 1:1 - 8:2
-    Block 1:10 - 8:2
+    BlockStatement 1:10 - 8:2
       SimpleStatement 2:5 - 2:9
         UnaryPostfix 2:5 - 2:8
           Operator: IncrementPostfix
@@ -9,7 +9,7 @@ Toplevel 1:1 - 8:2
       If 3:5 - 6:6
         SymbolRef 3:9 - 3:10 [Read]
           Name: a
-        Block 3:12 - 6:6
+        BlockStatement 3:12 - 6:6
           Continue 4:9 - 4:18
       SimpleStatement 7:5 - 7:9
         UnaryPostfix 7:5 - 7:8

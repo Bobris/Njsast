@@ -71,6 +71,38 @@ namespace Njsast.Compress
                         if (defun.Body.Count == 0) defun.Pure = true;
                         return null;
                     }
+                    case AstBlock block:
+                    {
+                        for (var i = 0; i < block.Body.Count; i++)
+                        {
+                            var si = block.Body[i];
+                            if (si is AstVar astVar && i < block.Body.Count - 1)
+                            {
+                                var si2 = block.Body[i + 1];
+                                if (si2 is AstVar astVar2)
+                                {
+                                    astVar.Definitions.AddRange(astVar2.Definitions);
+                                    block.Body.RemoveAt(i + 1);
+                                    Modified = true;
+                                    i--;
+                                    continue;
+                                }
+                            }
+
+                            if (si is AstBlockStatement statement)
+                            {
+                                if (statement.BlockScope!.IsSafelyInlinenable())
+                                {
+                                    block.Body.ReplaceItemAt(i, statement.Body.AsReadOnlySpan());
+                                    Modified = true;
+                                    i--;
+                                    continue;
+                                }
+                            }
+                        }
+
+                        return null;
+                    }
                     case AstAssign assign:
                     {
                         if (assign.Operator == Operator.Assignment)
@@ -446,8 +478,7 @@ namespace Njsast.Compress
                 return Remove;
             if (s.Count == 1)
                 return s[0];
-            var res = new AstBlockStatement(from.Source, from.Start, from.End);
-            res.Body.TransferFrom(ref s);
+            var res = new AstBlockStatement(@from.Source, @from.Start, @from.End, ref s);
             return res;
         }
 

@@ -4,7 +4,7 @@ Toplevel 1:1 - 1:37
       Name: done
     While 1:7 - 1:37
       True 1:14 - 1:18
-      Block 1:20 - 1:37
+      BlockStatement 1:20 - 1:37
         Continue 1:22 - 1:35
           LabelRef 1:31 - 1:35
             Name: done

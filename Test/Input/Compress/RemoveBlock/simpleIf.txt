@@ -2,7 +2,7 @@ Toplevel 1:1 - 4:2
   If 1:1 - 4:2
     SymbolRef 1:5 - 1:6 [Read]
       Name: a
-    Block 1:8 - 4:2
+    BlockStatement 1:8 - 4:2
       SimpleStatement 2:5 - 2:11
         Assign 2:5 - 2:10
           Operator: Assignment

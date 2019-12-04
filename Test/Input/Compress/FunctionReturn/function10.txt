@@ -5,7 +5,7 @@ Toplevel 1:1 - 6:2
     If 2:5 - 4:6
       SymbolRef 2:9 - 2:10 [Read]
         Name: a
-      Block 2:12 - 4:6
+      BlockStatement 2:12 - 4:6
     Return 5:5 - 5:14
       SymbolRef 5:12 - 5:13 [Read]
         Name: a

@@ -29,7 +29,7 @@ Toplevel 1:1 - 11:1
         Number 5:11 - 5:13
           Value: 11
           Literal: 11
-      Block 5:15 - 7:4
+      BlockStatement 5:15 - 7:4
         SimpleStatement 6:5 - 6:9
           UnaryPostfix 6:5 - 6:8
             Operator: IncrementPostfix

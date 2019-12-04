@@ -5,6 +5,7 @@ function func() {
         } else {
             return d;
         }
+        return c;
     } else {
         return d;
     }

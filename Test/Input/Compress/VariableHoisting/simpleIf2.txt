@@ -10,4 +10,4 @@ Toplevel 1:1 - 5:1
   If 4:1 - 4:10
     SymbolRef 4:5 - 4:6 [Read]
       Name: a
-    Block 4:8 - 4:10
+    BlockStatement 4:8 - 4:10

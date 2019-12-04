@@ -31,14 +31,14 @@ Toplevel 1:1 - 55:1
                 Number 49:16 - 49:17
                   Value: 0
                   Literal: 0
-              Block 49:19 - 53:4
+              BlockStatement 49:19 - 53:4
                 While 50:5 - 52:6
                   UnaryPrefix 50:12 - 50:14
                     Operator: LogicalNot
                     Number 50:13 - 50:14
                       Value: 0
                       Literal: 0
-                  Block 50:16 - 52:6
+                  BlockStatement 50:16 - 52:6
                     If 51:7 - 51:42
                       Binary 51:11 - 51:30
                         Operator: GreaterThan

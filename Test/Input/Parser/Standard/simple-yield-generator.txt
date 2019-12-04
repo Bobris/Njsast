@@ -12,7 +12,7 @@ Toplevel 1:1 - 5:2
         Number 2:20 - 2:21
           Value: 2
           Literal: 2
-      Block 2:23 - 4:6
+      BlockStatement 2:23 - 4:6
         SimpleStatement 3:9 - 3:23
           Yield 3:9 - 3:22
             UnaryPostfix 3:15 - 3:22

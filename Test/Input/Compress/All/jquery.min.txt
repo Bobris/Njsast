@@ -1738,7 +1738,7 @@ Toplevel 1:1 - 5496:1
                             Name: d
                           SymbolRef 177:15 - 177:16 [Read]
                             Name: e
-                        Block 177:19 - 180:10
+                        BlockStatement 177:19 - 180:10
                           For 178:11 - 179:53
                             Assign 178:16 - 178:28
                               Operator: Assignment
@@ -3528,7 +3528,7 @@ Toplevel 1:1 - 5496:1
                                 Name: C
                           SymbolRef 402:70 - 402:71 [Read]
                             Name: E
-                      Block 403:9 - 442:8
+                      BlockStatement 403:9 - 442:8
                         If 404:9 - 419:12
                           Binary 404:13 - 404:40
                             Operator: LogicalAnd
@@ -3561,7 +3561,7 @@ Toplevel 1:1 - 5496:1
                                   Literal: 1
                                 SymbolRef 405:20 - 405:21 [Read]
                                   Name: u
-                            Block 405:27 - 411:12
+                            BlockStatement 405:27 - 411:12
                               If 406:13 - 410:35
                                 Binary 406:17 - 406:24
                                   Operator: StrictEquals
@@ -3570,7 +3570,7 @@ Toplevel 1:1 - 5496:1
                                     Literal: 9
                                   SymbolRef 406:23 - 406:24 [Read]
                                     Name: p
-                                Block 406:26 - 409:14
+                                BlockStatement 406:26 - 409:14
                                   If 407:15 - 407:56
                                     UnaryPrefix 407:19 - 407:45
                                       Operator: LogicalNot
@@ -3654,7 +3654,7 @@ Toplevel 1:1 - 5496:1
                                           Name: a
                                       SymbolRef 410:33 - 410:34 [Read]
                                         Name: n
-                            Block 411:18 - 419:12
+                            BlockStatement 411:18 - 419:12
                               If 412:13 - 412:71
                                 Sub 412:17 - 412:21
                                   Number 412:19 - 412:20
@@ -3778,7 +3778,7 @@ Toplevel 1:1 - 5496:1
                                       Property: nodeName
                                       SymbolRef 424:36 - 424:37 [Read]
                                         Name: e
-                          Block 425:11 - 441:10
+                          BlockStatement 425:11 - 441:10
                             If 426:11 - 433:12
                               Sequence 426:16 - 426:54
                                 Assign 426:17 - 426:22
@@ -3809,7 +3809,7 @@ Toplevel 1:1 - 5496:1
                                         Name: U
                                     SymbolRef 426:52 - 426:53 [Read]
                                       Name: t
-                              Block 426:57 - 433:12
+                              BlockStatement 426:57 - 433:12
                                 SimpleStatement 427:13 - 430:39
                                   Sequence 427:13 - 430:38
                                     Conditional 427:13 - 429:46
@@ -5036,7 +5036,7 @@ Toplevel 1:1 - 5496:1
                                                         Name: t
                                                 SymbolRef 569:63 - 569:64 [Read]
                                                   Name: E
-                                              Block 569:66 - 572:18
+                                              BlockStatement 569:66 - 572:18
                                                 SimpleStatement 570:23 - 570:46
                                                   Assign 570:23 - 570:46
                                                     Operator: Assignment
@@ -5163,7 +5163,7 @@ Toplevel 1:1 - 5496:1
                                                         Name: t
                                                 SymbolRef 584:63 - 584:64 [Read]
                                                   Name: E
-                                              Block 584:66 - 598:18
+                                              BlockStatement 584:66 - 598:18
                                                 SimpleStatement 588:21 - 588:44
                                                   Assign 588:21 - 588:44
                                                     Operator: Assignment
@@ -5179,7 +5179,7 @@ Toplevel 1:1 - 5496:1
                                                 If 589:19 - 596:20
                                                   SymbolRef 589:23 - 589:24 [Read]
                                                     Name: o
-                                                  Block 589:26 - 596:20
+                                                  BlockStatement 589:26 - 596:20
                                                     If 590:21 - 591:34
                                                       Binary 590:25 - 590:72
                                                         Operator: LogicalAnd
@@ -5356,7 +5356,7 @@ Toplevel 1:1 - 5496:1
                                                 Value: *
                                               SymbolRef 613:29 - 613:30 [Read]
                                                 Name: e
-                                            Block 613:32 - 616:18
+                                            BlockStatement 613:32 - 616:18
                                               While 614:19 - 614:70
                                                 Assign 614:27 - 614:37
                                                   Operator: Assignment
@@ -7073,7 +7073,7 @@ Toplevel 1:1 - 5496:1
                                   Name: D
                               SymbolRef 813:9 - 813:10 [Read]
                                 Name: l
-                            Block 814:9 - 817:8
+                            BlockStatement 814:9 - 817:8
                               While 815:9 - 815:60
                                 Assign 815:17 - 815:27
                                   Operator: Assignment
@@ -7175,7 +7175,7 @@ Toplevel 1:1 - 5496:1
                             If 825:7 - 830:45
                               SymbolRef 825:11 - 825:12 [Read]
                                 Name: i
-                              Block 825:14 - 830:8
+                              BlockStatement 825:14 - 830:8
                                 If 826:9 - 829:59
                                   Binary 826:13 - 826:43
                                     Operator: LogicalOr
@@ -7202,7 +7202,7 @@ Toplevel 1:1 - 5496:1
                                         Literal: 11
                                       SymbolRef 826:42 - 826:43 [Read]
                                         Name: i
-                                  Block 826:45 - 829:10
+                                  BlockStatement 826:45 - 829:10
                                     If 827:11 - 827:70
                                       Binary 827:15 - 827:47
                                         Operator: Equals
@@ -8463,15 +8463,15 @@ Toplevel 1:1 - 5496:1
                                                 If 951:17 - 1001:18
                                                   SymbolRef 951:21 - 951:22 [Read]
                                                     Name: c
-                                                  Block 951:24 - 1001:18
+                                                  BlockStatement 951:24 - 1001:18
                                                     If 952:19 - 963:20
                                                       SymbolRef 952:23 - 952:24 [Read]
                                                         Name: y
-                                                      Block 952:26 - 963:20
+                                                      BlockStatement 952:26 - 963:20
                                                         While 953:21 - 961:22
                                                           SymbolRef 953:28 - 953:29 [Read]
                                                             Name: l
-                                                          Block 953:31 - 961:22
+                                                          BlockStatement 953:31 - 961:22
                                                             SimpleStatement 954:23 - 954:29
                                                               Assign 954:23 - 954:28
                                                                 Operator: Assignment
@@ -8574,7 +8574,7 @@ Toplevel 1:1 - 5496:1
                                                             Name: m
                                                           SymbolRef 964:69 - 964:70 [Read]
                                                             Name: p
-                                                      Block 964:73 - 978:20
+                                                      BlockStatement 964:73 - 978:20
                                                         SimpleStatement 965:21 - 972:50
                                                           Sequence 965:21 - 972:49
                                                             Assign 965:22 - 971:27
@@ -8742,7 +8742,7 @@ Toplevel 1:1 - 5496:1
                                                                   Name: a
                                                                 SymbolRef 974:60 - 974:61 [Read]
                                                                   Name: e
-                                                            Block 974:63 - 977:24
+                                                            BlockStatement 974:63 - 977:24
                                                               SimpleStatement 975:25 - 975:42
                                                                 Assign 975:25 - 975:41
                                                                   Operator: Assignment
@@ -9519,7 +9519,7 @@ Toplevel 1:1 - 5496:1
                                                           Property: nodeType
                                                           SymbolRef 1071:52 - 1071:53 [Read]
                                                             Name: e
-                                                    Block 1062:18 - 1071:16
+                                                    BlockStatement 1062:18 - 1071:16
                                                       If 1063:17 - 1070:21
                                                         Assign 1064:20 - 1066:75
                                                           Operator: Assignment
@@ -10575,7 +10575,7 @@ Toplevel 1:1 - 5496:1
                           If 1178:13 - 1195:20
                             SymbolRef 1178:17 - 1178:18 [Read]
                               Name: n
-                            Block 1178:20 - 1181:14
+                            BlockStatement 1178:20 - 1181:14
                               While 1179:15 - 1180:70
                                 Assign 1179:23 - 1179:31
                                   Operator: Assignment
@@ -10712,7 +10712,7 @@ Toplevel 1:1 - 5496:1
                                             Name: e
                                         SymbolRef 1190:33 - 1190:34 [Read]
                                           Name: e
-                                  Block 1191:24 - 1195:20
+                                  BlockStatement 1191:24 - 1195:20
                                     If 1192:21 - 1193:44
                                       Binary 1192:25 - 1192:63
                                         Operator: LogicalAnd
@@ -11250,7 +11250,7 @@ Toplevel 1:1 - 5496:1
                                       Name: r
                                 SymbolRef 1232:36 - 1232:37 [Read]
                                   Name: v
-                              Block 1232:40 - 1235:12
+                              BlockStatement 1232:40 - 1235:12
                                 SimpleStatement 1233:13 - 1233:60
                                   Sequence 1233:13 - 1233:59
                                     Assign 1233:14 - 1233:26
@@ -11326,7 +11326,7 @@ Toplevel 1:1 - 5496:1
                             If 1236:11 - 1249:102
                               SymbolRef 1236:15 - 1236:16 [Read]
                                 Name: e
-                              Block 1236:18 - 1249:12
+                              BlockStatement 1236:18 - 1249:12
                                 If 1237:13 - 1248:14
                                   Binary 1237:17 - 1237:23
                                     Operator: LogicalOr
@@ -11334,11 +11334,11 @@ Toplevel 1:1 - 5496:1
                                       Name: y
                                     SymbolRef 1237:22 - 1237:23 [Read]
                                       Name: d
-                                  Block 1237:25 - 1248:14
+                                  BlockStatement 1237:25 - 1248:14
                                     If 1238:15 - 1242:16
                                       SymbolRef 1238:19 - 1238:20 [Read]
                                         Name: y
-                                      Block 1238:22 - 1242:16
+                                      BlockStatement 1238:22 - 1242:16
                                         SimpleStatement 1239:17 - 1239:42
                                           Sequence 1239:17 - 1239:41
                                             Assign 1239:18 - 1239:24
@@ -11782,7 +11782,7 @@ Toplevel 1:1 - 5496:1
                                     Name: c
                                 SymbolRef 1287:57 - 1287:58 [Read]
                                   Name: t
-                        Block 1288:14 - 1306:10
+                        BlockStatement 1288:14 - 1306:10
                           If 1289:11 - 1304:12
                             Sub 1289:15 - 1289:69
                               SymbolRef 1289:67 - 1289:68 [Read]
@@ -11814,7 +11814,7 @@ Toplevel 1:1 - 5496:1
                                         Name: s
                                       SymbolRef 1289:52 - 1289:53 [Read]
                                         Name: e
-                            Block 1289:71 - 1304:12
+                            BlockStatement 1289:71 - 1304:12
                               For 1290:13 - 1290:72
                                 Assign 1290:18 - 1290:25
                                   Operator: Assignment
@@ -12117,7 +12117,7 @@ Toplevel 1:1 - 5496:1
                             While 1323:9 - 1338:10
                               SymbolRef 1323:16 - 1323:17 [Read]
                                 Name: a
-                              Block 1323:19 - 1338:10
+                              BlockStatement 1323:19 - 1338:10
                                 ForIn 1324:11 - 1336:40
                                   SymbolRef 1324:16 - 1324:17 [Write]
                                     Name: o
@@ -12435,7 +12435,7 @@ Toplevel 1:1 - 5496:1
                                 Operator: LogicalNot
                                 SymbolRef 1351:14 - 1351:15 [Read]
                                   Name: a
-                              Block 1351:17 - 1405:10
+                              BlockStatement 1351:17 - 1405:10
                                 SimpleStatement 1352:11 - 1352:43
                                   Sequence 1352:11 - 1352:42
                                     Binary 1352:11 - 1352:26
@@ -12701,7 +12701,7 @@ Toplevel 1:1 - 5496:1
                                                     Operator: IncrementPostfix
                                                     SymbolRef 1374:17 - 1374:18 [Read] [Write]
                                                       Name: l
-                                                  Block 1375:17 - 1386:16
+                                                  BlockStatement 1375:17 - 1386:16
                                                     If 1376:17 - 1384:18
                                                       Binary 1376:21 - 1376:27
                                                         Operator: LogicalAnd
@@ -12709,7 +12709,7 @@ Toplevel 1:1 - 5496:1
                                                           Name: x
                                                         SymbolRef 1376:26 - 1376:27 [Read]
                                                           Name: o
-                                                      Block 1376:29 - 1384:18
+                                                      BlockStatement 1376:29 - 1384:18
                                                         SimpleStatement 1377:19 - 1377:75
                                                           Sequence 1377:19 - 1377:74
                                                             Assign 1377:20 - 1377:25
@@ -12773,7 +12773,7 @@ Toplevel 1:1 - 5496:1
                                                                   Name: C
                                                               SymbolRef 1379:38 - 1379:39 [Read]
                                                                 Name: n
-                                                            Block 1379:42 - 1382:22
+                                                            BlockStatement 1379:42 - 1382:22
                                                               SimpleStatement 1380:23 - 1380:33
                                                                 Call 1380:23 - 1380:32
                                                                   Dot 1380:23 - 1380:29
@@ -12847,7 +12847,7 @@ Toplevel 1:1 - 5496:1
                                                           Name: l
                                                         SymbolRef 1387:41 - 1387:42 [Read]
                                                           Name: u
-                                                  Block 1387:45 - 1400:16
+                                                  BlockStatement 1387:45 - 1400:16
                                                     SimpleStatement 1388:17 - 1388:23
                                                       Assign 1388:17 - 1388:22
                                                         Operator: Assignment
@@ -12883,7 +12883,7 @@ Toplevel 1:1 - 5496:1
                                                     If 1390:17 - 1393:18
                                                       SymbolRef 1390:21 - 1390:22 [Read]
                                                         Name: e
-                                                      Block 1390:24 - 1393:18
+                                                      BlockStatement 1390:24 - 1393:18
                                                         If 1391:19 - 1391:77
                                                           Binary 1391:23 - 1391:28
                                                             Operator: LessThan
@@ -13120,7 +13120,7 @@ Toplevel 1:1 - 5496:1
                                     Property: length
                                     SymbolRef 1416:35 - 1416:36 [Read]
                                       Name: c
-                              Block 1416:46 - 1443:10
+                              BlockStatement 1416:46 - 1443:10
                                 If 1417:11 - 1427:12
                                   Binary 1418:13 - 1422:34
                                     Operator: LogicalAnd
@@ -13201,7 +13201,7 @@ Toplevel 1:1 - 5496:1
                                         Property: relative
                                         SymbolRef 1422:13 - 1422:14 [Read]
                                           Name: b
-                                  Block 1423:13 - 1427:12
+                                  BlockStatement 1423:13 - 1427:12
                                     If 1424:13 - 1425:24
                                       UnaryPrefix 1424:17 - 1424:77
                                         Operator: LogicalNot
@@ -13302,7 +13302,7 @@ Toplevel 1:1 - 5496:1
                                     Operator: DecrementPostfix
                                     SymbolRef 1429:18 - 1429:19 [Read] [Write]
                                       Name: i
-                                  Block 1429:23 - 1442:12
+                                  BlockStatement 1429:23 - 1442:12
                                     If 1430:13 - 1430:63
                                       Sequence 1430:18 - 1430:54
                                         Assign 1430:19 - 1430:27
@@ -13390,7 +13390,7 @@ Toplevel 1:1 - 5496:1
                                                       Name: t
                                               SymbolRef 1435:61 - 1435:62 [Read]
                                                 Name: t
-                                      Block 1437:15 - 1441:14
+                                      BlockStatement 1437:15 - 1441:14
                                         If 1438:15 - 1439:41
                                           Sequence 1438:20 - 1438:60
                                             Call 1438:20 - 1438:34
@@ -13950,7 +13950,7 @@ Toplevel 1:1 - 5496:1
                         Property: nodeType
                         SymbolRef 1512:19 - 1512:20 [Read]
                           Name: e
-                    Block 1512:31 - 1515:10
+                    BlockStatement 1512:31 - 1515:10
                       If 1513:11 - 1513:38
                         Binary 1513:15 - 1513:30
                           Operator: LogicalAnd
@@ -14648,7 +14648,7 @@ Toplevel 1:1 - 5496:1
                               Operator: TypeOf
                               SymbolRef 1590:43 - 1590:44 [Read]
                                 Name: e
-                        Block 1590:47 - 1614:6
+                        BlockStatement 1590:47 - 1614:6
                           If 1591:7 - 1598:80
                             Binary 1592:9 - 1596:21
                               Operator: LogicalOr
@@ -14764,7 +14764,7 @@ Toplevel 1:1 - 5496:1
                                 Literal: 1
                               SymbolRef 1599:11 - 1599:12 [Read]
                                 Name: r
-                            Block 1599:17 - 1610:8
+                            BlockStatement 1599:17 - 1610:8
                               If 1600:9 - 1608:72
                                 Sequence 1601:12 - 1606:45
                                   Assign 1601:13 - 1601:42
@@ -15317,7 +15317,7 @@ Toplevel 1:1 - 5496:1
                                         Name: n
                                       SymbolRef 1651:65 - 1651:66 [Read]
                                         Name: e
-                              Block 1652:15 - 1655:14
+                              BlockStatement 1652:15 - 1655:14
                                 SimpleStatement 1653:15 - 1653:25
                                   Call 1653:15 - 1653:24
                                     Dot 1653:15 - 1653:21
@@ -16214,7 +16214,7 @@ Toplevel 1:1 - 5496:1
                               Number 1771:58 - 1771:59
                                 Value: 1
                                 Literal: 1
-                          Block 1771:61 - 1777:10
+                          BlockStatement 1771:61 - 1777:10
                             SimpleStatement 1772:11 - 1772:25
                               Assign 1772:11 - 1772:24
                                 Operator: Assignment
@@ -17121,7 +17121,7 @@ Toplevel 1:1 - 5496:1
                                                     Name: i
                                                   SymbolRef 1909:33 - 1909:34 [Read]
                                                     Name: u
-                                              Block 1909:37 - 1928:24
+                                              BlockStatement 1909:37 - 1928:24
                                                 If 1910:25 - 1911:75
                                                   Binary 1910:29 - 1910:64
                                                     Operator: StrictEquals
@@ -19032,7 +19032,7 @@ Toplevel 1:1 - 5496:1
                               Literal: 0
                           SymbolRef 2129:24 - 2129:25 [Read]
                             Name: r
-                        Block 2129:27 - 2140:10
+                        BlockStatement 2129:27 - 2140:10
                           If 2130:11 - 2137:12
                             Binary 2130:15 - 2130:27
                               Operator: StrictNotEquals
@@ -19043,7 +19043,7 @@ Toplevel 1:1 - 5496:1
                                   Literal: 0
                               SymbolRef 2130:26 - 2130:27 [Read]
                                 Name: t
-                            Block 2130:29 - 2137:12
+                            BlockStatement 2130:29 - 2137:12
                               SimpleStatement 2131:13 - 2135:42
                                 Assign 2131:13 - 2135:41
                                   Operator: Assignment
@@ -19308,7 +19308,7 @@ Toplevel 1:1 - 5496:1
                               Name: e
                           SymbolRef 2156:48 - 2156:49 [Read]
                             Name: r
-                Block 2157:9 - 2171:8
+                BlockStatement 2157:9 - 2171:8
                   Try 2158:9 - 2169:23
                     SimpleStatement 2159:11 - 2168:23
                       Assign 2159:11 - 2168:22
@@ -19572,7 +19572,7 @@ Toplevel 1:1 - 5496:1
                               Literal: 0
                           SymbolRef 2198:24 - 2198:25 [Read]
                             Name: n
-                        Block 2198:27 - 2211:10
+                        BlockStatement 2198:27 - 2211:10
                           If 2199:11 - 2209:12
                             Binary 2200:13 - 2201:76
                               Operator: LogicalAnd
@@ -19614,7 +19614,7 @@ Toplevel 1:1 - 5496:1
                                         Name: o
                                       String 2201:60 - 2201:74
                                         Value: hasDataAttrs
-                            Block 2202:13 - 2209:12
+                            BlockStatement 2202:13 - 2209:12
                               SimpleStatement 2203:13 - 2203:26
                                 Assign 2203:13 - 2203:25
                                   Operator: Assignment
@@ -20988,7 +20988,7 @@ Toplevel 1:1 - 5496:1
                       Name: c
                   SymbolRef 2374:23 - 2374:24 [Read]
                     Name: l
-              Block 2374:26 - 2381:6
+              BlockStatement 2374:26 - 2381:6
                 SimpleStatement 2375:7 - 2375:48
                   Sequence 2375:7 - 2375:47
                     Assign 2375:8 - 2375:14
@@ -22150,7 +22150,7 @@ Toplevel 1:1 - 5496:1
                           Name: be
                       SymbolRef 2482:26 - 2482:27 [Read]
                         Name: o
-                    Block 2482:30 - 2490:10
+                    BlockStatement 2482:30 - 2490:10
                       SimpleStatement 2483:11 - 2487:24
                         Sequence 2483:11 - 2487:23
                           Assign 2483:12 - 2483:58
@@ -22406,7 +22406,7 @@ Toplevel 1:1 - 5496:1
                           Name: a
                     SymbolRef 2495:73 - 2495:74 [Read]
                       Name: n
-                  Block 2496:9 - 2499:8
+                  BlockStatement 2496:9 - 2499:8
                     SimpleStatement 2497:9 - 2497:15
                       Assign 2497:9 - 2497:14
                         Operator: Assignment
@@ -22681,7 +22681,7 @@ Toplevel 1:1 - 5496:1
                   Operator: TypeOf
                   SymbolRef 2532:28 - 2532:29 [Read]
                     Name: t
-              Block 2532:31 - 2536:6
+              BlockStatement 2532:31 - 2536:6
                 ForIn 2533:7 - 2534:33
                   SymbolRef 2533:12 - 2533:13 [Write]
                     Name: s
@@ -23033,7 +23033,7 @@ Toplevel 1:1 - 5496:1
                                   Name: i
                                 This 2568:36 - 2568:40 [Read]
                                   Name: this
-                            Block 2568:45 - 2582:14
+                            BlockStatement 2568:45 - 2582:14
                               If 2569:15 - 2581:19
                                 Dot 2569:19 - 2569:27
                                   Property: length
@@ -23330,7 +23330,7 @@ Toplevel 1:1 - 5496:1
                       If 2611:7 - 2651:8
                         SymbolRef 2611:11 - 2611:12 [Read]
                           Name: v
-                        Block 2611:14 - 2651:8
+                        BlockStatement 2611:14 - 2651:8
                           SimpleStatement 2612:9 - 2622:57
                             Sequence 2612:9 - 2622:56
                               Binary 2612:9 - 2612:63
@@ -23929,7 +23929,7 @@ Toplevel 1:1 - 5496:1
                               Property: events
                               SymbolRef 2666:21 - 2666:22 [Read]
                                 Name: v
-                        Block 2666:32 - 2696:8
+                        BlockStatement 2666:32 - 2696:8
                           SimpleStatement 2667:9 - 2667:53
                             Assign 2667:9 - 2667:52
                               Operator: Assignment
@@ -24017,7 +24017,7 @@ Toplevel 1:1 - 5496:1
                                           Value: .
                                 SymbolRef 2672:13 - 2672:14 [Read]
                                   Name: d
-                              Block 2673:13 - 2694:12
+                              BlockStatement 2673:13 - 2694:12
                                 SimpleStatement 2674:13 - 2679:34
                                   Sequence 2674:13 - 2679:33
                                     Assign 2674:14 - 2674:42
@@ -24525,7 +24525,7 @@ Toplevel 1:1 - 5496:1
                                   Name: this
                                 SymbolRef 2712:59 - 2712:60 [Read]
                                   Name: s
-                        Block 2713:9 - 2731:8
+                        BlockStatement 2713:9 - 2731:8
                           SimpleStatement 2714:9 - 2714:58
                             Sequence 2714:9 - 2714:57
                               Assign 2714:10 - 2714:47
@@ -24575,7 +24575,7 @@ Toplevel 1:1 - 5496:1
                                     Property: isPropagationStopped
                                     SymbolRef 2715:33 - 2715:34 [Read]
                                       Name: s
-                            Block 2715:59 - 2729:10
+                            BlockStatement 2715:59 - 2729:10
                               SimpleStatement 2716:11 - 2716:47
                                 Sequence 2716:11 - 2716:46
                                   Assign 2716:12 - 2716:36
@@ -24893,7 +24893,7 @@ Toplevel 1:1 - 5496:1
                                     Property: disabled
                                     SymbolRef 2744:65 - 2744:66 [Read]
                                       Name: l
-                            Block 2744:78 - 2752:12
+                            BlockStatement 2744:78 - 2752:12
                               For 2745:13 - 2750:35
                                 Sequence 2745:18 - 2745:39
                                   Assign 2745:18 - 2745:24
@@ -26608,7 +26608,7 @@ Toplevel 1:1 - 5496:1
                             Operator: TypeOf
                             SymbolRef 2971:32 - 2971:33 [Read]
                               Name: e
-                        Block 2971:35 - 2974:10
+                        BlockStatement 2971:35 - 2974:10
                           ForIn 2972:11 - 2972:45
                             SymbolRef 2972:16 - 2972:17 [Write]
                               Name: i
@@ -26931,7 +26931,7 @@ Toplevel 1:1 - 5496:1
                   Property: nodeType
                   SymbolRef 3009:15 - 3009:16 [Read]
                     Name: t
-              Block 3009:27 - 3017:6
+              BlockStatement 3009:27 - 3017:6
                 If 3010:7 - 3015:79
                   Binary 3011:9 - 3012:63
                     Operator: LogicalAnd
@@ -27356,7 +27356,7 @@ Toplevel 1:1 - 5496:1
                       Name: t
                     SymbolRef 3041:12 - 3041:13 [Read]
                       Name: o
-              Block 3042:7 - 3061:6
+              BlockStatement 3042:7 - 3061:6
                 For 3043:7 - 3047:30
                   Assign 3043:12 - 3043:55
                     Operator: Assignment
@@ -28209,7 +28209,7 @@ Toplevel 1:1 - 5496:1
                               Name: G
                             SymbolRef 3111:15 - 3111:16 [Read]
                               Name: n
-                          Block 3111:19 - 3119:10
+                          BlockStatement 3111:19 - 3119:10
                             If 3112:11 - 3117:12
                               Assign 3112:16 - 3112:32
                                 Operator: Assignment
@@ -28222,7 +28222,7 @@ Toplevel 1:1 - 5496:1
                                       Name: Q
                                   SymbolRef 3112:20 - 3112:21 [Read]
                                     Name: n
-                              Block 3112:35 - 3117:12
+                              BlockStatement 3112:35 - 3117:12
                                 If 3113:13 - 3115:77
                                   Dot 3113:17 - 3113:25
                                     Property: events
@@ -28549,7 +28549,7 @@ Toplevel 1:1 - 5496:1
                                     Property: nodeType
                                     This 3160:19 - 3160:23 [Read]
                                       Name: this
-                              Block 3161:13 - 3164:12
+                              BlockStatement 3161:13 - 3164:12
                                 SimpleStatement 3162:17 - 3162:32
                                   Assign 3162:17 - 3162:32
                                     Operator: Assignment
@@ -28887,7 +28887,7 @@ Toplevel 1:1 - 5496:1
                                                 Value: 
                                     SymbolRef 3202:16 - 3202:18 [Read]
                                       Name: ge
-                              Block 3203:15 - 3211:14
+                              BlockStatement 3203:15 - 3211:14
                                 SimpleStatement 3204:15 - 3204:38
                                   Assign 3204:15 - 3204:37
                                     Operator: Assignment
@@ -29604,7 +29604,7 @@ Toplevel 1:1 - 5496:1
                     If 3292:7 - 3308:8
                       SymbolRef 3292:11 - 3292:12 [Read]
                         Name: u
-                      Block 3292:14 - 3308:8
+                      BlockStatement 3292:14 - 3308:8
                         SimpleStatement 3293:9 - 3297:44
                           Sequence 3293:9 - 3297:43
                             Assign 3293:10 - 3294:89
@@ -30653,7 +30653,7 @@ Toplevel 1:1 - 5496:1
                     Name: $e
                 SymbolRef 3403:17 - 3403:18 [Read]
                   Name: a
-              Block 3403:21 - 3406:6
+              BlockStatement 3403:21 - 3406:6
                 If 3404:7 - 3404:24
                   UnaryPrefix 3404:11 - 3404:13
                     Operator: LogicalNot
@@ -30884,7 +30884,7 @@ Toplevel 1:1 - 5496:1
                               If 3426:11 - 3429:12
                                 SymbolRef 3426:15 - 3426:16 [Read]
                                   Name: t
-                                Block 3426:18 - 3429:12
+                                BlockStatement 3426:18 - 3429:12
                                   SimpleStatement 3427:17 - 3427:37
                                     Assign 3427:17 - 3427:37
                                       Operator: Assignment
@@ -31139,7 +31139,7 @@ Toplevel 1:1 - 5496:1
                             Property: style
                             SymbolRef 3457:56 - 3457:57 [Read]
                               Name: e
-                        Block 3457:65 - 3483:8
+                        BlockStatement 3457:65 - 3483:8
                           SimpleStatement 3461:11 - 3461:19
                             Assign 3461:11 - 3461:19
                               Operator: Assignment
@@ -32309,7 +32309,7 @@ Toplevel 1:1 - 5496:1
                                     Name: Array
                                 SymbolRef 3571:31 - 3571:32 [Read]
                                   Name: t
-                              Block 3571:35 - 3575:14
+                              BlockStatement 3571:35 - 3575:14
                                 For 3572:15 - 3573:49
                                   Sequence 3572:20 - 3572:43
                                     Assign 3572:20 - 3572:29
@@ -34744,7 +34744,7 @@ Toplevel 1:1 - 5496:1
                                       Name: st
                                   SymbolRef 3838:36 - 3838:37 [Read]
                                     Name: i
-                              Block 3838:41 - 3848:12
+                              BlockStatement 3838:41 - 3848:12
                                 If 3839:13 - 3846:14
                                   Sequence 3840:16 - 3842:42
                                     UnaryPrefix 3840:16 - 3840:27
@@ -34779,7 +34779,7 @@ Toplevel 1:1 - 5496:1
                                           Value: hide
                                         String 3842:35 - 3842:41
                                           Value: show
-                                  Block 3843:15 - 3846:14
+                                  BlockStatement 3843:15 - 3846:14
                                     If 3844:15 - 3844:67
                                       Binary 3844:19 - 3844:56
                                         Operator: LogicalOr
@@ -37410,7 +37410,7 @@ Toplevel 1:1 - 5496:1
                                       Name: e
                                     String 4094:56 - 4094:63
                                       Value: input
-                                Block 4094:66 - 4097:14
+                                BlockStatement 4094:66 - 4097:14
                                   SimpleStatement 4095:19 - 4095:30
                                     Assign 4095:19 - 4095:30
                                       Operator: Assignment
@@ -38408,7 +38408,7 @@ Toplevel 1:1 - 5496:1
                                           Name: i
                                     String 4226:70 - 4226:73
                                       Value:  
-                            Block 4226:77 - 4231:14
+                            BlockStatement 4226:77 - 4231:14
                               SimpleStatement 4227:15 - 4227:21
                                 Assign 4227:15 - 4227:20
                                   Operator: Assignment
@@ -38642,7 +38642,7 @@ Toplevel 1:1 - 5496:1
                                           Name: i
                                     String 4250:70 - 4250:73
                                       Value:  
-                            Block 4250:77 - 4256:14
+                            BlockStatement 4250:77 - 4256:14
                               SimpleStatement 4251:15 - 4251:21
                                 Assign 4251:15 - 4251:20
                                   Operator: Assignment
@@ -38864,7 +38864,7 @@ Toplevel 1:1 - 5496:1
                                 If 4272:15 - 4276:217
                                   SymbolRef 4272:19 - 4272:20 [Read]
                                     Name: a
-                                  Block 4272:22 - 4276:16
+                                  BlockStatement 4272:22 - 4276:16
                                     SimpleStatement 4273:17 - 4273:53
                                       Sequence 4273:17 - 4273:52
                                         Assign 4273:18 - 4273:23
@@ -39658,7 +39658,7 @@ Toplevel 1:1 - 5496:1
                                               Name: n
                                           String 4352:61 - 4352:71
                                             Value: optgroup
-                                  Block 4353:17 - 4356:16
+                                  BlockStatement 4353:17 - 4356:16
                                     If 4354:17 - 4354:53
                                       Sequence 4354:22 - 4354:41
                                         Assign 4354:23 - 4354:37
@@ -40356,7 +40356,7 @@ Toplevel 1:1 - 5496:1
                                       Name: n
                                     SymbolRef 4421:56 - 4421:57 [Read]
                                       Name: t
-                        Block 4422:9 - 4462:8
+                        BlockStatement 4422:9 - 4462:8
                           If 4423:9 - 4432:10
                             Binary 4423:13 - 4423:39
                               Operator: LogicalAnd
@@ -40379,7 +40379,7 @@ Toplevel 1:1 - 5496:1
                                     Name: x
                                   SymbolRef 4423:37 - 4423:38 [Read]
                                     Name: n
-                            Block 4423:41 - 4432:10
+                            BlockStatement 4423:41 - 4432:10
                               For 4424:11 - 4429:32
                                 Sequence 4425:13 - 4425:74
                                   Assign 4425:13 - 4425:36
@@ -42838,13 +42838,13 @@ Toplevel 1:1 - 5496:1
                                 If 4701:15 - 4710:16
                                   SymbolRef 4701:19 - 4701:20 [Read]
                                     Name: h
-                                  Block 4701:22 - 4710:16
+                                  BlockStatement 4701:22 - 4710:16
                                     If 4702:17 - 4708:18
                                       UnaryPrefix 4702:21 - 4702:23
                                         Operator: LogicalNot
                                         SymbolRef 4702:22 - 4702:23 [Read]
                                           Name: n
-                                      Block 4702:25 - 4708:18
+                                      BlockStatement 4702:25 - 4708:18
                                         SimpleStatement 4703:19 - 4703:26
                                           Assign 4703:19 - 4703:25
                                             Operator: Assignment
@@ -43236,7 +43236,7 @@ Toplevel 1:1 - 5496:1
                               Property: crossDomain
                               SymbolRef 4747:19 - 4747:20 [Read]
                                 Name: v
-                        Block 4748:11 - 4758:10
+                        BlockStatement 4748:11 - 4758:10
                           SimpleStatement 4749:11 - 4749:36
                             Assign 4749:11 - 4749:35
                               Operator: Assignment
@@ -43942,7 +43942,7 @@ Toplevel 1:1 - 5496:1
                                 Name: t
                               SymbolRef 4812:29 - 4812:30 [Read]
                                 Name: T
-                        Block 4813:11 - 4827:10
+                        BlockStatement 4813:11 - 4827:10
                           If 4814:11 - 4815:22
                             Sequence 4814:16 - 4814:73
                               Assign 4814:17 - 4814:33
@@ -44308,7 +44308,7 @@ Toplevel 1:1 - 5496:1
                                                       Name: s
                                                 SymbolRef 4856:43 - 4856:44 [Read]
                                                   Name: r
-                                            Block 4856:47 - 4859:22
+                                            BlockStatement 4856:47 - 4859:22
                                               SimpleStatement 4857:23 - 4857:36
                                                 Call 4857:23 - 4857:35
                                                   Dot 4857:23 - 4857:32
@@ -44340,13 +44340,13 @@ Toplevel 1:1 - 5496:1
                                                 Literal: 0
                                               SymbolRef 4860:36 - 4860:37 [Read]
                                                 Name: u
-                                        Block 4861:22 - 4870:18
+                                        BlockStatement 4861:22 - 4870:18
                                           ForIn 4862:19 - 4868:20
                                             SymbolRef 4862:24 - 4862:25 [Write]
                                               Name: i
                                             SymbolRef 4862:29 - 4862:30 [Read]
                                               Name: n
-                                            Block 4862:32 - 4868:20
+                                            BlockStatement 4862:32 - 4868:20
                                               If 4863:21 - 4866:22
                                                 Binary 4863:25 - 4863:62
                                                   Operator: LogicalOr
@@ -44377,7 +44377,7 @@ Toplevel 1:1 - 5496:1
                                                       Property: converters
                                                       SymbolRef 4863:34 - 4863:35 [Read]
                                                         Name: e
-                                                Block 4863:64 - 4866:22
+                                                BlockStatement 4863:64 - 4866:22
                                                   SimpleStatement 4864:23 - 4864:29
                                                     Assign 4864:23 - 4864:28
                                                       Operator: Assignment
@@ -44632,7 +44632,7 @@ Toplevel 1:1 - 5496:1
                                                   Name: u
                                                 SymbolRef 4892:47 - 4892:48 [Read]
                                                   Name: o
-                                            Block 4892:50 - 4917:20
+                                            BlockStatement 4892:50 - 4917:20
                                               If 4893:21 - 4903:26
                                                 UnaryPrefix 4893:25 - 4893:61
                                                   Operator: LogicalNot
@@ -44727,7 +44727,7 @@ Toplevel 1:1 - 5496:1
                                                                   Name: s
                                                             SymbolRef 4897:53 - 4897:54 [Read]
                                                               Name: l
-                                                    Block 4898:27 - 4903:26
+                                                    BlockStatement 4898:27 - 4903:26
                                                       SimpleStatement 4899:27 - 4901:76
                                                         Conditional 4899:27 - 4901:75
                                                           Binary 4899:27 - 4899:35
@@ -48163,7 +48163,7 @@ Toplevel 1:1 - 5496:1
                             Literal: 0
                           This 5318:13 - 5318:17 [Read]
                             Name: this
-                        Block 5318:22 - 5345:10
+                        BlockStatement 5318:22 - 5345:10
                           SimpleStatement 5322:13 - 5322:24
                             Assign 5322:13 - 5322:24
                               Operator: Assignment
@@ -48217,7 +48217,7 @@ Toplevel 1:1 - 5496:1
                                     Property: getBoundingClientRect
                                     SymbolRef 5324:53 - 5324:54 [Read]
                                       Name: r
-                            Block 5325:16 - 5340:12
+                            BlockStatement 5325:16 - 5340:12
                               SimpleStatement 5326:13 - 5328:57
                                 Sequence 5326:13 - 5328:56
                                   Assign 5326:14 - 5326:31
