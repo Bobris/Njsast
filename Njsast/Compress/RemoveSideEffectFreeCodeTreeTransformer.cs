@@ -85,18 +85,37 @@ namespace Njsast.Compress
                                     block.Body.RemoveAt(i + 1);
                                     Modified = true;
                                     i--;
-                                    continue;
                                 }
                             }
-
-                            if (si is AstBlockStatement statement)
+                            else if (si is AstLet astLet && i < block.Body.Count - 1)
+                            {
+                                var si2 = block.Body[i + 1];
+                                if (si2 is AstLet astLet2)
+                                {
+                                    astLet.Definitions.AddRange(astLet2.Definitions);
+                                    block.Body.RemoveAt(i + 1);
+                                    Modified = true;
+                                    i--;
+                                }
+                            }
+                            else if (si is AstConst astConst && i < block.Body.Count - 1)
+                            {
+                                var si2 = block.Body[i + 1];
+                                if (si2 is AstConst astConst2)
+                                {
+                                    astConst.Definitions.AddRange(astConst2.Definitions);
+                                    block.Body.RemoveAt(i + 1);
+                                    Modified = true;
+                                    i--;
+                                }
+                            }
+                            else if (si is AstBlockStatement statement)
                             {
                                 if (statement.BlockScope!.IsSafelyInlinenable())
                                 {
                                     block.Body.ReplaceItemAt(i, statement.Body.AsReadOnlySpan());
                                     Modified = true;
                                     i--;
-                                    continue;
                                 }
                             }
                         }

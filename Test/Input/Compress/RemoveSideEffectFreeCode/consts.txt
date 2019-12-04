@@ -1,0 +1,40 @@
+Toplevel 1:1 - 9:1
+  Const 1:1 - 1:13
+    VarDef 1:7 - 1:12
+      SymbolConst 1:7 - 1:8 [Write]
+        Name: a
+      Number 1:11 - 1:12
+        Value: 1
+        Literal: 1
+    VarDef 2:7 - 2:12
+      SymbolConst 2:7 - 2:8 [Write]
+        Name: b
+      Number 2:11 - 2:12
+        Value: 2
+        Literal: 2
+  BlockStatement 3:1 - 6:2
+    Const 4:3 - 4:15
+      VarDef 4:9 - 4:14
+        SymbolConst 4:9 - 4:10 [Write]
+          Name: c
+        Number 4:13 - 4:14
+          Value: 3
+          Literal: 3
+    SimpleStatement 5:3 - 5:18
+      Call 5:3 - 5:17
+        Dot 5:3 - 5:14
+          Property: log
+          SymbolRef 5:3 - 5:10 [Read]
+            Name: console
+        SymbolRef 5:15 - 5:16 [Read]
+          Name: c
+  SimpleStatement 8:1 - 8:19
+    Call 8:1 - 8:18
+      Dot 8:1 - 8:12
+        Property: log
+        SymbolRef 8:1 - 8:8 [Read]
+          Name: console
+      SymbolRef 8:13 - 8:14 [Read]
+        Name: a
+      SymbolRef 8:16 - 8:17 [Read]
+        Name: b
