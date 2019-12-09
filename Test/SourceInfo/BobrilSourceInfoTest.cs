@@ -49,9 +49,10 @@ namespace Test.SourceInfo
             //var m1 = sourceInfo.Assets![0];
             //sourceReplacer.Replace(m1.StartLine, m1.StartCol, m1.EndLine, m1.EndCol, "\"" + m1.Name + "\"");
             sourceReplacer.Apply(adder);
+            builder.AddText("//# sourceMappingURL=index.js.map");
             //builder.AddSource(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")), SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
-            output["index.sourceinfo.json"] = JsonSerializer.Serialize(sourceInfo, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true });
-            output["index.js"] = builder.Content() + "//# sourceMappingURL=index.js.map";
+            output["index.sourceinfo.json"] = JsonSerializer.Serialize(sourceInfo, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true }).Replace("\r\n","\n");
+            output["index.js"] = builder.Content();
             output["index.js.map"] = builder.Build(".", "..").ToString();
 
             return output;
