@@ -12,6 +12,7 @@ using Test.Bundler;
 using Test.Compress;
 using Test.ConstEval;
 using Test.Reader;
+using Test.SourceInfo;
 
 namespace Test
 {
@@ -149,6 +150,20 @@ namespace Test
                         bundlerTestData.InputContent.TryGetValue("out/" + pair.Key, out var inputContent)
                             ? inputContent
                             : "", pair.Value, ref errors, "bundler result", bundlerTestData.Input + "/out/" + pair.Key,
+                        "");
+                }
+            }
+
+            foreach (var bundlerTestData in new BobrilSourceInfoDataProviderAttribute("Input/BobrilSourceInfo").GetTypedData())
+            {
+                var outFiles = BobrilSourceInfoTest.BobrilSourceInfoTestCore(bundlerTestData);
+                tests++;
+                foreach (var pair in outFiles)
+                {
+                    CheckError(
+                        bundlerTestData.InputContent.TryGetValue("out/" + pair.Key, out var inputContent)
+                            ? inputContent
+                            : "", pair.Value, ref errors, "bobril sourceinfo result", bundlerTestData.Input + "/out/" + pair.Key,
                         "");
                 }
             }

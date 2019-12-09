@@ -1,0 +1,35 @@
+{
+  "BobrilImport": "b",
+  "BobrilG11NImport": "g",
+  "Imports": [
+    {
+      "StartCol": 16,
+      "StartLine": 2,
+      "EndCol": 24,
+      "EndLine": 2,
+      "Name": "bobril"
+    },
+    {
+      "StartCol": 16,
+      "StartLine": 3,
+      "EndCol": 29,
+      "EndLine": 3,
+      "Name": "bobril-g11n"
+    }
+  ],
+  "Translations": [
+    {
+      "StartCol": 8,
+      "StartLine": 7,
+      "EndCol": 14,
+      "EndLine": 7,
+      "StartHintCol": 0,
+      "StartHintLine": 0,
+      "EndHintCol": 0,
+      "EndHintLine": 0,
+      "Message": "{p1}",
+      "JustFormat": false,
+      "WithParams": false
+    }
+  ]
+}
