@@ -35,6 +35,7 @@ namespace Njsast.SourceMap
                 curCol = m.ToCol;
             }
             sourceAdder.Add(curLine, curCol, int.MaxValue, 0);
+            sourceAdder.FlushLine();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

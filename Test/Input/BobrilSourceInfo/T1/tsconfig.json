@@ -24,9 +24,8 @@
     "skipDefaultLibCheck": true,
     "sourceMap": true,
     "target": "es5",
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "newLine": "lf"
   },
-  "include": [
-    "**/*"
-  ]
+  "include": ["**/*"]
 }
