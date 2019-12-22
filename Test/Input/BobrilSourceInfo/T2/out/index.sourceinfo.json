@@ -75,15 +75,6 @@
         },
         {
           "Type": 0,
-          "StartCol": 31,
-          "StartLine": 6,
-          "EndCol": 37,
-          "EndLine": 6,
-          "PlaceCol": 0,
-          "PlaceLine": 0
-        },
-        {
-          "Type": 0,
           "StartCol": 50,
           "StartLine": 4,
           "EndCol": 50,
@@ -129,6 +120,15 @@
           "PlaceCol": 0,
           "PlaceLine": 0,
           "Text": "}"
+        },
+        {
+          "Type": 0,
+          "StartCol": 31,
+          "StartLine": 6,
+          "EndCol": 37,
+          "EndLine": 6,
+          "PlaceCol": 0,
+          "PlaceLine": 0
         },
         {
           "Type": 0,

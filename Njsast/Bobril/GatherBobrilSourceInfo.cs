@@ -413,8 +413,10 @@ namespace Njsast.Bobril
 
             void ProcessVdomTranslation(AstCall call)
             {
-// b.createElement(g.T, { p1: "param1" }, "Before", b.createElement("hr", null), g.t("{p1}"))
-// g.t("Before{1}{p1}", { p1: "param1", 1: function() { return b.createElement("hr", null); } })
+                // Convert this input:
+                // b.createElement(g.T, { p1: "param1" }, "Before", b.createElement("hr", null), g.t("{p1}"))
+                // Into this output:
+                // g.t("Before{1/}{p1}", { p1: "param1", 1:function(){return b.createElement("hr", null)}})
                 var tr = new SourceInfo.VdomTranslation();
                 tr.Replacements = new List<SourceInfo.Replacement>();
                 tr.KnownParams = new List<string>();
@@ -472,6 +474,25 @@ namespace Njsast.Bobril
                     }
                     else
                     {
+                        for (var i = 0; i < astObject.Properties.Count; i++)
+                        {
+                            if (astObject.Properties[i] is AstObjectKeyVal keyVal)
+                            {
+                                var key = keyVal.Key.ConstValue(_evalCtx);
+                                if (key as string != "hint") continue;
+                                var val = keyVal.Value.ConstValue(_evalCtx) as string;
+                                tr.Hint = val;
+                                tr.Replacements!.Add(new SourceInfo.Replacement
+                                {
+                                    Type = SourceInfo.ReplacementType.Normal,
+                                    StartLine = astObject.Properties[i].Start.Line,
+                                    StartCol = astObject.Properties[i].Start.Column,
+                                    EndLine = NextStartOrEnd(i, astObject.Properties.AsReadOnlySpan()).Line,
+                                    EndCol = NextStartOrEnd(i, astObject.Properties.AsReadOnlySpan()).Col,
+                                });
+                            }
+                        }
+
                         ctx.InsertPropLine = astObject.Properties.Last.End.Line;
                         ctx.InsertPropCol = astObject.Properties.Last.End.Column;
                         ctx.InsertPropComma = true;
@@ -557,7 +578,7 @@ namespace Njsast.Bobril
                     var child = children[i];
                     if (child is AstString str)
                     {
-                        ctx.SB.Append(str.Value);
+                        ctx.SB.Append(str.Value.Replace("\\", "\\\\"));
                         tr.Replacements!.Add(new SourceInfo.Replacement
                         {
                             Type = SourceInfo.ReplacementType.Normal,
@@ -596,13 +617,6 @@ namespace Njsast.Bobril
                         if (!IsSelfClosingVdomChild(nestedChildren))
                         {
                             var idx = ++ctx.ElementCounter;
-                            ctx.SB.Append("{");
-                            ctx.SB.Append(idx);
-                            ctx.SB.Append("}");
-                            GatherVdomTranslation(nestedChildren, tr, ref ctx);
-                            ctx.SB.Append("{/");
-                            ctx.SB.Append(idx);
-                            ctx.SB.Append("}");
                             tr.Replacements!.Add(new SourceInfo.Replacement
                             {
                                 Type = SourceInfo.ReplacementType.Normal,
@@ -663,6 +677,14 @@ namespace Njsast.Bobril
                                 });
                             }
 
+                            ctx.SB.Append("{");
+                            ctx.SB.Append(idx);
+                            ctx.SB.Append("}");
+                            GatherVdomTranslation(nestedChildren, tr, ref ctx);
+                            ctx.SB.Append("{/");
+                            ctx.SB.Append(idx);
+                            ctx.SB.Append("}");
+
                             continue;
                         }
                     }
@@ -714,7 +736,7 @@ namespace Njsast.Bobril
                 }
             }
 
-            static (int Line, int Col) NextStartOrEnd(int idx, in ReadOnlySpan<AstNode> children)
+            static (int Line, int Col) NextStartOrEnd<T>(int idx, in ReadOnlySpan<T> children) where T:AstNode
             {
                 if (idx == children.Length - 1)
                 {
