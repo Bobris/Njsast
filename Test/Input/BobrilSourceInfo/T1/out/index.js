@@ -2,8 +2,5 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var b = require("bobril");
 var g = require("bobril-g11n");
-b.init(function () { return (b.createElement(g.T, { p1: "param1" },
-    "Before",
-    b.createElement("hr", null),
-    g.t("{p1}"))); });
+b.init(function () { return (g.t("Before{1/}{p1}", { p1: "param1", 1:function(){return b.createElement("hr", null)} })); });
 //# sourceMappingURL=index.js.map

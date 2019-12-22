@@ -20,15 +20,17 @@ namespace Releaser
 
         static async Task<int> MainAsync(string[] args)
         {
-            var projDir = Environment.CurrentDirectory;
+            string projDir = Environment.CurrentDirectory;
             while (!File.Exists(projDir + "/CHANGELOG.md"))
             {
-                projDir = Path.GetDirectoryName(projDir);
-                if (string.IsNullOrWhiteSpace(projDir))
+                var parentDir = Path.GetDirectoryName(projDir);
+                if (string.IsNullOrWhiteSpace(parentDir))
                 {
                     Console.WriteLine("Cannot find CHANGELOG.md in some parent directory");
                     return 1;
                 }
+
+                projDir = parentDir;
             }
             Console.WriteLine("Project root directory: " + projDir);
             var logLines = File.ReadAllLines(projDir + "/CHANGELOG.md");

@@ -2,8 +2,10 @@ using Njsast.Ast;
 using Njsast.ConstEval;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace Njsast.Bobril
 {
@@ -36,13 +38,14 @@ namespace Njsast.Bobril
             {
                 if (module.Name == "bobril" && export is string expName)
                 {
-                    if (expName == "asset" || expName == "styleDef" || expName == "styleDefEx" || expName == "sprite")
+                    if (expName == "asset" || expName == "styleDef" || expName == "styleDefEx" || expName == "sprite" ||
+                        expName == "createElement")
                         return new JsModuleExport(module.Name, expName);
                 }
 
                 if (module.Name == "bobril-g11n" && export is string expName2)
                 {
-                    if (expName2 == "t" || expName2 == "f" || expName2 == "dt")
+                    if (expName2 == "t" || expName2 == "f" || expName2 == "dt" || expName2 == "T")
                         return new JsModuleExport(module.Name, expName2);
                 }
 
@@ -182,6 +185,14 @@ namespace Njsast.Bobril
                         {
                             if (exp.ModuleName == "bobril")
                             {
+                                if (exp.ExportName == "createElement" && call.Args.Count >= 2 &&
+                                    IsComponentT(call.Args[0]))
+                                {
+                                    ProcessVdomTranslation(call);
+                                    StopDescending();
+                                    return;
+                                }
+
                                 if (exp.ExportName == "asset" && call.Args.Count >= 1)
                                 {
                                     var nameArg = call.Args[0];
@@ -325,11 +336,10 @@ namespace Njsast.Bobril
                                     if (!(paramsArg is AstNull) && !(paramsArg is AstUndefined))
                                     {
                                         tr.WithParams = true;
-                                        var pars = paramsArg as IDictionary<object, object>;
-                                        if (pars != null)
+                                        if (paramsArg is IDictionary<object, object> pars)
                                         {
                                             tr.KnownParams = pars.Keys.Select(a => a as string).Where(a => a != null)
-                                                .ToList();
+                                                .Select(a => a!).ToList();
                                         }
                                     }
 
@@ -358,8 +368,11 @@ namespace Njsast.Bobril
                                             tr.WithParams = true;
                                             if (paramsValue is IDictionary<object, object> pars)
                                             {
-                                                tr.KnownParams = pars.Keys.Select(a => a is double d?d.ToString(CultureInfo.InvariantCulture):a as string)
-                                                    .Where(a => a != null).ToList();
+                                                tr.KnownParams = pars.Keys.Select(a =>
+                                                        a is double d
+                                                            ? d.ToString(CultureInfo.InvariantCulture)
+                                                            : a as string)
+                                                    .Where(a => a != null).Select(a => a!).ToList();
                                             }
                                         }
 
@@ -387,6 +400,300 @@ namespace Njsast.Bobril
                         _evalCtx.JustModuleExports = false;
                     }
                 }
+            }
+
+            struct VdomContext
+            {
+                public StringBuilder SB;
+                public int ElementCounter;
+                public int InsertPropLine;
+                public int InsertPropCol;
+                public bool InsertPropComma;
+            }
+
+            void ProcessVdomTranslation(AstCall call)
+            {
+// b.createElement(g.T, { p1: "param1" }, "Before", b.createElement("hr", null), g.t("{p1}"))
+// g.t("Before{1}{p1}", { p1: "param1", 1: function() { return b.createElement("hr", null); } })
+                var tr = new SourceInfo.VdomTranslation();
+                tr.Replacements = new List<SourceInfo.Replacement>();
+                tr.KnownParams = new List<string>();
+                tr.StartLine = call.Start.Line;
+                tr.StartCol = call.Start.Column;
+                tr.EndLine = call.End.Line;
+                tr.EndCol = call.End.Column;
+                tr.Replacements.Add(new SourceInfo.Replacement
+                {
+                    Type = SourceInfo.ReplacementType.Normal,
+                    StartLine = call.Expression.Start.Line,
+                    StartCol = call.Expression.Start.Column,
+                    EndLine = call.Expression.End.Line,
+                    EndCol = call.Expression.End.Column,
+                    Text = $"{SourceInfo.BobrilG11NImport}.t"
+                });
+                tr.Replacements.Add(new SourceInfo.Replacement
+                {
+                    Type = SourceInfo.ReplacementType.MessageId,
+                    StartLine = call.Args[0].Start.Line,
+                    StartCol = call.Args[0].Start.Column,
+                    EndLine = call.Args[0].End.Line,
+                    EndCol = call.Args[0].End.Column
+                });
+                if (SourceInfo.VdomTranslations == null)
+                {
+                    SourceInfo.VdomTranslations = new List<SourceInfo.VdomTranslation>();
+                }
+
+                VdomContext ctx = new VdomContext();
+                ctx.SB = new StringBuilder();
+                ctx.ElementCounter = 0;
+                if (call.Args[1] is AstNull)
+                {
+                    ctx.InsertPropLine = call.Args[1].Start.Line;
+                    ctx.InsertPropCol = call.Args[1].Start.Column;
+                    tr.Replacements.Add(new SourceInfo.Replacement
+                    {
+                        Type = SourceInfo.ReplacementType.Normal,
+                        StartLine = ctx.InsertPropLine,
+                        StartCol = ctx.InsertPropCol,
+                        EndLine = call.Args[1].End.Line,
+                        EndCol = call.Args[1].End.Column,
+                        Text = "{"
+                    });
+                    tr.Replacements.Add(new SourceInfo.Replacement
+                    {
+                        Type = SourceInfo.ReplacementType.Normal,
+                        StartLine = call.Args[1].End.Line,
+                        StartCol = call.Args[1].End.Column,
+                        EndLine = call.Args[1].End.Line,
+                        EndCol = call.Args[1].End.Column,
+                        Text = "}"
+                    });
+                    ctx.InsertPropComma = false;
+                }
+                else if (call.Args[1] is AstObject astObject)
+                {
+                    if (astObject.Properties.Count == 0)
+                    {
+                        ctx.InsertPropLine = call.Args[1].End.Line;
+                        ctx.InsertPropCol = call.Args[1].End.Column - 1;
+                        ctx.InsertPropComma = false;
+                    }
+                    else
+                    {
+                        ctx.InsertPropLine = astObject.Properties.Last.End.Line;
+                        ctx.InsertPropCol = astObject.Properties.Last.End.Column;
+                        ctx.InsertPropComma = true;
+                    }
+                }
+                else throw new NotImplementedException("TODO Complex props");
+                tr.Replacements.Add(new SourceInfo.Replacement
+                {
+                    Type = SourceInfo.ReplacementType.Normal,
+                    StartLine = call.Args[1].End.Line,
+                    StartCol = call.Args[1].End.Column,
+                    EndLine = call.Args[2].Start.Line,
+                    EndCol = call.Args[2].Start.Column,
+                });
+                GatherVdomTranslation(call.Args.AsReadOnlySpan(2), tr, ref ctx);
+                tr.Message = ctx.SB.ToString();
+                SourceInfo.VdomTranslations.Add(tr);
+            }
+
+            bool IsSelfClosingVdomChild(ReadOnlySpan<AstNode> children)
+            {
+                for (var i = 0; i < children.Length; i++)
+                {
+                    var child = children[i];
+                    if (child is AstString str)
+                    {
+                        return false;
+                    }
+
+                    if (IsStringT(child, out var message))
+                    {
+                        return false;
+                    }
+
+                    if (IsCreateElement(child))
+                    {
+                        if (IsComponentT(((AstCall) child).Args[0]))
+                        {
+                            return false;
+                        }
+
+                        if (children.Length == 1 && !IsSelfClosingVdomChild(((AstCall) child).Args.AsReadOnlySpan(2)))
+                        {
+                            return false;
+                        }
+                    }
+                }
+
+                return true;
+            }
+
+            bool IsCreateElement(AstNode astNode)
+            {
+                if (astNode is AstCall call && call.Args.Count >= 2)
+                {
+                    var c = DetectModuleExportOfCall(call.Expression);
+                    return (c != null && c.ModuleName == "bobril" && c.ExportName == "createElement");
+                }
+
+                return false;
+            }
+
+            void GatherVdomTranslation(ReadOnlySpan<AstNode> children, SourceInfo.VdomTranslation tr,
+                ref VdomContext ctx)
+            {
+                for (var i = 0; i < children.Length; i++)
+                {
+                    var child = children[i];
+                    if (child is AstString str)
+                    {
+                        ctx.SB.Append(str.Value);
+                        tr.Replacements!.Add(new SourceInfo.Replacement
+                        {
+                            Type = SourceInfo.ReplacementType.Normal,
+                            StartLine = child.Start.Line,
+                            StartCol = child.Start.Column,
+                            EndLine = NextStartOrEnd(i, in children).Line,
+                            EndCol = NextStartOrEnd(i, in children).Col,
+                        });
+                        continue;
+                    }
+
+                    if (IsStringT(child, out var message))
+                    {
+                        ctx.SB.Append(message);
+                        tr.Replacements!.Add(new SourceInfo.Replacement
+                        {
+                            Type = SourceInfo.ReplacementType.Normal,
+                            StartLine = child.Start.Line,
+                            StartCol = child.Start.Column,
+                            EndLine = NextStartOrEnd(i, in children).Line,
+                            EndCol = NextStartOrEnd(i, in children).Col,
+                        });
+                        continue;
+                    }
+
+                    if (IsCreateElement(child) && !IsComponentT(((AstCall) child).Args[0]))
+                    {
+                        var nestedChildren = ((AstCall) child).Args.AsReadOnlySpan(2);
+                        if (children.Length == 1 &&
+                            !IsSelfClosingVdomChild(nestedChildren))
+                        {
+                            GatherVdomTranslation(nestedChildren, tr, ref ctx);
+                            continue;
+                        }
+
+                        if (!IsSelfClosingVdomChild(nestedChildren))
+                        {
+                            var idx = ++ctx.ElementCounter;
+                            ctx.SB.Append("{");
+                            ctx.SB.Append(idx);
+                            ctx.SB.Append("}");
+                            GatherVdomTranslation(nestedChildren, tr, ref ctx);
+                            ctx.SB.Append("{/");
+                            ctx.SB.Append(idx);
+                            ctx.SB.Append("}");
+                            continue;
+                        }
+                    }
+
+                    var idx2 = ++ctx.ElementCounter;
+                    ctx.SB.Append("{");
+                    ctx.SB.Append(idx2);
+                    ctx.SB.Append("/}");
+                    tr.Replacements!.Add(new SourceInfo.Replacement
+                    {
+                        Type = SourceInfo.ReplacementType.Normal,
+                        StartLine = ctx.InsertPropLine,
+                        StartCol = ctx.InsertPropCol,
+                        EndLine = ctx.InsertPropLine,
+                        EndCol = ctx.InsertPropCol,
+                        Text = (ctx.InsertPropComma?", ":"")+idx2+":function(){return "
+                    });
+                    ctx.InsertPropComma = true;
+                    tr.Replacements!.Add(new SourceInfo.Replacement
+                    {
+                        Type = SourceInfo.ReplacementType.MoveToPlace,
+                        PlaceLine = ctx.InsertPropLine,
+                        PlaceCol = ctx.InsertPropCol,
+                        StartLine = child.Start.Line,
+                        StartCol = child.Start.Column,
+                        EndLine = child.End.Line,
+                        EndCol = child.End.Column,
+                    });
+                    tr.Replacements.Add(new SourceInfo.Replacement
+                    {
+                        Type = SourceInfo.ReplacementType.Normal,
+                        StartLine = ctx.InsertPropLine,
+                        StartCol = ctx.InsertPropCol,
+                        EndLine = ctx.InsertPropLine,
+                        EndCol = ctx.InsertPropCol,
+                        Text = "}"
+                    });
+                    if (i + 1 < children.Length)
+                    {
+                        tr.Replacements.Add(new SourceInfo.Replacement
+                        {
+                            Type = SourceInfo.ReplacementType.Normal,
+                            StartLine = child.End.Line,
+                            StartCol = child.End.Column,
+                            EndLine = NextStartOrEnd(i, in children).Line,
+                            EndCol = NextStartOrEnd(i, in children).Col,
+                        });
+                    }
+                }
+            }
+
+            static (int Line, int Col) NextStartOrEnd(int idx, in ReadOnlySpan<AstNode> children)
+            {
+                if (idx == children.Length - 1)
+                {
+                    return (children[idx].End.Line, children[idx].End.Column);
+                }
+
+                return (children[idx + 1].Start.Line, children[idx + 1].Start.Column);
+            }
+
+            bool IsStringT(AstNode astNode, [NotNullWhen(true)] out string? str)
+            {
+                if (astNode is AstCall call && call.Args.Count == 1)
+                {
+                    var c = DetectModuleExportOfCall(call.Expression);
+                    if (c != null && c.ModuleName == "bobril-g11n" && c.ExportName == "t")
+                    {
+                        if (call.Args[0].ConstValue(_evalCtx) is string param)
+                        {
+                            str = param;
+                            return true;
+                        }
+                    }
+                }
+
+                str = null;
+                return false;
+            }
+
+            JsModuleExport? DetectModuleExportOfCall(AstNode node)
+            {
+                try
+                {
+                    _evalCtx.JustModuleExports = true;
+                    return node.ConstValue(_evalCtx) as JsModuleExport;
+                }
+                finally
+                {
+                    _evalCtx.JustModuleExports = false;
+                }
+            }
+
+            bool IsComponentT(AstNode arg)
+            {
+                var c = DetectModuleExportOfCall(arg);
+                return c != null && c.ModuleName == "bobril-g11n" && c.ExportName == "T";
             }
 
             string? ExpressionName()

@@ -17,19 +17,100 @@
       "Name": "bobril-g11n"
     }
   ],
-  "Translations": [
+  "VdomTranslations": [
     {
-      "StartCol": 8,
-      "StartLine": 7,
-      "EndCol": 14,
+      "StartCol": 29,
+      "StartLine": 4,
+      "EndCol": 16,
       "EndLine": 7,
-      "StartHintCol": 0,
-      "StartHintLine": 0,
-      "EndHintCol": 0,
-      "EndHintLine": 0,
-      "Message": "{p1}",
-      "JustFormat": false,
-      "WithParams": false
+      "Message": "Before{1/}{p1}",
+      "KnownParams": [],
+      "Replacements": [
+        {
+          "Type": 0,
+          "StartCol": 29,
+          "StartLine": 4,
+          "EndCol": 44,
+          "EndLine": 4,
+          "PlaceCol": 0,
+          "PlaceLine": 0,
+          "Text": "g.t"
+        },
+        {
+          "Type": 1,
+          "StartCol": 45,
+          "StartLine": 4,
+          "EndCol": 48,
+          "EndLine": 4,
+          "PlaceCol": 0,
+          "PlaceLine": 0
+        },
+        {
+          "Type": 0,
+          "StartCol": 66,
+          "StartLine": 4,
+          "EndCol": 4,
+          "EndLine": 5,
+          "PlaceCol": 0,
+          "PlaceLine": 0
+        },
+        {
+          "Type": 0,
+          "StartCol": 4,
+          "StartLine": 5,
+          "EndCol": 4,
+          "EndLine": 6,
+          "PlaceCol": 0,
+          "PlaceLine": 0
+        },
+        {
+          "Type": 0,
+          "StartCol": 64,
+          "StartLine": 4,
+          "EndCol": 64,
+          "EndLine": 4,
+          "PlaceCol": 0,
+          "PlaceLine": 0,
+          "Text": ", 1:function(){return "
+        },
+        {
+          "Type": 2,
+          "StartCol": 4,
+          "StartLine": 6,
+          "EndCol": 31,
+          "EndLine": 6,
+          "PlaceCol": 64,
+          "PlaceLine": 4
+        },
+        {
+          "Type": 0,
+          "StartCol": 64,
+          "StartLine": 4,
+          "EndCol": 64,
+          "EndLine": 4,
+          "PlaceCol": 0,
+          "PlaceLine": 0,
+          "Text": "}"
+        },
+        {
+          "Type": 0,
+          "StartCol": 31,
+          "StartLine": 6,
+          "EndCol": 4,
+          "EndLine": 7,
+          "PlaceCol": 0,
+          "PlaceLine": 0
+        },
+        {
+          "Type": 0,
+          "StartCol": 4,
+          "StartLine": 7,
+          "EndCol": 15,
+          "EndLine": 7,
+          "PlaceCol": 0,
+          "PlaceLine": 0
+        }
+      ]
     }
   ]
 }

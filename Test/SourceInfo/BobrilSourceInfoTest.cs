@@ -46,16 +46,45 @@ namespace Test.SourceInfo
             var adder = builder.CreateSourceAdder(source,
                 SourceMap.Parse(testData.InputContent["index.js.map"], "."));
             var sourceReplacer = new SourceReplacer();
-            //var m1 = sourceInfo.Assets![0];
-            //sourceReplacer.Replace(m1.StartLine, m1.StartCol, m1.EndLine, m1.EndCol, "\"" + m1.Name + "\"");
+            ProcessReplacements(sourceReplacer, sourceInfo);
             sourceReplacer.Apply(adder);
             builder.AddText("//# sourceMappingURL=index.js.map");
-            //builder.AddSource(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")), SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
-            output["index.sourceinfo.json"] = JsonSerializer.Serialize(sourceInfo, new JsonSerializerOptions { WriteIndented = true, IgnoreNullValues = true }).Replace("\r\n","\n");
+            output["index.sourceinfo.json"] = JsonSerializer
+                .Serialize(sourceInfo, new JsonSerializerOptions {WriteIndented = true, IgnoreNullValues = true})
+                .Replace("\r\n", "\n");
             output["index.js"] = builder.Content();
             output["index.js.map"] = builder.Build(".", "..").ToString();
 
             return output;
+        }
+
+        static void ProcessReplacements(SourceReplacer sourceReplacer, Njsast.Bobril.SourceInfo sourceInfo)
+        {
+            if (sourceInfo.VdomTranslations == null) return;
+            foreach (var vdomTranslation in sourceInfo.VdomTranslations)
+            {
+                if (vdomTranslation.Message == null) continue;
+                if (vdomTranslation.Replacements == null) continue;
+                foreach (var rep in vdomTranslation.Replacements)
+                {
+                    if (rep.Type == Njsast.Bobril.SourceInfo.ReplacementType.MoveToPlace)
+                    {
+                        sourceReplacer.Move(rep.StartLine, rep.StartCol, rep.EndLine, rep.EndCol, rep.PlaceLine,
+                            rep.PlaceCol);
+                    }
+                    else
+                    {
+                        var t = rep.Text;
+                        if (rep.Type == Njsast.Bobril.SourceInfo.ReplacementType.MessageId)
+                        {
+                            t = JsonSerializer.Serialize(vdomTranslation.Message);
+                        }
+
+                        sourceReplacer.Replace(rep.StartLine, rep.StartCol, rep.EndLine, rep.EndCol,
+                            t ?? "");
+                    }
+                }
+            }
         }
     }
 }
