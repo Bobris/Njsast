@@ -456,18 +456,9 @@ namespace Njsast.Bobril
                         Type = SourceInfo.ReplacementType.Normal,
                         StartLine = ctx.InsertPropLine,
                         StartCol = ctx.InsertPropCol,
-                        EndLine = call.Args[1].End.Line,
-                        EndCol = call.Args[1].End.Column,
+                        EndLine = ctx.InsertPropLine,
+                        EndCol = ctx.InsertPropCol,
                         Text = "{"
-                    });
-                    tr.Replacements.Add(new SourceInfo.Replacement
-                    {
-                        Type = SourceInfo.ReplacementType.Normal,
-                        StartLine = call.Args[1].End.Line,
-                        StartCol = call.Args[1].End.Column,
-                        EndLine = call.Args[1].End.Line,
-                        EndCol = call.Args[1].End.Column,
-                        Text = "}"
                     });
                     ctx.InsertPropComma = false;
                 }
@@ -487,6 +478,7 @@ namespace Njsast.Bobril
                     }
                 }
                 else throw new NotImplementedException("TODO Complex props");
+
                 tr.Replacements.Add(new SourceInfo.Replacement
                 {
                     Type = SourceInfo.ReplacementType.Normal,
@@ -496,6 +488,20 @@ namespace Njsast.Bobril
                     EndCol = call.Args[2].Start.Column,
                 });
                 GatherVdomTranslation(call.Args.AsReadOnlySpan(2), tr, ref ctx);
+
+                if (call.Args[1] is AstNull)
+                {
+                    tr.Replacements.Add(new SourceInfo.Replacement
+                    {
+                        Type = SourceInfo.ReplacementType.Normal,
+                        StartLine = ctx.InsertPropLine,
+                        StartCol = ctx.InsertPropCol,
+                        EndLine = call.Args[1].End.Line,
+                        EndCol = call.Args[1].End.Column,
+                        Text = "}"
+                    });
+                }
+
                 tr.Message = ctx.SB.ToString();
                 SourceInfo.VdomTranslations.Add(tr);
             }
@@ -597,6 +603,66 @@ namespace Njsast.Bobril
                             ctx.SB.Append("{/");
                             ctx.SB.Append(idx);
                             ctx.SB.Append("}");
+                            tr.Replacements!.Add(new SourceInfo.Replacement
+                            {
+                                Type = SourceInfo.ReplacementType.Normal,
+                                StartLine = ctx.InsertPropLine,
+                                StartCol = ctx.InsertPropCol,
+                                EndLine = ctx.InsertPropLine,
+                                EndCol = ctx.InsertPropCol,
+                                Text = (ctx.InsertPropComma ? ", " : "") + idx + ":function(__ch__){return "
+                            });
+                            ctx.InsertPropComma = true;
+                            tr.Replacements!.Add(new SourceInfo.Replacement
+                            {
+                                Type = SourceInfo.ReplacementType.MoveToPlace,
+                                PlaceLine = ctx.InsertPropLine,
+                                PlaceCol = ctx.InsertPropCol,
+                                StartLine = child.Start.Line,
+                                StartCol = child.Start.Column,
+                                EndLine = nestedChildren[0].Start.Line,
+                                EndCol = nestedChildren[0].Start.Column
+                            });
+                            tr.Replacements!.Add(new SourceInfo.Replacement
+                            {
+                                Type = SourceInfo.ReplacementType.Normal,
+                                StartLine = ctx.InsertPropLine,
+                                StartCol = ctx.InsertPropCol,
+                                EndLine = ctx.InsertPropLine,
+                                EndCol = ctx.InsertPropCol,
+                                Text = "__ch__"
+                            });
+                            tr.Replacements!.Add(new SourceInfo.Replacement
+                            {
+                                Type = SourceInfo.ReplacementType.MoveToPlace,
+                                PlaceLine = ctx.InsertPropLine,
+                                PlaceCol = ctx.InsertPropCol,
+                                StartLine = nestedChildren[^1].End.Line,
+                                StartCol = nestedChildren[^1].End.Column,
+                                EndLine = child.End.Line,
+                                EndCol = child.End.Column
+                            });
+                            tr.Replacements.Add(new SourceInfo.Replacement
+                            {
+                                Type = SourceInfo.ReplacementType.Normal,
+                                StartLine = ctx.InsertPropLine,
+                                StartCol = ctx.InsertPropCol,
+                                EndLine = ctx.InsertPropLine,
+                                EndCol = ctx.InsertPropCol,
+                                Text = "}"
+                            });
+                            if (i + 1 < children.Length)
+                            {
+                                tr.Replacements.Add(new SourceInfo.Replacement
+                                {
+                                    Type = SourceInfo.ReplacementType.Normal,
+                                    StartLine = child.End.Line,
+                                    StartCol = child.End.Column,
+                                    EndLine = NextStartOrEnd(i, in children).Line,
+                                    EndCol = NextStartOrEnd(i, in children).Col,
+                                });
+                            }
+
                             continue;
                         }
                     }
@@ -612,7 +678,7 @@ namespace Njsast.Bobril
                         StartCol = ctx.InsertPropCol,
                         EndLine = ctx.InsertPropLine,
                         EndCol = ctx.InsertPropCol,
-                        Text = (ctx.InsertPropComma?", ":"")+idx2+":function(){return "
+                        Text = (ctx.InsertPropComma ? ", " : "") + idx2 + ":function(){return "
                     });
                     ctx.InsertPropComma = true;
                     tr.Replacements!.Add(new SourceInfo.Replacement
