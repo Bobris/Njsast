@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Njsast.Utils;
 
 namespace Njsast.SourceMap

@@ -87,6 +87,7 @@ namespace Njsast.SourceMap
                 ref var m = ref _modifications[i];
                 if (cur != m.From)
                 {
+                    Debug.Assert(cur < m.From);
                     sourceAdder.Add(cur.Line, cur.Col, m.From.Line, m.From.Col);
                 }
 

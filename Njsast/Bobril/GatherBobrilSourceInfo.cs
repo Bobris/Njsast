@@ -627,6 +627,7 @@ namespace Njsast.Bobril
                                 Text = (ctx.InsertPropComma ? ", " : "") + idx + ":function(__ch__){return "
                             });
                             ctx.InsertPropComma = true;
+                            var (chStartLine, chStartCol, chEndLine, chEndCol) = DetectChildrenStartEndVdom(nestedChildren);
                             tr.Replacements!.Add(new SourceInfo.Replacement
                             {
                                 Type = SourceInfo.ReplacementType.MoveToPlace,
@@ -634,8 +635,8 @@ namespace Njsast.Bobril
                                 PlaceCol = ctx.InsertPropCol,
                                 StartLine = child.Start.Line,
                                 StartCol = child.Start.Column,
-                                EndLine = nestedChildren[0].Start.Line,
-                                EndCol = nestedChildren[0].Start.Column
+                                EndLine = chStartLine,
+                                EndCol = chStartCol
                             });
                             tr.Replacements!.Add(new SourceInfo.Replacement
                             {
@@ -651,8 +652,8 @@ namespace Njsast.Bobril
                                 Type = SourceInfo.ReplacementType.MoveToPlace,
                                 PlaceLine = ctx.InsertPropLine,
                                 PlaceCol = ctx.InsertPropCol,
-                                StartLine = nestedChildren[^1].End.Line,
-                                StartCol = nestedChildren[^1].End.Column,
+                                StartLine = chEndLine,
+                                StartCol = chEndCol,
                                 EndLine = child.End.Line,
                                 EndCol = child.End.Column
                             });
@@ -734,6 +735,21 @@ namespace Njsast.Bobril
                         });
                     }
                 }
+            }
+
+            (int StartLine,int StartCol,int EndLine, int EndCol) DetectChildrenStartEndVdom(in ReadOnlySpan<AstNode> children)
+            {
+                if (children.Length == 1)
+                {
+                    var child = children[0];
+                    if (IsCreateElement(child) && !IsComponentT(((AstCall) child).Args[0]))
+                    {
+                        return DetectChildrenStartEndVdom(((AstCall) child).Args.AsReadOnlySpan(2));
+                    }
+                }
+
+                return (children[0].Start.Line, children[0].Start.Column, children[^1].End.Line,
+                    children[^1].End.Column);
             }
 
             static (int Line, int Col) NextStartOrEnd<T>(int idx, in ReadOnlySpan<T> children) where T:AstNode
