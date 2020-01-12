@@ -33,7 +33,7 @@ namespace Njsast.Bundler
             Func<string, string, string> resolver)
         {
             AstToplevel toplevel;
-            AstSymbol symbol;
+            AstSymbol? symbol;
             if (PathUtils.GetExtension(name) == "json")
             {
                 (toplevel, symbol) = Helpers.EmitVarDefineJson(content, name);
@@ -49,7 +49,11 @@ namespace Njsast.Bundler
             toplevel.FigureOutScope();
             if (toplevel.Globals!.ContainsKey("module"))
             {
-                (toplevel, symbol) = Helpers.EmitCommonJsWrapper(toplevel);
+                (toplevel, symbol) = Helpers.IfPossibleEmitModuleExportsJsWrapper(toplevel);
+                if (symbol == null)
+                {
+                    (toplevel, symbol) = Helpers.EmitCommonJsWrapper(toplevel);
+                }
                 toplevel.FigureOutScope();
                 var sourceFile = new SourceFile(name, toplevel) {WholeExport = symbol};
                 new ImportExportTransformer(sourceFile, resolver).Transform(toplevel);

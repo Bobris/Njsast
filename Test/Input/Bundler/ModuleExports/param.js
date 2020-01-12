@@ -3,6 +3,7 @@ module.exports = {
     console.log(p);
   },
   dontIt: function() {
-    console.log("KO");
+    var window = "KO";
+    global.console.log(window);
   }
 };

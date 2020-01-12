@@ -1,45 +1,29 @@
 !function(undefined) {
     "use strict";
-    var exports_lib2, exports_wrapper, exports_lib;
-    exports_lib2 = function() {
-        var exports = {}, module = {
-            exports: exports
-        };
-        module.exports = {
-            doIt: function(p) {
-                console.log(p);
-            },
-            dontIt: function() {
-                console.log("KO");
-            }
-        };
-        return module.exports;
-    }.call(window);
-    exports_wrapper = function() {
-        var exports_wrapper = {}, module = {
-            exports: exports_wrapper
-        };
-        module.exports = function(param) {
-            Object.keys(param).forEach(function(name) {
-                var orig = param[name];
-                param[name] = function(p) {
-                    orig(name + ":" + p);
-                };
-            });
-            return param;
-        };
-        return module.exports;
-    }.call(window);
-    exports_lib = function() {
-        var exports_lib = {}, module = {
-            exports: exports_lib
-        }, global = this;
-        module.exports = exports_wrapper(exports_lib2);
-        if ("test" in global) {
-            setTimeout(global.test, 1);
+    var global, exports_lib2, exports_wrapper, exports_lib;
+    global = window;
+    exports_lib2 = {
+        doIt: function(p) {
+            console.log(p);
+        },
+        dontIt: function() {
+            var window = "KO";
+            global.console.log(window);
         }
-        return module.exports;
-    }.call(window);
+    };
+    exports_wrapper = function(param) {
+        Object.keys(param).forEach(function(name) {
+            var orig = param[name];
+            param[name] = function(p) {
+                orig(name + ":" + p);
+            };
+        });
+        return param;
+    };
+    exports_lib = exports_wrapper(exports_lib2);
+    if ("test" in window) {
+        setTimeout(window.test, 1);
+    }
     exports_lib.doIt("Ok");
 }();
 

@@ -261,52 +261,30 @@
         return cooked;
     };
     var DEBUG = false;
-    var exports_lib2 = function() {
-        var exports = {};
-        var module = {
-            exports: exports
-        };
-        var global = this;
-        module.exports = {
-            doIt: function(p) {
-                console.log(p);
-            },
-            dontIt: function() {
-                console.log("KO");
-            }
-        };
-        return module.exports;
-    }.call(window);
-    var exports_wrapper = function() {
-        var exports_wrapper = {};
-        var module = {
-            exports: exports_wrapper
-        };
-        var global = this;
-        module.exports = function(param) {
-            Object.keys(param).forEach(function(name) {
-                var orig = param[name];
-                param[name] = function(p) {
-                    orig(name + ":" + p);
-                };
-            });
-            return param;
-        };
-        return module.exports;
-    }.call(window);
-    var exports_lib = function() {
-        var exports_lib = {};
-        var module = {
-            exports: exports_lib
-        };
-        var global = this;
-        var param = exports_lib2;
-        module.exports = exports_wrapper(exports_lib2);
-        if ("test" in global) {
-            setTimeout(global.test, 1);
+    var global = window;
+    var exports_lib2 = {
+        doIt: function(p) {
+            console.log(p);
+        },
+        dontIt: function() {
+            var window = "KO";
+            global.console.log(window);
         }
-        return module.exports;
-    }.call(window);
+    };
+    var exports_wrapper = function(param) {
+        Object.keys(param).forEach(function(name) {
+            var orig = param[name];
+            param[name] = function(p) {
+                orig(name + ":" + p);
+            };
+        });
+        return param;
+    };
+    var param = exports_lib2;
+    var exports_lib = exports_wrapper(exports_lib2);
+    if ("test" in window) {
+        setTimeout(window.test, 1);
+    }
     exports_lib.doIt("Ok");
 }();
 
