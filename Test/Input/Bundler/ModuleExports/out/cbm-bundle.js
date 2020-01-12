@@ -5,7 +5,6 @@
         var o = {}, e = {
             exports: o
         };
-        this;
         e.exports = {
             doIt: function(o) {
                 console.log(o);
@@ -20,7 +19,6 @@
         var o = {}, e = {
             exports: o
         };
-        this;
         e.exports = function(o) {
             Object.keys(o).forEach(function(e) {
                 var r = o[e];

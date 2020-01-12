@@ -5,7 +5,6 @@
         var exports = {}, module = {
             exports: exports
         };
-        this;
         module.exports = {
             doIt: function(p) {
                 console.log(p);
@@ -20,7 +19,6 @@
         var exports_wrapper = {}, module = {
             exports: exports_wrapper
         };
-        this;
         module.exports = function(param) {
             Object.keys(param).forEach(function(name) {
                 var orig = param[name];
