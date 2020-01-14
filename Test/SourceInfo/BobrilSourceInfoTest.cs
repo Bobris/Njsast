@@ -43,8 +43,8 @@ namespace Test.SourceInfo
                 });
 
             var builder = new SourceMapBuilder();
-            var adder = builder.CreateSourceAdder(source,
-                SourceMap.Parse(testData.InputContent["index.js.map"], "."));
+            var adder = builder.CreateSourceAdder(source, testData.InputContent.ContainsKey("index.js.map") ?
+                SourceMap.Parse(testData.InputContent["index.js.map"], "."): null);
             var sourceReplacer = new SourceReplacer();
             ProcessReplacements(sourceReplacer, sourceInfo);
             sourceReplacer.Apply(adder);
