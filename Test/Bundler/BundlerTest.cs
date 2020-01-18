@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Njsast.Ast;
 using Njsast.Bundler;
 using Njsast.Compress;
 using Njsast.Output;
@@ -120,6 +121,10 @@ namespace Test.Bundler
             }
 
             public void ReportTime(string name, TimeSpan duration)
+            {
+            }
+
+            public void ModifyBundle(string name, AstToplevel topLevelAst)
             {
             }
         }
