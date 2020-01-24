@@ -188,7 +188,7 @@
         function se(t, e, n, r) {
             var i, o, a, s, u, l, c, f = e && e.ownerDocument, p = e ? e.nodeType : 9;
             if (n = n || [], "string" != typeof t || !t || 1 !== p && 9 !== p && 11 !== p) return n;
-            if (!r && (e ? e.ownerDocument || e : m !== C && T(e), e = e || C, E)) {
+            if (!r && ((e ? e.ownerDocument || e : m) !== C && T(e), e = e || C, E)) {
                 if (11 !== p && (u = Z.exec(t))) if (i = u[1]) {
                     if (9 === p) {
                         if (!(a = e.getElementById(i))) return n;
@@ -472,7 +472,7 @@
                                     i[h] = [ S, s, d ];
                                     break;
                                 }
-                            } else if (p && (d = s = (r = (i = (o = (a = e)[k] || (a[k] = {}))[a.uniqueID] || (o[a.uniqueID] = {}))[h] || [])[0] === S && r[1]), !1 === d) while (a = ++s && a && a[l] || (d = s = 0) || u.pop()) if (x ? a.nodeName.toLowerCase() === f : 1 === a.nodeType && ++d && (p && (i = (o = a[k] || (a[k] = {}))[a.uniqueID] || (o[a.uniqueID] = {})[h] = [ S, d ]), a === e)) break;
+                            } else if (p && (d = s = (r = (i = (o = (a = e)[k] || (a[k] = {}))[a.uniqueID] || (o[a.uniqueID] = {}))[h] || [])[0] === S && r[1]), !1 === d) while (a = ++s && a && a[l] || (d = s = 0) || u.pop()) if ((x ? a.nodeName.toLowerCase() === f : 1 === a.nodeType) && ++d && (p && ((i = (o = a[k] || (a[k] = {}))[a.uniqueID] || (o[a.uniqueID] = {}))[h] = [ S, d ]), a === e)) break;
                             return (d -= v) === g || d % g == 0 && 0 <= d / g;
                         }
                     };
@@ -614,7 +614,7 @@
                     while (e = e[u]) if ((1 === e.nodeType || f) && s(e, t, n)) return !0;
                 } else while (e = e[u]) if (1 === e.nodeType || f) if (i = (o = e[k] || (e[k] = {}))[e.uniqueID] || (o[e.uniqueID] = {}), l && l === e.nodeName.toLowerCase()) e = e[u] || e; else {
                     if ((r = i[c]) && r[0] === S && r[1] === p) return a[2] = r[2];
-                    if (i[c] = a[2] = s(e, t, n)) return !0;
+                    if ((i[c] = a)[2] = s(e, t, n)) return !0;
                 }
                 return !1;
             };
@@ -665,7 +665,7 @@
                 var r = !o && (n || t !== w) || ((i = t).nodeType ? u(e, t, n) : l(e, t, n));
                 return i = null, r;
             } ]; s < r; s++) if (t = b.relative[e[s].type]) c = [ be(we(c), t) ]; else {
-                if (t = b.filter[e[s].type].apply(null, e[s].matches)[k]) {
+                if ((t = b.filter[e[s].type].apply(null, e[s].matches))[k]) {
                     for (n = ++s; n < r; n++) if (b.relative[e[n].type]) break;
                     return Ce(1 < s && we(c), 1 < s && xe(e.slice(0, s - 1).concat({
                         value: " " === e[s - 2].type ? "*" : ""
@@ -2444,7 +2444,7 @@
     }
     function zt(e, t) {
         var n, r, i = k.ajaxSettings.flatOptions || {};
-        for (n in t) void 0 !== t[n] && (i[n] ? e : r || (r = {})[n] = t[n]);
+        for (n in t) void 0 !== t[n] && ((i[n] ? e : r || (r = {}))[n] = t[n]);
         return r && k.extend(!0, e, r), e;
     }
     Ft.href = Et.href, k.extend({
@@ -2584,7 +2584,7 @@
                     if (c[1]) for (a in e.converters) l[a.toLowerCase()] = e.converters[a];
                     o = c.shift();
                     while (o) if (e.responseFields[o] && (n[e.responseFields[o]] = t), !u && r && e.dataFilter && (t = e.dataFilter(t, e.dataType)), u = o, o = c.shift()) if ("*" === o) o = u; else if ("*" !== u && u !== o) {
-                        if (!(a = l[u + " " + o] || l["* " + o])) for (i in l) if (s = i.split(" ")[1] === o && (a = l[u + " " + s[0]] || l["* " + s[0]])) {
+                        if (!(a = l[u + " " + o] || l["* " + o])) for (i in l) if ((s = i.split(" "))[1] === o && (a = l[u + " " + s[0]] || l["* " + s[0]])) {
                             !0 === a ? a = l[i] : !0 !== l[i] && (o = s[0], c.unshift(s[1]));
                             break;
                         }
