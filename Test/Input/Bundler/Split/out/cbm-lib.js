@@ -1,12 +1,12 @@
-!function(_) {
+(function(_) {
     "use strict";
     var e;
-    function o() {
+    function l() {
         return "Hello";
     }
     e = {
-        hello: o
+        hello: l
     };
     __bbb.a = e;
-}();
+}).call(this);
 

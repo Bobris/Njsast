@@ -1,6 +1,6 @@
-!function(_) {
+(function(_) {
     "use strict";
-    var e = 1, t = e + 2;
-    console.log(t);
-}();
+    var t = 1, e = t + 2;
+    console.log(e);
+}).call(this);
 

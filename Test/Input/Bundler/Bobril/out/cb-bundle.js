@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __export_isArray, emptyComponent, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, hasNativeRaf, nativeRaf, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, uptimeMs, frameCounter, regEvents, listeningEventDeepness, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events, i, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name, j, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack, callbacks, lastDndId, dnds, systemDnd, rootId, shimmedStyle, shimedStyleKeys, userSelectPropName, DndCtx, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, dynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, isIE9, chainedBeforeFrame, cssSubRuleDelimiter, firstStyles, uppercasePattern, msPattern, rgbaRegex, currentCtx, registryEvents, rootIds, weirdPortrait, bodyCursorBackup, userSelectBackup;
     (function() {
@@ -3534,5 +3534,5 @@
     init(function() {
         return "hello";
     });
-}();
+}).call(this);
 

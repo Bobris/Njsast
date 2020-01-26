@@ -289,5 +289,5 @@
         return Main;
     }(Base);
     new Main().hello();
-}();
+}.call(this);
 

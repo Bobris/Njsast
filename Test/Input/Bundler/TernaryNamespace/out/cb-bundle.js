@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __export_$, __export_$_libb, lib;
     function fn(a, b) {
@@ -15,5 +15,5 @@
     };
     lib = Math.random() > 0.5 ? __export_$ : __export_$_libb;
     console.log(lib.fn(1, 2));
-}();
+}).call(this);
 

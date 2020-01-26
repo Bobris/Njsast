@@ -1,9 +1,9 @@
-!function(e) {
+(function(l) {
     "use strict";
     console.log("I am dependency");
-    function o() {
+    function e() {
         return "Hello";
     }
-    console.log(o());
-}();
+    console.log(e());
+}).call(this);
 

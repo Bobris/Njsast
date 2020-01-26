@@ -269,5 +269,5 @@
         console.log(link_index);
     }
     doit();
-}();
+}.call(this);
 

@@ -293,5 +293,5 @@
         return "unused";
     }
     __bbb.e = shared;
-}();
+}.call(this);
 

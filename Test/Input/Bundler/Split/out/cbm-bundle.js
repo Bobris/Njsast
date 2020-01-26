@@ -1,6 +1,6 @@
 var __bbb = {};
 
-!function(r) {
+(function(r) {
     "use strict";
     var e;
     e = function(e, t) {
@@ -33,5 +33,5 @@ var __bbb = {};
     e("cbm-lib.js", "a").then(function(r) {
         console.log(r.hello());
     });
-}();
+}).call(this);
 

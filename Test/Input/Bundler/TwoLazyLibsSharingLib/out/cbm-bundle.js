@@ -1,6 +1,6 @@
 var __bbb = {};
 
-!function(r) {
+(function(r) {
     "use strict";
     var e;
     e = function(e, t) {
@@ -40,5 +40,5 @@ var __bbb = {};
     }).then(function(r) {
         console.log(r.world());
     });
-}();
+}).call(this);
 

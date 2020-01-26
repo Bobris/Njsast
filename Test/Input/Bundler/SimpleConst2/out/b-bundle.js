@@ -263,5 +263,5 @@
     var DEBUG = false;
     var a = 42;
     console.log(a);
-}();
+}.call(this);
 

@@ -265,5 +265,5 @@
         test: "ok"
     };
     console.log(content.test);
-}();
+}.call(this);
 

@@ -265,5 +265,5 @@
     var __export_Klass_lib = __export_Klass;
     function use() {}
     use();
-}();
+}.call(this);
 

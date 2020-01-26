@@ -1,4 +1,4 @@
-!function(n) {
+(function(n) {
     "use strict";
     var _, t;
     function o(n, _) {
@@ -9,5 +9,5 @@
     };
     t = _;
     console.log(t.fn(1, 2));
-}();
+}).call(this);
 

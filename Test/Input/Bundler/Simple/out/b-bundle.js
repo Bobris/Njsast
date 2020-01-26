@@ -265,5 +265,5 @@
         return "Hello";
     }
     console.log(hello());
-}();
+}.call(this);
 

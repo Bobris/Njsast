@@ -299,5 +299,5 @@ var __bbb = {};
         console.log(lib.hello());
     });
     __bbb.b = shared;
-}();
+}.call(this);
 

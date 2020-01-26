@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __shared_shared, __export_$;
     __shared_shared = __bbb.b;
@@ -10,5 +10,5 @@
         hello: hello
     };
     __bbb.a = __export_$;
-}();
+}).call(this);
 

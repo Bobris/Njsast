@@ -293,5 +293,5 @@
         hello: hello
     };
     __bbb.a = __export_$;
-}();
+}.call(this);
 

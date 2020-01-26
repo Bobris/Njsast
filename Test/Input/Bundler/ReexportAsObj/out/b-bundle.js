@@ -269,5 +269,5 @@
     };
     var lib = __export_$;
     console.log(lib.fn(1, 2));
-}();
+}.call(this);
 

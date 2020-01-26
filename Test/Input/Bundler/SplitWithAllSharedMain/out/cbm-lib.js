@@ -1,15 +1,15 @@
-!function(_) {
+(function(_) {
     "use strict";
-    var e, r, l;
+    var e, l, r;
     e = __bbb.b;
-    r = e;
-    r.shared();
+    l = e;
+    l.shared();
     function a() {
         return "Hello";
     }
-    l = {
+    r = {
         hello: a
     };
-    __bbb.a = l;
-}();
+    __bbb.a = r;
+}).call(this);
 

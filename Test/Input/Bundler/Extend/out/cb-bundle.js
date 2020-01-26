@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __extendStatics, __extends, Base, Main;
     __extendStatics = Object.setPrototypeOf || {
@@ -44,5 +44,5 @@
         return Main;
     }(Base);
     new Main().hello();
-}();
+}).call(this);
 

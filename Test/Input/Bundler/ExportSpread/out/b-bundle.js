@@ -289,5 +289,5 @@
     console.log(__export_fn4());
     console.log(__export_fn5());
     console.log(__export_fn6());
-}();
+}.call(this);
 

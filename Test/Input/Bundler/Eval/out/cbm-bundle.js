@@ -1,4 +1,4 @@
-!function(n) {
+(function(n) {
     "use strict";
     function e() {
         eval("return 1");
@@ -7,5 +7,5 @@
         return n + e();
     }
     console.log(t("a"));
-}();
+}).call(this);
 

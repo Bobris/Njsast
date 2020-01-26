@@ -1,4 +1,4 @@
-!function(d) {
+(function(d) {
     "use strict";
     var _;
     _ = d;
@@ -7,5 +7,5 @@
     }
     t(function() {});
     if (_) _();
-}();
+}).call(this);
 

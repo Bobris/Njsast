@@ -1,7 +1,7 @@
-!function(_) {
+(function(_) {
     "use strict";
     var o, n, e, f, r, t, x, p;
-    function c() {
+    function l() {
         return {
             f1: function() {
                 return "a";
@@ -14,13 +14,13 @@
             }
         };
     }
-    o = (x = c(), x.f1), n = x.f2, e = x.f3;
-    f = (p = c(), p.f1), r = p.f2, t = p.f3;
+    o = (x = l(), x.f1), n = x.f2, e = x.f3;
+    f = (p = l(), p.f1), r = p.f2, t = p.f3;
     console.log(o());
     console.log(n());
     console.log(e());
     console.log(f());
     console.log(r());
     console.log(t());
-}();
+}).call(this);
 

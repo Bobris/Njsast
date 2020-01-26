@@ -267,5 +267,5 @@
     }
     setDdd(function() {});
     if (__export_ddd) __export_ddd();
-}();
+}.call(this);
 

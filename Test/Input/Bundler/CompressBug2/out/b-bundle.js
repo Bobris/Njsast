@@ -269,5 +269,5 @@
         __export_now();
     }
     init();
-}();
+}.call(this);
 

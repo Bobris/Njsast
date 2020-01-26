@@ -263,5 +263,5 @@
     var DEBUG = false;
     var exports = 42;
     console.log(exports);
-}();
+}.call(this);
 

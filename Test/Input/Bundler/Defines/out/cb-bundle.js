@@ -1,2 +1,2 @@
-!function(undefined) {}();
+(function(undefined) {}).call(this);
 

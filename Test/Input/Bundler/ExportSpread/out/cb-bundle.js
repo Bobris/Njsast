@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __export_fn1, __export_fn2, __export_fn3, __export_fn4, __export_fn5, __export_fn6, _a, _b;
     function reg() {
@@ -22,5 +22,5 @@
     console.log(__export_fn4());
     console.log(__export_fn5());
     console.log(__export_fn6());
-}();
+}).call(this);
 

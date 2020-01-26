@@ -1,12 +1,12 @@
-!function(n) {
+(function(n) {
     "use strict";
-    var e = 2;
-    function i(n, e) {
-        return n + e;
+    var i = 2;
+    function e(n, i) {
+        return n + i;
     }
-    function d(n, e) {
-        return n - e;
+    function d(n, i) {
+        return n - i;
     }
-    console.log(i(d(e, 1), e));
-}();
+    console.log(e(d(i, 1), i));
+}).call(this);
 

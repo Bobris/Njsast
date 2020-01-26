@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __export_now;
     __export_now = Date.now;
@@ -6,5 +6,5 @@
         __export_now();
     }
     init();
-}();
+}).call(this);
 

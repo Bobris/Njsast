@@ -1,1 +1,1 @@
-!function(n){"use strict";function u(n,u){return n+u}console.log(u(1,2))}()
+(function(n){"use strict";function t(n,t){return n+t}console.log(t(1,2))}).call(this)

@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __export_page = "OK";
     function route(param) {
@@ -14,5 +14,5 @@
     }
     doit();
     console.log(__export_page);
-}();
+}).call(this);
 

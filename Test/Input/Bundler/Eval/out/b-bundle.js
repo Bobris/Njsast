@@ -268,5 +268,5 @@
         return parameter + functionUsingEval();
     }
     console.log(longname("a"));
-}();
+}.call(this);
 

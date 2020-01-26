@@ -275,5 +275,5 @@
     }
     doit();
     console.log(__export_page);
-}();
+}.call(this);
 

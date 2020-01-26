@@ -268,5 +268,5 @@
         return "OK";
     }
     console.log(fn_lib2());
-}();
+}.call(this);
 

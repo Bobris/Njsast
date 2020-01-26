@@ -1,4 +1,4 @@
-!function(t) {
+(function(t) {
     "use strict";
     var p;
     (function(t) {
@@ -6,5 +6,5 @@
         t[t["Stop"] = 1] = "Stop";
     })(p || (p = {}));
     console.log(p.Start);
-}();
+}).call(this);
 

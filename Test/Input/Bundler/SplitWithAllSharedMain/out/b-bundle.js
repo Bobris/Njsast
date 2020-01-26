@@ -303,5 +303,5 @@ var __bbb = {};
         console.log(lib.hello());
     });
     __bbb.b = __export_$;
-}();
+}.call(this);
 

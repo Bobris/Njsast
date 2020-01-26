@@ -1,12 +1,12 @@
-!function(n) {
+(function(n) {
     "use strict";
     function i(n) {
         return n;
     }
-    function e() {
+    function l() {
         var n = i("hello");
         console.log(n);
     }
-    e();
-}();
+    l();
+}).call(this);
 

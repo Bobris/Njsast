@@ -268,5 +268,5 @@
         Opts[Opts["Stop"] = 1] = "Stop";
     })(Opts = __export_Opts || (__export_Opts = {}));
     console.log(__export_Opts.Start);
-}();
+}.call(this);
 

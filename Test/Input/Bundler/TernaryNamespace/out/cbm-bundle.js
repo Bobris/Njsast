@@ -1,19 +1,19 @@
-!function(_) {
+(function(_) {
     "use strict";
     var n, b, t;
-    function r(_, n) {
+    function i(_, n) {
         return _ + n;
     }
     n = {
-        fn: r
+        fn: i
     };
-    function o(_, n) {
+    function r(_, n) {
         return _ - n;
     }
     b = {
-        fn: o
+        fn: r
     };
     t = Math.random() > 0.5 ? n : b;
     console.log(t.fn(1, 2));
-}();
+}).call(this);
 

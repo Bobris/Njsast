@@ -5057,5 +5057,5 @@
     init(function() {
         return "hello";
     });
-}();
+}.call(this);
 

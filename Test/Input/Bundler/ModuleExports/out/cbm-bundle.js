@@ -1,4 +1,4 @@
-!function(o) {
+(function(o) {
     "use strict";
     var t, r, n, e;
     t = window;
@@ -25,5 +25,5 @@
         setTimeout(window.test, 1);
     }
     e.doIt("Ok");
-}();
+}).call(this);
 

@@ -1,49 +1,49 @@
 var __bbb = {};
 
-!function(r) {
+(function(r) {
     "use strict";
     var e, o;
     e = function(e, o) {
-        var n, t;
-        n = __bbb;
-        t = n[o];
-        if (t !== r) {
-            if (t instanceof Promise) return t;
-            return Promise.resolve(t);
+        var t, n;
+        t = __bbb;
+        n = t[o];
+        if (n !== r) {
+            if (n instanceof Promise) return n;
+            return Promise.resolve(n);
         }
-        t = new Promise(function(s, i) {
+        n = new Promise(function(s, i) {
             var u, b;
             u = document.createElement("script");
             b = setTimeout(p, 120000);
             function p() {
                 u.onload = u.onerror = r;
                 clearTimeout(b);
-                if (n[o] === t) {
-                    n[o] = r;
+                if (t[o] === n) {
+                    t[o] = r;
                     i(new Error("Fail to load " + e));
-                } else s(n[o]);
+                } else s(t[o]);
             }
             u.charset = "utf-8";
             u.onload = u.onerror = p;
             u.src = e;
             document.head.appendChild(u);
         });
-        return n[o] = t;
+        return t[o] = n;
     };
-    function n() {
+    function t() {
         console.log("shared");
     }
-    function t() {
+    function n() {
         return "unused";
     }
     o = {
-        shared: n,
-        unused: t
+        shared: t,
+        unused: n
     };
-    n();
+    t();
     e("cbm-lib.js", "a").then(function(r) {
         console.log(r.hello());
     });
     __bbb.b = o;
-}();
+}).call(this);
 

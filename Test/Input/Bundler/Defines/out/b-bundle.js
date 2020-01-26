@@ -265,5 +265,5 @@
         if (DEBUG && !shouldBeTrue) throw Error(messageIfFalse || "assertion failed");
     }
     assert(false, "bad");
-}();
+}.call(this);
 

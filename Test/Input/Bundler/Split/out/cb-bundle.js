@@ -1,6 +1,6 @@
 var __bbb = {};
 
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __import;
     __import = function(url, prop) {
@@ -33,5 +33,5 @@ var __bbb = {};
     __import("cb-lib.js", "a").then(function(lib) {
         console.log(lib.hello());
     });
-}();
+}).call(this);
 

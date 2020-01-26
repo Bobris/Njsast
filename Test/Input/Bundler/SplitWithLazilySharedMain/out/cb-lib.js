@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     var __import, __export_$;
     __import = function(url, prop) {
@@ -38,5 +38,5 @@
         hello: hello
     };
     __bbb.a = __export_$;
-}();
+}).call(this);
 

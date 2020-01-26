@@ -266,5 +266,5 @@
             if (Math.random() > 0.5) break out;
         }
     }
-}();
+}.call(this);
 

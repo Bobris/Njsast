@@ -277,5 +277,5 @@
     var libb = __export_$_libb;
     var lib = Math.random() > 0.5 ? __export_$ : __export_$_libb;
     console.log(lib.fn(1, 2));
-}();
+}.call(this);
 

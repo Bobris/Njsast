@@ -286,5 +286,5 @@
         setTimeout(window.test, 1);
     }
     exports_lib.doIt("Ok");
-}();
+}.call(this);
 

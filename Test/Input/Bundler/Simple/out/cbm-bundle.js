@@ -1,8 +1,8 @@
-!function(o) {
+(function(l) {
     "use strict";
-    function n() {
+    function o() {
         return "Hello";
     }
-    console.log(n());
-}();
+    console.log(o());
+}).call(this);
 

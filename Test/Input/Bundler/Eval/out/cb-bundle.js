@@ -1,4 +1,4 @@
-!function(undefined) {
+(function(undefined) {
     "use strict";
     function functionUsingEval() {
         eval("return 1");
@@ -7,5 +7,5 @@
         return parameter + functionUsingEval();
     }
     console.log(longname("a"));
-}();
+}).call(this);
 

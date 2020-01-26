@@ -298,5 +298,5 @@ var __bbb = {};
     }).then(function(lib) {
         console.log(lib.world());
     });
-}();
+}.call(this);
 

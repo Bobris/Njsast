@@ -265,5 +265,5 @@
         return a + b;
     }
     console.log(fn(1, 2));
-}();
+}.call(this);
 

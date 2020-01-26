@@ -291,5 +291,5 @@ var __bbb = {};
     __import("b-lib.js", "a").then(function(lib) {
         console.log(lib.hello());
     });
-}();
+}.call(this);
 

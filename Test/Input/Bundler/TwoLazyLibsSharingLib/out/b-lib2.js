@@ -295,5 +295,5 @@
         world: world
     };
     __bbb.c = __export_$;
-}();
+}.call(this);
 
