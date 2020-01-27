@@ -2674,8 +2674,8 @@
         } catch (e) {}
     };
     Ut = {
-        [0]: 200,
-        [1223]: 204
+        0: 200,
+        1223: 204
     };
     Xt = k.ajaxSettings.xhr();
     y.cors = !!Xt && "withCredentials" in Xt, y.ajax = Xt = !!Xt, k.ajaxTransport(function(i) {
