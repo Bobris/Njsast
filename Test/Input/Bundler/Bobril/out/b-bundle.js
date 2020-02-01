@@ -2145,24 +2145,24 @@
                     reject.call(this, e);
                 }
             }
-            function Promise(fn) {
+            function Promise_bobril(fn) {
                 this.s = null;
                 this.v = null;
                 this.d = [];
                 doResolve(fn, bind(resolve, this), bind(reject, this));
             }
-            Promise.prototype.then = function(onFulfilled, onRejected) {
+            Promise_bobril.prototype.then = function(onFulfilled, onRejected) {
                 var me = this;
-                return new Promise(function(resolve, reject) {
+                return new Promise_bobril(function(resolve, reject) {
                     handle.call(me, [ onFulfilled, onRejected, resolve, reject ]);
                 });
             };
-            Promise.prototype["catch"] = function(onRejected) {
+            Promise_bobril.prototype["catch"] = function(onRejected) {
                 return this.then(undefined, onRejected);
             };
-            Promise.all = function() {
+            Promise_bobril.all = function() {
                 var args = [].slice.call(arguments.length === 1 && __export_isArray(arguments[0]) ? arguments[0] : arguments);
-                return new Promise(function(resolve, reject) {
+                return new Promise_bobril(function(resolve, reject) {
                     if (args.length === 0) {
                         resolve(args);
                         return;
@@ -2192,27 +2192,27 @@
                     }
                 });
             };
-            Promise.resolve = function(value) {
-                if (value && typeof value === "object" && value.constructor === Promise) {
+            Promise_bobril.resolve = function(value) {
+                if (value && typeof value === "object" && value.constructor === Promise_bobril) {
                     return value;
                 }
-                return new Promise(function(resolve) {
+                return new Promise_bobril(function(resolve) {
                     resolve(value);
                 });
             };
-            Promise.reject = function(value) {
-                return new Promise(function(_resolve, reject) {
+            Promise_bobril.reject = function(value) {
+                return new Promise_bobril(function(_resolve, reject) {
                     reject(value);
                 });
             };
-            Promise.race = function(values) {
-                return new Promise(function(resolve, reject) {
+            Promise_bobril.race = function(values) {
+                return new Promise_bobril(function(resolve, reject) {
                     for (var i = 0, len = values.length; i < len; i++) {
                         values[i].then(resolve, reject);
                     }
                 });
             };
-            window["Promise"] = Promise;
+            window["Promise"] = Promise_bobril;
         })();
     }
     if (ieVersion() === 9) {
