@@ -1,29 +1,29 @@
 (function(o) {
     "use strict";
-    var t, r, n, e;
-    t = window;
-    r = {
+    var r, t, a, n;
+    r = window;
+    t = {
         doIt: function(o) {
             console.log(o);
         },
         dontIt: function() {
             var o = "KO";
-            t.console.log(o);
+            r.console.log(o);
         }
     };
-    n = function(o) {
-        Object.keys(o).forEach(function(t) {
-            var r = o[t];
-            o[t] = function(o) {
-                r(t + ":" + o);
+    a = function(o) {
+        Object.keys(o).forEach(function(r) {
+            var t = o[r];
+            o[r] = function(o) {
+                t(r + ":" + o);
             };
         });
         return o;
     };
-    e = n(r);
+    n = a(t);
     if ("test" in window) {
         setTimeout(window.test, 1);
     }
-    e.doIt("Ok");
+    n.doIt("Ok");
 }).call(this);
 

@@ -7,3 +7,4 @@ var Image = /** @class */ (function () {
     return Image;
 }());
 exports.Image = Image;
+URL.createObjectURL("");

@@ -264,12 +264,14 @@
     function loadImage() {
         return new Image();
     }
+    var URL_bobril = "yes I am crazy to override URL";
     var Image_image = function() {
         function Image_image() {
             console.log("constructed");
         }
         return Image_image;
     }();
+    URL.createObjectURL("");
     new Image_image();
     loadImage();
 }.call(this);

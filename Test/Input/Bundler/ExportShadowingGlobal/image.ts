@@ -3,3 +3,5 @@ export class Image {
     console.log("constructed");
   }
 }
+
+URL.createObjectURL("");

@@ -267,8 +267,8 @@
             console.log(p);
         },
         dontIt: function() {
-            var window = "KO";
-            global.console.log(window);
+            var window_param = "KO";
+            global.console.log(window_param);
         }
     };
     var exports_wrapper = function(param) {

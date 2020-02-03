@@ -10,6 +10,7 @@
         }
         return e;
     }();
+    URL.createObjectURL("");
     new a();
     n();
 }).call(this);

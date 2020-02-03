@@ -10,6 +10,7 @@
         }
         return Image_image;
     }();
+    URL.createObjectURL("");
     new Image_image();
     loadImage();
 }).call(this);

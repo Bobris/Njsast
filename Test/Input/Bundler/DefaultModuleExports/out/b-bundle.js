@@ -261,7 +261,7 @@
         return cooked;
     };
     var DEBUG = false;
-    var exports = 42;
-    console.log(exports);
+    var exports_lib = 42;
+    console.log(exports_lib);
 }.call(this);
 
