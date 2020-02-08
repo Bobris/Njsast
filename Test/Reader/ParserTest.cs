@@ -96,7 +96,7 @@ namespace Test.Reader
                 dumper = new DumpAst(new AstDumpWriter(strSink));
                 dumper.Walk(toplevel);
                 var beforeClone = strSink.ToString();
-                toplevel = (AstToplevel) toplevel.DeepClone();
+                toplevel = toplevel.DeepClone();
                 strSink = new StringLineSink();
                 toplevel.FigureOutScope();
                 dumper = new DumpAst(new AstDumpWriter(strSink));

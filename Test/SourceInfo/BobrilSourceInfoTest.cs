@@ -3,6 +3,8 @@ using System.IO;
 using System.Text.Json;
 using Njsast.Bobril;
 using Njsast.ConstEval;
+using Njsast.Coverage;
+using Njsast.Output;
 using Njsast.Reader;
 using Njsast.SourceMap;
 using Njsast.Utils;
@@ -43,8 +45,10 @@ namespace Test.SourceInfo
                 });
 
             var builder = new SourceMapBuilder();
-            var adder = builder.CreateSourceAdder(source, testData.InputContent.ContainsKey("index.js.map") ?
-                SourceMap.Parse(testData.InputContent["index.js.map"], "."): null);
+            var adder = builder.CreateSourceAdder(source,
+                testData.InputContent.ContainsKey("index.js.map")
+                    ? SourceMap.Parse(testData.InputContent["index.js.map"], ".")
+                    : null);
             var sourceReplacer = new SourceReplacer();
             ProcessReplacements(sourceReplacer, sourceInfo);
             sourceReplacer.Apply(adder);
@@ -54,6 +58,29 @@ namespace Test.SourceInfo
                 .Replace("\r\n", "\n");
             output["index.js"] = builder.Content();
             output["index.js.map"] = builder.Build(".", "..").ToString();
+
+            if (testData.InputContent.ContainsKey("index.js.map"))
+            {
+                SourceMap.Parse(testData.InputContent["index.js.map"], ".").ResolveInAst(toplevel);
+            }
+
+            var coverageInstrumentation = new CoverageInstrumentation();
+            toplevel = coverageInstrumentation.Instrument(toplevel);
+            coverageInstrumentation.AddCountingHelpers(toplevel);
+
+            builder = new SourceMapBuilder();
+            toplevel.PrintToBuilder(builder, new OutputOptions {Beautify = true});
+            builder.AddText("//# sourceMappingURL=cov.js.map");
+            output["cov.info.json"] = JsonSerializer
+                .Serialize(
+                    new
+                    {
+                        Statements = coverageInstrumentation.StatementInfos,
+                        Conditions = coverageInstrumentation.ConditionInfos
+                    }, new JsonSerializerOptions {WriteIndented = true, IgnoreNullValues = true})
+                .Replace("\r\n", "\n");
+            output["cov.js"] = builder.Content();
+            output["cov.js.map"] = builder.Build(".", "..").ToString();
 
             return output;
         }
