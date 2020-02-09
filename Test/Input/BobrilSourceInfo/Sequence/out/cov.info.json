@@ -1,0 +1,48 @@
+{
+  "Statements": [
+    {
+      "index": 0,
+      "fileName": "./index.tsx",
+      "start": "1:1",
+      "end": "3:2"
+    },
+    {
+      "index": 1,
+      "fileName": "./index.tsx",
+      "start": "2:3",
+      "end": "2:23"
+    },
+    {
+      "index": 2,
+      "fileName": "./index.tsx",
+      "start": "5:1",
+      "end": "5:53"
+    },
+    {
+      "index": 5,
+      "fileName": "./index.tsx",
+      "start": "5:41",
+      "end": "5:46"
+    },
+    {
+      "index": 6,
+      "fileName": "./index.tsx",
+      "start": "5:48",
+      "end": "5:51"
+    },
+    {
+      "index": 7,
+      "fileName": "./index.tsx",
+      "start": "7:1",
+      "end": "7:19"
+    }
+  ],
+  "Conditions": [
+    {
+      "index": 3,
+      "fileName": "./index.tsx",
+      "start": "5:12",
+      "end": "5:31"
+    }
+  ]
+}

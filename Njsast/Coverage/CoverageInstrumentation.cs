@@ -53,7 +53,7 @@ namespace Njsast.Coverage
                     astConditional.Alternative = Transform(astConditional.Alternative);
                     return node;
                 case AstSequence astSequence:
-                    InstrumentBlock(ref astSequence.Expressions);
+                    InstrumentBlock(ref astSequence.Expressions, true);
                     return node;
                 case AstLambda lambda:
                     InstrumentBlock(ref lambda.Body);
@@ -90,7 +90,7 @@ namespace Njsast.Coverage
             }
         }
 
-        void InstrumentBlock(ref StructList<AstNode> block)
+        void InstrumentBlock(ref StructList<AstNode> block, bool seq = false)
         {
             var input = new StructList<AstNode>();
             input.TransferFrom(ref block);
@@ -100,7 +100,14 @@ namespace Njsast.Coverage
                 var idx = _owner.LastIndex++;
                 var call = new AstCall(new AstSymbolRef(_owner.FncNameStatement));
                 call.Args.Add(new AstNumber(idx));
-                block.Add(new AstSimpleStatement(call));
+                if (seq)
+                {
+                    block.Add(call);
+                }
+                else
+                {
+                    block.Add(new AstSimpleStatement(call));
+                }
                 var ii = input[i];
                 _owner.StatementInfos.Add(new InstrumentedStatementInfo
                 {
