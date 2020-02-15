@@ -1,5 +1,5 @@
 "use strict";
-var __c0v = new Uint32Array(5);
+var __c0v = new Uint32Array(4);
 
 window.__c0v = __c0v;
 
@@ -12,24 +12,22 @@ function __c0vC(r, i) {
     return r;
 }
 
-__c0vS(0);
-
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-__c0vS(1);
+__c0vS(0);
 
 var b = require("bobril");
 
-__c0vS(2);
+__c0vS(1);
 
 var g = require("bobril-g11n");
 
-__c0vS(3);
+__c0vS(2);
 
 b.init(function() {
-    __c0vS(4);
+    __c0vS(3);
     return b.createElement(g.T, null, "Normal ", b.createElement("b", null, "Bold"));
 });
 
