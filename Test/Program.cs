@@ -197,14 +197,22 @@ namespace Test
 
         static void Debug()
         {
-            var parser = new Parser(new Options {EcmaVersion = 6},
-                "import(\"i\")"
-            );
-            var toplevel = parser.Parse();
-            toplevel.FigureOutScope();
-            var outputOptions = new OutputOptions();
-            outputOptions.Beautify = true;
-            Console.WriteLine(toplevel.PrintToString(outputOptions));
+            var tests = 0;
+            var errors = 0;
+            foreach (var parserData in new ParserTestDataProviderAttribute("Input/Parser").GetParserData())
+            {
+                if (parserData.Name != "Input/Parser/SourceMap/basic-es5-class")
+                    continue;
+                tests++;
+                var (outAst, outMinJs, outMinJsMap, outNiceJs, outNiceJsMap) = ParserTest.ParseTestCore(parserData);
+                var file = parserData.Name;
+                CheckError(parserData.ExpectedAst, outAst, ref errors, "AST", file, "txt");
+                CheckError(parserData.ExpectedMinJs, outMinJs, ref errors, "minified js", file, "minjs");
+                CheckError(parserData.ExpectedMinJsMap, outMinJsMap, ref errors, "minified js map", file, "minjs.map");
+                CheckError(parserData.ExpectedNiceJs, outNiceJs, ref errors, "beautified js", file, "nicejs");
+                CheckError(parserData.ExpectedNiceJsMap, outNiceJsMap, ref errors, "beautified js map", file,
+                    "nicejs.map");
+            }
         }
 
         static void SourceMapEmitDebug()
