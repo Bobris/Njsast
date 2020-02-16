@@ -136,19 +136,23 @@ namespace Njsast.Coverage
             }
         }
 
-        bool ShouldStatementCover(AstNode node)
+        static bool ShouldStatementCover(AstNode node)
         {
-            if (node is AstFunction || node is AstClass || node is AstImport || node is AstExport)
+            if (node.Source == null)
                 return false;
-            if (node.IsExportsAssign().HasValue)
+            if (node is AstDefun || node is AstClass || node is AstImport || node is AstExport)
+                return false;
+            if (node.IsExportsAssign(true).HasValue)
                 return false;
             if (node.IsDefinePropertyExportsEsModule())
                 return false;
             return true;
         }
 
-        bool ShouldConditionCover(AstNode node)
+        static bool ShouldConditionCover(AstNode node)
         {
+            if (node.Source == null)
+                return false;
             // Don't cover trivial conditions
             if (node is AstFalse || node is AstTrue)
                 return false;

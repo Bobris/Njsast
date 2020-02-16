@@ -3,71 +3,59 @@
     {
       "index": 0,
       "fileName": "./index.tsx",
-      "start": "1:1",
-      "end": "3:2"
-    },
-    {
-      "index": 1,
-      "fileName": "./index.tsx",
       "start": "2:3",
       "end": "2:23"
     },
     {
-      "index": 2,
-      "fileName": "./index.tsx",
-      "start": "5:1",
-      "end": "7:2"
-    },
-    {
-      "index": 3,
+      "index": 1,
       "fileName": "./index.tsx",
       "start": "6:3",
       "end": "6:22"
     },
     {
-      "index": 4,
+      "index": 2,
       "fileName": "./index.tsx",
       "start": "9:1",
       "end": "9:53"
     },
     {
-      "index": 7,
+      "index": 5,
       "fileName": "./index.tsx",
       "start": "9:41",
       "end": "9:46"
     },
     {
-      "index": 8,
+      "index": 6,
       "fileName": "./index.tsx",
       "start": "9:48",
       "end": "9:51"
     },
     {
-      "index": 9,
+      "index": 7,
       "fileName": "./index.tsx",
       "start": "11:1",
       "end": "13:2"
     },
     {
-      "index": 10,
+      "index": 8,
       "fileName": "./index.tsx",
       "start": "12:3",
       "end": "12:9"
     },
     {
-      "index": 11,
+      "index": 9,
       "fileName": "./index.tsx",
       "start": "15:1",
       "end": "17:2"
     },
     {
-      "index": 16,
+      "index": 14,
       "fileName": "./index.tsx",
       "start": "16:3",
       "end": "16:38"
     },
     {
-      "index": 17,
+      "index": 15,
       "fileName": "./index.tsx",
       "start": "19:1",
       "end": "19:19"
@@ -75,19 +63,19 @@
   ],
   "Conditions": [
     {
-      "index": 5,
+      "index": 3,
       "fileName": "./index.tsx",
       "start": "9:12",
       "end": "9:31"
     },
     {
-      "index": 12,
+      "index": 10,
       "fileName": "./index.tsx",
       "start": "15:5",
       "end": "15:24"
     },
     {
-      "index": 14,
+      "index": 12,
       "fileName": "./index.tsx",
       "start": "15:5",
       "end": "15:47"

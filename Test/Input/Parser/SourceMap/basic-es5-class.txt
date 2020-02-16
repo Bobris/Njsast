@@ -1,4 +1,4 @@
-Toplevel 1:1 - 9:11 [HasUseStrictDirective]
+Toplevel 1:1 - 12:44 [HasUseStrictDirective]
   Var 1:1 - 5:2
     VarDef 1:5 - 1:4
       SymbolVar 1:5 - 1:10 [Write]

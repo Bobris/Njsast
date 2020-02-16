@@ -117,7 +117,7 @@ namespace Njsast.Ast
             return null;
         }
 
-        public static (string name, AstNode? value)? IsExportsAssign(this AstNode node)
+        public static (string name, AstNode? value)? IsExportsAssign(this AstNode node, bool allowLocalExports = false)
         {
             if (node is AstSimpleStatement simpleStatement)
             {
@@ -127,7 +127,14 @@ namespace Njsast.Ast
             if (!(node is AstAssign assign)) return null;
             if (assign.Operator != Operator.Assignment) return null;
             if (!(assign.Left is AstPropAccess propAccess)) return null;
-            if (!propAccess.Expression.IsSymbolDef().IsExportsSymbol()) return null;
+            if (allowLocalExports)
+            {
+                if (!(propAccess.Expression is AstSymbolRef symb) || symb.Name != "exports") return null;
+            }
+            else
+            {
+                if (!propAccess.Expression.IsSymbolDef().IsExportsSymbol()) return null;
+            }
             var name = propAccess.PropertyAsString;
             if (name != null) return (name, assign.Right);
             return null;
@@ -160,10 +167,10 @@ namespace Njsast.Ast
             return def.IsSingleInit;
         }
 
-        public static T DeepClone<T>(this T node) where T: AstNode
+        public static T DeepClone<T>(this T node) where T : AstNode
         {
             var tr = new DeepCloneTransformer();
-            return (T)tr.Transform(node);
+            return (T) tr.Transform(node);
         }
 
         public static string DumpToString(this AstNode node, bool withoutPositions = false)
