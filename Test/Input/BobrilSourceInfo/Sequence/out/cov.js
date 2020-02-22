@@ -41,8 +41,8 @@ while (true) {
 
 __c0vS(9);
 
-if (__c0vC(__c0vC(Math.random() > 0.5, 10) && Math.random() < 0.5, 12)) {
-    __c0vS(14);
+if (__c0vC(__c0vC(Math.random() > 0.5, 13) && Math.random() < 0.5, 11)) {
+    __c0vS(10);
     console.log("combined conditions");
 }
 

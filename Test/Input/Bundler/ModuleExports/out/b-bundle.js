@@ -262,7 +262,7 @@
     };
     var DEBUG = false;
     var global = window;
-    var exports_lib2 = {
+    var exports = {
         doIt: function(p) {
             console.log(p);
         },
@@ -280,8 +280,8 @@
         });
         return param;
     };
-    var param = exports_lib2;
-    var exports_lib = exports_wrapper(exports_lib2);
+    var param = exports;
+    var exports_lib = exports_wrapper(exports);
     if ("test" in window) {
         setTimeout(window.test, 1);
     }

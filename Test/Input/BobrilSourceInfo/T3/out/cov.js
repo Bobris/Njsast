@@ -1,5 +1,5 @@
 "use strict";
-var __c0v = new Uint32Array(4);
+var __c0v = new Uint32Array(2);
 
 window.__c0v = __c0v;
 
@@ -16,18 +16,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-__c0vS(0);
-
 var b = require("bobril");
-
-__c0vS(1);
 
 var g = require("bobril-g11n");
 
-__c0vS(2);
+__c0vS(0);
 
 b.init(function() {
-    __c0vS(3);
+    __c0vS(1);
     return b.createElement(g.T, {
         hint: 'Leave things like \'{1}\' on appropriate places',
         p1: b.now() - 100000,

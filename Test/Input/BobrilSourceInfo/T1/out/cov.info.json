@@ -3,23 +3,11 @@
     {
       "index": 0,
       "fileName": "./index.tsx",
-      "start": "1:1",
-      "end": "1:29"
-    },
-    {
-      "index": 1,
-      "fileName": "./index.tsx",
-      "start": "2:1",
-      "end": "2:34"
-    },
-    {
-      "index": 2,
-      "fileName": "./index.tsx",
       "start": "4:1",
       "end": "10:4"
     },
     {
-      "index": 3,
+      "index": 1,
       "fileName": "./index.tsx",
       "start": "4:14",
       "end": "10:3"

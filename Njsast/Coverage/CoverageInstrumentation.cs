@@ -18,13 +18,13 @@ namespace Njsast.Coverage
             {
                 case AstIf astIf:
                 {
-                    astIf.Condition = Transform(astIf.Condition);
-                    astIf.Condition = InstrumentCondition(astIf.Condition);
                     astIf.Body = (AstStatement) Transform(MakeBlockStatement(astIf.Body));
                     if (astIf.Alternative != null)
                     {
                         astIf.Alternative = (AstStatement) Transform(MakeBlockStatement(astIf.Alternative!));
                     }
+                    astIf.Condition = InstrumentCondition(astIf.Condition);
+                    astIf.Condition = Transform(astIf.Condition);
 
                     return node;
                 }
@@ -32,9 +32,9 @@ namespace Njsast.Coverage
                 {
                     if (astBinary.Operator == Operator.LogicalAnd || astBinary.Operator == Operator.LogicalOr)
                     {
-                        astBinary.Left = Transform(astBinary.Left);
-                        astBinary.Left = InstrumentCondition(astBinary.Left);
                         astBinary.Right = Transform(astBinary.Right);
+                        astBinary.Left = InstrumentCondition(astBinary.Left);
+                        astBinary.Left = Transform(astBinary.Left);
                         return node;
                     }
 
@@ -146,7 +146,38 @@ namespace Njsast.Coverage
                 return false;
             if (node.IsDefinePropertyExportsEsModule())
                 return false;
+            if (IsVarRequire(node))
+                return false;
             return true;
+        }
+
+        static bool IsVarRequire(AstNode node)
+        {
+            if (node is AstVar astVar)
+            {
+                if (astVar.Definitions.Count == 1 && astVar.Definitions[0].Value is AstCall call)
+                {
+                    return IsRequireCall(call);
+                }
+            }
+
+            if (node is AstSimpleStatement astSimpleStatement)
+            {
+                if (astSimpleStatement.Body is AstCall call)
+                {
+                    return IsRequireCall(call);
+                }
+            }
+
+            return false;
+        }
+
+        static bool IsRequireCall(AstCall call)
+        {
+            if (call.Args.Count == 1 && call.Expression is AstSymbolRef symb && symb.Name == "require" &&
+                call.Args[0] is AstString)
+                return true;
+            return false;
         }
 
         static bool ShouldConditionCover(AstNode node)

@@ -5,10 +5,10 @@
         return new Image();
     }
     Image_image = function() {
-        function Image_image() {
+        function Image_image2() {
             console.log("constructed");
         }
-        return Image_image;
+        return Image_image2;
     }();
     URL.createObjectURL("");
     new Image_image();

@@ -261,14 +261,13 @@
         return cooked;
     };
     var DEBUG = false;
-    var a = 1;
-    function fn(a, b) {
-        return a + b;
-    }
-    function fn_index(a_index2, b) {
-        return a_index2 - b;
-    }
-    var a_index = 2;
-    console.log(fn(fn_index(a_index, 1), a_index));
+    var __export_c1 = 1;
+    var __export_c2 = 2;
+    var __export_create = 10;
+    var __export_create_toolboxB = 20;
+    console.log("A", __export_create);
+    console.log("B", __export_create_toolboxB);
+    console.log("Ac1", __export_c1);
+    console.log("Bc1", __export_c1);
 }.call(this);
 
