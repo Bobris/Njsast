@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Text.Json;
+using System.Text.Unicode;
 using Njsast.Bobril;
 using Njsast.ConstEval;
 using Njsast.Coverage;
@@ -68,21 +71,37 @@ namespace Test.SourceInfo
             toplevel = coverageInstrumentation.Instrument(toplevel);
             coverageInstrumentation.AddCountingHelpers(toplevel);
 
+            coverageInstrumentation.CleanUp(new TestUtf8Reader(testData.InputContent));
+
             builder = new SourceMapBuilder();
             toplevel.PrintToBuilder(builder, new OutputOptions {Beautify = true});
             builder.AddText("//# sourceMappingURL=cov.js.map");
             output["cov.info.json"] = JsonSerializer
-                .Serialize(
-                    new
-                    {
-                        Statements = coverageInstrumentation.StatementInfos,
-                        Conditions = coverageInstrumentation.ConditionInfos
-                    }, new JsonSerializerOptions {WriteIndented = true, IgnoreNullValues = true})
+                .Serialize(coverageInstrumentation.InstrumentedFiles,
+                    new JsonSerializerOptions {WriteIndented = true, IgnoreNullValues = true})
                 .Replace("\r\n", "\n");
             output["cov.js"] = builder.Content();
             output["cov.js.map"] = builder.Build(".", "..").ToString();
 
             return output;
+        }
+
+        public class TestUtf8Reader : ITextFileReader
+        {
+            readonly Dictionary<string, string> _inputContent;
+
+            public TestUtf8Reader(Dictionary<string, string> inputContent)
+            {
+                _inputContent = inputContent;
+            }
+
+            public ReadOnlySpan<byte> ReadUtf8(string fileName)
+            {
+                if (fileName.StartsWith("./")) fileName = fileName.Substring(2);
+                return _inputContent.TryGetValue(fileName, out var content)
+                    ? Encoding.UTF8.GetBytes(content)
+                    : new ReadOnlySpan<byte>();
+            }
         }
 
         static void ProcessReplacements(SourceReplacer sourceReplacer, Njsast.Bobril.SourceInfo sourceInfo)

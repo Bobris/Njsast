@@ -1,29 +1,37 @@
 {
-  "Statements": [
-    {
-      "index": 0,
-      "fileName": "./index.tsx",
-      "start": "4:1",
-      "end": "17:4"
-    },
-    {
-      "index": 1,
-      "fileName": "./index.tsx",
-      "start": "5:3",
-      "end": "7:5"
-    },
-    {
-      "index": 2,
-      "fileName": "./index.tsx",
-      "start": "8:3",
-      "end": "10:5"
-    },
-    {
-      "index": 3,
-      "fileName": "./index.tsx",
-      "start": "11:3",
-      "end": "16:5"
-    }
-  ],
-  "Conditions": []
+  "./index.tsx": {
+    "fileName": "./index.tsx",
+    "infos": [
+      {
+        "type": "Statement",
+        "index": 0,
+        "start": "3:0",
+        "end": "3:7"
+      },
+      {
+        "type": "Function",
+        "index": 1,
+        "start": "3:7",
+        "end": "3:14"
+      },
+      {
+        "type": "Statement",
+        "index": 1,
+        "start": "4:2",
+        "end": "6:4"
+      },
+      {
+        "type": "Statement",
+        "index": 2,
+        "start": "7:2",
+        "end": "9:4"
+      },
+      {
+        "type": "Statement",
+        "index": 3,
+        "start": "10:2",
+        "end": "15:4"
+      }
+    ]
+  }
 }
