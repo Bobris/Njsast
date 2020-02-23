@@ -1,8 +1,6 @@
 using System;
-using System.Buffers.Text;
 using System.Linq;
 using System.Text.Json.Serialization;
-using System.Text.Unicode;
 using Njsast.Utils;
 
 namespace Njsast.Coverage
@@ -60,6 +58,7 @@ namespace Njsast.Coverage
                     i--;
                 }
             }
+
             Infos = new StructList<InstrumentedInfo>(Infos.OrderBy(i => i.Start).ToArray());
         }
 
@@ -78,6 +77,7 @@ namespace Njsast.Coverage
                     firstNonWhiteSpace = pos;
                     AdvanceRune(ref content, ref pos, out wasWhiteSpace);
                 }
+
                 if (pos >= info.End) continue;
                 info.Start = firstNonWhiteSpace;
                 var lastNonWhiteSpace = pos;
