@@ -10,7 +10,7 @@
         for (key in style) {
             v = style[key];
             if (v === undefined) continue;
-            res += hyphenateStyle(key) + ":" + (v === "" ? "\"\"" : v) + ";";
+            res += hyphenateStyle(key) + ":" + (v === "" ? '""' : v) + ";";
         }
         res = res.slice(0, -1);
         return res;

@@ -10,7 +10,7 @@
         for (a in t) {
             r = t[a];
             if (r === e) continue;
-            s += n(a) + ":" + (r === "" ? "\"\"" : r) + ";";
+            s += n(a) + ":" + (r === "" ? '""' : r) + ";";
         }
         s = s.slice(0, -1);
         return s;

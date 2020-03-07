@@ -1849,7 +1849,7 @@
                     return;
                 }
                 s[oldName] = "none";
-                addFilter(s, 'progid:DXImageTransform.Microsoft.gradient(startColorstr=\'' + color1 + '\',endColorstr=\'' + color2 + '\', gradientType=\'' + dir + '\')');
+                addFilter(s, "progid:DXImageTransform.Microsoft.gradient(startColorstr='" + color1 + "',endColorstr='" + color2 + "', gradientType='" + dir + "')");
             });
         })();
     } else {
@@ -3445,7 +3445,7 @@
         for (key in style) {
             v = style[key];
             if (v === undefined) continue;
-            res += hyphenateStyle(key) + ":" + (v === "" ? "\"\"" : v) + ";";
+            res += hyphenateStyle(key) + ":" + (v === "" ? '""' : v) + ";";
         }
         res = res.slice(0, -1);
         return res;

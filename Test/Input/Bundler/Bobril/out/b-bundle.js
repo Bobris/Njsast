@@ -416,7 +416,7 @@
             if (vi === undefined) continue;
             if (mi === undefined) {
                 if (DEBUG) {
-                    if (ki === "float" && window.console && console.error) console.error('In style instead of \'float\' you have to use \'cssFloat\'');
+                    if (ki === "float" && window.console && console.error) console.error("In style instead of 'float' you have to use 'cssFloat'");
                     if (/-/.test(ki) && window.console && console.warn) console.warn("Style property " + ki + " contains dash (must use JS props instead of css names)");
                 }
                 if (testPropExistence(ki)) {
@@ -2257,7 +2257,7 @@
                     return;
                 }
                 s[oldName] = "none";
-                addFilter(s, 'progid:DXImageTransform.Microsoft.gradient(startColorstr=\'' + color1 + '\',endColorstr=\'' + color2 + '\', gradientType=\'' + dir + '\')');
+                addFilter(s, "progid:DXImageTransform.Microsoft.gradient(startColorstr='" + color1 + "',endColorstr='" + color2 + "', gradientType='" + dir + "')");
             });
         })();
     } else {
@@ -3919,7 +3919,7 @@
         return pattern.replace(paramInjectMatcher, function(_match, paramName) {
             paramName = paramName || "splat";
             if (paramName.slice(-1) !== "?") {
-                if (params[paramName] == null) throw new Error("Missing \"" + paramName + "\" parameter for path \"" + pattern + "\"");
+                if (params[paramName] == null) throw new Error('Missing "' + paramName + '" parameter for path "' + pattern + '"');
             } else {
                 paramName = paramName.slice(0, -1);
                 if (params[paramName] == null) {
@@ -3929,7 +3929,7 @@
             var segment;
             if (paramName === "splat" && Array.isArray(params[paramName])) {
                 segment = params[paramName][splatIndex++];
-                if (segment == null) throw new Error("Missing splat # " + splatIndex + " for path \"" + pattern + "\"");
+                if (segment == null) throw new Error("Missing splat # " + splatIndex + ' for path "' + pattern + '"');
             } else {
                 segment = params[paramName];
             }
@@ -4610,7 +4610,7 @@
         for (var key in style) {
             var v = style[key];
             if (v === undefined) continue;
-            res += hyphenateStyle(key) + ":" + (v === "" ? "\"\"" : v) + ";";
+            res += hyphenateStyle(key) + ":" + (v === "" ? '""' : v) + ";";
         }
         res = res.slice(0, -1);
         return res;

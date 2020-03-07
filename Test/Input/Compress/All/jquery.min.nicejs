@@ -322,14 +322,14 @@
             }, b.find.CLASS = d.getElementsByClassName && function(e, t) {
                 if ("undefined" != typeof t.getElementsByClassName && E) return t.getElementsByClassName(e);
             }, s = [], v = [], (d.qsa = K.test(C.querySelectorAll)) && (ce(function(e) {
-                a.appendChild(e).innerHTML = '<a id=\'' + k + '\'></a><select id=\'' + k + '-\r\\\' msallowcapture=\'\'><option selected=\'\'></option></select>', e.querySelectorAll('[msallowcapture^=\'\']').length && v.push("[*^$]=" + M + "*(?:''|\"\")"), e.querySelectorAll("[selected]").length || v.push("\\[" + M + "*(?:value|" + R + ")"), e.querySelectorAll("[id~=" + k + "-]").length || v.push("~="), e.querySelectorAll(":checked").length || v.push(":checked"), e.querySelectorAll("a#" + k + "+*").length || v.push(".#.+[+~]");
+                a.appendChild(e).innerHTML = "<a id='" + k + "'></a><select id='" + k + "-\r\\' msallowcapture=''><option selected=''></option></select>", e.querySelectorAll("[msallowcapture^='']").length && v.push("[*^$]=" + M + "*(?:''|\"\")"), e.querySelectorAll("[selected]").length || v.push("\\[" + M + "*(?:value|" + R + ")"), e.querySelectorAll("[id~=" + k + "-]").length || v.push("~="), e.querySelectorAll(":checked").length || v.push(":checked"), e.querySelectorAll("a#" + k + "+*").length || v.push(".#.+[+~]");
             }), ce(function(e) {
                 var t;
-                e.innerHTML = '<a href=\'\' disabled=\'disabled\'></a><select disabled=\'disabled\'><option/></select>';
+                e.innerHTML = "<a href='' disabled='disabled'></a><select disabled='disabled'><option/></select>";
                 t = C.createElement("input");
                 t.setAttribute("type", "hidden"), e.appendChild(t).setAttribute("name", "D"), e.querySelectorAll("[name=d]").length && v.push("name" + M + "*[*^$|!~]?="), 2 !== e.querySelectorAll(":enabled").length && v.push(":enabled", ":disabled"), a.appendChild(e).disabled = !0, 2 !== e.querySelectorAll(":disabled").length && v.push(":enabled", ":disabled"), e.querySelectorAll("*,:x"), v.push(",.*:");
             })), (d.matchesSelector = K.test(c = a.matches || a.webkitMatchesSelector || a.mozMatchesSelector || a.oMatchesSelector || a.msMatchesSelector)) && ce(function(e) {
-                d.disconnectedMatch = c.call(e, "*"), c.call(e, '[s!=\'\']:x'), s.push("!=", $);
+                d.disconnectedMatch = c.call(e, "*"), c.call(e, "[s!='']:x"), s.push("!=", $);
             }), v = v.length && new RegExp(v.join("|")), s = s.length && new RegExp(s.join("|")), t = K.test(a.compareDocumentPosition), y = t || K.test(a.contains) ? function(e, t) {
                 var n = 9 === e.nodeType ? e.documentElement : e, r = t && t.parentNode;
                 return e === r || !(!r || 1 !== r.nodeType || !(n.contains ? n.contains(r) : e.compareDocumentPosition && 16 & e.compareDocumentPosition(r)));
@@ -742,7 +742,7 @@
         }, d.sortStable = k.split("").sort(D).join("") === k, d.detectDuplicates = !!l, T(), d.sortDetached = ce(function(e) {
             return 1 & e.compareDocumentPosition(C.createElement("fieldset"));
         }), ce(function(e) {
-            return e.innerHTML = '<a href=\'#\'></a>', "#" === e.firstChild.getAttribute("href");
+            return e.innerHTML = "<a href='#'></a>", "#" === e.firstChild.getAttribute("href");
         }) || fe("type|href|height|width", function(e, t, n) {
             if (!n) return e.getAttribute(t, "type" === t.toLowerCase() ? 1 : 2);
         }), d.attributes && ce(function(e) {
@@ -1289,7 +1289,7 @@
     de = /<([a-z][^\/\0>\x20\t\r\n\f]*)/i;
     he = /^$|^module$|\/(?:java|ecma)script/i;
     ge = {
-        option: [ 1, '<select multiple=\'multiple\'>', "</select>" ],
+        option: [ 1, "<select multiple='multiple'>", "</select>" ],
         thead: [ 1, "<table>", "</table>" ],
         col: [ 2, "<table><colgroup>", "</colgroup></table>" ],
         tr: [ 2, "<table><tbody>", "</tbody></table>" ],
