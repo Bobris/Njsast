@@ -1359,7 +1359,7 @@
             if (o) {
                 if (r || o.ctx[S] === D) {
                     u = T(d);
-                    $n(u, o, d.e, l, r ? 1000000 : o.ctx[k]);
+                    $n(u, o, d.e, l, r ? 1e6 : o.ctx[k]);
                 } else {
                     if (n(d.c)) ut(d.c, d.e, l);
                 }
@@ -1389,7 +1389,7 @@
     }
     L = function(n, t) {
         if (n != null) {
-            if (t == e) t = 1000000;
+            if (t == e) t = 1e6;
             if (n[S] !== D + 1) {
                 n[S] = D + 1;
                 n[k] = t;
@@ -2473,7 +2473,7 @@
         var n;
         if (Se == 0) return !1;
         n = x();
-        if (n < Ce + 1000 && e >= Se) {
+        if (n < Ce + 1e3 && e >= Se) {
             Ce = n;
             Se = e;
             return !0;

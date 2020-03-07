@@ -271,7 +271,7 @@ var __bbb = {};
         }
         res = new Promise(function(r, e) {
             var script = document.createElement("script");
-            var timeout = setTimeout(handle, 120000);
+            var timeout = setTimeout(handle, 12e4);
             function handle() {
                 script.onload = script.onerror = undefined;
                 clearTimeout(timeout);

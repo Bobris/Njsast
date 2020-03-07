@@ -1683,7 +1683,7 @@
             if (rc) {
                 if (fullRefresh || rc.ctx[ctxInvalidated] === frameCounter) {
                     var node = RootComponent(r);
-                    updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1000000 : rc.ctx[ctxDeepness]);
+                    updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1e6 : rc.ctx[ctxDeepness]);
                 } else {
                     if (__export_isArray(r.c)) selectedUpdate(r.c, r.e, insertBefore);
                 }
@@ -1713,7 +1713,7 @@
     }
     __export_invalidate = function(ctx, deepness) {
         if (ctx != null) {
-            if (deepness == undefined) deepness = 1000000;
+            if (deepness == undefined) deepness = 1e6;
             if (ctx[ctxInvalidated] !== frameCounter + 1) {
                 ctx[ctxInvalidated] = frameCounter + 1;
                 ctx[ctxDeepness] = deepness;
@@ -1760,7 +1760,7 @@
         if (rootNode == null) return;
         var ctx = rootNode.ctx;
         ctx[ctxInvalidated] = frameCounter;
-        ctx[ctxDeepness] = 1000000;
+        ctx[ctxDeepness] = 1e6;
     }
     function getRoots() {
         return roots;
@@ -2896,7 +2896,7 @@
     function shouldPreventClickingSpree(clickCount) {
         if (clickingSpreeCount == 0) return false;
         var n = __export_now();
-        if (n < clickingSpreeStart + 1000 && clickCount >= clickingSpreeCount) {
+        if (n < clickingSpreeStart + 1e3 && clickCount >= clickingSpreeCount) {
             clickingSpreeStart = n;
             clickingSpreeCount = clickCount;
             return true;
@@ -4842,7 +4842,7 @@
     function svgDescribeArc(x, y, radius, startAngle, endAngle, startWithLine) {
         var absDeltaAngle = Math.abs(endAngle - startAngle);
         var close = false;
-        if (absDeltaAngle > 360 - 0.01) {
+        if (absDeltaAngle > 360 - .01) {
             if (endAngle > startAngle) endAngle = startAngle - 359.9; else endAngle = startAngle + 359.9;
             if (radius === 0) return "";
             close = true;

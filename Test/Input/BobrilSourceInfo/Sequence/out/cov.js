@@ -30,7 +30,7 @@ exports.exported = exported;
 
 __c0vS(2);
 
-var expr = __c0vC(Math.random() > 0.5, 3) ? "A" : (__c0vS(5), inc(), __c0vS(6), "B");
+var expr = __c0vC(Math.random() > .5, 3) ? "A" : (__c0vS(5), inc(), __c0vS(6), "B");
 
 __c0vS(7);
 
@@ -41,7 +41,7 @@ while (true) {
 
 __c0vS(9);
 
-if (__c0vC(__c0vC(Math.random() > 0.5, 13) && Math.random() < 0.5, 11)) {
+if (__c0vC(__c0vC(Math.random() > .5, 13) && Math.random() < .5, 11)) {
     __c0vS(10);
     console.log("combined conditions");
 }

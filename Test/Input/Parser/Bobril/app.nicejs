@@ -32,7 +32,7 @@ var page = b.createVirtualComponent({
         setInterval(function() {
             ctx.counter++;
             b.invalidate();
-        }, 1000);
+        }, 1e3);
     },
     render: function(ctx, me, _oldMe) {
         var m = g.getMoment();

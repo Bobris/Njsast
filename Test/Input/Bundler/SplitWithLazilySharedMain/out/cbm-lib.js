@@ -12,7 +12,7 @@
         n = new Promise(function(i, s) {
             var p, u;
             p = document.createElement("script");
-            u = setTimeout(b, 120000);
+            u = setTimeout(b, 12e4);
             function b() {
                 p.onload = p.onerror = r;
                 clearTimeout(u);

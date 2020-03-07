@@ -13,7 +13,7 @@
     b = {
         fn: r
     };
-    t = Math.random() > 0.5 ? n : b;
+    t = Math.random() > .5 ? n : b;
     console.log(t.fn(1, 2));
 }).call(this);
 

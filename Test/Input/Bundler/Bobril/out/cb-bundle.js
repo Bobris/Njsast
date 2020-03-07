@@ -1359,7 +1359,7 @@
             if (rc) {
                 if (fullRefresh || rc.ctx[ctxInvalidated] === frameCounter) {
                     node = RootComponent(r);
-                    updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1000000 : rc.ctx[ctxDeepness]);
+                    updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1e6 : rc.ctx[ctxDeepness]);
                 } else {
                     if (__export_isArray(r.c)) selectedUpdate(r.c, r.e, insertBefore);
                 }
@@ -1389,7 +1389,7 @@
     }
     __export_invalidate = function(ctx, deepness) {
         if (ctx != null) {
-            if (deepness == undefined) deepness = 1000000;
+            if (deepness == undefined) deepness = 1e6;
             if (ctx[ctxInvalidated] !== frameCounter + 1) {
                 ctx[ctxInvalidated] = frameCounter + 1;
                 ctx[ctxDeepness] = deepness;
@@ -2473,7 +2473,7 @@
         var n;
         if (clickingSpreeCount == 0) return !1;
         n = __export_now();
-        if (n < clickingSpreeStart + 1000 && clickCount >= clickingSpreeCount) {
+        if (n < clickingSpreeStart + 1e3 && clickCount >= clickingSpreeCount) {
             clickingSpreeStart = n;
             clickingSpreeCount = clickCount;
             return !0;

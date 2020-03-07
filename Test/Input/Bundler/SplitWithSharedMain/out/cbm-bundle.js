@@ -14,7 +14,7 @@ var __bbb = {};
         i = new Promise(function(n, s) {
             var b, c;
             b = document.createElement("script");
-            c = setTimeout(p, 120000);
+            c = setTimeout(p, 12e4);
             function p() {
                 b.onload = b.onerror = r;
                 clearTimeout(c);

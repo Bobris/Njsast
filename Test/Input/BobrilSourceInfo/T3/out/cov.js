@@ -26,7 +26,7 @@ b.init(function() {
     __c0vS(1);
     return b.createElement(g.T, {
         hint: "Leave things like '{1}' on appropriate places",
-        p1: b.now() - 100000,
+        p1: b.now() - 1e5,
         p2: 42
     }, "Normal", " ", b.createElement("b", {
         style: {

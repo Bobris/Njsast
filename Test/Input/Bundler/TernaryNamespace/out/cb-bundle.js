@@ -13,7 +13,7 @@
     __export_$_libb = {
         fn: fn_libb
     };
-    lib = Math.random() > 0.5 ? __export_$ : __export_$_libb;
+    lib = Math.random() > .5 ? __export_$ : __export_$_libb;
     console.log(lib.fn(1, 2));
 }).call(this);
 
