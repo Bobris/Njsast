@@ -199,19 +199,19 @@ namespace Test
         {
             var tests = 0;
             var errors = 0;
-            foreach (var parserData in new ParserTestDataProviderAttribute("Input/Parser").GetParserData())
+            foreach (var bundlerTestData in new BundlerDataProviderAttribute("Input/Bundler").GetTypedData())
             {
-                if (parserData.Name != "Input/Parser/SourceMap/basic-es5-class")
-                    continue;
+                if (!bundlerTestData.Name.Contains("Eval2")) continue;
+                var outFiles = BundlerTest.BundlerTestCore(bundlerTestData);
                 tests++;
-                var (outAst, outMinJs, outMinJsMap, outNiceJs, outNiceJsMap) = ParserTest.ParseTestCore(parserData);
-                var file = parserData.Name;
-                CheckError(parserData.ExpectedAst, outAst, ref errors, "AST", file, "txt");
-                CheckError(parserData.ExpectedMinJs, outMinJs, ref errors, "minified js", file, "minjs");
-                CheckError(parserData.ExpectedMinJsMap, outMinJsMap, ref errors, "minified js map", file, "minjs.map");
-                CheckError(parserData.ExpectedNiceJs, outNiceJs, ref errors, "beautified js", file, "nicejs");
-                CheckError(parserData.ExpectedNiceJsMap, outNiceJsMap, ref errors, "beautified js map", file,
-                    "nicejs.map");
+                foreach (var pair in outFiles)
+                {
+                    CheckError(
+                        bundlerTestData.InputContent.TryGetValue("out/" + pair.Key, out var inputContent)
+                            ? inputContent
+                            : "", pair.Value, ref errors, "bundler result", bundlerTestData.Input + "/out/" + pair.Key,
+                        "");
+                }
             }
         }
 
