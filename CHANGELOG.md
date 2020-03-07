@@ -2,9 +2,14 @@
 
 ## [unreleased]
 
+### Added
+
+- Coverage instrumentation.
+
 ### Fixed
 
-Compress should never remove IIFE functions. Fixes compression of already compressed jquery.min.js.
+- Many bugs in bundler and minification.
+- Compress should never remove IIFE functions. Fixes compression of already compressed jquery.min.js.
 
 ## 0.1.0
 
