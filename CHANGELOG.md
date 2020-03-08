@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Added
+
+- New Coverage reporters
+
 ## 0.2.0
 
 ### Added
