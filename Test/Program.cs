@@ -199,19 +199,12 @@ namespace Test
         {
             var tests = 0;
             var errors = 0;
-            foreach (var bundlerTestData in new BundlerDataProviderAttribute("Input/Bundler").GetTypedData())
+            foreach (var constEvalData in new ConstEvalDataProviderAttribute("Input/ConstEval").GetTypedData())
             {
-                if (!bundlerTestData.Name.Contains("Eval2")) continue;
-                var outFiles = BundlerTest.BundlerTestCore(bundlerTestData);
+                var file = constEvalData.Name;
+                var outNiceJs = ConstEvalTest.ConstEvalTestCore(constEvalData);
                 tests++;
-                foreach (var pair in outFiles)
-                {
-                    CheckError(
-                        bundlerTestData.InputContent.TryGetValue("out/" + pair.Key, out var inputContent)
-                            ? inputContent
-                            : "", pair.Value, ref errors, "bundler result", bundlerTestData.Input + "/out/" + pair.Key,
-                        "");
-                }
+                CheckError(constEvalData.ExpectedNiceJs, outNiceJs, ref errors, "const eval", file, "nicejs");
             }
         }
 

@@ -42235,11 +42235,20 @@ Toplevel 1:1 - 5496:1
                       Property: dataTypes
                       SymbolRef 4626:14 - 4626:15 [Read]
                         Name: i
-                Call 4626:45 - 4626:51
-                  SymbolRef 4626:45 - 4626:46 [Read]
-                    Name: l
-                  String 4626:47 - 4626:50
-                    Value: *
+                Binary 4626:34 - 4626:51
+                  Operator: LogicalAnd
+                  UnaryPrefix 4626:34 - 4626:41
+                    Operator: LogicalNot
+                    Sub 4626:35 - 4626:41
+                      String 4626:37 - 4626:40
+                        Value: *
+                      SymbolRef 4626:35 - 4626:36 [Read]
+                        Name: s
+                  Call 4626:45 - 4626:51
+                    SymbolRef 4626:45 - 4626:46 [Read]
+                      Name: l
+                    String 4626:47 - 4626:50
+                      Value: *
           Defun 4628:3 - 4634:4
             SymbolDefun 4628:12 - 4628:14 [Write]
               Name: zt

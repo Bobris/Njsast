@@ -2440,7 +2440,7 @@
                 return "string" != typeof n || u || s[n] ? u ? !(r = n) : void 0 : (i.dataTypes.unshift(n), l(n), !1);
             }), r;
         }
-        return l(i.dataTypes[0]) || l("*");
+        return l(i.dataTypes[0]) || !s["*"] && l("*");
     }
     function zt(e, t) {
         var n, r, i = k.ajaxSettings.flatOptions || {};

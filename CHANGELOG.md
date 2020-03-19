@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Fixed
+
+- Nasty Const eval bug
+
 ### Added
 
 - New Coverage reporters
