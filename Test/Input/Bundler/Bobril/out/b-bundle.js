@@ -262,7 +262,7 @@
     };
     var DEBUG = false;
     var __export_invalidate;
-    var BobrilCtx = function() {
+    var BobrilCtx_bobril = function() {
         function BobrilCtx(data, me) {
             this.data = data;
             this.me = me;
@@ -1638,7 +1638,7 @@
         scheduled = false;
         internalUpdate(time);
     }
-    var rootIds;
+    var rootIds_bobril;
     var RootComponent = createVirtualComponent({
         render: function(ctx, me) {
             var r = ctx.data;
@@ -1666,19 +1666,19 @@
             fullRecreateRequested = false;
             fullRefresh = true;
         }
-        rootIds = Object.keys(roots);
-        for (var i = 0; i < rootIds.length; i++) {
-            var r = roots[rootIds[i]];
+        rootIds_bobril = Object.keys(roots);
+        for (var i = 0; i < rootIds_bobril.length; i++) {
+            var r = roots[rootIds_bobril[i]];
             if (!r) continue;
             var rc = r.n;
             var insertBefore = null;
-            for (var j = i + 1; j < rootIds.length; j++) {
-                var rafter = roots[rootIds[j]];
+            for (var j = i + 1; j < rootIds_bobril.length; j++) {
+                var rafter = roots[rootIds_bobril[j]];
                 if (rafter === undefined) continue;
                 insertBefore = getDomNode(rafter.n);
                 if (insertBefore != null) break;
             }
-            if (focusRootTop) inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds);
+            if (focusRootTop) inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds_bobril);
             if (r.e === undefined) r.e = document.body;
             if (rc) {
                 if (fullRefresh || rc.ctx[ctxInvalidated] === frameCounter) {
@@ -1694,7 +1694,7 @@
             }
             r.c = rc.children;
         }
-        rootIds = undefined;
+        rootIds_bobril = undefined;
         callPostCallbacks();
         var r0 = roots["0"];
         afterFrameCallback(r0 ? r0.c : null);
@@ -1738,8 +1738,8 @@
             p: parent,
             n: undefined
         };
-        if (rootIds != null) {
-            rootIds.push(rootId);
+        if (rootIds_bobril != null) {
+            rootIds_bobril.push(rootId);
         } else {
             firstInvalidate();
         }
@@ -1752,7 +1752,7 @@
         delete roots[id];
     }
     function updateRoot(id, factory) {
-        assert(rootIds != null, "updateRoot could be called only from render");
+        assert(rootIds_bobril != null, "updateRoot could be called only from render");
         var root = roots[id];
         assert(root != null);
         if (factory != null) root.f = factory;
@@ -1776,7 +1776,7 @@
         beforeInit = finishInitialize;
     }
     function init(factory, element) {
-        assert(rootIds == null, "init should not be called from render");
+        assert(rootIds_bobril == null, "init should not be called from render");
         removeRoot("0");
         roots["0"] = {
             f: factory,
@@ -1965,8 +1965,8 @@
         __export_invalidate();
         return false;
     }
-    var events = [ "resize", "orientationchange" ];
-    for (var i = 0; i < events.length; i++) addEvent(events[i], 10, emitOnMediaChange);
+    var events_bobril = [ "resize", "orientationchange" ];
+    for (var i_bobril = 0; i_bobril < events_bobril.length; i_bobril++) addEvent(events_bobril[i_bobril], 10, emitOnMediaChange);
     function accDeviceBreaks(newBreaks) {
         if (newBreaks != null) {
             breaks = newBreaks;
@@ -2145,24 +2145,24 @@
                     reject.call(this, e);
                 }
             }
-            function Promise_bobril(fn) {
+            function Promise(fn) {
                 this.s = null;
                 this.v = null;
                 this.d = [];
                 doResolve(fn, bind(resolve, this), bind(reject, this));
             }
-            Promise_bobril.prototype.then = function(onFulfilled, onRejected) {
+            Promise.prototype.then = function(onFulfilled, onRejected) {
                 var me = this;
-                return new Promise_bobril(function(resolve, reject) {
+                return new Promise(function(resolve, reject) {
                     handle.call(me, [ onFulfilled, onRejected, resolve, reject ]);
                 });
             };
-            Promise_bobril.prototype["catch"] = function(onRejected) {
+            Promise.prototype["catch"] = function(onRejected) {
                 return this.then(undefined, onRejected);
             };
-            Promise_bobril.all = function() {
+            Promise.all = function() {
                 var args = [].slice.call(arguments.length === 1 && __export_isArray(arguments[0]) ? arguments[0] : arguments);
-                return new Promise_bobril(function(resolve, reject) {
+                return new Promise(function(resolve, reject) {
                     if (args.length === 0) {
                         resolve(args);
                         return;
@@ -2192,27 +2192,27 @@
                     }
                 });
             };
-            Promise_bobril.resolve = function(value) {
-                if (value && typeof value === "object" && value.constructor === Promise_bobril) {
+            Promise.resolve = function(value) {
+                if (value && typeof value === "object" && value.constructor === Promise) {
                     return value;
                 }
-                return new Promise_bobril(function(resolve) {
+                return new Promise(function(resolve) {
                     resolve(value);
                 });
             };
-            Promise_bobril.reject = function(value) {
-                return new Promise_bobril(function(_resolve, reject) {
+            Promise.reject = function(value) {
+                return new Promise(function(_resolve, reject) {
                     reject(value);
                 });
             };
-            Promise_bobril.race = function(values) {
-                return new Promise_bobril(function(resolve, reject) {
+            Promise.race = function(values) {
+                return new Promise(function(resolve, reject) {
                     for (var i = 0, len = values.length; i < len; i++) {
                         values[i].then(resolve, reject);
                     }
                 });
             };
-            window["Promise"] = Promise_bobril;
+            window["Promise"] = Promise;
         })();
     }
     if (ieVersion() === 9) {
@@ -2512,10 +2512,10 @@
         if (f) emitOnChange(ev, f.element, f);
         return false;
     }
-    var events = [ "input", "cut", "paste", "keydown", "keypress", "keyup", "click", "change" ];
-    for (var i = 0; i < events.length; i++) addEvent(events[i], 10, emitOnChange);
+    var events_bobril = [ "input", "cut", "paste", "keydown", "keypress", "keyup", "click", "change" ];
+    for (var i_bobril = 0; i_bobril < events_bobril.length; i_bobril++) addEvent(events_bobril[i_bobril], 10, emitOnChange);
     var mouseEvents = [ "!PointerDown", "!PointerMove", "!PointerUp", "!PointerCancel" ];
-    for (var i = 0; i < mouseEvents.length; i++) addEvent(mouseEvents[i], 2, emitOnMouseChange);
+    for (var i_bobril = 0; i_bobril < mouseEvents.length; i_bobril++) addEvent(mouseEvents[i_bobril], 2, emitOnMouseChange);
     function buildParam(ev) {
         return {
             shift: ev.shiftKey,
@@ -2648,11 +2648,11 @@
         addEvent(name, 5, callback);
     }
     var pointersEventNames = [ "PointerDown", "PointerMove", "PointerUp", "PointerCancel" ];
-    var i;
+    var i_bobril;
     if (ieVersion() && ieVersion() < 11) {
         var mouseEvents = [ "click", "dblclick", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mousemove", "mouseout", "mouseover", "mouseup", "mousewheel", "scroll", "wheel" ];
-        for (i = 0; i < mouseEvents.length; ++i) {
-            addEvent(mouseEvents[i], 1, pointerThroughIE);
+        for (i_bobril = 0; i_bobril < mouseEvents.length; ++i_bobril) {
+            addEvent(mouseEvents[i_bobril], 1, pointerThroughIE);
         }
     }
     function type2Bobril(t) {
@@ -2775,25 +2775,25 @@
         addEvent5("touchcancel", buildHandlerTouch(pointersEventNames[3]));
         listenMouse();
     } else if (window.onpointerdown !== undefined) {
-        for (i = 0; i < 4; i++) {
-            var name = pointersEventNames[i];
-            addEvent5(name.toLowerCase(), buildHandlerPointer(name));
+        for (i_bobril = 0; i_bobril < 4; i_bobril++) {
+            var name_bobril = pointersEventNames[i_bobril];
+            addEvent5(name_bobril.toLowerCase(), buildHandlerPointer(name_bobril));
         }
     } else if (window.onmspointerdown !== undefined) {
-        for (i = 0; i < 4; i++) {
-            var name = pointersEventNames[i];
-            addEvent5("@MS" + name, buildHandlerPointer(name));
+        for (i_bobril = 0; i_bobril < 4; i_bobril++) {
+            var name_bobril = pointersEventNames[i_bobril];
+            addEvent5("@MS" + name_bobril, buildHandlerPointer(name_bobril));
         }
     } else {
         listenMouse();
     }
-    for (var j = 0; j < 4; j++) {
+    for (var j_bobril = 0; j_bobril < 4; j_bobril++) {
         (function(name) {
             var onName = "on" + name;
             addEvent("!" + name, 50, function(ev, _target, node) {
                 return invokeMouseOwner(onName, ev) || bubble(node, onName, ev) != null;
             });
-        })(pointersEventNames[j]);
+        })(pointersEventNames[j_bobril]);
     }
     var pointersDown = newHashObj();
     var toBust = [];
@@ -2952,8 +2952,8 @@
     }
     var bustingEventNames = [ "!PointerDown", "!PointerMove", "!PointerUp", "!PointerCancel", "^click" ];
     var bustingEventHandlers = [ bustingPointerDown, bustingPointerMove, bustingPointerUp, bustingPointerCancel, bustingClick ];
-    for (var i = 0; i < 5; i++) {
-        addEvent(bustingEventNames[i], 3, bustingEventHandlers[i]);
+    for (var i_bobril = 0; i_bobril < 5; i_bobril++) {
+        addEvent(bustingEventNames[i_bobril], 3, bustingEventHandlers[i_bobril]);
     }
     function createHandlerMouse(handlerName) {
         return function(ev, _target, node) {
@@ -2965,8 +2965,8 @@
         };
     }
     var mouseHandlerNames = [ "Down", "Move", "Up", "Up" ];
-    for (var i = 0; i < 4; i++) {
-        addEvent(bustingEventNames[i], 80, createHandlerMouse("onMouse" + mouseHandlerNames[i]));
+    for (var i_bobril = 0; i_bobril < 4; i_bobril++) {
+        addEvent(bustingEventNames[i_bobril], 80, createHandlerMouse("onMouse" + mouseHandlerNames[i_bobril]));
     }
     function decodeButton(ev) {
         return ev.which || ev.button;
@@ -3087,19 +3087,19 @@
     };
     var currentActiveElement = undefined;
     var currentFocusedNode = undefined;
-    var nodeStack = [];
+    var nodeStack_bobril = [];
     function emitOnFocusChange(inFocus) {
         var newActiveElement = document.hasFocus() || inFocus ? document.activeElement : undefined;
         if (newActiveElement !== currentActiveElement) {
             currentActiveElement = newActiveElement;
             var newStack = vdomPath(currentActiveElement);
             var common = 0;
-            while (common < nodeStack.length && common < newStack.length && nodeStack[common] === newStack[common]) common++;
-            var i = nodeStack.length - 1;
+            while (common < nodeStack_bobril.length && common < newStack.length && nodeStack_bobril[common] === newStack[common]) common++;
+            var i = nodeStack_bobril.length - 1;
             var n;
             var c;
             if (i >= common) {
-                n = nodeStack[i];
+                n = nodeStack_bobril[i];
                 if (n) {
                     c = n.component;
                     if (c && c.onBlur) c.onBlur(n.ctx);
@@ -3107,7 +3107,7 @@
                 i--;
             }
             while (i >= common) {
-                n = nodeStack[i];
+                n = nodeStack_bobril[i];
                 if (n) {
                     c = n.component;
                     if (c && c.onFocusOut) c.onFocusOut(n.ctx);
@@ -3131,8 +3131,8 @@
                 }
                 i++;
             }
-            nodeStack = newStack;
-            currentFocusedNode = nodeStack.length == 0 ? undefined : null2undefined(nodeStack[nodeStack.length - 1]);
+            nodeStack_bobril = newStack;
+            currentFocusedNode = nodeStack_bobril.length == 0 ? undefined : null2undefined(nodeStack_bobril[nodeStack_bobril.length - 1]);
         }
         return false;
     }
@@ -3176,24 +3176,24 @@
         }
         return false;
     }
-    var callbacks = [];
+    var callbacks_bobril = [];
     function emitOnScroll(_ev, _target, node) {
         var info = {
             node: node
         };
-        for (var i = 0; i < callbacks.length; i++) {
-            callbacks[i](info);
+        for (var i = 0; i < callbacks_bobril.length; i++) {
+            callbacks_bobril[i](info);
         }
         return false;
     }
     addEvent("^scroll", 10, emitOnScroll);
     function addOnScroll(callback) {
-        callbacks.push(callback);
+        callbacks_bobril.push(callback);
     }
     function removeOnScroll(callback) {
-        for (var i = 0; i < callbacks.length; i++) {
-            if (callbacks[i] === callback) {
-                callbacks.splice(i, 1);
+        for (var i = 0; i < callbacks_bobril.length; i++) {
+            if (callbacks_bobril[i] === callback) {
+                callbacks_bobril.splice(i, 1);
                 return;
             }
         }
@@ -3224,7 +3224,7 @@
         return res;
     }
     var cachedConvertPointFromClientToNode;
-    var CSSMatrix = function() {
+    var CSSMatrix_bobril = function() {
         function CSSMatrix(data) {
             this.data = data;
         }
@@ -3279,14 +3279,14 @@
         return CSSMatrix;
     }();
     function getTransformationMatrix(element) {
-        var identity = CSSMatrix.identity();
+        var identity = CSSMatrix_bobril.identity();
         var transformationMatrix = identity;
         var x = element;
         var doc = x.ownerDocument.documentElement;
         while (x != undefined && x !== doc && x.nodeType != 1) x = x.parentNode;
         while (x != undefined && x !== doc) {
             var computedStyle = window.getComputedStyle(x, undefined);
-            var c = CSSMatrix.fromString((computedStyle.transform || computedStyle.OTransform || computedStyle.WebkitTransform || computedStyle.msTransform || computedStyle.MozTransform || "none").replace(/^none$/, "matrix(1,0,0,1,0,0)"));
+            var c = CSSMatrix_bobril.fromString((computedStyle.transform || computedStyle.OTransform || computedStyle.WebkitTransform || computedStyle.msTransform || computedStyle.MozTransform || "none").replace(/^none$/, "matrix(1,0,0,1,0,0)"));
             transformationMatrix = c.multiply(transformationMatrix);
             x = x.parentNode;
         }
@@ -3337,7 +3337,7 @@
     var lastDndId = 0;
     var dnds = [];
     var systemDnd = null;
-    var rootId = null;
+    var rootId_bobril = null;
     var bodyCursorBackup;
     var userSelectBackup;
     var shimmedStyle = {
@@ -3380,12 +3380,12 @@
         dnds.push(this);
     };
     function lazyCreateRoot() {
-        if (rootId == null) {
+        if (rootId_bobril == null) {
             var dbs = document.body.style;
             bodyCursorBackup = dbs.cursor;
             userSelectBackup = dbs[userSelectPropName];
             dbs[userSelectPropName] = "none";
-            rootId = addRoot(dndRootFactory);
+            rootId_bobril = addRoot(dndRootFactory);
         }
     }
     var DndComp = {
@@ -3502,16 +3502,16 @@
         if (systemDnd === this) {
             systemDnd = null;
         }
-        if (dnds.length === 0 && rootId != null) {
-            removeRoot(rootId);
-            rootId = null;
+        if (dnds.length === 0 && rootId_bobril != null) {
+            removeRoot(rootId_bobril);
+            rootId_bobril = null;
             var dbs = document.body.style;
             dbs.cursor = bodyCursorBackup;
             dbs[userSelectPropName] = userSelectBackup;
         }
     };
     var pointer2Dnd = newHashObj();
-    function handlePointerDown(ev, _target, node) {
+    function handlePointerDown_bobril(ev, _target, node) {
         var dnd = pointer2Dnd[ev.id];
         if (dnd) {
             dnd.cancelDnd();
@@ -3817,7 +3817,7 @@
         }
         return undefined;
     }
-    addEvent("!PointerDown", 4, handlePointerDown);
+    addEvent("!PointerDown", 4, handlePointerDown_bobril);
     addEvent("!PointerMove", 4, handlePointerMove);
     addEvent("!PointerUp", 4, handlePointerUp);
     addEvent("!PointerCancel", 4, handlePointerCancel);
@@ -4548,7 +4548,7 @@
         chainedBeforeFrame();
         var _a;
     }
-    function style(node) {
+    function style_bobril(node) {
         var styles = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             styles[_i - 1] = arguments[_i];
@@ -4903,7 +4903,7 @@
         for (var _i = 1; _i < arguments.length; _i++) {
             styles[_i - 1] = arguments[_i];
         }
-        return style({
+        return style_bobril({
             tag: "div",
             children: children
         }, styles);
@@ -4944,7 +4944,7 @@
         var merged = mergeComponents(originalComponent, after);
         return createVirtualComponent(merged);
     }
-    function prop(value, onChange) {
+    function prop_bobril(value, onChange) {
         return function(val) {
             if (val !== undefined) {
                 if (onChange !== undefined) onChange(val, value);
@@ -5033,7 +5033,7 @@
             for (var n in props) {
                 if (!props.hasOwnProperty(n)) continue;
                 if (n === "style") {
-                    style(res, props[n]);
+                    style_bobril(res, props[n]);
                     continue;
                 }
                 if (n === "key" || n === "ref" || n === "className" || n === "component" || n === "data") {

@@ -261,7 +261,7 @@
         return cooked;
     };
     var DEBUG = false;
-    var a = 42;
-    console.log(a);
+    var a_lib = 42;
+    console.log(a_lib);
 }.call(this);
 

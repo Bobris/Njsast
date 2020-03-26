@@ -1,6 +1,6 @@
 (function(e) {
     "use strict";
-    var t, n, r;
+    var t, n, i;
     t = function() {
         function e() {}
         e.prototype.clear = function() {
@@ -9,8 +9,8 @@
         return e;
     }();
     n = new t();
-    r = new t();
-    r.clear();
+    i = new t();
+    i.clear();
     n.clear();
 }).call(this);
 

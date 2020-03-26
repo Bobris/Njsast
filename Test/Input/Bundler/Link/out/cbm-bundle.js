@@ -1,12 +1,9 @@
 (function(n) {
     "use strict";
-    function i(n) {
-        return n;
-    }
-    function l() {
-        var n = i("hello");
+    function i() {
+        var n = n("hello");
         console.log(n);
     }
-    l();
+    i();
 }).call(this);
 

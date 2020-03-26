@@ -270,8 +270,8 @@
     var __export_page = "OK";
     var __export_route = route("KO");
     function doit() {
-        var link_index = link("hello");
-        console.log(link_index);
+        var link = link("hello");
+        console.log(link);
     }
     doit();
     console.log(__export_page);

@@ -266,10 +266,10 @@
     }
     var URL_bobril = "yes I am crazy to override URL";
     var Image_image = function() {
-        function Image_image2() {
+        function Image() {
             console.log("constructed");
         }
-        return Image_image2;
+        return Image;
     }();
     URL.createObjectURL("");
     new Image_image();

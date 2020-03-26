@@ -1,6 +1,6 @@
 (function(undefined) {
     "use strict";
-    var __export_isArray, emptyComponent, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, hasNativeRaf, nativeRaf, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, uptimeMs, frameCounter, regEvents, listeningEventDeepness, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events, i, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name, j, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack, callbacks, lastDndId, dnds, systemDnd, rootId, shimmedStyle, shimedStyleKeys, userSelectPropName, DndCtx, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, dynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, isIE9, chainedBeforeFrame, cssSubRuleDelimiter, firstStyles, uppercasePattern, msPattern, rgbaRegex, currentCtx, registryEvents, rootIds, weirdPortrait, bodyCursorBackup, userSelectBackup;
+    var __export_isArray, emptyComponent, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, hasNativeRaf, nativeRaf, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, uptimeMs, frameCounter, regEvents, listeningEventDeepness, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events_bobril, i_bobril, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name_bobril, j_bobril, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack_bobril, callbacks_bobril, lastDndId, dnds, systemDnd, rootId_bobril, shimmedStyle, shimedStyleKeys, userSelectPropName, DndCtx, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, dynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, isIE9, chainedBeforeFrame, cssSubRuleDelimiter, firstStyles, uppercasePattern, msPattern, rgbaRegex, currentCtx, registryEvents, rootIds_bobril, weirdPortrait, bodyCursorBackup, userSelectBackup;
     (function() {
         function BobrilCtx(data, me) {
             this.data = data;
@@ -1342,19 +1342,19 @@
             fullRecreateRequested = !1;
             fullRefresh = !0;
         }
-        rootIds = Object.keys(roots);
-        for (i = 0; i < rootIds.length; i++) {
-            r = roots[rootIds[i]];
+        rootIds_bobril = Object.keys(roots);
+        for (i = 0; i < rootIds_bobril.length; i++) {
+            r = roots[rootIds_bobril[i]];
             if (!r) continue;
             rc = r.n;
             insertBefore = null;
-            for (j = i + 1; j < rootIds.length; j++) {
-                rafter = roots[rootIds[j]];
+            for (j = i + 1; j < rootIds_bobril.length; j++) {
+                rafter = roots[rootIds_bobril[j]];
                 if (rafter === undefined) continue;
                 insertBefore = getDomNode(rafter.n);
                 if (insertBefore != null) break;
             }
-            if (focusRootTop) inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds);
+            if (focusRootTop) inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds_bobril);
             if (r.e === undefined) r.e = document.body;
             if (rc) {
                 if (fullRefresh || rc.ctx[ctxInvalidated] === frameCounter) {
@@ -1370,7 +1370,7 @@
             }
             r.c = rc.children;
         }
-        rootIds = undefined;
+        rootIds_bobril = undefined;
         callPostCallbacks();
         r0 = roots["0"];
         afterFrameCallback(r0 ? r0.c : null);
@@ -1415,8 +1415,8 @@
             p: parent,
             n: undefined
         };
-        if (rootIds != null) {
-            rootIds.push(rootId);
+        if (rootIds_bobril != null) {
+            rootIds_bobril.push(rootId);
         } else {
             firstInvalidate();
         }
@@ -1559,8 +1559,8 @@
         __export_invalidate();
         return !1;
     }
-    events = [ "resize", "orientationchange" ];
-    for (i = 0; i < events.length; i++) addEvent(events[i], 10, emitOnMediaChange);
+    events_bobril = [ "resize", "orientationchange" ];
+    for (i_bobril = 0; i_bobril < events_bobril.length; i_bobril++) addEvent(events_bobril[i_bobril], 10, emitOnMediaChange);
     viewport = window.document.documentElement;
     isAndroid = /Android/i.test(navigator.userAgent);
     function getMedia() {
@@ -1733,24 +1733,24 @@
                     reject.call(this, e);
                 }
             }
-            function Promise_bobril(fn) {
+            function Promise(fn) {
                 this.s = null;
                 this.v = null;
                 this.d = [];
                 doResolve(fn, bind(resolve, this), bind(reject, this));
             }
-            Promise_bobril.prototype.then = function(onFulfilled, onRejected) {
+            Promise.prototype.then = function(onFulfilled, onRejected) {
                 var me = this;
-                return new Promise_bobril(function(resolve, reject) {
+                return new Promise(function(resolve, reject) {
                     handle.call(me, [ onFulfilled, onRejected, resolve, reject ]);
                 });
             };
-            Promise_bobril.prototype["catch"] = function(onRejected) {
+            Promise.prototype["catch"] = function(onRejected) {
                 return this.then(undefined, onRejected);
             };
-            Promise_bobril.all = function() {
+            Promise.all = function() {
                 var args = [].slice.call(arguments.length === 1 && __export_isArray(arguments[0]) ? arguments[0] : arguments);
-                return new Promise_bobril(function(resolve, reject) {
+                return new Promise(function(resolve, reject) {
                     var remaining, i;
                     if (args.length === 0) {
                         resolve(args);
@@ -1782,28 +1782,28 @@
                     }
                 });
             };
-            Promise_bobril.resolve = function(value) {
-                if (value && typeof value === "object" && value.constructor === Promise_bobril) {
+            Promise.resolve = function(value) {
+                if (value && typeof value === "object" && value.constructor === Promise) {
                     return value;
                 }
-                return new Promise_bobril(function(resolve) {
+                return new Promise(function(resolve) {
                     resolve(value);
                 });
             };
-            Promise_bobril.reject = function(value) {
-                return new Promise_bobril(function(_resolve, reject) {
+            Promise.reject = function(value) {
+                return new Promise(function(_resolve, reject) {
                     reject(value);
                 });
             };
-            Promise_bobril.race = function(values) {
-                return new Promise_bobril(function(resolve, reject) {
+            Promise.race = function(values) {
+                return new Promise(function(resolve, reject) {
                     var i, len;
                     for (i = 0, len = values.length; i < len; i++) {
                         values[i].then(resolve, reject);
                     }
                 });
             };
-            window["Promise"] = Promise_bobril;
+            window["Promise"] = Promise;
         })();
     }
     if (ieVersion() === 9) {
@@ -2102,10 +2102,10 @@
         if (f) emitOnChange(ev, f.element, f);
         return !1;
     }
-    events = [ "input", "cut", "paste", "keydown", "keypress", "keyup", "click", "change" ];
-    for (i = 0; i < events.length; i++) addEvent(events[i], 10, emitOnChange);
+    events_bobril = [ "input", "cut", "paste", "keydown", "keypress", "keyup", "click", "change" ];
+    for (i_bobril = 0; i_bobril < events_bobril.length; i_bobril++) addEvent(events_bobril[i_bobril], 10, emitOnChange);
     mouseEvents = [ "!PointerDown", "!PointerMove", "!PointerUp", "!PointerCancel" ];
-    for (i = 0; i < mouseEvents.length; i++) addEvent(mouseEvents[i], 2, emitOnMouseChange);
+    for (i_bobril = 0; i_bobril < mouseEvents.length; i_bobril++) addEvent(mouseEvents[i_bobril], 2, emitOnMouseChange);
     function buildParam(ev) {
         return {
             shift: ev.shiftKey,
@@ -2231,8 +2231,8 @@
     pointersEventNames = [ "PointerDown", "PointerMove", "PointerUp", "PointerCancel" ];
     if (ieVersion() && ieVersion() < 11) {
         mouseEvents = [ "click", "dblclick", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mousemove", "mouseout", "mouseover", "mouseup", "mousewheel", "scroll", "wheel" ];
-        for (i = 0; i < mouseEvents.length; ++i) {
-            addEvent(mouseEvents[i], 1, pointerThroughIE);
+        for (i_bobril = 0; i_bobril < mouseEvents.length; ++i_bobril) {
+            addEvent(mouseEvents[i_bobril], 1, pointerThroughIE);
         }
     }
     function type2Bobril(t) {
@@ -2357,25 +2357,25 @@
         addEvent5("touchcancel", buildHandlerTouch(pointersEventNames[3]));
         listenMouse();
     } else if (window.onpointerdown !== undefined) {
-        for (i = 0; i < 4; i++) {
-            name = pointersEventNames[i];
-            addEvent5(name.toLowerCase(), buildHandlerPointer(name));
+        for (i_bobril = 0; i_bobril < 4; i_bobril++) {
+            name_bobril = pointersEventNames[i_bobril];
+            addEvent5(name_bobril.toLowerCase(), buildHandlerPointer(name_bobril));
         }
     } else if (window.onmspointerdown !== undefined) {
-        for (i = 0; i < 4; i++) {
-            name = pointersEventNames[i];
-            addEvent5("@MS" + name, buildHandlerPointer(name));
+        for (i_bobril = 0; i_bobril < 4; i_bobril++) {
+            name_bobril = pointersEventNames[i_bobril];
+            addEvent5("@MS" + name_bobril, buildHandlerPointer(name_bobril));
         }
     } else {
         listenMouse();
     }
-    for (j = 0; j < 4; j++) {
+    for (j_bobril = 0; j_bobril < 4; j_bobril++) {
         (function(name) {
             var onName = "on" + name;
             addEvent("!" + name, 50, function(ev, _target, node) {
                 return invokeMouseOwner(onName, ev) || bubble(node, onName, ev) != null;
             });
-        })(pointersEventNames[j]);
+        })(pointersEventNames[j_bobril]);
     }
     pointersDown = newHashObj();
     toBust = [];
@@ -2527,8 +2527,8 @@
     }
     bustingEventNames = [ "!PointerDown", "!PointerMove", "!PointerUp", "!PointerCancel", "^click" ];
     bustingEventHandlers = [ bustingPointerDown, bustingPointerMove, bustingPointerUp, bustingPointerCancel, bustingClick ];
-    for (i = 0; i < 5; i++) {
-        addEvent(bustingEventNames[i], 3, bustingEventHandlers[i]);
+    for (i_bobril = 0; i_bobril < 5; i_bobril++) {
+        addEvent(bustingEventNames[i_bobril], 3, bustingEventHandlers[i_bobril]);
     }
     function createHandlerMouse(handlerName) {
         return function(ev, _target, node) {
@@ -2540,8 +2540,8 @@
         };
     }
     mouseHandlerNames = [ "Down", "Move", "Up", "Up" ];
-    for (i = 0; i < 4; i++) {
-        addEvent(bustingEventNames[i], 80, createHandlerMouse("onMouse" + mouseHandlerNames[i]));
+    for (i_bobril = 0; i_bobril < 4; i_bobril++) {
+        addEvent(bustingEventNames[i_bobril], 80, createHandlerMouse("onMouse" + mouseHandlerNames[i_bobril]));
     }
     function decodeButton(ev) {
         return ev.which || ev.button;
@@ -2660,7 +2660,7 @@
     };
     currentActiveElement = undefined;
     currentFocusedNode = undefined;
-    nodeStack = [];
+    nodeStack_bobril = [];
     function emitOnFocusChange(inFocus) {
         var newActiveElement, newStack, common, i, n, c;
         newActiveElement = document.hasFocus() || inFocus ? document.activeElement : undefined;
@@ -2668,10 +2668,10 @@
             currentActiveElement = newActiveElement;
             newStack = vdomPath(currentActiveElement);
             common = 0;
-            while (common < nodeStack.length && common < newStack.length && nodeStack[common] === newStack[common]) common++;
-            i = nodeStack.length - 1;
+            while (common < nodeStack_bobril.length && common < newStack.length && nodeStack_bobril[common] === newStack[common]) common++;
+            i = nodeStack_bobril.length - 1;
             if (i >= common) {
-                n = nodeStack[i];
+                n = nodeStack_bobril[i];
                 if (n) {
                     c = n.component;
                     if (c && c.onBlur) c.onBlur(n.ctx);
@@ -2679,7 +2679,7 @@
                 i--;
             }
             while (i >= common) {
-                n = nodeStack[i];
+                n = nodeStack_bobril[i];
                 if (n) {
                     c = n.component;
                     if (c && c.onFocusOut) c.onFocusOut(n.ctx);
@@ -2703,8 +2703,8 @@
                 }
                 i++;
             }
-            nodeStack = newStack;
-            currentFocusedNode = nodeStack.length == 0 ? undefined : null2undefined(nodeStack[nodeStack.length - 1]);
+            nodeStack_bobril = newStack;
+            currentFocusedNode = nodeStack_bobril.length == 0 ? undefined : null2undefined(nodeStack_bobril[nodeStack_bobril.length - 1]);
         }
         return !1;
     }
@@ -2721,14 +2721,14 @@
     function focused() {
         return currentFocusedNode;
     }
-    callbacks = [];
+    callbacks_bobril = [];
     function emitOnScroll(_ev, _target, node) {
         var info, i;
         info = {
             node: node
         };
-        for (i = 0; i < callbacks.length; i++) {
-            callbacks[i](info);
+        for (i = 0; i < callbacks_bobril.length; i++) {
+            callbacks_bobril[i](info);
         }
         return !1;
     }
@@ -2771,7 +2771,7 @@
     lastDndId = 0;
     dnds = [];
     systemDnd = null;
-    rootId = null;
+    rootId_bobril = null;
     shimmedStyle = {
         userSelect: ""
     };
@@ -2813,12 +2813,12 @@
     };
     function lazyCreateRoot() {
         var dbs;
-        if (rootId == null) {
+        if (rootId_bobril == null) {
             dbs = document.body.style;
             bodyCursorBackup = dbs.cursor;
             userSelectBackup = dbs[userSelectPropName];
             dbs[userSelectPropName] = "none";
-            rootId = addRoot(dndRootFactory);
+            rootId_bobril = addRoot(dndRootFactory);
         }
     }
     DndComp = {
@@ -2935,16 +2935,16 @@
         if (systemDnd === this) {
             systemDnd = null;
         }
-        if (dnds.length === 0 && rootId != null) {
-            removeRoot(rootId);
-            rootId = null;
+        if (dnds.length === 0 && rootId_bobril != null) {
+            removeRoot(rootId_bobril);
+            rootId_bobril = null;
             dbs = document.body.style;
             dbs.cursor = bodyCursorBackup;
             dbs[userSelectPropName] = userSelectBackup;
         }
     };
     pointer2Dnd = newHashObj();
-    function handlePointerDown(ev, _target, node) {
+    function handlePointerDown_bobril(ev, _target, node) {
         var dnd, sourceCtx, htmlNode, boundFn, rect;
         dnd = pointer2Dnd[ev.id];
         if (dnd) {
@@ -3247,7 +3247,7 @@
         preventDefault(ev);
         return !0;
     }
-    addEvent("!PointerDown", 4, handlePointerDown);
+    addEvent("!PointerDown", 4, handlePointerDown_bobril);
     addEvent("!PointerMove", 4, handlePointerMove);
     addEvent("!PointerUp", 4, handlePointerUp);
     addEvent("!PointerCancel", 4, handlePointerCancel);

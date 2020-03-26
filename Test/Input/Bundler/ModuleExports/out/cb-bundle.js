@@ -1,14 +1,14 @@
 (function(undefined) {
     "use strict";
-    var global, exports, exports_wrapper, exports_lib;
+    var global, exports_param, exports_wrapper, exports_lib;
     global = window;
-    exports = {
+    exports_param = {
         doIt: function(p) {
             console.log(p);
         },
         dontIt: function() {
-            var window_param = "KO";
-            global.console.log(window_param);
+            var window = "KO";
+            global.console.log(window);
         }
     };
     exports_wrapper = function(param) {
@@ -20,7 +20,7 @@
         });
         return param;
     };
-    exports_lib = exports_wrapper(exports);
+    exports_lib = exports_wrapper(exports_param);
     if ("test" in window) {
         setTimeout(window.test, 1);
     }

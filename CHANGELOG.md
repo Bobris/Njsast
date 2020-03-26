@@ -5,6 +5,7 @@
 ### Fixed
 
 - Nasty Const eval bug
+- Symbol renaming in Bundler
 
 ### Added
 

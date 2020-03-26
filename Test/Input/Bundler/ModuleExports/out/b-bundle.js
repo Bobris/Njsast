@@ -262,13 +262,13 @@
     };
     var DEBUG = false;
     var global = window;
-    var exports = {
+    var exports_param = {
         doIt: function(p) {
             console.log(p);
         },
         dontIt: function() {
-            var window_param = "KO";
-            global.console.log(window_param);
+            var window = "KO";
+            global.console.log(window);
         }
     };
     var exports_wrapper = function(param) {
@@ -280,8 +280,8 @@
         });
         return param;
     };
-    var param = exports;
-    var exports_lib = exports_wrapper(exports);
+    var param_lib = exports_param;
+    var exports_lib = exports_wrapper(exports_param);
     if ("test" in window) {
         setTimeout(window.test, 1);
     }

@@ -1,8 +1,8 @@
 (function(o) {
     "use strict";
-    var r, t, a, n;
+    var r, a, t, n;
     r = window;
-    t = {
+    a = {
         doIt: function(o) {
             console.log(o);
         },
@@ -11,16 +11,16 @@
             r.console.log(o);
         }
     };
-    a = function(o) {
+    t = function(o) {
         Object.keys(o).forEach(function(r) {
-            var t = o[r];
+            var a = o[r];
             o[r] = function(o) {
-                t(r + ":" + o);
+                a(r + ":" + o);
             };
         });
         return o;
     };
-    n = a(t);
+    n = t(a);
     if ("test" in window) {
         setTimeout(window.test, 1);
     }

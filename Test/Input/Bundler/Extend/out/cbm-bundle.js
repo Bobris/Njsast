@@ -1,20 +1,20 @@
 (function(e) {
     "use strict";
-    var t, n, o, r;
-    t = Object.setPrototypeOf || {
+    var n, t, o, i;
+    n = Object.setPrototypeOf || {
         __proto__: []
-    } instanceof Array && function(e, t) {
-        e.__proto__ = t;
-    } || function(e, t) {
-        var n;
-        for (n in t) if (t.hasOwnProperty(n)) e[n] = t[n];
+    } instanceof Array && function(e, n) {
+        e.__proto__ = n;
+    } || function(e, n) {
+        var t;
+        for (t in n) if (n.hasOwnProperty(t)) e[t] = n[t];
     };
-    n = function(e, n) {
-        t(e, n);
+    t = function(e, t) {
+        n(e, t);
         function o() {
             this.constructor = e;
         }
-        e.prototype = n === null ? Object.create(n) : (o.prototype = n.prototype, new o());
+        e.prototype = t === null ? Object.create(t) : (o.prototype = t.prototype, new o());
     };
     o = function() {
         function e() {}
@@ -24,25 +24,25 @@
         return e;
     }();
     (function(e) {
-        n(t, e);
-        function t() {
+        t(n, e);
+        function n() {
             return e !== null && e.apply(this, arguments) || this;
         }
-        t.prototype.hello = function() {
+        n.prototype.hello = function() {
             console.log("Derived");
         };
-        return t;
+        return n;
     })(o);
-    r = function(e) {
-        n(t, e);
-        function t() {
+    i = function(e) {
+        t(n, e);
+        function n() {
             return e !== null && e.apply(this, arguments) || this;
         }
-        t.prototype.hello = function() {
+        n.prototype.hello = function() {
             console.log("Main");
         };
-        return t;
+        return n;
     }(o);
-    new r().hello();
+    new i().hello();
 }).call(this);
 

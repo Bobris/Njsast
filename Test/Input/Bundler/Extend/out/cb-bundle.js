@@ -1,6 +1,6 @@
 (function(undefined) {
     "use strict";
-    var __extendStatics, __extends, Base, Main;
+    var __extendStatics, __extends, Base_lib, Main_index;
     __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -16,7 +16,7 @@
         }
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
-    Base = function() {
+    Base_lib = function() {
         function Base() {}
         Base.prototype.hello = function() {
             console.log("Base");
@@ -32,8 +32,8 @@
             console.log("Derived");
         };
         return Derived;
-    })(Base);
-    Main = function(_super) {
+    })(Base_lib);
+    Main_index = function(_super) {
         __extends(Main, _super);
         function Main() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -42,7 +42,7 @@
             console.log("Main");
         };
         return Main;
-    }(Base);
-    new Main().hello();
+    }(Base_lib);
+    new Main_index().hello();
 }).call(this);
 

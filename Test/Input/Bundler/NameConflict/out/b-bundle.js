@@ -261,12 +261,12 @@
         return cooked;
     };
     var DEBUG = false;
-    var a = 1;
+    var a_lib = 1;
     function fn(a, b) {
         return a + b;
     }
-    function fn_index(a_index2, b) {
-        return a_index2 - b;
+    function fn_index(a, b) {
+        return a - b;
     }
     var a_index = 2;
     console.log(fn(fn_index(a_index, 1), a_index));

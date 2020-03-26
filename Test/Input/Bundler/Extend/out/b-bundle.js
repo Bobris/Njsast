@@ -261,14 +261,14 @@
         return cooked;
     };
     var DEBUG = false;
-    var Base = function() {
+    var Base_lib = function() {
         function Base() {}
         Base.prototype.hello = function() {
             console.log("Base");
         };
         return Base;
     }();
-    var Derived = function(_super) {
+    var Derived_lib = function(_super) {
         __extends(Derived, _super);
         function Derived() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -277,8 +277,8 @@
             console.log("Derived");
         };
         return Derived;
-    }(Base);
-    var Main = function(_super) {
+    }(Base_lib);
+    var Main_index = function(_super) {
         __extends(Main, _super);
         function Main() {
             return _super !== null && _super.apply(this, arguments) || this;
@@ -287,7 +287,7 @@
             console.log("Main");
         };
         return Main;
-    }(Base);
-    new Main().hello();
+    }(Base_lib);
+    new Main_index().hello();
 }.call(this);
 
