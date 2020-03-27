@@ -261,13 +261,17 @@
         return cooked;
     };
     var DEBUG = false;
-    function link_index(name) {
-        return name;
+    function fun_lib2() {
+        console.log("fun");
     }
-    function doit() {
-        var link = link_index("hello");
-        console.log(link);
-    }
-    doit();
+    var __export_ns;
+    var ns_lib2;
+    (function(ns) {
+        function fun() {
+            fun_lib2();
+        }
+        ns.fun = fun;
+    })(ns_lib2 = __export_ns || (__export_ns = {}));
+    __export_ns.fun();
 }.call(this);
 

@@ -264,13 +264,13 @@
     function route(param) {
         return param;
     }
-    function link(name) {
+    function link_index(name) {
         return name;
     }
     var __export_page = "OK";
     var __export_route = route("KO");
     function doit() {
-        var link = link("hello");
+        var link = link_index("hello");
         console.log(link);
     }
     doit();

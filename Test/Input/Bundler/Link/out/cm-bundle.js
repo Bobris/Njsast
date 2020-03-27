@@ -1,1 +1,1 @@
-(function(n){"use strict";function i(){var n=n("hello");console.log(n)}i()}).call(this)
+(function(n){"use strict";function i(n){return n}function l(){var n=i("hello");console.log(n)}l()}).call(this)
