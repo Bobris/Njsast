@@ -1,1 +1,1 @@
-function used(){}
+function used(){console.log("Ok")}used()

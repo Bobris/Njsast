@@ -50,7 +50,7 @@ namespace Test.Compress
         public static readonly ICompressOptions RemoveSideEffectFreeCodeCompressOptions = new CompressOptions
         {
             EnableRemoveSideEffectFreeCode = true,
-            MaxPasses = 1
+            MaxPasses = 3
         };
 
         public static readonly ICompressOptions VariableHostingCompressOptions = new CompressOptions

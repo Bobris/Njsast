@@ -1,9 +1,7 @@
 function used() {
-    
+  console.log("Ok");
 }
 
-function unused() {
-    
-}
+function unused() {}
 
 used();

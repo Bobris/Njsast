@@ -1,9 +1,4 @@
-var c = !1;
+var canUse;
 
-{
-    var canUse;
-    {
-        console.log("OK" + canUse);
-    }
-}
+console.log("OK" + canUse);
 
