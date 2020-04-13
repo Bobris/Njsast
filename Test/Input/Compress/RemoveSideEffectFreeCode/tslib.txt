@@ -1,35 +1,4 @@
 Toplevel 1:1 - 341:1
-  Var 1:1 - 9:5
-    VarDef 247:5 - 249:2
-      SymbolVar 247:5 - 247:12 [Write]
-        Name: __await
-      Function 247:15 - 249:2
-        SymbolFunarg 247:25 - 247:26 [Write]
-          Name: v
-        Return 248:3 - 248:74
-          Conditional 248:10 - 248:73
-            Binary 248:10 - 248:33
-              Operator: InstanceOf
-              This 248:10 - 248:14 [Read]
-                Name: this
-              SymbolRef 248:26 - 248:33 [Read]
-                Name: __await
-            Sequence 248:37 - 248:55
-              Assign 248:38 - 248:48
-                Operator: Assignment
-                Dot 248:38 - 248:44
-                  Property: v
-                  This 248:38 - 248:42 [Read]
-                    Name: this
-                SymbolRef 248:47 - 248:48 [Read]
-                  Name: v
-              This 248:51 - 248:55 [Read]
-                Name: this
-            New 248:59 - 248:73
-              SymbolRef 248:63 - 248:70 [Read]
-                Name: __await
-              SymbolRef 248:71 - 248:72 [Read]
-                Name: v
   SimpleStatement 340:1 - 340:40
     Call 340:1 - 340:39
       Dot 340:1 - 340:12
