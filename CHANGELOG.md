@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## 0.3.0
+
 ### Fixed
 
 - Nasty Const eval bug
