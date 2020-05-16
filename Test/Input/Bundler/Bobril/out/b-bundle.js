@@ -261,7 +261,106 @@
         return cooked;
     };
     var DEBUG = false;
+    var __export_RenderPhase;
+    var __export_asap;
     var __export_invalidate;
+    var __export_BobrilDeviceCategory;
+    var __export_BobrilPointerType;
+    var __export_ignoreClick;
+    var __export_DndOp;
+    var __export_DndEnabledOps;
+    var __export_RouteTransitionType;
+    var __export_EventResult;
+    var hasPostInitDom = 1;
+    var hasPostUpdateDom = 2;
+    var hasPostUpdateDomEverytime = 4;
+    var hasEvents = 8;
+    var hasCaptureEvents = 16;
+    var MediaRuleBuilder_bobril = function() {
+        function MediaRuleBuilder() {
+            this.tokens = [];
+        }
+        MediaRuleBuilder.prototype.pushOptionalTokens = function(behaviour, mediaType) {
+            !!behaviour && this.tokens.push({
+                type: behaviour
+            });
+            !!mediaType && this.tokens.push({
+                type: mediaType
+            });
+        };
+        MediaRuleBuilder.prototype.rule = function(behaviour, mediaType) {
+            if (mediaType === void 0) {
+                mediaType = "all";
+            }
+            this.pushOptionalTokens(behaviour, mediaType);
+            return this;
+        };
+        MediaRuleBuilder.prototype.and = function(mediaRule) {
+            this.tokens.push({
+                type: "and"
+            });
+            this.tokens.push(mediaRule);
+            return this;
+        };
+        MediaRuleBuilder.prototype.or = function() {
+            this.tokens.push({
+                type: "or"
+            });
+            return this;
+        };
+        MediaRuleBuilder.prototype.build = function() {
+            return this.tokens.reduce(toRule, "");
+        };
+        return MediaRuleBuilder;
+    }();
+    function toRule(buffer, token) {
+        var str = "";
+        switch (token.type) {
+          case "aspect-ratio":
+            str = "(" + token.type + ": " + token.width + "/" + token.height + ")";
+            break;
+
+          case "all":
+          case "and":
+          case "not":
+          case "only":
+          case "print":
+          case "screen":
+          case "speech":
+            str = "" + token.type;
+            break;
+
+          case "or":
+            str = ",";
+            break;
+
+          case "color":
+            str = "(" + token.type + ")";
+            break;
+
+          case "max-height":
+          case "max-width":
+          case "min-height":
+          case "min-width":
+            str = "(" + token.type + ": " + token.value + token.unit + ")";
+            break;
+
+          case "min-color":
+          case "orientation":
+            str = "(" + token.type + ": " + token.value + ")";
+            break;
+
+          default:
+            str = emptyQuery(token);
+        }
+        return buffer + str + " ";
+    }
+    function emptyQuery(_token) {
+        return "";
+    }
+    function createMediaQuery() {
+        return new MediaRuleBuilder_bobril();
+    }
     var BobrilCtx_bobril = function() {
         function BobrilCtx(data, me) {
             this.data = data;
@@ -277,6 +376,10 @@
         if (DEBUG && !shouldBeTrue) throw Error(messageIfFalse || "assertion failed");
     }
     var __export_isArray = Array.isArray;
+    var isArrayVdom = __export_isArray;
+    function setIsArrayVdom(isArrayFnc) {
+        isArrayVdom = isArrayFnc;
+    }
     var emptyComponent = {};
     function createTextNode(content) {
         return document.createTextNode(content);
@@ -293,23 +396,29 @@
     function isString(val) {
         return typeof val == "string";
     }
+    function isBoolean(val) {
+        return typeof val == "boolean";
+    }
     function isFunction(val) {
         return typeof val == "function";
     }
     function isObject(val) {
         return typeof val === "object";
     }
-    if (Object.assign == null) {
+    function assertNever(switchValue) {
+        throw new Error("Switch is not exhaustive for value: " + JSON.stringify(switchValue));
+    }
+    if (Object.assign == undefined) {
         Object.assign = function assign(target) {
             var _sources = [];
             for (var _i = 1; _i < arguments.length; _i++) {
                 _sources[_i - 1] = arguments[_i];
             }
-            if (target == null) throw new TypeError("Target in assign cannot be undefined or null");
+            if (target == undefined) throw new TypeError("Target in assign cannot be undefined or null");
             var totalArgs = arguments.length;
             for (var i_1 = 1; i_1 < totalArgs; i_1++) {
                 var source = arguments[i_1];
-                if (source == null) continue;
+                if (source == undefined) continue;
                 var keys = Object.keys(source);
                 var totalKeys = keys.length;
                 for (var j_1 = 0; j_1 < totalKeys; j_1++) {
@@ -320,22 +429,97 @@
             return target;
         };
     }
+    if (!Object.is) {
+        Object.is = function(x, y) {
+            if (x === y) {
+                return x !== 0 || 1 / x === 1 / y;
+            } else {
+                return x !== x && y !== y;
+            }
+        };
+    }
+    var is = Object.is;
+    var hOP = Object.prototype.hasOwnProperty;
     var __export_assign = Object.assign;
+    function polyfill(prototype, method, value) {
+        if (!prototype[method]) {
+            Object.defineProperty(prototype, method, {
+                value: value,
+                configurable: true,
+                writable: true
+            });
+        }
+    }
+    polyfill(Array.prototype, "find", function(pred) {
+        var o = Object(this);
+        var len = o.length >>> 0;
+        var thisArg = arguments[1];
+        for (var k = 0; k < len; k++) {
+            var kValue = o[k];
+            if (pred.call(thisArg, kValue, k, o)) {
+                return kValue;
+            }
+        }
+        return;
+    });
+    polyfill(Array.prototype, "findIndex", function(pred) {
+        var o = Object(this);
+        var len = o.length >>> 0;
+        var thisArg = arguments[1];
+        for (var k = 0; k < len; k++) {
+            var kValue = o[k];
+            if (pred.call(thisArg, kValue, k, o)) {
+                return k;
+            }
+        }
+        return -1;
+    });
+    polyfill(Array.prototype, "some", function(pred) {
+        var o = Object(this);
+        var len = o.length >>> 0;
+        var thisArg = arguments[1];
+        for (var i = 0; i < len; i++) {
+            if (i in o && pred.call(thisArg, o[i], i, o)) {
+                return true;
+            }
+        }
+        return false;
+    });
+    polyfill(String.prototype, "includes", function(search, start) {
+        if (!isNumber(start)) start = 0;
+        if (start + search.length > this.length) {
+            return false;
+        } else {
+            return this.indexOf(search, start) !== -1;
+        }
+    });
+    polyfill(String.prototype, "startsWith", function(search, pos) {
+        return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+    });
+    polyfill(String.prototype, "endsWith", function(search, pos) {
+        var s = this.toString();
+        if (!isNumber(pos) || !isFinite(pos) || Math.floor(pos) !== pos || pos > s.length) {
+            pos = s.length;
+        }
+        pos -= search.length;
+        var lastIndex = s.indexOf(search, pos);
+        return lastIndex !== -1 && lastIndex === pos;
+    });
     function flatten(a) {
-        if (!__export_isArray(a)) {
-            if (a == null || a === false || a === true) return [];
+        if (!isArrayVdom(a)) {
+            if (a == undefined || a === false || a === true) return [];
             return [ a ];
         }
         a = a.slice(0);
         var aLen = a.length;
         for (var i_2 = 0; i_2 < aLen; ) {
             var item = a[i_2];
-            if (__export_isArray(item)) {
+            if (isArrayVdom(item)) {
                 a.splice.apply(a, [ i_2, 1 ].concat(item));
                 aLen = a.length;
                 continue;
             }
-            if (item == null || item === false || item === true) {
+            if (item == undefined || item === false || item === true) {
                 a.splice(i_2, 1);
                 aLen--;
                 continue;
@@ -343,6 +527,11 @@
             i_2++;
         }
         return a;
+    }
+    function swallowPromise(promise) {
+        promise.catch(function(reason) {
+            console.error("Uncaught exception from swallowPromise", reason);
+        });
     }
     var inSvg = false;
     var inNotFocusable = false;
@@ -364,7 +553,7 @@
     function testPropExistence(name) {
         return isString(testingDivStyle[name]);
     }
-    var mapping = newHashObj();
+    var mapping = new Map();
     var isUnitlessNumber = {
         boxFlex: true,
         boxFlexGroup: true,
@@ -411,16 +600,15 @@
         var k = Object.keys(newValue);
         for (var i = 0, l = k.length; i < l; i++) {
             var ki = k[i];
-            var mi = mapping[ki];
+            var mi = mapping.get(ki);
             var vi = newValue[ki];
             if (vi === undefined) continue;
             if (mi === undefined) {
                 if (DEBUG) {
-                    if (ki === "float" && window.console && console.error) console.error("In style instead of 'float' you have to use 'cssFloat'");
                     if (/-/.test(ki) && window.console && console.warn) console.warn("Style property " + ki + " contains dash (must use JS props instead of css names)");
                 }
                 if (testPropExistence(ki)) {
-                    mi = isUnitlessNumber[ki] === true ? null : pxAdder;
+                    mi = isUnitlessNumber[ki] === true ? noop : pxAdder;
                 } else {
                     var titleCaseKi = ki.replace(/^\w/, function(match) {
                         return match.toUpperCase();
@@ -432,13 +620,13 @@
                         }
                     }
                     if (mi === undefined) {
-                        mi = isUnitlessNumber[ki] === true ? null : pxAdder;
+                        mi = isUnitlessNumber[ki] === true ? noop : pxAdder;
                         if (DEBUG && window.console && console.warn && [ "overflowScrolling", "touchCallout" ].indexOf(ki) < 0) console.warn("Style property " + ki + " is not supported in this browser");
                     }
                 }
-                mapping[ki] = mi;
+                mapping.set(ki, mi);
             }
-            if (mi !== null) mi(newValue, vi, ki);
+            mi(newValue, vi, ki);
         }
     }
     function removeProperty(s, name) {
@@ -448,7 +636,7 @@
         if (isString(value)) {
             var len = value.length;
             if (len > 11 && value.substr(len - 11, 11) === " !important") {
-                s.setProperty(name, value.substr(0, len - 11), "important");
+                s.setProperty(hyphenateStyle(name), value.substr(0, len - 11), "important");
                 return;
             }
         }
@@ -461,13 +649,14 @@
             var rule;
             if (isObject(oldStyle)) {
                 for (rule in oldStyle) {
-                    if (!(rule in newStyle)) removeProperty(s, rule);
+                    if (oldStyle[rule] === undefined) continue;
+                    if (newStyle[rule] === undefined) removeProperty(s, rule);
                 }
                 for (rule in newStyle) {
                     var v = newStyle[rule];
                     if (v !== undefined) {
                         if (oldStyle[rule] !== v) setStyleProperty(s, rule, v);
-                    } else {
+                    } else if (oldStyle[rule] !== undefined) {
                         removeProperty(s, rule);
                     }
                 }
@@ -495,6 +684,12 @@
     }
     var focusableTag = /^input$|^select$|^textarea$|^button$/;
     var tabindexStr = "tabindex";
+    function isNaturallyFocusable(tag, attrs) {
+        if (tag == undefined) return false;
+        if (focusableTag.test(tag)) return true;
+        if (tag === "a" && attrs != null && attrs.href != null) return true;
+        return false;
+    }
     function updateElement(n, el, newAttrs, oldAttrs, notFocusable) {
         var attrName, newAttr, oldAttr, valueOldAttr, valueNewAttr;
         var wasTabindex = false;
@@ -523,11 +718,11 @@
                 } else el.setAttribute(attrName, newAttr);
             }
         }
-        if (notFocusable && !wasTabindex && n.tag && focusableTag.test(n.tag)) {
+        if (notFocusable && !wasTabindex && isNaturallyFocusable(n.tag, newAttrs)) {
             el.setAttribute(tabindexStr, "-1");
             oldAttrs[tabindexStr] = -1;
         }
-        if (newAttrs == null) {
+        if (newAttrs == undefined) {
             for (attrName in oldAttrs) {
                 if (oldAttrs[attrName] !== undefined) {
                     if (notFocusable && attrName === tabindexStr) continue;
@@ -559,6 +754,10 @@
                 updateCall.push(fn);
                 updateInstance.push(c);
             }
+            if ((c.ctx.$hookFlags || 0) & hasPostInitDom) {
+                updateCall.push(hookPostInitDom);
+                updateInstance.push(c);
+            }
         }
     }
     function pushUpdateCallback(c) {
@@ -569,9 +768,18 @@
                 updateCall.push(fn);
                 updateInstance.push(c);
             }
+            var flags = c.ctx.$hookFlags || 0;
+            if (flags & hasPostUpdateDom) {
+                updateCall.push(hookPostUpdateDom);
+                updateInstance.push(c);
+            }
             fn = cc.postUpdateDomEverytime;
             if (fn) {
                 updateCall.push(fn);
+                updateInstance.push(c);
+            }
+            if (flags & hasPostUpdateDomEverytime) {
+                updateCall.push(hookPostUpdateDomEverytime);
                 updateInstance.push(c);
             }
         }
@@ -584,6 +792,10 @@
                 updateCall.push(fn);
                 updateInstance.push(c);
             }
+            if ((c.ctx.$hookFlags || 0) & hasPostUpdateDomEverytime) {
+                updateCall.push(hookPostUpdateDomEverytime);
+                updateInstance.push(c);
+            }
         }
     }
     function findCfg(parent) {
@@ -591,7 +803,7 @@
         while (parent) {
             cfg = parent.cfg;
             if (cfg !== undefined) break;
-            if (parent.ctx) {
+            if (parent.ctx !== undefined && parent.component !== emptyComponent) {
                 cfg = parent.ctx.cfg;
                 break;
             }
@@ -600,18 +812,20 @@
         return cfg;
     }
     function setRef(ref, value) {
-        if (ref == null) return;
-        if (isFunction(ref)) {
+        if (ref === undefined) return;
+        if ("current" in ref) {
+            ref.current = value;
+        } else if (isFunction(ref)) {
             ref(value);
-            return;
+        } else if (__export_isArray(ref)) {
+            var ctx = ref[0];
+            var refs = ctx.refs;
+            if (refs === undefined) {
+                refs = newHashObj();
+                ctx.refs = refs;
+            }
+            refs[ref[1]] = value;
         }
-        var ctx = ref[0];
-        var refs = ctx.refs;
-        if (refs == null) {
-            refs = newHashObj();
-            ctx.refs = refs;
-        }
-        refs[ref[1]] = value;
     }
     var focusRootStack = [];
     var focusRootTop = null;
@@ -628,6 +842,7 @@
         }
     }
     var currentCtx;
+    var hookId = -1;
     function getCurrentCtx() {
         return currentCtx;
     }
@@ -675,9 +890,11 @@
             if (component.init) {
                 component.init(ctx, c);
             }
-            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, 0);
+            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, RenderPhase_bobril.Create);
             if (component.render) {
+                hookId = 0;
                 component.render(ctx, c);
+                hookId = -1;
             }
             currentCtx = undefined;
         } else {
@@ -688,6 +905,11 @@
             c.tag = undefined;
             c.children = undefined;
             return c;
+        } else if (tag === "@") {
+            createInto = c.data;
+            portalMap.set(createInto, c);
+            createBefore = null;
+            tag = undefined;
         }
         var children = c.children;
         var inSvgForeignObject = false;
@@ -713,7 +935,7 @@
         }
         if (tag === "/") {
             var htmlText = children;
-            if (htmlText === "") {} else if (createBefore == null) {
+            if (htmlText === "") {} else if (createBefore == undefined) {
                 var before = createInto.lastChild;
                 createInto.insertAdjacentHTML("beforeend", htmlText);
                 c.element = [];
@@ -801,72 +1023,63 @@
     }
     function createChildren(c, createInto, createBefore) {
         var ch = c.children;
-        if (!ch) return;
-        if (!__export_isArray(ch)) {
-            if (isString(ch)) {
-                createInto.textContent = ch;
-                return;
-            }
-            ch = [ ch ];
+        if (isString(ch)) {
+            createInto.textContent = ch;
+            return;
         }
-        ch = ch.slice(0);
-        var i = 0, l = ch.length;
-        while (i < l) {
-            var item = ch[i];
-            if (__export_isArray(item)) {
-                ch.splice.apply(ch, [ i, 1 ].concat(item));
-                l = ch.length;
-                continue;
-            }
-            item = normalizeNode(item);
-            if (item == null) {
-                ch.splice(i, 1);
-                l--;
-                continue;
-            }
-            ch[i] = createNode(item, c, createInto, createBefore);
-            i++;
+        var res = [];
+        flattenVdomChildren(res, ch);
+        for (var i_3 = 0; i_3 < res.length; i_3++) {
+            res[i_3] = createNode(res[i_3], c, createInto, createBefore);
         }
-        c.children = ch;
+        c.children = res;
     }
     function destroyNode(c) {
-        setRef(c.ref, null);
+        setRef(c.ref, undefined);
         var ch = c.children;
         if (__export_isArray(ch)) {
-            for (var i_3 = 0, l = ch.length; i_3 < l; i_3++) {
-                destroyNode(ch[i_3]);
+            for (var i_4 = 0, l = ch.length; i_4 < l; i_4++) {
+                destroyNode(ch[i_4]);
             }
         }
         var component = c.component;
         if (component) {
             var ctx = c.ctx;
             currentCtx = ctx;
-            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(c, 3);
+            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(c, RenderPhase_bobril.Destroy);
             if (component.destroy) component.destroy(ctx, c, c.element);
             var disposables = ctx.disposables;
             if (__export_isArray(disposables)) {
-                for (var i_4 = disposables.length; i_4-- > 0; ) {
-                    var d = disposables[i_4];
+                for (var i_5 = disposables.length; i_5-- > 0; ) {
+                    var d = disposables[i_5];
                     if (isFunction(d)) d(ctx); else d.dispose();
                 }
             }
+            currentCtx = undefined;
+        }
+        if (c.tag === "@") {
+            portalMap.delete(c.data);
+            removeNodeRecursive(c);
         }
     }
     function addDisposable(ctx, disposable) {
         var disposables = ctx.disposables;
-        if (disposables == null) {
+        if (disposables == undefined) {
             disposables = [];
             ctx.disposables = disposables;
         }
         disposables.push(disposable);
+    }
+    function isDisposable(val) {
+        return isObject(val) && val.dispose;
     }
     function removeNodeRecursive(c) {
         var el = c.element;
         if (__export_isArray(el)) {
             var pa = el[0].parentNode;
             if (pa) {
-                for (var i_5 = 0; i_5 < el.length; i_5++) {
-                    pa.removeChild(el[i_5]);
+                for (var i_6 = 0; i_6 < el.length; i_6++) {
+                    pa.removeChild(el[i_6]);
                 }
             }
         } else if (el != null) {
@@ -886,6 +1099,7 @@
         removeNodeRecursive(c);
     }
     var roots = newHashObj();
+    var portalMap = new Map();
     function nodeContainsNode(c, n, resIndex, res) {
         var el = c.element;
         var ch = c.children;
@@ -899,7 +1113,7 @@
                     return null;
                 }
             }
-        } else if (el == null) {
+        } else if (el == undefined) {
             if (__export_isArray(ch)) {
                 for (var i = 0; i < ch.length; i++) {
                     var result = nodeContainsNode(ch[i], n, resIndex, res);
@@ -920,32 +1134,52 @@
     }
     function vdomPath(n) {
         var res = [];
-        if (n == null) return res;
+        if (n == undefined) return res;
         var rootIds = Object.keys(roots);
         var rootElements = rootIds.map(function(i) {
             return roots[i].e || document.body;
         });
+        var rootNodes = rootIds.map(function(i) {
+            return roots[i].n;
+        });
+        portalMap.forEach(function(v, k) {
+            rootElements.push(k);
+            rootNodes.push(v);
+        });
         var nodeStack = [];
-        rootFound: while (n) {
-            for (var j = 0; j < rootElements.length; j++) {
-                if (n === rootElements[j]) break rootFound;
+        rootReallyFound: while (true) {
+            rootFound: while (n) {
+                for (var j = 0; j < rootElements.length; j++) {
+                    if (n === rootElements[j]) break rootFound;
+                }
+                nodeStack.push(n);
+                n = n.parentNode;
             }
-            nodeStack.push(n);
-            n = n.parentNode;
-        }
-        if (!n || nodeStack.length === 0) return res;
-        var currentCacheArray = null;
-        var currentNode = nodeStack.pop();
-        for (j = 0; j < rootElements.length; j++) {
-            if (n === rootElements[j]) {
-                var rn = roots[rootIds[j]].n;
-                if (rn === undefined) continue;
-                var findResult = nodeContainsNode(rn, currentNode, res.length, res);
-                if (findResult !== undefined) {
-                    currentCacheArray = findResult;
-                    break;
+            if (!n || nodeStack.length === 0) return res;
+            var currentCacheArray = null;
+            var currentNode = nodeStack.pop();
+            for (j = 0; j < rootElements.length; j++) {
+                if (n === rootElements[j]) {
+                    var rn = rootNodes[j];
+                    if (rn === undefined) continue;
+                    res = [];
+                    if (rn.parent !== undefined) {
+                        var rnp = rn;
+                        while (rnp = rnp.parent) {
+                            res.push(rnp);
+                        }
+                        res.reverse();
+                    }
+                    var findResult = nodeContainsNode(rn, currentNode, res.length, res);
+                    if (findResult !== undefined) {
+                        currentCacheArray = findResult;
+                        break rootReallyFound;
+                    }
                 }
             }
+            nodeStack.push(currentNode);
+            nodeStack.push(n);
+            n = n.parentNode;
         }
         subtreeSearch: while (nodeStack.length) {
             currentNode = nodeStack.pop();
@@ -1002,7 +1236,7 @@
         var ctx = c.ctx;
         if (component != null && ctx != null) {
             var locallyInvalidated = false;
-            if (ctx[ctxInvalidated] === frameCounter) {
+            if (ctx[ctxInvalidated] >= frameCounter) {
                 deepness = Math.max(deepness, ctx[ctxDeepness]);
                 locallyInvalidated = true;
             }
@@ -1017,13 +1251,15 @@
                 }
                 ctx.data = n.data || {};
                 c.component = component;
-                if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, inSelectedUpdate ? 2 : 1);
+                if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, inSelectedUpdate ? RenderPhase_bobril.LocalUpdate : RenderPhase_bobril.Update);
                 if (component.render) {
                     c.orig = n;
                     n = __export_assign({}, n);
                     c.cfg = undefined;
                     if (n.cfg !== undefined) n.cfg = undefined;
+                    hookId = 0;
                     component.render(ctx, n, c);
+                    hookId = -1;
                     if (n.cfg !== undefined) {
                         if (c.cfg === undefined) c.cfg = n.cfg; else __export_assign(c.cfg, n.cfg);
                     }
@@ -1031,7 +1267,8 @@
                 currentCtx = undefined;
             }
         } else {
-            if (c.orig === n) {
+            if (c.orig === n && !ignoringShouldChange) {
+                finishUpdateNodeWithoutChange(c, createInto, createBefore);
                 return c;
             }
             c.orig = n;
@@ -1049,12 +1286,23 @@
         if (isNumber(newChildren)) {
             newChildren = "" + newChildren;
         }
-        if (bigChange || component != null && ctx == null || component == null && ctx != null && ctx.me.component !== emptyComponent) {} else if (tag === "/") {
+        if (bigChange || component != undefined && ctx == undefined || component == undefined && ctx != undefined && ctx.me.component !== emptyComponent) {} else if (tag === "/") {
             if (c.tag === "/" && cachedChildren === newChildren) {
                 finishUpdateNode(n, c, component);
                 return c;
             }
         } else if (tag === c.tag) {
+            if (tag === "@") {
+                if (n.data !== c.data) {
+                    var r = createNode(n, c.parent, n.data, null);
+                    removeNode(c);
+                    return r;
+                }
+                createInto = n.data;
+                createBefore = getLastDomNode(c);
+                if (createBefore != null) createBefore = createBefore.nextSibling;
+                tag = undefined;
+            }
             if (tag === undefined) {
                 if (isString(newChildren) && isString(cachedChildren)) {
                     if (newChildren !== cachedChildren) {
@@ -1091,7 +1339,7 @@
                     }
                 } else {
                     if (deepness <= 0) {
-                        if (__export_isArray(cachedChildren)) selectedUpdate(c.children, el, createBefore);
+                        if (__export_isArray(cachedChildren)) selectedUpdate(c.children, el, null);
                     } else {
                         cachedChildren = updateChildren(el, newChildren, cachedChildren, c, null, deepness - 1);
                     }
@@ -1114,7 +1362,7 @@
         }
         var parEl = c.element;
         if (__export_isArray(parEl)) parEl = parEl[0];
-        if (parEl == null) parEl = createInto; else parEl = parEl.parentNode;
+        if (parEl == undefined) parEl = createInto; else parEl = parEl.parentNode;
         var r = createNode(n, c.parent, parEl, getDomNode(c));
         removeNode(c);
         return r;
@@ -1134,10 +1382,25 @@
         }
         return null;
     }
+    function getLastDomNode(c) {
+        if (c === undefined) return null;
+        var el = c.element;
+        if (el != null) {
+            if (__export_isArray(el)) return el[el.length - 1];
+            return el;
+        }
+        var ch = c.children;
+        if (!__export_isArray(ch)) return null;
+        for (var i = ch.length; i-- > 0; ) {
+            el = getLastDomNode(ch[i]);
+            if (el) return el;
+        }
+        return null;
+    }
     function findNextNode(a, i, len, def) {
         while (++i < len) {
             var ai = a[i];
-            if (ai == null) continue;
+            if (ai == undefined) continue;
             var n = getDomNode(ai);
             if (n != null) return n;
         }
@@ -1190,36 +1453,39 @@
         }
         cachedChildren[cachedIndex] = updateNode(newNode, cur, element, before, deepness);
     }
-    function updateChildren(element, newChildren, cachedChildren, parentNode, createBefore, deepness) {
-        if (newChildren == null) newChildren = [];
-        if (!__export_isArray(newChildren)) {
-            newChildren = [ newChildren ];
+    function recursiveFlattenVdomChildren(res, children) {
+        if (children == undefined) return;
+        if (isArrayVdom(children)) {
+            for (var i_7 = 0; i_7 < children.length; i_7++) {
+                recursiveFlattenVdomChildren(res, children[i_7]);
+            }
+        } else {
+            var item = normalizeNode(children);
+            if (item !== undefined) res.push(item);
         }
-        if (cachedChildren == null) cachedChildren = [];
+    }
+    function flattenVdomChildren(res, children) {
+        recursiveFlattenVdomChildren(res, children);
+        if (DEBUG) {
+            var set = new Set();
+            for (var i_8 = 0; i_8 < res.length; i_8++) {
+                var key = res[i_8].key;
+                if (key == undefined) continue;
+                if (set.has(key)) {
+                    console.warn("Duplicate Bobril node key " + key);
+                }
+                set.add(key);
+            }
+        }
+    }
+    function updateChildren(element, newChildren, cachedChildren, parentNode, createBefore, deepness) {
+        if (cachedChildren == undefined) cachedChildren = [];
         if (!__export_isArray(cachedChildren)) {
             if (element.firstChild) element.removeChild(element.firstChild);
             cachedChildren = [];
         }
-        var newCh = newChildren;
-        newCh = newCh.slice(0);
-        var newLength = newCh.length;
-        var newIndex;
-        for (newIndex = 0; newIndex < newLength; ) {
-            var item = newCh[newIndex];
-            if (__export_isArray(item)) {
-                newCh.splice.apply(newCh, [ newIndex, 1 ].concat(item));
-                newLength = newCh.length;
-                continue;
-            }
-            item = normalizeNode(item);
-            if (item == null) {
-                newCh.splice(newIndex, 1);
-                newLength--;
-                continue;
-            }
-            newCh[newIndex] = item;
-            newIndex++;
-        }
+        var newCh = [];
+        flattenVdomChildren(newCh, newChildren);
         return updateChildrenCore(element, newCh, cachedChildren, parentNode, createBefore, deepness);
     }
     function updateChildrenCore(element, newChildren, cachedChildren, parentNode, createBefore, deepness) {
@@ -1323,19 +1589,19 @@
                 continue;
             }
             cachedKey = cachedChildren[cachedIndex].key;
-            if (cachedKey == null) {
+            if (cachedKey == undefined) {
                 cachedIndex++;
                 continue;
             }
             key = newChildren[newIndex].key;
-            if (key == null) {
+            if (key == undefined) {
                 newIndex++;
                 while (newIndex < newEnd) {
                     key = newChildren[newIndex].key;
-                    if (key != null) break;
+                    if (key != undefined) break;
                     newIndex++;
                 }
-                if (key == null) break;
+                if (key == undefined) break;
             }
             var akPos = cachedKeys[key];
             if (akPos === undefined) {
@@ -1435,7 +1701,7 @@
                     }
                     continue;
                 }
-                while (cachedChildren[cachedIndex].key == null) cachedIndex++;
+                while (cachedChildren[cachedIndex].key == undefined) cachedIndex++;
                 assert(key === cachedChildren[cachedIndex].key);
                 cachedChildren.splice(newIndex, 0, cachedChildren[cachedIndex]);
                 cachedChildren.splice(cachedIndex + 1, 1);
@@ -1473,6 +1739,7 @@
             if (param === +param) hasNativeRaf = true;
         });
     }
+    var setTimeout = window.setTimeout;
     var __export_now = Date.now || function() {
         return new Date().getTime();
     };
@@ -1484,7 +1751,7 @@
         } else {
             var delay = 50 / 3 + lastTickTime - __export_now();
             if (delay < 0) delay = 0;
-            window.setTimeout(function() {
+            setTimeout(function() {
                 lastTickTime = __export_now();
                 callback(lastTickTime - startTime);
             }, delay);
@@ -1494,6 +1761,7 @@
     var ctxDeepness = "$deepness";
     var fullRecreateRequested = true;
     var scheduled = false;
+    var isInvalidated = true;
     var initializing = true;
     var uptimeMs = 0;
     var frameCounter = 0;
@@ -1502,7 +1770,7 @@
     var regEvents = {};
     var registryEvents;
     function addEvent(name, priority, callback) {
-        if (registryEvents == null) registryEvents = {};
+        if (registryEvents == undefined) registryEvents = {};
         var list = registryEvents[name] || [];
         list.push({
             priority: priority,
@@ -1516,6 +1784,18 @@
             if (events[i](ev, target, node)) return true;
         }
         return false;
+    }
+    var isPassiveEventHandlerSupported = false;
+    try {
+        var options_bobril = Object.defineProperty({}, "passive", {
+            get: function() {
+                isPassiveEventHandlerSupported = true;
+            }
+        });
+        window.addEventListener("test", options_bobril, options_bobril);
+        window.removeEventListener("test", options_bobril, options_bobril);
+    } catch (err) {
+        isPassiveEventHandlerSupported = false;
     }
     var listeningEventDeepness = 0;
     function addListener(el, name) {
@@ -1539,7 +1819,10 @@
             if (listeningEventDeepness == 0 && deferSyncUpdateRequested) syncUpdate();
         }
         if ("on" + eventName in window) el = window;
-        el.addEventListener(eventName, enhanceEvent, capture);
+        el.addEventListener(eventName, enhanceEvent, isPassiveEventHandlerSupported ? {
+            capture: capture,
+            passive: false
+        } : capture);
     }
     function initEvents() {
         if (registryEvents === undefined) return;
@@ -1565,20 +1848,32 @@
         for (var i = 0; i < len; i++) {
             var node = cache[i];
             var ctx = node.ctx;
-            if (ctx != null && ctx[ctxInvalidated] === frameCounter) {
-                cache[i] = updateNode(node.orig, node, element, createBefore, ctx[ctxDeepness], true);
+            if (ctx != null && ctx[ctxInvalidated] >= frameCounter) {
+                cache[i] = updateNode(node.orig, node, element, findNextNode(cache, i, len, createBefore), ctx[ctxDeepness], true);
             } else if (__export_isArray(node.children)) {
                 var backupInSvg = inSvg;
                 var backupInNotFocusable = inNotFocusable;
                 if (inNotFocusable && focusRootTop === node) inNotFocusable = false;
                 if (node.tag === "svg") inSvg = true; else if (inSvg && node.tag === "foreignObject") inSvg = false;
-                selectedUpdate(node.children, node.element || element, findNextNode(cache, i, len, createBefore));
+                var thisElement = node.element;
+                if (thisElement != undefined) {
+                    selectedUpdate(node.children, thisElement, null);
+                } else {
+                    selectedUpdate(node.children, element, findNextNode(cache, i, len, createBefore));
+                }
                 pushUpdateEverytimeCallback(node);
                 inSvg = backupInSvg;
                 inNotFocusable = backupInNotFocusable;
             }
         }
     }
+    var RenderPhase_bobril;
+    (function(RenderPhase) {
+        RenderPhase[RenderPhase["Create"] = 0] = "Create";
+        RenderPhase[RenderPhase["Update"] = 1] = "Update";
+        RenderPhase[RenderPhase["LocalUpdate"] = 2] = "LocalUpdate";
+        RenderPhase[RenderPhase["Destroy"] = 3] = "Destroy";
+    })(RenderPhase_bobril = __export_RenderPhase || (__export_RenderPhase = {}));
     var emptyBeforeRenderCallback = function() {};
     var beforeRenderCallback = emptyBeforeRenderCallback;
     var beforeFrameCallback = function() {};
@@ -1608,7 +1903,7 @@
         while (child != null) {
             if (parent === child) return true;
             var p = child.parent;
-            if (p == null) {
+            if (p == undefined) {
                 for (var i = 0; i < rootIds.length; i++) {
                     var r = roots[rootIds[i]];
                     if (!r) continue;
@@ -1626,6 +1921,7 @@
     function syncUpdate() {
         deferSyncUpdateRequested = false;
         internalUpdate(__export_now() - startTime);
+        executeEffectCallbacks();
     }
     function deferSyncUpdate() {
         if (listeningEventDeepness > 0) {
@@ -1637,6 +1933,7 @@
     function update(time) {
         scheduled = false;
         internalUpdate(time);
+        __export_asap(executeEffectCallbacks);
     }
     var rootIds_bobril;
     var RootComponent = createVirtualComponent({
@@ -1651,6 +1948,7 @@
         }
     });
     function internalUpdate(time) {
+        isInvalidated = false;
         renderFrameBegin = __export_now();
         initEvents();
         reallyBeforeFrameCallback();
@@ -1659,43 +1957,49 @@
         nextIgnoreShouldChange = false;
         uptimeMs = time;
         beforeFrameCallback();
-        focusRootTop = focusRootStack.length === 0 ? null : focusRootStack[focusRootStack.length - 1];
-        inNotFocusable = false;
         var fullRefresh = false;
         if (fullRecreateRequested) {
             fullRecreateRequested = false;
             fullRefresh = true;
         }
-        rootIds_bobril = Object.keys(roots);
-        for (var i = 0; i < rootIds_bobril.length; i++) {
-            var r = roots[rootIds_bobril[i]];
-            if (!r) continue;
-            var rc = r.n;
-            var insertBefore = null;
-            for (var j = i + 1; j < rootIds_bobril.length; j++) {
-                var rafter = roots[rootIds_bobril[j]];
-                if (rafter === undefined) continue;
-                insertBefore = getDomNode(rafter.n);
-                if (insertBefore != null) break;
-            }
-            if (focusRootTop) inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds_bobril);
-            if (r.e === undefined) r.e = document.body;
-            if (rc) {
-                if (fullRefresh || rc.ctx[ctxInvalidated] === frameCounter) {
-                    var node = RootComponent(r);
-                    updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1e6 : rc.ctx[ctxDeepness]);
-                } else {
-                    if (__export_isArray(r.c)) selectedUpdate(r.c, r.e, insertBefore);
+        listeningEventDeepness++;
+        for (var repeat = 0; repeat < 2; repeat++) {
+            focusRootTop = focusRootStack.length === 0 ? null : focusRootStack[focusRootStack.length - 1];
+            inNotFocusable = false;
+            rootIds_bobril = Object.keys(roots);
+            for (var i = 0; i < rootIds_bobril.length; i++) {
+                var r = roots[rootIds_bobril[i]];
+                if (!r) continue;
+                var rc = r.n;
+                var insertBefore = null;
+                for (var j = i + 1; j < rootIds_bobril.length; j++) {
+                    var rafter = roots[rootIds_bobril[j]];
+                    if (rafter === undefined) continue;
+                    insertBefore = getDomNode(rafter.n);
+                    if (insertBefore != null) break;
                 }
-            } else {
-                var node = RootComponent(r);
-                rc = createNode(node, undefined, r.e, insertBefore);
-                r.n = rc;
+                if (focusRootTop) inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds_bobril);
+                if (r.e === undefined) r.e = document.body;
+                if (rc) {
+                    if (fullRefresh || rc.ctx[ctxInvalidated] >= frameCounter) {
+                        var node = RootComponent(r);
+                        updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1e6 : rc.ctx[ctxDeepness]);
+                    } else {
+                        if (__export_isArray(r.c)) selectedUpdate(r.c, r.e, insertBefore);
+                    }
+                } else {
+                    var node = RootComponent(r);
+                    rc = createNode(node, undefined, r.e, insertBefore);
+                    r.n = rc;
+                }
+                r.c = rc.children;
             }
-            r.c = rc.children;
+            rootIds_bobril = undefined;
+            callPostCallbacks();
+            if (!deferSyncUpdateRequested) break;
         }
-        rootIds_bobril = undefined;
-        callPostCallbacks();
+        deferSyncUpdateRequested = false;
+        listeningEventDeepness--;
         var r0 = roots["0"];
         afterFrameCallback(r0 ? r0.c : null);
         lastFrameDurationMs = __export_now() - renderFrameBegin;
@@ -1723,6 +2027,7 @@
         } else {
             fullRecreateRequested = true;
         }
+        isInvalidated = true;
         if (scheduled || initializing) return;
         scheduled = true;
         requestAnimationFrame(update);
@@ -1757,7 +2062,7 @@
         assert(root != null);
         if (factory != null) root.f = factory;
         var rootNode = root.n;
-        if (rootNode == null) return;
+        if (rootNode == undefined) return;
         var ctx = rootNode.ctx;
         ctx[ctxInvalidated] = frameCounter;
         ctx[ctxDeepness] = 1e6;
@@ -1776,7 +2081,7 @@
         beforeInit = finishInitialize;
     }
     function init(factory, element) {
-        assert(rootIds_bobril == null, "init should not be called from render");
+        assert(rootIds_bobril == undefined, "init should not be called from render");
         removeRoot("0");
         roots["0"] = {
             f: factory,
@@ -1793,14 +2098,60 @@
             callback(prevBeforeInit);
         };
     }
+    var currentCtxWithEvents;
     function bubble(node, name, param) {
+        if (param == undefined) {
+            param = {
+                target: node
+            };
+        } else if (isObject(param) && param.target == undefined) {
+            param.target = node;
+        }
+        var res = captureBroadcast(name, param);
+        if (res != undefined) return res;
+        var prevCtx = currentCtxWithEvents;
         while (node) {
             var c = node.component;
             if (c) {
                 var ctx = node.ctx;
+                currentCtxWithEvents = ctx;
+                if (((ctx.$hookFlags || 0) & hasEvents) === hasEvents) {
+                    var hooks = ctx.$hooks;
+                    for (var i = 0, l = hooks.length; i < l; i++) {
+                        var h = hooks[i];
+                        if (h instanceof EventsHook_bobril) {
+                            var m = h.events[name];
+                            if (m !== undefined) {
+                                var eventResult = +m.call(ctx, param);
+                                if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                                    currentCtxWithEvents = prevCtx;
+                                    return ctx;
+                                }
+                                if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                                    currentCtxWithEvents = prevCtx;
+                                    return undefined;
+                                }
+                                if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                                    res = ctx;
+                                }
+                            }
+                        }
+                    }
+                }
                 var m = c[name];
                 if (m) {
-                    if (m.call(c, ctx, param)) return ctx;
+                    var eventResult = +m.call(c, ctx, param);
+                    if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                        currentCtxWithEvents = prevCtx;
+                        return ctx;
+                    }
+                    if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                        currentCtxWithEvents = prevCtx;
+                        return undefined;
+                    }
+                    if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                        res = ctx;
+                    }
                 }
                 m = c.shouldStopBubble;
                 if (m) {
@@ -1809,41 +2160,193 @@
             }
             node = node.parent;
         }
-        return undefined;
+        currentCtxWithEvents = prevCtx;
+        return res;
     }
     function broadcastEventToNode(node, name, param) {
         if (!node) return undefined;
+        var res;
         var c = node.component;
         if (c) {
             var ctx = node.ctx;
+            var prevCtx = currentCtxWithEvents;
+            currentCtxWithEvents = ctx;
+            if (((ctx.$hookFlags || 0) & hasEvents) === hasEvents) {
+                var hooks = ctx.$hooks;
+                for (var i = 0, l = hooks.length; i < l; i++) {
+                    var h = hooks[i];
+                    if (h instanceof EventsHook_bobril) {
+                        var m = h.events[name];
+                        if (m !== undefined) {
+                            var eventResult = +m.call(ctx, param);
+                            if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                                currentCtxWithEvents = prevCtx;
+                                return ctx;
+                            }
+                            if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                                currentCtxWithEvents = prevCtx;
+                                return undefined;
+                            }
+                            if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                                res = ctx;
+                            }
+                        }
+                    }
+                }
+            }
             var m = c[name];
             if (m) {
-                if (m.call(c, ctx, param)) return ctx;
+                var eventResult = +m.call(c, ctx, param);
+                if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                    currentCtxWithEvents = prevCtx;
+                    return ctx;
+                }
+                if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                    currentCtxWithEvents = prevCtx;
+                    return undefined;
+                }
+                if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                    res = ctx;
+                }
             }
             m = c.shouldStopBroadcast;
             if (m) {
-                if (m.call(c, ctx, name, param)) return undefined;
+                if (m.call(c, ctx, name, param)) {
+                    currentCtxWithEvents = prevCtx;
+                    return res;
+                }
             }
+            currentCtxWithEvents = prevCtx;
         }
         var ch = node.children;
         if (__export_isArray(ch)) {
             for (var i = 0; i < ch.length; i++) {
-                var res = broadcastEventToNode(ch[i], name, param);
+                var res2 = broadcastEventToNode(ch[i], name, param);
+                if (res2 != undefined) return res2;
+            }
+        }
+        return res;
+    }
+    function broadcastCapturedEventToNode(node, name, param) {
+        if (!node) return undefined;
+        var res;
+        var c = node.component;
+        if (c) {
+            var ctx = node.ctx;
+            if (((ctx.$hookFlags || 0) & hasCaptureEvents) === hasCaptureEvents) {
+                var hooks = ctx.$hooks;
+                var prevCtx = currentCtxWithEvents;
+                currentCtxWithEvents = ctx;
+                for (var i = 0, l = hooks.length; i < l; i++) {
+                    var h = hooks[i];
+                    if (h instanceof CaptureEventsHook_bobril) {
+                        var m = h.events[name];
+                        if (m !== undefined) {
+                            var eventResult = +m.call(ctx, param);
+                            if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                                currentCtxWithEvents = prevCtx;
+                                return ctx;
+                            }
+                            if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                                currentCtxWithEvents = prevCtx;
+                                return undefined;
+                            }
+                            if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                                res = ctx;
+                            }
+                        }
+                    }
+                }
+                currentCtxWithEvents = prevCtx;
+            }
+        }
+        var ch = node.children;
+        if (__export_isArray(ch)) {
+            for (var i = 0, l = ch.length; i < l; i++) {
+                var res2 = broadcastCapturedEventToNode(ch[i], name, param);
+                if (res2 != undefined) return res2;
+            }
+        }
+        return res;
+    }
+    function captureBroadcast(name, param) {
+        var k = Object.keys(roots);
+        for (var i = 0; i < k.length; i++) {
+            var ch = roots[k[i]].n;
+            if (ch != null) {
+                var res = broadcastCapturedEventToNode(ch, name, param);
                 if (res != null) return res;
             }
         }
         return undefined;
     }
     function broadcast(name, param) {
+        var res = captureBroadcast(name, param);
+        if (res != null) return res;
         var k = Object.keys(roots);
         for (var i = 0; i < k.length; i++) {
             var ch = roots[k[i]].n;
             if (ch != null) {
-                var res = broadcastEventToNode(ch, name, param);
+                res = broadcastEventToNode(ch, name, param);
                 if (res != null) return res;
             }
         }
         return undefined;
+    }
+    function runMethodFrom(ctx, methodId, param) {
+        var done = false;
+        if (DEBUG && ctx == undefined) throw new Error("runMethodFrom ctx is undefined");
+        var currentRoot = ctx.me;
+        var previousRoot;
+        while (currentRoot != undefined) {
+            var children = currentRoot.children;
+            if (__export_isArray(children)) loopChildNodes(children);
+            if (done) return true;
+            var comp = currentRoot.component;
+            if (comp && comp.runMethod) {
+                var prevCtx = currentCtxWithEvents;
+                currentCtxWithEvents = currentRoot.ctx;
+                if (comp.runMethod(currentCtxWithEvents, methodId, param)) done = true;
+                currentCtxWithEvents = prevCtx;
+            }
+            if (done) return true;
+            previousRoot = currentRoot;
+            currentRoot = currentRoot.parent;
+        }
+        function loopChildNodes(children) {
+            for (var i = children.length - 1; i >= 0; i--) {
+                var child = children[i];
+                if (child === previousRoot) continue;
+                __export_isArray(child.children) && loopChildNodes(child.children);
+                if (done) return;
+                var comp = child.component;
+                if (comp && comp.runMethod) {
+                    var prevCtx = currentCtxWithEvents;
+                    currentCtxWithEvents = child.ctx;
+                    if (comp.runMethod(currentCtxWithEvents, methodId, param)) {
+                        currentCtxWithEvents = prevCtx;
+                        done = true;
+                        return;
+                    }
+                    currentCtxWithEvents = prevCtx;
+                }
+            }
+        }
+        return done;
+    }
+    function getCurrentCtxWithEvents() {
+        if (currentCtxWithEvents != undefined) return currentCtxWithEvents;
+        return currentCtx;
+    }
+    function tryRunMethod(methodId, param) {
+        return runMethodFrom(getCurrentCtxWithEvents(), methodId, param);
+    }
+    function runMethod(methodId, param) {
+        if (!runMethodFrom(getCurrentCtxWithEvents(), methodId, param)) throw Error("runMethod didn't found " + methodId);
+    }
+    var lastMethodId = 0;
+    function allocateMethodId() {
+        return lastMethodId++;
     }
     function merge(f1, f2) {
         return function() {
@@ -1878,14 +2381,14 @@
     function overrideComponents(originalComponent, overridingComponent) {
         var res = Object.create(originalComponent);
         res.super = originalComponent;
-        for (var i_6 in overridingComponent) {
-            if (!(i_6 in emptyObject)) {
-                var m = overridingComponent[i_6];
-                var origM = originalComponent[i_6];
-                if (i_6 === "id") {
-                    res[i_6] = (origM != null ? origM : "") + "/" + m;
+        for (var i_9 in overridingComponent) {
+            if (!(i_9 in emptyObject)) {
+                var m = overridingComponent[i_9];
+                var origM = originalComponent[i_9];
+                if (i_9 === "id") {
+                    res[i_9] = (origM != null ? origM : "") + "/" + m;
                 } else {
-                    res[i_6] = m;
+                    res[i_9] = m;
                 }
             }
         }
@@ -1944,8 +2447,9 @@
         return r;
     }
     function setStyleShim(name, action) {
-        mapping[name] = action;
+        mapping.set(name, action);
     }
+    setStyleShim("float", renamer("cssFloat"));
     function uptime() {
         return uptimeMs;
     }
@@ -1956,8 +2460,15 @@
         return frameCounter;
     }
     function invalidated() {
-        return scheduled;
+        return isInvalidated;
     }
+    var BobrilDeviceCategory_bobril;
+    (function(BobrilDeviceCategory) {
+        BobrilDeviceCategory[BobrilDeviceCategory["Mobile"] = 0] = "Mobile";
+        BobrilDeviceCategory[BobrilDeviceCategory["Tablet"] = 1] = "Tablet";
+        BobrilDeviceCategory[BobrilDeviceCategory["Desktop"] = 2] = "Desktop";
+        BobrilDeviceCategory[BobrilDeviceCategory["LargeDesktop"] = 3] = "LargeDesktop";
+    })(BobrilDeviceCategory_bobril = __export_BobrilDeviceCategory || (__export_BobrilDeviceCategory = {}));
     var media = null;
     var breaks = [ [ 414, 800, 900 ], [ 736, 1280, 1440 ] ];
     function emitOnMediaChange() {
@@ -1978,15 +2489,15 @@
     var isAndroid = /Android/i.test(navigator.userAgent);
     var weirdPortrait;
     function getMedia() {
-        if (media == null) {
+        if (media == undefined) {
             var w = viewport.clientWidth;
             var h = viewport.clientHeight;
             var o = window.orientation;
             var p = h >= w;
-            if (o == null) o = p ? 0 : 90;
+            if (o == undefined) o = p ? 0 : 90; else o = +o;
             if (isAndroid) {
                 var op = Math.abs(o) % 180 === 90;
-                if (weirdPortrait == null) {
+                if (weirdPortrait == undefined) {
                     weirdPortrait = op === p;
                 } else {
                     p = op === weirdPortrait;
@@ -1999,12 +2510,13 @@
                 height: h,
                 orientation: o,
                 deviceCategory: device,
-                portrait: p
+                portrait: p,
+                dppx: window.devicePixelRatio
             };
         }
         return media;
     }
-    var __export_asap = function() {
+    __export_asap = function() {
         var callbacks = [];
         function executeCallbacks() {
             var cbList = callbacks;
@@ -2013,7 +2525,6 @@
                 cbList[i]();
             }
         }
-        var onreadystatechange = "onreadystatechange";
         if (window.MutationObserver) {
             var hiddenDiv = document.createElement("div");
             new MutationObserver(executeCallbacks).observe(hiddenDiv, {
@@ -2024,37 +2535,6 @@
                     hiddenDiv.setAttribute("yes", "no");
                 }
                 callbacks.push(callback);
-            };
-        } else if (!window.setImmediate && window.postMessage && window.addEventListener) {
-            var MESSAGE_PREFIX = "basap" + Math.random(), hasPostMessage = false;
-            var onGlobalMessage = function(event) {
-                if (event.source === window && event.data === MESSAGE_PREFIX) {
-                    hasPostMessage = false;
-                    executeCallbacks();
-                }
-            };
-            window.addEventListener("message", onGlobalMessage, false);
-            return function(fn) {
-                callbacks.push(fn);
-                if (!hasPostMessage) {
-                    hasPostMessage = true;
-                    window.postMessage(MESSAGE_PREFIX, "*");
-                }
-            };
-        } else if (!window.setImmediate && onreadystatechange in document.createElement("script")) {
-            var scriptEl;
-            return function(callback) {
-                callbacks.push(callback);
-                if (!scriptEl) {
-                    scriptEl = document.createElement("script");
-                    scriptEl[onreadystatechange] = function() {
-                        scriptEl[onreadystatechange] = null;
-                        scriptEl.parentNode.removeChild(scriptEl);
-                        scriptEl = null;
-                        executeCallbacks();
-                    };
-                    document.body.appendChild(scriptEl);
-                }
             };
         } else {
             var timeout;
@@ -2085,7 +2565,7 @@
                 }
                 __export_asap(function() {
                     var cb = _this.s ? deferred[0] : deferred[1];
-                    if (cb == null) {
+                    if (cb == undefined) {
                         (_this.s ? deferred[2] : deferred[3])(_this.v);
                         return;
                     }
@@ -2215,85 +2695,6 @@
             window["Promise"] = Promise;
         })();
     }
-    if (ieVersion() === 9) {
-        (function() {
-            function addFilter(s, v) {
-                if (s.zoom == null) s.zoom = "1";
-                var f = s.filter;
-                s.filter = f == null ? v : f + " " + v;
-            }
-            var simpleLinearGradient = /^linear\-gradient\(to (.+?),(.+?),(.+?)\)/gi;
-            setStyleShim("background", function(s, v, oldName) {
-                var match = simpleLinearGradient.exec(v);
-                if (match == null) return;
-                var dir = match[1];
-                var color1 = match[2];
-                var color2 = match[3];
-                var tmp;
-                switch (dir) {
-                  case "top":
-                    dir = "0";
-                    tmp = color1;
-                    color1 = color2;
-                    color2 = tmp;
-                    break;
-
-                  case "bottom":
-                    dir = "0";
-                    break;
-
-                  case "left":
-                    dir = "1";
-                    tmp = color1;
-                    color1 = color2;
-                    color2 = tmp;
-                    break;
-
-                  case "right":
-                    dir = "1";
-                    break;
-
-                  default:
-                    return;
-                }
-                s[oldName] = "none";
-                addFilter(s, "progid:DXImageTransform.Microsoft.gradient(startColorstr='" + color1 + "',endColorstr='" + color2 + "', gradientType='" + dir + "')");
-            });
-        })();
-    } else {
-        (function() {
-            var testStyle = document.createElement("div").style;
-            testStyle.cssText = "background:-webkit-linear-gradient(top,red,red)";
-            if (testStyle.background.length > 0) {
-                (function() {
-                    var startsWithGradient = /^(?:repeating\-)?(?:linear|radial)\-gradient/gi;
-                    var revDirs = {
-                        top: "bottom",
-                        bottom: "top",
-                        left: "right",
-                        right: "left"
-                    };
-                    function gradientWebkitConvertor(style, value, name) {
-                        if (startsWithGradient.test(value)) {
-                            var pos = value.indexOf("(to ");
-                            if (pos > 0) {
-                                pos += 4;
-                                var posEnd = value.indexOf(",", pos);
-                                var dir = value.slice(pos, posEnd);
-                                dir = dir.split(" ").map(function(v) {
-                                    return revDirs[v] || v;
-                                }).join(" ");
-                                value = value.slice(0, pos - 3) + dir + value.slice(posEnd);
-                            }
-                            value = "-webkit-" + value;
-                        }
-                        style[name] = value;
-                    }
-                    setStyleShim("background", gradientWebkitConvertor);
-                })();
-            }
-        })();
-    }
     var bValue = "b$value";
     var bSelectionStart = "b$selStart";
     var bSelectionEnd = "b$selEnd";
@@ -2333,6 +2734,7 @@
         }
         if (node.ctx === undefined) {
             node.ctx = {
+                data: undefined,
                 me: node
             };
             node.component = emptyComponent;
@@ -2408,24 +2810,24 @@
         if (!node) {
             return false;
         }
-        var c = node.component;
-        var hasProp = node.attrs && node.attrs[bValue];
-        var hasOnChange = c && c.onChange != null;
-        var hasPropOrOnChange = hasProp || hasOnChange;
-        var hasOnSelectionChange = c && c.onSelectionChange != null;
-        if (!hasPropOrOnChange && !hasOnSelectionChange) return false;
+        if (node.ctx === undefined) {
+            node.ctx = {
+                data: undefined,
+                me: node
+            };
+            node.component = emptyComponent;
+        }
         var ctx = node.ctx;
         var tagName = target.tagName;
         var isSelect = tagName === "SELECT";
         var isMultiSelect = isSelect && target.multiple;
-        if (hasPropOrOnChange && isMultiSelect) {
+        if (isMultiSelect) {
             var vs = selectedArray(target.options);
             if (!stringArrayEqual(ctx[bValue], vs)) {
                 ctx[bValue] = vs;
-                if (hasProp) hasProp(vs);
-                if (hasOnChange) c.onChange(ctx, vs);
+                emitOnInput(node, vs);
             }
-        } else if (hasPropOrOnChange && isCheckboxLike(target)) {
+        } else if (isCheckboxLike(target)) {
             if (ev && ev.type === "change") {
                 setTimeout(function() {
                     emitOnChange(undefined, target, node);
@@ -2438,55 +2840,59 @@
                     var radio = radios[j];
                     var radioNode = deref(radio);
                     if (!radioNode) continue;
-                    var rbHasProp = node.attrs[bValue];
-                    var radioComponent = radioNode.component;
-                    var rbHasOnChange = radioComponent && radioComponent.onChange != null;
-                    if (!rbHasProp && !rbHasOnChange) continue;
                     var radioCtx = radioNode.ctx;
                     var vrb = radio.checked;
                     if (radioCtx[bValue] !== vrb) {
                         radioCtx[bValue] = vrb;
-                        if (rbHasProp) rbHasProp(vrb);
-                        if (rbHasOnChange) radioComponent.onChange(radioCtx, vrb);
+                        emitOnInput(radioNode, vrb);
                     }
                 }
             } else {
                 var vb = target.checked;
                 if (ctx[bValue] !== vb) {
                     ctx[bValue] = vb;
-                    if (hasProp) hasProp(vb);
-                    if (hasOnChange) c.onChange(ctx, vb);
+                    emitOnInput(node, vb);
                 }
             }
         } else {
-            if (hasPropOrOnChange) {
-                var v = target.value;
-                if (ctx[bValue] !== v) {
-                    ctx[bValue] = v;
-                    if (hasProp) hasProp(v);
-                    if (hasOnChange) c.onChange(ctx, v);
-                }
+            var v = target.value;
+            if (ctx[bValue] !== v) {
+                ctx[bValue] = v;
+                emitOnInput(node, v);
             }
-            if (hasOnSelectionChange) {
-                var sStart = target.selectionStart;
-                var sEnd = target.selectionEnd;
-                var sDir = target.selectionDirection;
-                var swap = false;
-                var oStart = ctx[bSelectionStart];
-                if (sDir == null) {
-                    if (sEnd === oStart) swap = true;
-                } else if (sDir === "backward") {
-                    swap = true;
-                }
-                if (swap) {
-                    var s = sStart;
-                    sStart = sEnd;
-                    sEnd = s;
-                }
-                emitOnSelectionChange(node, sStart, sEnd);
+            var sStart = target.selectionStart;
+            var sEnd = target.selectionEnd;
+            var sDir = target.selectionDirection;
+            var swap = false;
+            var oStart = ctx[bSelectionStart];
+            if (sDir == undefined) {
+                if (sEnd === oStart) swap = true;
+            } else if (sDir === "backward") {
+                swap = true;
             }
+            if (swap) {
+                var s = sStart;
+                sStart = sEnd;
+                sEnd = s;
+            }
+            emitOnSelectionChange(node, sStart, sEnd);
         }
         return false;
+    }
+    function emitOnInput(node, value) {
+        var prevCtx = currentCtxWithEvents;
+        var ctx = node.ctx;
+        var component = node.component;
+        currentCtxWithEvents = ctx;
+        var hasProp = node.attrs && node.attrs[bValue];
+        if (isFunction(hasProp)) hasProp(value);
+        var hasOnChange = component && component.onChange;
+        if (isFunction(hasOnChange)) hasOnChange(ctx, value);
+        currentCtxWithEvents = prevCtx;
+        bubble(node, "onInput", {
+            target: node,
+            value: value
+        });
     }
     function emitOnSelectionChange(node, start, end) {
         var c = node.component;
@@ -2494,7 +2900,8 @@
         if (c && (ctx[bSelectionStart] !== start || ctx[bSelectionEnd] !== end)) {
             ctx[bSelectionStart] = start;
             ctx[bSelectionEnd] = end;
-            if (c.onSelectionChange) c.onSelectionChange(ctx, {
+            bubble(node, "onSelectionChange", {
+                target: node,
                 startPosition: start,
                 endPosition: end
             });
@@ -2518,6 +2925,7 @@
     for (var i_bobril = 0; i_bobril < mouseEvents.length; i_bobril++) addEvent(mouseEvents[i_bobril], 2, emitOnMouseChange);
     function buildParam(ev) {
         return {
+            target: undefined,
             shift: ev.shiftKey,
             ctrl: ev.ctrlKey,
             alt: ev.altKey,
@@ -2545,7 +2953,7 @@
     }
     function emitOnKeyPress(ev, _target, node) {
         if (!node) return false;
-        if (ev.which === 0) return false;
+        if (ev.which === 0 || ev.altKey) return false;
         var param = {
             charCode: ev.which || ev.keyCode
         };
@@ -2558,6 +2966,12 @@
     addEvent("keydown", 50, emitOnKeyDown);
     addEvent("keyup", 50, emitOnKeyUp);
     addEvent("keypress", 50, emitOnKeyPress);
+    var BobrilPointerType_bobril;
+    (function(BobrilPointerType) {
+        BobrilPointerType[BobrilPointerType["Mouse"] = 0] = "Mouse";
+        BobrilPointerType[BobrilPointerType["Touch"] = 1] = "Touch";
+        BobrilPointerType[BobrilPointerType["Pen"] = 2] = "Pen";
+    })(BobrilPointerType_bobril = __export_BobrilPointerType || (__export_BobrilPointerType = {}));
     var MoveOverIsNotTap = 13;
     var TapShouldBeShorterThanMs = 750;
     var MaxBustDelay = 500;
@@ -2580,15 +2994,19 @@
         ownerCtx = null;
     }
     function invokeMouseOwner(handlerName, param) {
-        if (ownerCtx == null) {
+        if (ownerCtx == undefined) {
             return false;
         }
-        var handler = ownerCtx.me.component[handlerName];
+        var c = ownerCtx.me.component;
+        var handler = c[handlerName];
         if (!handler) {
             return false;
         }
         invokingOwner = true;
-        var stop = handler(ownerCtx, param);
+        var prevCtx = currentCtxWithEvents;
+        currentCtxWithEvents = ownerCtx;
+        var stop = handler.call(c, ownerCtx, param);
+        currentCtxWithEvents = prevCtx;
         invokingOwner = false;
         return stop;
     }
@@ -2606,10 +3024,6 @@
         }
         return false;
     }
-    function hasPointerEventsNone(target) {
-        var bNode = deref(target);
-        return hasPointerEventsNoneB(bNode);
-    }
     function revertVisibilityChanges(hiddenEls) {
         if (hiddenEls.length) {
             for (var i = hiddenEls.length - 1; i >= 0; --i) {
@@ -2626,39 +3040,15 @@
         });
         t.style.visibility = "hidden";
     }
-    function pointerThroughIE(ev, target, _node) {
-        var hiddenEls = [];
-        var t = target;
-        while (hasPointerEventsNone(t)) {
-            pushAndHide(hiddenEls, t);
-            t = document.elementFromPoint(ev.x, ev.y);
-        }
-        if (revertVisibilityChanges(hiddenEls)) {
-            try {
-                t.dispatchEvent(ev);
-            } catch (e) {
-                return false;
-            }
-            preventDefault(ev);
-            return true;
-        }
-        return false;
-    }
     function addEvent5(name, callback) {
         addEvent(name, 5, callback);
     }
     var pointersEventNames = [ "PointerDown", "PointerMove", "PointerUp", "PointerCancel" ];
     var i_bobril;
-    if (ieVersion() && ieVersion() < 11) {
-        var mouseEvents = [ "click", "dblclick", "drag", "dragend", "dragenter", "dragleave", "dragover", "dragstart", "drop", "mousedown", "mousemove", "mouseout", "mouseover", "mouseup", "mousewheel", "scroll", "wheel" ];
-        for (i_bobril = 0; i_bobril < mouseEvents.length; ++i_bobril) {
-            addEvent(mouseEvents[i_bobril], 1, pointerThroughIE);
-        }
-    }
     function type2Bobril(t) {
-        if (t === "mouse" || t === 4) return 0;
-        if (t === "pen" || t === 3) return 2;
-        return 1;
+        if (t === "mouse" || t === 4) return BobrilPointerType_bobril.Mouse;
+        if (t === "pen" || t === 3) return BobrilPointerType_bobril.Pen;
+        return BobrilPointerType_bobril.Touch;
     }
     function pointerEventsNoneFix(x, y, target, node) {
         var hiddenEls = [];
@@ -2673,6 +3063,8 @@
     }
     function buildHandlerPointer(name) {
         return function handlePointerDown(ev, target, node) {
+            target = document.elementFromPoint(ev.clientX, ev.clientY);
+            node = deref(target);
             if (hasPointerEventsNoneB(node)) {
                 var fixed = pointerEventsNoneFix(ev.clientX, ev.clientY, target, node);
                 target = fixed[0];
@@ -2681,7 +3073,7 @@
             var button = ev.button + 1;
             var type = type2Bobril(ev.pointerType);
             var buttons = ev.buttons;
-            if (button === 0 && type === 0 && buttons) {
+            if (button === 0 && type === BobrilPointerType_bobril.Mouse && buttons) {
                 button = 1;
                 while (!(buttons & 1)) {
                     buttons = buttons >> 1;
@@ -2689,7 +3081,9 @@
                 }
             }
             var param = {
+                target: node,
                 id: ev.pointerId,
+                cancelable: normalizeCancelable(ev),
                 type: type,
                 x: ev.clientX,
                 y: ev.clientY,
@@ -2715,8 +3109,10 @@
                 target = document.elementFromPoint(t.clientX, t.clientY);
                 node = deref(target);
                 var param = {
+                    target: node,
                     id: t.identifier + 2,
-                    type: 1,
+                    cancelable: normalizeCancelable(ev),
+                    type: BobrilPointerType_bobril.Touch,
                     x: t.clientX,
                     y: t.clientY,
                     button: 1,
@@ -2745,8 +3141,10 @@
                 node = fixed[1];
             }
             var param = {
+                target: node,
                 id: 1,
-                type: 0,
+                type: BobrilPointerType_bobril.Mouse,
+                cancelable: normalizeCancelable(ev),
                 x: ev.clientX,
                 y: ev.clientY,
                 button: decodeButton(ev),
@@ -2791,7 +3189,7 @@
         (function(name) {
             var onName = "on" + name;
             addEvent("!" + name, 50, function(ev, _target, node) {
-                return invokeMouseOwner(onName, ev) || bubble(node, onName, ev) != null;
+                return invokeMouseOwner(onName, ev) || bubble(node, onName, ev) != undefined;
             });
         })(pointersEventNames[j_bobril]);
     }
@@ -2808,7 +3206,10 @@
     }
     var prevMousePath = [];
     function revalidateMouseIn() {
-        if (lastMouseEv) mouseEnterAndLeave(lastMouseEv);
+        if (lastMouseEv) {
+            mouseEnterAndLeave(lastMouseEv);
+            handlePointerMove(lastMouseEv, undefined, deref(document.elementFromPoint(lastMouseEv.x, lastMouseEv.y)));
+        }
     }
     function mouseEnterAndLeave(ev) {
         lastMouseEv = ev;
@@ -2816,7 +3217,7 @@
         var toPath = vdomPath(t);
         var node = toPath.length == 0 ? undefined : toPath[toPath.length - 1];
         if (hasPointerEventsNoneB(node)) {
-            var fixed = pointerEventsNoneFix(ev.x, ev.y, t, node == null ? undefined : node);
+            var fixed = pointerEventsNoneFix(ev.x, ev.y, t, node == undefined ? undefined : node);
             t = fixed[0];
             toPath = vdomPath(t);
         }
@@ -2826,7 +3227,7 @@
         var n;
         var c;
         var i = prevMousePath.length;
-        if (i > 0) {
+        if (i > 0 && (i > common || i != toPath.length)) {
             n = prevMousePath[i - 1];
             if (n) {
                 c = n.component;
@@ -2850,7 +3251,7 @@
             i++;
         }
         prevMousePath = toPath;
-        if (i > 0) {
+        if (i > 0 && (i > common || i != prevMousePath.length)) {
             n = prevMousePath[i - 1];
             if (n) {
                 c = n.component;
@@ -2878,7 +3279,7 @@
         return false;
     }
     function bustingPointerMove(ev, target, node) {
-        if (ev.type === 0 && ev.button === 0 && pointersDown[ev.id] != null) {
+        if (ev.type === BobrilPointerType_bobril.Mouse && ev.button === 0 && pointersDown[ev.id] != null) {
             ev.button = 1;
             emitEvent("!PointerUp", ev, target, node);
             ev.button = 0;
@@ -2913,7 +3314,7 @@
         if (firstPointerDown == ev.id) {
             mouseEnterAndLeave(ev);
             firstPointerDown = -1;
-            if (ev.type == 1 && !tapCanceled) {
+            if (ev.type == BobrilPointerType_bobril.Touch && !tapCanceled) {
                 if (__export_now() - firstPointerDownTime < TapShouldBeShorterThanMs) {
                     emitEvent("!PointerCancel", ev, target, node);
                     shouldPreventClickingSpree(1);
@@ -2922,6 +3323,8 @@
                     toBust.push([ ev.x, ev.y, __export_now() + delay, handled ? 1 : 0 ]);
                     return handled;
                 }
+            } else if (tapCanceled) {
+                __export_ignoreClick(ev.x, ev.y);
             }
         }
         return false;
@@ -2971,23 +3374,20 @@
     function decodeButton(ev) {
         return ev.which || ev.button;
     }
+    function normalizeCancelable(ev) {
+        var c = ev.cancelable;
+        return !isBoolean(c) || c;
+    }
     function createHandler(handlerName, allButtons) {
-        return function(ev, target, node) {
-            if (listeningEventDeepness == 1 && (target.nodeName != "INPUT" || ev.clientX != 0 || ev.clientY != 0)) {
-                target = document.elementFromPoint(ev.clientX, ev.clientY);
-                node = deref(target);
-                if (hasPointerEventsNoneB(node)) {
-                    var fixed = pointerEventsNoneFix(ev.clientX, ev.clientY, target, node);
-                    target = fixed[0];
-                    node = fixed[1];
-                }
-            }
+        return function(ev, _target, node) {
             var button = decodeButton(ev) || 1;
             if (!allButtons && button !== 1) return false;
             var param = {
+                target: node,
                 x: ev.clientX,
                 y: ev.clientY,
                 button: button,
+                cancelable: normalizeCancelable(ev),
                 shift: ev.shiftKey,
                 ctrl: ev.ctrlKey,
                 alt: ev.altKey,
@@ -3057,10 +3457,12 @@
             dy = ev.deltaY;
         }
         var param = {
+            target: node,
             dx: dx,
             dy: dy,
             x: ev.clientX,
             y: ev.clientY,
+            cancelable: normalizeCancelable(ev),
             button: button,
             shift: ev.shiftKey,
             ctrl: ev.ctrlKey,
@@ -3081,16 +3483,20 @@
     var __export_firstPointerDownId = function() {
         return firstPointerDown;
     };
-    var __export_ignoreClick = function(x, y) {
+    __export_ignoreClick = function(x, y) {
         var delay = ieVersion() ? MaxBustDelayForIE : MaxBustDelay;
         toBust.push([ x, y, __export_now() + delay, 1 ]);
     };
     var currentActiveElement = undefined;
     var currentFocusedNode = undefined;
     var nodeStack_bobril = [];
+    var focusChangeRunning = false;
     function emitOnFocusChange(inFocus) {
-        var newActiveElement = document.hasFocus() || inFocus ? document.activeElement : undefined;
-        if (newActiveElement !== currentActiveElement) {
+        if (focusChangeRunning) return false;
+        focusChangeRunning = true;
+        while (true) {
+            var newActiveElement = document.hasFocus() || inFocus ? document.activeElement : undefined;
+            if (newActiveElement === currentActiveElement) break;
             currentActiveElement = newActiveElement;
             var newStack = vdomPath(currentActiveElement);
             var common = 0;
@@ -3100,10 +3506,7 @@
             var c;
             if (i >= common) {
                 n = nodeStack_bobril[i];
-                if (n) {
-                    c = n.component;
-                    if (c && c.onBlur) c.onBlur(n.ctx);
-                }
+                bubble(n, "onBlur");
                 i--;
             }
             while (i >= common) {
@@ -3125,15 +3528,12 @@
             }
             if (i < newStack.length) {
                 n = newStack[i];
-                if (n) {
-                    c = n.component;
-                    if (c && c.onFocus) c.onFocus(n.ctx);
-                }
-                i++;
+                bubble(n, "onFocus");
             }
             nodeStack_bobril = newStack;
             currentFocusedNode = nodeStack_bobril.length == 0 ? undefined : null2undefined(nodeStack_bobril[nodeStack_bobril.length - 1]);
         }
+        focusChangeRunning = false;
         return false;
     }
     function emitOnFocusChangeDelayed() {
@@ -3149,8 +3549,8 @@
     function focused() {
         return currentFocusedNode;
     }
-    function focus(node) {
-        if (node == null) return false;
+    function focus(node, backwards) {
+        if (node == undefined) return false;
         if (isString(node)) return false;
         var style = node.style;
         if (style != null) {
@@ -3159,8 +3559,8 @@
         }
         var attrs = node.attrs;
         if (attrs != null) {
-            var ti = attrs.tabindex != null ? attrs.tabindex : attrs.tabIndex;
-            if (ti !== undefined || node.tag && focusableTag.test(node.tag)) {
+            var ti = attrs.tabindex;
+            if (ti !== undefined || isNaturallyFocusable(node.tag, attrs)) {
                 var el = node.element;
                 el.focus();
                 emitOnFocusChange(false);
@@ -3170,7 +3570,7 @@
         var children = node.children;
         if (__export_isArray(children)) {
             for (var i = 0; i < children.length; i++) {
-                if (focus(children[i])) return true;
+                if (focus(children[backwards ? children.length - 1 - i : i], backwards)) return true;
             }
             return false;
         }
@@ -3184,6 +3584,7 @@
         for (var i = 0; i < callbacks_bobril.length; i++) {
             callbacks_bobril[i](info);
         }
+        captureBroadcast("onScroll", info);
         return false;
     }
     addEvent("^scroll", 10, emitOnScroll);
@@ -3223,7 +3624,6 @@
         res[1] += rect.top;
         return res;
     }
-    var cachedConvertPointFromClientToNode;
     var CSSMatrix_bobril = function() {
         function CSSMatrix(data) {
             this.data = data;
@@ -3318,39 +3718,36 @@
     }
     function convertPointFromClientToNode(node, pageX, pageY) {
         var element = getDomNode(node);
-        if (cachedConvertPointFromClientToNode == null) {
-            var nativeConvert_1 = window.webkitConvertPointFromPageToNode;
-            if (nativeConvert_1) {
-                cachedConvertPointFromClientToNode = function(element, x, y) {
-                    var scr = getWindowScroll();
-                    var res = nativeConvert_1(element, new WebKitPoint(scr[0] + x, scr[1] + y));
-                    return [ res.x, res.y ];
-                };
-            } else {
-                cachedConvertPointFromClientToNode = function(element, x, y) {
-                    return getTransformationMatrix(element).inverse().transformPoint(x, y);
-                };
-            }
-        }
-        return cachedConvertPointFromClientToNode(element, pageX, pageY);
+        if (element == undefined) element = document.body;
+        return getTransformationMatrix(element).inverse().transformPoint(pageX, pageY);
     }
+    var DndOp_bobril;
+    (function(DndOp) {
+        DndOp[DndOp["None"] = 0] = "None";
+        DndOp[DndOp["Link"] = 1] = "Link";
+        DndOp[DndOp["Copy"] = 2] = "Copy";
+        DndOp[DndOp["Move"] = 3] = "Move";
+    })(DndOp_bobril = __export_DndOp || (__export_DndOp = {}));
+    var DndEnabledOps_bobril;
+    (function(DndEnabledOps) {
+        DndEnabledOps[DndEnabledOps["None"] = 0] = "None";
+        DndEnabledOps[DndEnabledOps["Link"] = 1] = "Link";
+        DndEnabledOps[DndEnabledOps["Copy"] = 2] = "Copy";
+        DndEnabledOps[DndEnabledOps["LinkCopy"] = 3] = "LinkCopy";
+        DndEnabledOps[DndEnabledOps["Move"] = 4] = "Move";
+        DndEnabledOps[DndEnabledOps["MoveLink"] = 5] = "MoveLink";
+        DndEnabledOps[DndEnabledOps["MoveCopy"] = 6] = "MoveCopy";
+        DndEnabledOps[DndEnabledOps["MoveCopyLink"] = 7] = "MoveCopyLink";
+    })(DndEnabledOps_bobril = __export_DndEnabledOps || (__export_DndEnabledOps = {}));
     var lastDndId = 0;
     var dnds = [];
     var systemDnd = null;
     var rootId_bobril = null;
-    var bodyCursorBackup;
-    var userSelectBackup;
-    var shimmedStyle = {
-        userSelect: ""
-    };
-    shimStyle(shimmedStyle);
-    var shimedStyleKeys = Object.keys(shimmedStyle);
-    var userSelectPropName = shimedStyleKeys[shimedStyleKeys.length - 1];
     var DndCtx = function(pointerId) {
         this.id = ++lastDndId;
         this.pointerid = pointerId;
-        this.enabledOperations = 7;
-        this.operation = 0;
+        this.enabledOperations = DndEnabledOps_bobril.MoveCopyLink;
+        this.operation = DndOp_bobril.None;
         this.started = false;
         this.beforeDrag = true;
         this.local = true;
@@ -3379,12 +3776,11 @@
         if (pointerId >= 0) pointer2Dnd[pointerId] = this;
         dnds.push(this);
     };
+    var draggingStyle = "b-dragging";
     function lazyCreateRoot() {
-        if (rootId_bobril == null) {
-            var dbs = document.body.style;
-            bodyCursorBackup = dbs.cursor;
-            userSelectBackup = dbs[userSelectPropName];
-            dbs[userSelectPropName] = "none";
+        if (rootId_bobril == undefined) {
+            var dd = document.documentElement;
+            dd.classList.add(draggingStyle);
             rootId_bobril = addRoot(dndRootFactory);
         }
     }
@@ -3408,15 +3804,15 @@
             if (dnd.cursor != null) return dnd.cursor;
             if (dnd.system) return "";
             switch (dnd.operation) {
-              case 3:
+              case DndOp_bobril.Move:
                 cursor = "move";
                 break;
 
-              case 1:
+              case DndOp_bobril.Link:
                 cursor = "alias";
                 break;
 
-              case 2:
+              case DndOp_bobril.Copy:
                 cursor = "copy";
                 break;
             }
@@ -3440,6 +3836,7 @@
             me.tag = "div";
             me.style = {
                 position: "fixed",
+                zIndex: 1e9,
                 pointerEvents: "none",
                 userSelect: "none",
                 left: 0,
@@ -3447,9 +3844,13 @@
                 right: 0,
                 bottom: 0
             };
-            var dbs = document.body.style;
+            var dds = document.documentElement.style;
             var cur = currentCursor();
-            if (cur && dbs.cursor !== cur) dbs.cursor = cur;
+            if (cur) {
+                if (dds.cursor !== cur) dds.setProperty("cursor", cur, "important");
+            } else {
+                dds.setProperty("cursor", "");
+            }
             me.children = res;
         },
         onDrag: function(ctx) {
@@ -3505,9 +3906,9 @@
         if (dnds.length === 0 && rootId_bobril != null) {
             removeRoot(rootId_bobril);
             rootId_bobril = null;
-            var dbs = document.body.style;
-            dbs.cursor = bodyCursorBackup;
-            dbs[userSelectPropName] = userSelectBackup;
+            var dd = document.documentElement;
+            dd.classList.remove(draggingStyle);
+            dd.style.setProperty("cursor", "");
         }
     };
     var pointer2Dnd = newHashObj();
@@ -3527,7 +3928,7 @@
             var sourceCtx = bubble(node, "onDragStart", dnd);
             if (sourceCtx) {
                 var htmlNode = getDomNode(sourceCtx.me);
-                if (htmlNode == null) {
+                if (htmlNode == undefined) {
                     dnd.destroy();
                     return false;
                 }
@@ -3552,8 +3953,8 @@
     function dndMoved(node, dnd) {
         dnd.overNode = node;
         dnd.targetCtx = bubble(node, "onDragOver", dnd);
-        if (dnd.targetCtx == null) {
-            dnd.operation = 0;
+        if (dnd.targetCtx == undefined) {
+            dnd.operation = DndOp_bobril.None;
         }
         broadcast("onDrag", dnd);
     }
@@ -3652,7 +4053,7 @@
             var sourceCtx = bubble(node, "onDragStart", dnd);
             if (sourceCtx) {
                 var htmlNode = getDomNode(sourceCtx.me);
-                if (htmlNode == null) {
+                if (htmlNode == undefined) {
                     dnd.destroy();
                     return false;
                 }
@@ -3687,7 +4088,7 @@
             style.width = "0";
             style.height = "0";
             style.padding = "0";
-            window.setTimeout(function() {
+            setTimeout(function() {
                 style.opacity = opacityBackup;
                 style.width = widthBackup;
                 style.height = heightBackup;
@@ -3714,7 +4115,7 @@
     }
     function handleDragOver(ev, _target, _node) {
         var dnd = systemDnd;
-        if (dnd == null) {
+        if (dnd == undefined) {
             dnd = new DndCtx(-1);
             dnd.system = true;
             systemDnd = dnd;
@@ -3746,7 +4147,7 @@
         }
         updateFromNative(dnd, ev);
         setDropEffect(ev, dnd.operation);
-        if (dnd.operation != 0) {
+        if (dnd.operation != DndOp_bobril.None) {
             preventDefault(ev);
             return true;
         }
@@ -3759,10 +4160,10 @@
         if (systemDnd != null && (x === 0 && y === 0 || x < 0 || y < 0 || x >= m.width || y >= m.height)) {
             systemDnd.x = 0;
             systemDnd.y = 0;
-            systemDnd.operation = 0;
+            systemDnd.operation = DndOp_bobril.None;
             broadcast("onDrag", systemDnd);
         }
-        return false;
+        return true;
     }
     function handleDragEnd(_ev, _target, _node) {
         if (systemDnd != null) {
@@ -3772,14 +4173,14 @@
     }
     function handleDrop(ev, _target, _node) {
         var dnd = systemDnd;
-        if (dnd == null) return false;
+        if (dnd == undefined) return false;
         dnd.x = ev.clientX;
         dnd.y = ev.clientY;
         if (!dnd.local) {
             var dataKeys = Object.keys(dnd.data);
             var dt = ev.dataTransfer;
-            for (var i_7 = 0; i_7 < dataKeys.length; i_7++) {
-                var k = dataKeys[i_7];
+            for (var i_10 = 0; i_10 < dataKeys.length; i_10++) {
+                var k = dataKeys[i_10];
                 var d;
                 if (k === "Files") {
                     d = [].slice.call(dt.files, 0);
@@ -3810,8 +4211,8 @@
         return true;
     }
     function anyActiveDnd() {
-        for (var i_8 = 0; i_8 < dnds.length; i_8++) {
-            var dnd = dnds[i_8];
+        for (var i_11 = 0; i_11 < dnds.length; i_11++) {
+            var dnd = dnds[i_11];
             if (dnd.beforeDrag) continue;
             return dnd;
         }
@@ -3832,6 +4233,12 @@
     var __export_getDnds = function() {
         return dnds;
     };
+    var RouteTransitionType_bobril;
+    (function(RouteTransitionType) {
+        RouteTransitionType[RouteTransitionType["Push"] = 0] = "Push";
+        RouteTransitionType[RouteTransitionType["Replace"] = 1] = "Replace";
+        RouteTransitionType[RouteTransitionType["Pop"] = 2] = "Pop";
+    })(RouteTransitionType_bobril = __export_RouteTransitionType || (__export_RouteTransitionType = {}));
     var waitingForPopHashChange = -1;
     function emitOnHashChange() {
         if (waitingForPopHashChange >= 0) clearTimeout(waitingForPopHashChange);
@@ -3919,17 +4326,17 @@
         return pattern.replace(paramInjectMatcher, function(_match, paramName) {
             paramName = paramName || "splat";
             if (paramName.slice(-1) !== "?") {
-                if (params[paramName] == null) throw new Error('Missing "' + paramName + '" parameter for path "' + pattern + '"');
+                if (params[paramName] == undefined) throw new Error('Missing "' + paramName + '" parameter for path "' + pattern + '"');
             } else {
                 paramName = paramName.slice(0, -1);
-                if (params[paramName] == null) {
+                if (params[paramName] == undefined) {
                     return "";
                 }
             }
             var segment;
             if (paramName === "splat" && Array.isArray(params[paramName])) {
                 segment = params[paramName][splatIndex++];
-                if (segment == null) throw new Error("Missing splat # " + splatIndex + ' for path "' + pattern + '"');
+                if (segment == undefined) throw new Error("Missing splat # " + splatIndex + ' for path "' + pattern + '"');
             } else {
                 segment = params[paramName];
             }
@@ -4003,7 +4410,7 @@
                 return function(n) {
                     if (n) a[i] = n;
                 };
-            }(nodesArray, idx));
+            }(nodesArray, setterOfNodesArray.length));
         }
         return setterOfNodesArray[idx];
     }
@@ -4021,7 +4428,7 @@
             firstRouting = false;
             currentTransition = {
                 inApp: true,
-                type: 2,
+                type: RouteTransitionType_bobril.Pop,
                 name: undefined,
                 params: undefined
             };
@@ -4032,20 +4439,20 @@
                 runTransition(createRedirectPush(matches[0].name, out.p));
             }
         }
-        if (currentTransition && currentTransition.type === 2 && transitionState < 0) {
+        if (currentTransition && currentTransition.type === RouteTransitionType_bobril.Pop && transitionState < 0) {
             programPath = browserPath;
             currentTransition.inApp = true;
-            if (currentTransition.name == null && matches.length > 0) {
+            if (currentTransition.name == undefined && matches.length > 0) {
                 currentTransition.name = matches[0].name;
                 currentTransition.params = out.p;
                 nextIteration();
                 if (currentTransition != null) return undefined;
             } else return undefined;
         }
-        if (currentTransition == null) {
+        if (currentTransition == undefined) {
             activeRoutes = matches;
-            while (nodesArray.length > activeRoutes.length) nodesArray.pop();
-            while (nodesArray.length < activeRoutes.length) nodesArray.push(undefined);
+            while (nodesArray.length > activeRoutes.length) nodesArray.shift();
+            while (nodesArray.length < activeRoutes.length) nodesArray.unshift(undefined);
             activeParams = out.p;
         }
         var fn = noop;
@@ -4059,7 +4466,11 @@
                     var handler = r.handler;
                     var res;
                     if (isFunction(handler)) {
-                        res = handler(data);
+                        res = {
+                            key: undefined,
+                            ref: undefined,
+                            children: handler(data)
+                        };
                     } else {
                         res = {
                             key: undefined,
@@ -4161,12 +4572,28 @@
         if (isInApp(name)) {
             var r = nameRouteMap[name];
             if (DEBUG) {
-                if (rootRoutes == null) throw Error("Cannot use urlOfRoute before defining routes");
-                if (r == null) throw Error("Route with name " + name + " if not defined in urlOfRoute");
+                if (rootRoutes == undefined) throw Error("Cannot use urlOfRoute before defining routes");
+                if (r == undefined) throw Error("Route with name " + name + " if not defined in urlOfRoute");
             }
             return "#" + injectParams(r.url, params);
         }
         return name;
+    }
+    function Link(data) {
+        return style_bobril({
+            tag: "a",
+            component: {
+                id: "link",
+                onClick: function() {
+                    runTransition((data.replace ? createRedirectReplace : createRedirectPush)(data.name, data.params));
+                    return true;
+                }
+            },
+            children: data.children,
+            attrs: {
+                href: urlOfRoute(data.name, data.params)
+            }
+        }, isActive(data.name, data.params) ? data.activeStyle != undefined ? data.activeStyle : [ data.style, "active" ] : data.style);
     }
     function link(node, name, params) {
         node.data = node.data || {};
@@ -4195,7 +4622,7 @@
     function createRedirectPush(name, params) {
         return {
             inApp: isInApp(name),
-            type: 0,
+            type: RouteTransitionType_bobril.Push,
             name: name,
             params: params || {}
         };
@@ -4203,7 +4630,7 @@
     function createRedirectReplace(name, params) {
         return {
             inApp: isInApp(name),
-            type: 1,
+            type: RouteTransitionType_bobril.Replace,
             name: name,
             params: params || {}
         };
@@ -4212,7 +4639,7 @@
         distance = distance || 1;
         return {
             inApp: myAppHistoryDeepness >= distance,
-            type: 2,
+            type: RouteTransitionType_bobril.Pop,
             name: undefined,
             params: {},
             distance: distance
@@ -4223,15 +4650,15 @@
     var transitionState = 0;
     function doAction(transition) {
         switch (transition.type) {
-          case 0:
+          case RouteTransitionType_bobril.Push:
             push(urlOfRoute(transition.name, transition.params), transition.inApp);
             break;
 
-          case 1:
+          case RouteTransitionType_bobril.Replace:
             replace(urlOfRoute(transition.name, transition.params), transition.inApp);
             break;
 
-          case 2:
+          case RouteTransitionType_bobril.Pop:
             pop(transition.distance);
             break;
         }
@@ -4244,6 +4671,11 @@
                 transitionState++;
                 if (!node) continue;
                 var comp = node.component;
+                if (!comp && __export_isArray(node.children)) {
+                    node = node.children[0];
+                    if (!node) continue;
+                    comp = node.component;
+                }
                 if (!comp) continue;
                 var fn = comp.canDeactivate;
                 if (!fn) continue;
@@ -4265,14 +4697,14 @@
                 return;
             } else if (transitionState == activeRoutes.length) {
                 if (nextTransition) {
-                    if (currentTransition && currentTransition.type == 0) {
+                    if (currentTransition && currentTransition.type == RouteTransitionType_bobril.Push) {
                         push(urlOfRoute(currentTransition.name, currentTransition.params), currentTransition.inApp);
                     }
                     currentTransition = nextTransition;
                     nextTransition = null;
                 }
                 transitionState = -1;
-                if (!currentTransition.inApp || currentTransition.type === 2) {
+                if (!currentTransition.inApp || currentTransition.type === RouteTransitionType_bobril.Pop) {
                     var tr = currentTransition;
                     if (!currentTransition.inApp) currentTransition = null;
                     doAction(tr);
@@ -4293,7 +4725,7 @@
                     transitionState = activeRoutes.length;
                     continue;
                 }
-                if (currentTransition.type !== 2) {
+                if (currentTransition.type !== RouteTransitionType_bobril.Pop) {
                     var tr = currentTransition;
                     currentTransition = null;
                     doAction(tr);
@@ -4312,8 +4744,13 @@
                 var handler = rr.handler;
                 var comp = undefined;
                 if (isFunction(handler)) {
-                    var node = handler({});
-                    if (!node) continue;
+                    var node = handler({
+                        activeRouteHandler: function() {
+                            return undefined;
+                        },
+                        routeParams: currentTransition.params
+                    });
+                    if (!node || !isObject(node) || __export_isArray(node)) continue;
                     comp = node.component;
                 } else {
                     comp = handler;
@@ -4358,23 +4795,29 @@
             component: {
                 id: "anchor",
                 postUpdateDom: function(ctx, me) {
-                    var routeName;
-                    if (name) {
-                        routeName = name;
-                    } else {
-                        var firstChild = me.children && me.children[0];
-                        routeName = firstChild.attrs && firstChild.attrs.id;
-                    }
-                    if (!isActive(routeName, params)) {
-                        ctx.l = 0;
-                        return;
-                    }
-                    if (ctx.l === __export_transitionRunCount) return;
-                    getDomNode(me).scrollIntoView();
-                    ctx.l = __export_transitionRunCount;
+                    handleAnchorRoute(ctx, me, name, params);
+                },
+                postInitDom: function(ctx, me) {
+                    handleAnchorRoute(ctx, me, name, params);
                 }
             }
         };
+    }
+    function handleAnchorRoute(ctx, me, name, params) {
+        var routeName;
+        if (name) {
+            routeName = name;
+        } else {
+            var firstChild = me.children && me.children[0];
+            routeName = firstChild.attrs && firstChild.attrs.id;
+        }
+        if (!isActive(routeName, params)) {
+            ctx.l = 0;
+            return;
+        }
+        if (ctx.l === __export_transitionRunCount) return;
+        getDomNode(me).scrollIntoView();
+        ctx.l = __export_transitionRunCount;
     }
     function getRoutes() {
         return rootRoutes;
@@ -4386,15 +4829,18 @@
         return activeParams;
     }
     var allStyles = newHashObj();
+    var allAnimations = newHashObj();
+    var allMediaQueries = newHashObj();
     var allSprites = newHashObj();
+    var bundledSprites = newHashObj();
     var allNameHints = newHashObj();
     var dynamicSprites = [];
+    var bundledDynamicSprites = [];
     var imageCache = newHashObj();
     var injectedCss = "";
     var rebuildStyles = false;
     var htmlStyle = null;
     var globalCounter = 0;
-    var isIE9 = ieVersion() === 9;
     var chainedBeforeFrame = setBeforeFrame(beforeFrame);
     var cssSubRuleDelimiter = /\:|\ |\>/;
     function buildCssSubRule(parent) {
@@ -4407,11 +4853,11 @@
         var result = "";
         if (parent) {
             if (__export_isArray(parent)) {
-                for (var i_9 = 0; i_9 < parent.length; i_9++) {
-                    if (i_9 > 0) {
+                for (var i_12 = 0; i_12 < parent.length; i_12++) {
+                    if (i_12 > 0) {
                         result += ",";
                     }
-                    result += "." + buildCssSubRule(parent[i_9]) + "." + name;
+                    result += "." + buildCssSubRule(parent[i_12]) + "." + name;
                 }
             } else {
                 result = "." + buildCssSubRule(parent) + "." + name;
@@ -4431,12 +4877,12 @@
         } else if (isFunction(style)) {
             style(cur, curPseudo);
         } else if (__export_isArray(style)) {
-            for (var i_10 = 0; i_10 < style.length; i_10++) {
-                flattenStyle(cur, curPseudo, style[i_10], undefined);
+            for (var i_13 = 0; i_13 < style.length; i_13++) {
+                flattenStyle(cur, curPseudo, style[i_13], undefined);
             }
         } else if (typeof style === "object") {
             for (var key in style) {
-                if (!Object.prototype.hasOwnProperty.call(style, key)) continue;
+                if (!hOP.call(style, key)) continue;
                 var val = style[key];
                 if (isFunction(val)) {
                     val = val(cur, key);
@@ -4444,7 +4890,7 @@
                 cur[key] = val;
             }
         }
-        if (stylePseudo != null && curPseudo != null) {
+        if (stylePseudo != undefined && curPseudo != undefined) {
             for (var pseudoKey in stylePseudo) {
                 var curPseudoVal = curPseudo[pseudoKey];
                 if (curPseudoVal === undefined) {
@@ -4455,28 +4901,95 @@
             }
         }
     }
-    var firstStyles = false;
+    var lastDppx = 0;
+    var lastSpriteUrl = "";
+    var lastSpriteDppx = 1;
+    var hasBundledSprites = false;
+    var wasSpriteUrlChanged = true;
     function beforeFrame() {
-        var dbs = document.body.style;
-        if (firstStyles && uptimeMs >= 150) {
-            dbs.opacity = "1";
-            firstStyles = false;
+        var _a, e_1, _b;
+        if (hasBundledSprites && lastDppx != getMedia().dppx) {
+            lastDppx = getMedia().dppx;
+            var newSpriteUrl = bundlePath;
+            var newSpriteDppx = 1;
+            if (lastDppx > 1) {
+                for (var i_14 = 0; i_14 < bundlePath2.length; i_14++) {
+                    if (i_14 == bundlePath2.length - 1 || bundlePath2[i_14][1] >= lastDppx) {
+                        newSpriteUrl = bundlePath2[i_14][0];
+                        newSpriteDppx = bundlePath2[i_14][1];
+                    } else break;
+                }
+            }
+            if (lastSpriteUrl != newSpriteUrl) {
+                lastSpriteUrl = newSpriteUrl;
+                lastSpriteDppx = newSpriteDppx;
+                rebuildStyles = true;
+                wasSpriteUrlChanged = true;
+            }
         }
         if (rebuildStyles) {
-            if (frameCounter === 1 && "webkitAnimation" in dbs) {
-                firstStyles = true;
-                dbs.opacity = "0";
-                setTimeout(__export_invalidate, 200);
+            if (hasBundledSprites) {
+                var imageSprite = imageCache[lastSpriteUrl];
+                if (imageSprite === undefined) {
+                    imageSprite = null;
+                    imageCache[lastSpriteUrl] = imageSprite;
+                    loadImage(lastSpriteUrl, function(image) {
+                        imageCache[lastSpriteUrl] = image;
+                        invalidateStyles();
+                    });
+                }
+                if (imageSprite != null) {
+                    for (var i_15 = 0; i_15 < bundledDynamicSprites.length; i_15++) {
+                        var dynSprite = bundledDynamicSprites[i_15];
+                        var colorStr = dynSprite.color;
+                        if (!isString(colorStr)) colorStr = colorStr();
+                        if (wasSpriteUrlChanged || colorStr !== dynSprite.lastColor) {
+                            dynSprite.lastColor = colorStr;
+                            var mulWidth = dynSprite.width * lastSpriteDppx | 0;
+                            var mulHeight = dynSprite.height * lastSpriteDppx | 0;
+                            var lastUrl = recolorAndClip(imageSprite, colorStr, mulWidth, mulHeight, dynSprite.left * lastSpriteDppx | 0, dynSprite.top * lastSpriteDppx | 0);
+                            var stDef = allStyles[dynSprite.styleId];
+                            stDef.style = {
+                                backgroundImage: "url(" + lastUrl + ")",
+                                width: dynSprite.width,
+                                height: dynSprite.height,
+                                backgroundPosition: 0,
+                                backgroundSize: "100%"
+                            };
+                        }
+                    }
+                    if (wasSpriteUrlChanged) {
+                        var iWidth = imageSprite.width / lastSpriteDppx;
+                        var iHeight = imageSprite.height / lastSpriteDppx;
+                        for (var key_1 in bundledSprites) {
+                            var sprite_1 = bundledSprites[key_1];
+                            if (sprite_1.color !== undefined) continue;
+                            var stDef = allStyles[sprite_1.styleId];
+                            var width = sprite_1.width;
+                            var height = sprite_1.height;
+                            var percentWidth = 100 * iWidth / width;
+                            var percentHeight = 100 * iHeight / height;
+                            stDef.style = {
+                                backgroundImage: "url(" + lastSpriteUrl + ")",
+                                width: width,
+                                height: height,
+                                backgroundPosition: 100 * sprite_1.left / (iWidth - width) + "% " + 100 * sprite_1.top / (iHeight - height) + "%",
+                                backgroundSize: percentWidth + "% " + percentHeight + "%"
+                            };
+                        }
+                    }
+                    wasSpriteUrlChanged = false;
+                }
             }
-            for (var i_11 = 0; i_11 < dynamicSprites.length; i_11++) {
-                var dynSprite = dynamicSprites[i_11];
+            for (var i_16 = 0; i_16 < dynamicSprites.length; i_16++) {
+                var dynSprite = dynamicSprites[i_16];
                 var image = imageCache[dynSprite.url];
-                if (image == null) continue;
+                if (image == undefined) continue;
                 var colorStr = dynSprite.color();
                 if (colorStr !== dynSprite.lastColor) {
                     dynSprite.lastColor = colorStr;
-                    if (dynSprite.width == null) dynSprite.width = image.width;
-                    if (dynSprite.height == null) dynSprite.height = image.height;
+                    if (dynSprite.width == undefined) dynSprite.width = image.width;
+                    if (dynSprite.height == undefined) dynSprite.height = image.height;
                     var lastUrl = recolorAndClip(image, colorStr, dynSprite.width, dynSprite.height, dynSprite.left, dynSprite.top);
                     var stDef = allStyles[dynSprite.styleId];
                     stDef.style = {
@@ -4488,6 +5001,18 @@
                 }
             }
             var styleStr = injectedCss;
+            for (var key in allAnimations) {
+                var anim = allAnimations[key];
+                styleStr += "@keyframes " + anim.name + " {";
+                for (var key2 in anim.def) {
+                    var item = anim.def[key2];
+                    var style_1 = newHashObj();
+                    flattenStyle(style_1, undefined, item, undefined);
+                    shimStyle(style_1);
+                    styleStr += key2 + (key2 == "from" || key2 == "to" ? "" : "%") + " {" + inlineStyleToCssDeclaration(style_1) + "}\n";
+                }
+                styleStr += "}\n";
+            }
             for (var key in allStyles) {
                 var ss = allStyles[key];
                 var parent_1 = ss.parent;
@@ -4495,39 +5020,59 @@
                 var ssPseudo = ss.pseudo;
                 var ssStyle = ss.style;
                 if (isFunction(ssStyle) && ssStyle.length === 0) {
-                    _a = ssStyle(), ssStyle = _a[0], ssPseudo = _a[1];
+                    _a = __read(ssStyle(), 2), ssStyle = _a[0], ssPseudo = _a[1];
                 }
-                if (isString(ssStyle) && ssPseudo == null) {
+                if (isString(ssStyle) && ssPseudo == undefined) {
                     ss.realName = ssStyle;
-                    assert(name_1 != null, "Cannot link existing class to selector");
+                    assert(name_1 != undefined, "Cannot link existing class to selector");
                     continue;
                 }
                 ss.realName = name_1;
-                var style_1 = newHashObj();
+                var style_2 = newHashObj();
                 var flattenPseudo = newHashObj();
                 flattenStyle(undefined, flattenPseudo, undefined, ssPseudo);
-                flattenStyle(style_1, flattenPseudo, ssStyle, undefined);
+                flattenStyle(style_2, flattenPseudo, ssStyle, undefined);
                 var extractedInlStyle = null;
-                if (style_1["pointerEvents"]) {
+                if (style_2["pointerEvents"]) {
                     extractedInlStyle = newHashObj();
-                    extractedInlStyle["pointerEvents"] = style_1["pointerEvents"];
-                }
-                if (isIE9) {
-                    if (style_1["userSelect"]) {
-                        if (extractedInlStyle == null) extractedInlStyle = newHashObj();
-                        extractedInlStyle["userSelect"] = style_1["userSelect"];
-                        delete style_1["userSelect"];
-                    }
+                    extractedInlStyle["pointerEvents"] = style_2["pointerEvents"];
                 }
                 ss.inlStyle = extractedInlStyle;
-                shimStyle(style_1);
-                var cssStyle = inlineStyleToCssDeclaration(style_1);
-                if (cssStyle.length > 0) styleStr += (name_1 == null ? parent_1 : buildCssRule(parent_1, name_1)) + " {" + cssStyle + "}\n";
+                shimStyle(style_2);
+                var cssStyle = inlineStyleToCssDeclaration(style_2);
+                if (cssStyle.length > 0) styleStr += (name_1 == undefined ? parent_1 : buildCssRule(parent_1, name_1)) + " {" + cssStyle + "}\n";
                 for (var key2 in flattenPseudo) {
                     var item = flattenPseudo[key2];
                     shimStyle(item);
-                    styleStr += (name_1 == null ? parent_1 + ":" + key2 : buildCssRule(parent_1, name_1 + ":" + key2)) + " {" + inlineStyleToCssDeclaration(item) + "}\n";
+                    styleStr += (name_1 == undefined ? parent_1 + ":" + key2 : buildCssRule(parent_1, name_1 + ":" + key2)) + " {" + inlineStyleToCssDeclaration(item) + "}\n";
                 }
+            }
+            for (var key in allMediaQueries) {
+                var mediaQuery = allMediaQueries[key];
+                styleStr += "@media " + key + "{";
+                try {
+                    for (var mediaQuery_1 = (e_1 = void 0, __values(mediaQuery)), mediaQuery_1_1 = mediaQuery_1.next(); !mediaQuery_1_1.done; mediaQuery_1_1 = mediaQuery_1.next()) {
+                        var definition = mediaQuery_1_1.value;
+                        for (var key2 in definition) {
+                            var item = definition[key2];
+                            var style_3 = newHashObj();
+                            flattenStyle(style_3, undefined, item, undefined);
+                            shimStyle(style_3);
+                            styleStr += "." + key2 + " {" + inlineStyleToCssDeclaration(style_3) + "}\n";
+                        }
+                    }
+                } catch (e_1_1) {
+                    e_1 = {
+                        error: e_1_1
+                    };
+                } finally {
+                    try {
+                        if (mediaQuery_1_1 && !mediaQuery_1_1.done && (_b = mediaQuery_1.return)) _b.call(mediaQuery_1);
+                    } finally {
+                        if (e_1) throw e_1.error;
+                    }
+                }
+                styleStr += "}\n";
             }
             var styleElement = document.createElement("style");
             styleElement.type = "text/css";
@@ -4546,7 +5091,6 @@
             rebuildStyles = false;
         }
         chainedBeforeFrame();
-        var _a;
     }
     function style_bobril(node) {
         var styles = [];
@@ -4566,17 +5110,21 @@
                 continue;
             }
             var s = ca[i];
-            if (s == null || s === true || s === false || s === "") {} else if (isString(s)) {
+            if (s == undefined || s === true || s === false || s === "" || s === 0) {} else if (isString(s)) {
                 var sd = allStyles[s];
-                if (className == null) className = sd.realName; else className = className + " " + sd.realName;
-                var inlS = sd.inlStyle;
-                if (inlS) {
-                    if (inlineStyle == null) inlineStyle = {};
-                    inlineStyle = __export_assign(inlineStyle, inlS);
+                if (sd != undefined) {
+                    if (className == undefined) className = sd.realName; else className = className + " " + sd.realName;
+                    var inlS = sd.inlStyle;
+                    if (inlS) {
+                        if (inlineStyle == undefined) inlineStyle = {};
+                        inlineStyle = __export_assign(inlineStyle, inlS);
+                    }
+                } else {
+                    if (className == undefined) className = s; else className = className + " " + s;
                 }
             } else if (__export_isArray(s)) {
                 if (ca.length > i + 1) {
-                    if (stack == null) stack = [];
+                    if (stack == undefined) stack = [];
                     stack.push(i);
                     stack.push(ca);
                 }
@@ -4584,7 +5132,7 @@
                 i = 0;
                 continue;
             } else {
-                if (inlineStyle == null) inlineStyle = {};
+                if (inlineStyle == undefined) inlineStyle = {};
                 for (var key in s) {
                     if (s.hasOwnProperty(key)) {
                         var val = s[key];
@@ -4618,7 +5166,7 @@
     function styleDef(style, pseudo, nameHint) {
         return styleDefEx(undefined, style, pseudo, nameHint);
     }
-    function styleDefEx(parent, style, pseudo, nameHint) {
+    function makeName(nameHint) {
         if (nameHint && nameHint !== "b-") {
             nameHint = nameHint.replace(/[^a-z0-9_-]/gi, "_").replace(/^[0-9]/, "_$&");
             if (allNameHints[nameHint]) {
@@ -4630,12 +5178,39 @@
         } else {
             nameHint = "b-" + globalCounter++;
         }
+        return nameHint;
+    }
+    function keyframesDef(def, nameHint) {
+        nameHint = makeName(nameHint);
+        allAnimations[nameHint] = {
+            name: nameHint,
+            def: def
+        };
+        invalidateStyles();
+        var res = function(params) {
+            if (isString(params)) return params + " " + nameHint;
+            return nameHint;
+        };
+        res.toString = res;
+        return res;
+    }
+    function mediaQueryDef(def, mediaQueryDefinition) {
+        var mediaQuery = allMediaQueries[def];
+        if (!mediaQuery) {
+            mediaQuery = [];
+            allMediaQueries[def] = mediaQuery;
+        }
+        mediaQuery.push(mediaQueryDefinition);
+        invalidateStyles();
+    }
+    function styleDefEx(parent, style, pseudo, nameHint) {
+        nameHint = makeName(nameHint);
         allStyles[nameHint] = {
             name: nameHint,
             realName: nameHint,
             parent: parent,
             style: style,
-            inlStyle: null,
+            inlStyle: undefined,
             pseudo: pseudo
         };
         invalidateStyles();
@@ -4647,7 +5222,7 @@
             realName: null,
             parent: selector,
             style: style,
-            inlStyle: null,
+            inlStyle: undefined,
             pseudo: pseudo
         };
         invalidateStyles();
@@ -4661,9 +5236,10 @@
         var style = {
             backgroundImage: "url(" + spDef.url + ")",
             width: spDef.width,
-            height: spDef.height
+            height: spDef.height,
+            backgroundPosition: -spDef.left + "px " + -spDef.top + "px",
+            backgroundSize: spDef.width + "px " + spDef.height + "px"
         };
-        style.backgroundPosition = -spDef.left + "px " + -spDef.top + "px";
         stDef.style = style;
         invalidateStyles();
     }
@@ -4750,7 +5326,7 @@
         if (isFunction(color)) {
             isVarColor = true;
             colorId = color[funcIdName];
-            if (colorId == null) {
+            if (colorId == undefined) {
                 colorId = "" + lastFuncId++;
                 color[funcIdName] = colorId;
             }
@@ -4780,11 +5356,11 @@
                 });
             }
             invalidateStyles();
-        } else if (width == null || height == null || color != null) {
+        } else if (width == undefined || height == undefined || color != undefined) {
             loadImage(url, function(image) {
-                if (spDef.width == null) spDef.width = image.width;
-                if (spDef.height == null) spDef.height = image.height;
-                if (color != null) {
+                if (spDef.width == undefined) spDef.width = image.width;
+                if (spDef.height == undefined) spDef.height = image.height;
+                if (color != undefined) {
                     spDef.url = recolorAndClip(image, color, spDef.width, spDef.height, spDef.left, spDef.top);
                     spDef.left = 0;
                     spDef.top = 0;
@@ -4798,32 +5374,72 @@
         return styleId;
     }
     var bundlePath = window["bobrilBPath"] || "bundle.png";
+    var bundlePath2 = window["bobrilBPath2"] || [];
     function setBundlePngPath(path) {
         bundlePath = path;
     }
+    function getSpritePaths() {
+        return [ bundlePath, bundlePath2 ];
+    }
+    function setSpritePaths(main, others) {
+        bundlePath = main;
+        bundlePath2 = others;
+    }
     function spriteb(width, height, left, top) {
-        var url = bundlePath;
-        var key = url + "::" + width + ":" + height + ":" + left + ":" + top;
-        var spDef = allSprites[key];
+        var key = ":" + width + ":" + height + ":" + left + ":" + top;
+        var spDef = bundledSprites[key];
         if (spDef) return spDef.styleId;
+        hasBundledSprites = true;
         var styleId = styleDef({
-            width: 0,
-            height: 0
+            width: width,
+            height: height
         });
         spDef = {
             styleId: styleId,
-            url: url,
             width: width,
             height: height,
             left: left,
             top: top
         };
-        updateSprite(spDef);
-        allSprites[key] = spDef;
+        bundledSprites[key] = spDef;
+        wasSpriteUrlChanged = true;
         return styleId;
     }
     function spritebc(color, width, height, left, top) {
-        return sprite(bundlePath, color, width, height, left, top);
+        if (color == undefined) {
+            return spriteb(width, height, left, top);
+        }
+        var colorId;
+        if (isString(color)) {
+            colorId = color;
+        } else {
+            colorId = color[funcIdName];
+            if (colorId == undefined) {
+                colorId = "" + lastFuncId++;
+                color[funcIdName] = colorId;
+            }
+        }
+        var key = colorId + ":" + width + ":" + height + ":" + left + ":" + top;
+        var spDef = bundledSprites[key];
+        if (spDef) return spDef.styleId;
+        hasBundledSprites = true;
+        var styleId = styleDef({
+            width: width,
+            height: height
+        });
+        spDef = {
+            styleId: styleId,
+            width: width,
+            height: height,
+            left: left,
+            top: top
+        };
+        spDef.color = color;
+        spDef.lastColor = "";
+        spDef.lastUrl = "";
+        bundledDynamicSprites.push(spDef);
+        bundledSprites[key] = spDef;
+        return styleId;
     }
     function injectCss(css) {
         injectedCss += css;
@@ -4832,6 +5448,10 @@
     function asset(path) {
         return path;
     }
+    selectorStyleDef("html." + draggingStyle + " *", {
+        cursor: "inherit !important",
+        userSelect: "none !important"
+    });
     function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
         var angleInRadians = angleInDegrees * Math.PI / 180;
         return {
@@ -4911,7 +5531,7 @@
     function createVirtualComponent(component) {
         return function(data, children) {
             if (children !== undefined) {
-                if (data == null) data = {};
+                if (data == undefined) data = {};
                 data.children = children;
             }
             return {
@@ -4980,13 +5600,51 @@
     }
     function propim(value, ctx, onChange) {
         return function(val) {
-            if (val !== undefined && val !== value) {
+            if (val !== undefined && !is(val, value)) {
                 var oldVal = val;
                 value = val;
                 if (onChange !== undefined) onChange(val, oldVal);
                 __export_invalidate(ctx);
             }
             return value;
+        };
+    }
+    function debounceProp(from, delay) {
+        if (delay === void 0) {
+            delay = 500;
+        }
+        var current = from();
+        var lastSet = current;
+        var timer;
+        function clearTimer() {
+            if (timer !== undefined) {
+                clearTimeout(timer);
+                timer = undefined;
+            }
+        }
+        return function(value) {
+            if (value === undefined) {
+                var origin_1 = from();
+                if (origin_1 === lastSet) return current;
+                current = origin_1;
+                lastSet = origin_1;
+                clearTimer();
+                return origin_1;
+            } else {
+                clearTimer();
+                if (current === value) {
+                    lastSet = value;
+                    from(value);
+                } else {
+                    current = value;
+                    timer = setTimeout(function() {
+                        lastSet = current;
+                        from(current);
+                        timer = undefined;
+                    }, delay);
+                }
+                return value;
+            }
         };
     }
     function getValue(value) {
@@ -5014,45 +5672,587 @@
         getDnds: __export_getDnds,
         setBeforeInit: setBeforeInit
     };
+    function shallowEqual(a, b) {
+        if (is(a, b)) {
+            return true;
+        }
+        if (!isObject(a) || !isObject(b)) {
+            return false;
+        }
+        var kA = Object.keys(a);
+        var kB = Object.keys(b);
+        if (kA.length !== kB.length) {
+            return false;
+        }
+        for (var i_17 = 0; i_17 < kA.length; i_17++) {
+            if (!hOP.call(b, kA[i_17]) || !is(a[kA[i_17]], b[kA[i_17]])) {
+                return false;
+            }
+        }
+        return true;
+    }
+    var jsxFactoryCache = new Map();
+    function getStringPropertyDescriptors(obj) {
+        var props = new Map();
+        do {
+            Object.getOwnPropertyNames(obj).forEach(function(prop) {
+                if (!this.has(prop)) this.set(prop, Object.getOwnPropertyDescriptor(obj, prop));
+            }, props);
+        } while (obj = Object.getPrototypeOf(obj));
+        return props;
+    }
     function createElement(name, props) {
-        var children = [];
-        for (var i = 2; i < arguments.length; i++) {
-            var ii = arguments[i];
-            children.push(ii);
+        var children;
+        var argumentsCount = arguments.length - 2;
+        if (argumentsCount === 0) {} else if (argumentsCount === 1) {
+            children = arguments[2];
+        } else {
+            children = new Array(argumentsCount);
+            for (var i_18 = 0; i_18 < argumentsCount; i_18++) {
+                children[i_18] = arguments[i_18 + 2];
+            }
         }
         if (isString(name)) {
-            var res = {
+            var res = argumentsCount === 0 ? {
+                tag: name
+            } : {
                 tag: name,
                 children: children
             };
-            if (props == null) {
+            if (props == undefined) {
                 return res;
             }
-            var attrs = {};
-            var someAttrs = false;
+            var attrs;
+            var component;
             for (var n in props) {
                 if (!props.hasOwnProperty(n)) continue;
+                var propValue = props[n];
                 if (n === "style") {
-                    style_bobril(res, props[n]);
+                    style_bobril(res, propValue);
                     continue;
                 }
-                if (n === "key" || n === "ref" || n === "className" || n === "component" || n === "data") {
-                    res[n] = props[n];
+                if (n === "ref") {
+                    if (isString(propValue)) {
+                        assert(getCurrentCtx() != undefined);
+                        res.ref = [ getCurrentCtx(), propValue ];
+                    } else res.ref = propValue;
                     continue;
                 }
-                someAttrs = true;
-                attrs[n] = props[n];
+                if (n === "key" || n === "className" || n === "component" || n === "data" || n === "children") {
+                    res[n] = propValue;
+                    continue;
+                }
+                if (n.startsWith("on") && isFunction(propValue)) {
+                    if (component == undefined) {
+                        component = {};
+                        res.component = component;
+                    }
+                    component[n] = propValue.call.bind(propValue);
+                    continue;
+                }
+                if (attrs == undefined) {
+                    attrs = {};
+                    res.attrs = attrs;
+                }
+                attrs[n] = propValue;
             }
-            if (someAttrs) res.attrs = attrs;
             return res;
         } else {
-            var res_1 = name(props, children);
-            if (props != null) {
-                if (props.key != null) res_1.key = props.key;
-                if (props.ref != null) res_1.ref = props.ref;
+            var res_1;
+            var factory = jsxFactoryCache.get(name);
+            if (factory === undefined) {
+                factory = createFactory(name);
+                jsxFactoryCache.set(name, factory);
+            }
+            if (argumentsCount == 0) {
+                res_1 = factory(props);
+            } else {
+                if (factory.length == 1) {
+                    if (props == undefined) props = {
+                        children: children
+                    }; else props.children = children;
+                    res_1 = factory(props);
+                } else {
+                    res_1 = factory(props, children);
+                }
+            }
+            if (props != undefined) {
+                if (props.key != undefined) res_1.key = props.key;
+                if (props.ref != undefined) res_1.ref = props.ref;
             }
             return res_1;
         }
+    }
+    function Fragment(data) {
+        return data;
+    }
+    function Portal(data) {
+        var _a;
+        return {
+            tag: "@",
+            data: (_a = data.element) !== null && _a !== void 0 ? _a : document.body,
+            children: data.children,
+            key: data.key,
+            ref: data.ref
+        };
+    }
+    var EventResult_bobril;
+    (function(EventResult) {
+        EventResult[EventResult["NotHandled"] = 0] = "NotHandled";
+        EventResult[EventResult["HandledPreventDefault"] = 1] = "HandledPreventDefault";
+        EventResult[EventResult["HandledButRunDefault"] = 2] = "HandledButRunDefault";
+        EventResult[EventResult["NotHandledPreventDefault"] = 3] = "NotHandledPreventDefault";
+    })(EventResult_bobril = __export_EventResult || (__export_EventResult = {}));
+    var Component_bobril = function() {
+        function Component(data, me) {
+            this.data = data;
+            this.me = me;
+            this.cfg = undefined;
+            this.refs = undefined;
+        }
+        return Component;
+    }();
+    var PureComponent_bobril = function(_super) {
+        __extends(PureComponent, _super);
+        function PureComponent() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        PureComponent.prototype.shouldChange = function(newData, oldData) {
+            return !shallowEqual(newData, oldData);
+        };
+        return PureComponent;
+    }(Component_bobril);
+    function forwardRender(m) {
+        return function(ctx, me, _oldMe) {
+            me.children = m.call(ctx, ctx.data);
+        };
+    }
+    function forwardInit(m) {
+        return function(ctx) {
+            m.call(ctx, ctx.data);
+        };
+    }
+    function forwardShouldChange(m) {
+        return function(ctx, me, oldMe) {
+            return m.call(ctx, me.data, oldMe.data);
+        };
+    }
+    function forwardMe(m) {
+        return m.call.bind(m);
+    }
+    function combineWithForwardMe(component, name, func) {
+        var existing = component[name];
+        if (existing != undefined) {
+            component[name] = function(ctx, me) {
+                existing(ctx, me);
+                func.call(ctx, me);
+            };
+        } else {
+            component[name] = forwardMe(func);
+        }
+    }
+    var methodsWithMeParam = [ "destroy", "postInitDom", "postUpdateDom", "postUpdateDomEverytime" ];
+    function component_bobril(component, name) {
+        var bobrilComponent = {};
+        if (component.prototype instanceof Component_bobril) {
+            var proto = component.prototype;
+            var protoStatic = proto.constructor;
+            bobrilComponent.id = getId(name, protoStatic);
+            var protoMap = getStringPropertyDescriptors(proto);
+            protoMap.forEach(function(descriptor, key) {
+                var value = descriptor.value;
+                if (value == undefined) return;
+                var set = undefined;
+                if (key === "render") {
+                    set = forwardRender(value);
+                } else if (key === "init") {
+                    set = forwardInit(value);
+                } else if (key === "shouldChange") {
+                    set = forwardShouldChange(value);
+                } else if (methodsWithMeParam.indexOf(key) >= 0) {
+                    combineWithForwardMe(bobrilComponent, key, value);
+                } else if (key === "postRenderDom") {
+                    combineWithForwardMe(bobrilComponent, methodsWithMeParam[1], value);
+                    combineWithForwardMe(bobrilComponent, methodsWithMeParam[2], value);
+                } else if (isFunction(value) && /^(?:canDeactivate$|on[A-Z])/.test(key)) {
+                    set = forwardMe(value);
+                }
+                if (set !== undefined) {
+                    bobrilComponent[key] = set;
+                }
+            });
+            bobrilComponent.ctxClass = component;
+            bobrilComponent.canActivate = protoStatic.canActivate;
+        } else {
+            bobrilComponent.id = getId(name, component);
+            bobrilComponent.render = forwardRender(component);
+        }
+        return function(data) {
+            return {
+                data: data,
+                component: bobrilComponent
+            };
+        };
+    }
+    function getId(name, classOrFunction) {
+        return name || classOrFunction.id || classOrFunction.name + "_" + allocateMethodId();
+    }
+    function createFactory(comp) {
+        if (comp.prototype instanceof Component_bobril) {
+            return component_bobril(comp);
+        } else if (comp.length == 2) {
+            return comp;
+        } else {
+            return component_bobril(comp);
+        }
+    }
+    function checkCurrentRenderCtx() {
+        assert(currentCtx != undefined && hookId >= 0, "Hooks could be used only in Render method");
+    }
+    function _getHooks() {
+        checkCurrentRenderCtx();
+        var hooks = currentCtx.$hooks;
+        if (hooks === undefined) {
+            hooks = [];
+            currentCtx.$hooks = hooks;
+        }
+        return hooks;
+    }
+    function _allocHook() {
+        return hookId++;
+    }
+    function useState(initValue) {
+        var myHookId = hookId++;
+        var hooks = _getHooks();
+        var ctx = currentCtx;
+        var hook = hooks[myHookId];
+        if (hook === undefined) {
+            if (isFunction(initValue)) {
+                initValue = initValue();
+            }
+            hook = function(value) {
+                if (value !== undefined && !is(value, hook[0])) {
+                    hook[0] = value;
+                    __export_invalidate(ctx);
+                }
+                return hook[0];
+            };
+            hook[0] = initValue;
+            hook[1] = function(value) {
+                if (isFunction(value)) {
+                    value = value(hook[0]);
+                }
+                if (!is(value, hook[0])) {
+                    hook[0] = value;
+                    __export_invalidate(ctx);
+                }
+            };
+            hooks[myHookId] = hook;
+        }
+        return hook;
+    }
+    function createContext(defaultValue, id) {
+        if (id === undefined) {
+            id = "__b#" + allocateMethodId();
+        }
+        return {
+            id: id,
+            dv: defaultValue
+        };
+    }
+    function context(key) {
+        return function(target, propertyKey) {
+            Object.defineProperty(target, propertyKey, {
+                configurable: true,
+                get: function() {
+                    var cfg = this.me.cfg || this.cfg;
+                    if (cfg == undefined || !(key.id in cfg)) return key.dv;
+                    return cfg[key.id];
+                },
+                set: function(value) {
+                    extendCfg(this, key.id, value);
+                }
+            });
+        };
+    }
+    function useContext(key) {
+        checkCurrentRenderCtx();
+        var cfg = currentCtx.me.cfg || currentCtx.cfg;
+        if (isString(key)) {
+            if (cfg == undefined) return undefined;
+            return cfg[key];
+        } else {
+            if (cfg == undefined || !(key.id in cfg)) return key.dv;
+            return cfg[key.id];
+        }
+    }
+    function useProvideContext(key, value) {
+        checkCurrentRenderCtx();
+        extendCfg(currentCtx, isString(key) ? key : key.id, value);
+    }
+    function useRef(initialValue) {
+        var myHookId = hookId++;
+        var hooks = _getHooks();
+        var hook = hooks[myHookId];
+        if (hook === undefined) {
+            hook = function(value) {
+                if (value !== undefined) {
+                    hook.current = value;
+                }
+                return hook.current;
+            };
+            hook.current = initialValue;
+            hooks[myHookId] = hook;
+        }
+        return hook;
+    }
+    function useStore(factory) {
+        var myHookId = hookId++;
+        var hooks = _getHooks();
+        var hook = hooks[myHookId];
+        if (hook === undefined) {
+            hook = factory();
+            if (isDisposable(hook)) {
+                addDisposable(currentCtx, hook);
+            }
+            hooks[myHookId] = hook;
+        }
+        return hook;
+    }
+    function hookPostInitDom(ctx) {
+        var hooks = ctx.$hooks;
+        var len = hooks.length;
+        for (var i_19 = 0; i_19 < len; i_19++) {
+            var hook = hooks[i_19];
+            var fn = hook.postInitDom;
+            if (fn !== undefined) {
+                fn.call(hook, ctx);
+            }
+        }
+    }
+    function hookPostUpdateDom(ctx) {
+        var hooks = ctx.$hooks;
+        var len = hooks.length;
+        for (var i_20 = 0; i_20 < len; i_20++) {
+            var hook = hooks[i_20];
+            var fn = hook.postUpdateDom;
+            if (fn !== undefined) {
+                fn.call(hook, ctx);
+            }
+        }
+    }
+    function hookPostUpdateDomEverytime(ctx) {
+        var hooks = ctx.$hooks;
+        var len = hooks.length;
+        for (var i_21 = 0; i_21 < len; i_21++) {
+            var hook = hooks[i_21];
+            var fn = hook.postUpdateDomEverytime;
+            if (fn !== undefined) {
+                fn.call(hook, ctx);
+            }
+        }
+    }
+    function bind_bobril(target, propertyKey, descriptor) {
+        if (propertyKey != undefined && descriptor != undefined) {
+            var fn_1 = descriptor.value;
+            assert(isFunction(fn_1), "Only methods can be decorated with @bind. '" + propertyKey + "' is not a method!");
+            var definingProperty_1 = false;
+            return {
+                configurable: true,
+                get: function() {
+                    if (definingProperty_1) {
+                        return fn_1;
+                    }
+                    var value = fn_1.bind(this);
+                    definingProperty_1 = true;
+                    Object.defineProperty(this, propertyKey, {
+                        value: value,
+                        configurable: true,
+                        writable: true
+                    });
+                    definingProperty_1 = false;
+                    return value;
+                }
+            };
+        }
+        var proto = target.prototype;
+        var keys = Object.getOwnPropertyNames(proto);
+        keys.forEach(function(key) {
+            if (key === "constructor") {
+                return;
+            }
+            var descriptor = Object.getOwnPropertyDescriptor(proto, key);
+            if (isFunction(descriptor.value)) {
+                Object.defineProperty(proto, key, bind_bobril(target, key, descriptor));
+            }
+        });
+        return target;
+    }
+    var DepsChangeDetector_bobril = function() {
+        function DepsChangeDetector() {}
+        DepsChangeDetector.prototype.detectChange = function(deps) {
+            var changed = false;
+            if (deps != undefined) {
+                var lastDeps = this.deps;
+                if (lastDeps == undefined) {
+                    changed = true;
+                } else {
+                    var depsLen = deps.length;
+                    if (depsLen != lastDeps.length) changed = true; else {
+                        for (var i_22 = 0; i_22 < depsLen; i_22++) {
+                            if (!is(deps[i_22], lastDeps[i_22])) {
+                                changed = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+            } else changed = true;
+            this.deps = deps;
+            return changed;
+        };
+        return DepsChangeDetector;
+    }();
+    var MemoHook_bobril = function(_super) {
+        __extends(MemoHook, _super);
+        function MemoHook() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        MemoHook.prototype.memoize = function(factory, deps) {
+            if (this.detectChange(deps)) {
+                this.current = factory();
+            }
+            return this.current;
+        };
+        return MemoHook;
+    }(DepsChangeDetector_bobril);
+    function useMemo(factory, deps) {
+        var myHookId = hookId++;
+        var hooks = _getHooks();
+        var hook = hooks[myHookId];
+        if (hook === undefined) {
+            hook = new MemoHook_bobril();
+            hooks[myHookId] = hook;
+        }
+        return hook.memoize(factory, deps);
+    }
+    var effectCallbacks = [];
+    function executeEffectCallbacks() {
+        var cbList = effectCallbacks;
+        effectCallbacks = [];
+        for (var i = 0, len = cbList.length; i < len; i++) {
+            cbList[i]();
+        }
+    }
+    var EffectHook_bobril = function(_super) {
+        __extends(EffectHook, _super);
+        function EffectHook() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        EffectHook.prototype.update = function(callback, deps) {
+            this.callback = callback;
+            if (this.detectChange(deps)) {
+                this.doRun();
+            }
+        };
+        EffectHook.prototype.doRun = function() {
+            effectCallbacks.push(this.run);
+        };
+        EffectHook.prototype.run = function() {
+            var c = this.callback;
+            if (c != undefined) {
+                this.dispose();
+                this.lastDisposer = c();
+            }
+        };
+        EffectHook.prototype.dispose = function() {
+            this.callback = undefined;
+            if (isFunction(this.lastDisposer)) this.lastDisposer();
+            this.lastDisposer = undefined;
+        };
+        return EffectHook;
+    }(DepsChangeDetector_bobril);
+    function useEffect(callback, deps) {
+        var myHookId = hookId++;
+        var hooks = _getHooks();
+        var hook = hooks[myHookId];
+        if (hook === undefined) {
+            hook = new EffectHook_bobril();
+            hook.run = hook.run.bind(hook);
+            addDisposable(currentCtx, hook);
+            hooks[myHookId] = hook;
+        }
+        hook.update(callback, deps);
+    }
+    var LayoutEffectHook_bobril = function(_super) {
+        __extends(LayoutEffectHook, _super);
+        function LayoutEffectHook() {
+            var _this = _super.call(this) || this;
+            _this.shouldRun = false;
+            return _this;
+        }
+        LayoutEffectHook.prototype.postInitDom = function(ctx) {
+            this.postUpdateDomEverytime(ctx);
+        };
+        LayoutEffectHook.prototype.postUpdateDomEverytime = function(ctx) {
+            if (this.shouldRun) {
+                this.shouldRun = false;
+                this.run();
+                if (ctx[ctxInvalidated] > frameCounter) {
+                    deferSyncUpdate();
+                }
+            }
+        };
+        LayoutEffectHook.prototype.doRun = function() {
+            this.shouldRun = true;
+        };
+        return LayoutEffectHook;
+    }(EffectHook_bobril);
+    function useLayoutEffect(callback, deps) {
+        var myHookId = hookId++;
+        var hooks = _getHooks();
+        var hook = hooks[myHookId];
+        if (hook === undefined) {
+            currentCtx.$hookFlags |= hasPostInitDom | hasPostUpdateDomEverytime;
+            hook = new LayoutEffectHook_bobril();
+            addDisposable(currentCtx, hook);
+            hooks[myHookId] = hook;
+        }
+        hook.update(callback, deps);
+    }
+    var EventsHook_bobril = function() {
+        function EventsHook() {}
+        return EventsHook;
+    }();
+    function useEvents(events) {
+        var myHookId = hookId++;
+        var hooks = _getHooks();
+        var hook = hooks[myHookId];
+        if (hook === undefined) {
+            currentCtx.$hookFlags |= hasEvents;
+            hook = new EventsHook_bobril();
+            hooks[myHookId] = hook;
+        } else {
+            assert(hook instanceof EventsHook_bobril);
+        }
+        hook.events = events;
+    }
+    var CaptureEventsHook_bobril = function() {
+        function CaptureEventsHook() {}
+        return CaptureEventsHook;
+    }();
+    function useCaptureEvents(events) {
+        var myHookId = hookId++;
+        var hooks = _getHooks();
+        var hook = hooks[myHookId];
+        if (hook === undefined) {
+            currentCtx.$hookFlags |= hasCaptureEvents;
+            hook = new CaptureEventsHook_bobril();
+            hooks[myHookId] = hook;
+        } else {
+            assert(hook instanceof CaptureEventsHook_bobril);
+        }
+        hook.events = events;
     }
     init(function() {
         return "hello";

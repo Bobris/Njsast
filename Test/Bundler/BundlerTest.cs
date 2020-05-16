@@ -61,7 +61,7 @@ namespace Test.Bundler
 
             void InitCommonParts()
             {
-                bundler.PartToMainFilesMap =
+                bundler!.PartToMainFilesMap =
                     new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
                 bundler.GlobalDefines = new Dictionary<string, object> {{"DEBUG", false}};
             }

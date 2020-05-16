@@ -1,6 +1,82 @@
 "use strict";
 // Bobril.Core
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.useCaptureEvents = exports.useEvents = exports.useLayoutEffect = exports.useEffect = exports.useMemo = exports.bind = exports.useStore = exports.useRef = exports.useProvideContext = exports.useContext = exports.context = exports.createContext = exports.useState = exports._allocHook = exports._getHooks = exports.component = exports.PureComponent = exports.Component = exports.EventResult = exports.__spread = exports.Portal = exports.Fragment = exports.createElement = exports.shallowEqual = exports.emitChange = exports.getValue = exports.debounceProp = exports.propim = exports.propa = exports.propi = exports.prop = exports.createDerivedComponent = exports.createComponent = exports.createOverridingComponent = exports.createVirtualComponent = exports.styledDiv = exports.extendCfg = exports.withRef = exports.withKey = exports.svgRect = exports.svgCircle = exports.svgPie = exports.asset = exports.injectCss = exports.spritebc = exports.spriteb = exports.setSpritePaths = exports.getSpritePaths = exports.setBundlePngPath = exports.sprite = exports.setImagesWithCredentials = exports.invalidateStyles = exports.selectorStyleDef = exports.styleDefEx = exports.mediaQueryDef = exports.keyframesDef = exports.styleDef = exports.style = exports.getActiveParams = exports.getActiveRoutes = exports.getRoutes = exports.anchor = exports.runTransition = exports.transitionRunCount = exports.createBackTransition = exports.createRedirectReplace = exports.createRedirectPush = exports.link = exports.Link = exports.urlOfRoute = exports.isActive = exports.routeNotFound = exports.routeDefault = exports.route = exports.routes = exports.encodeUrlPath = exports.decodeUrl = exports.encodeUrl = exports.RouteTransitionType = exports.getDnds = exports.anyActiveDnd = exports.DndEnabledOps = exports.DndOp = exports.convertPointFromClientToNode = exports.nodePagePos = exports.getWindowScroll = exports.isScrollable = exports.removeOnScroll = exports.addOnScroll = exports.focus = exports.focused = exports.ignoreClick = exports.firstPointerDownId = exports.pointersDownCount = exports.nodeOnPoint = exports.preventClickingSpree = exports.revalidateMouseIn = exports.releaseMouseOwner = exports.registerMouseOwner = exports.isMouseOwnerEvent = exports.isMouseOwner = exports.BobrilPointerType = exports.select = exports.asap = exports.getMedia = exports.accDeviceBreaks = exports.BobrilDeviceCategory = exports.invalidated = exports.frame = exports.lastFrameDuration = exports.uptime = exports.setStyleShim = exports.cloneNode = exports.preventDefault = exports.postEnhance = exports.preEnhance = exports.allocateMethodId = exports.runMethod = exports.tryRunMethod = exports.getCurrentCtxWithEvents = exports.runMethodFrom = exports.broadcast = exports.captureBroadcast = exports.bubble = exports.setBeforeInit = exports.init = exports.getRoots = exports.updateRoot = exports.removeRoot = exports.addRoot = exports.invalidate = exports.setInvalidate = exports.ignoreShouldChange = exports.deferSyncUpdate = exports.syncUpdate = exports.setAfterFrame = exports.setReallyBeforeFrame = exports.setBeforeFrame = exports.setBeforeRender = exports.RenderPhase = exports.emitEvent = exports.addEvent = exports.now = exports.updateChildren = exports.callPostCallbacks = exports.getLastDomNode = exports.getDomNode = exports.updateNode = exports.deref = exports.vdomPath = exports.isDisposable = exports.addDisposable = exports.createNode = exports.setCurrentCtx = exports.getCurrentCtx = exports.unregisterFocusRoot = exports.registerFocusRoot = exports.ieVersion = exports.setSetValue = exports.swallowPromise = exports.flatten = exports.assign = exports.assertNever = exports.isObject = exports.isFunction = exports.isBoolean = exports.isString = exports.isNumber = exports.setIsArrayVdom = exports.isArray = exports.BobrilCtx = exports.createMediaQuery = void 0;
+var hasPostInitDom = 1;
+var hasPostUpdateDom = 2;
+var hasPostUpdateDomEverytime = 4;
+var hasEvents = 8;
+var hasCaptureEvents = 16;
+var MediaRuleBuilder = /** @class */ (function () {
+    function MediaRuleBuilder() {
+        this.tokens = [];
+    }
+    MediaRuleBuilder.prototype.pushOptionalTokens = function (behaviour, mediaType) {
+        !!behaviour && this.tokens.push({ type: behaviour });
+        !!mediaType && this.tokens.push({ type: mediaType });
+    };
+    MediaRuleBuilder.prototype.rule = function (behaviour, mediaType) {
+        if (mediaType === void 0) { mediaType = "all"; }
+        this.pushOptionalTokens(behaviour, mediaType);
+        return this;
+    };
+    MediaRuleBuilder.prototype.and = function (mediaRule) {
+        this.tokens.push({ type: "and" });
+        this.tokens.push(mediaRule);
+        return this;
+    };
+    MediaRuleBuilder.prototype.or = function () {
+        this.tokens.push({ type: "or" });
+        return this;
+    };
+    MediaRuleBuilder.prototype.build = function () {
+        return this.tokens.reduce(toRule, "");
+    };
+    return MediaRuleBuilder;
+}());
+function toRule(buffer, token) {
+    var str = "";
+    switch (token.type) {
+        case "aspect-ratio":
+            str = "(" + token.type + ": " + token.width + "/" + token.height + ")";
+            break;
+        case "all":
+        case "and":
+        case "not":
+        case "only":
+        case "print":
+        case "screen":
+        case "speech":
+            str = "" + token.type;
+            break;
+        case "or":
+            str = ",";
+            break;
+        case "color":
+            str = "(" + token.type + ")";
+            break;
+        case "max-height":
+        case "max-width":
+        case "min-height":
+        case "min-width":
+            str = "(" + token.type + ": " + token.value + token.unit + ")";
+            break;
+        case "min-color":
+        case "orientation":
+            str = "(" + token.type + ": " + token.value + ")";
+            break;
+        default:
+            str = emptyQuery(token);
+    }
+    return buffer + str + " ";
+}
+function emptyQuery(_token) {
+    return "";
+}
+function createMediaQuery() {
+    return new MediaRuleBuilder();
+}
+exports.createMediaQuery = createMediaQuery;
 var BobrilCtx = /** @class */ (function () {
     function BobrilCtx(data, me) {
         this.data = data;
@@ -19,6 +95,11 @@ function assert(shouldBeTrue, messageIfFalse) {
         throw Error(messageIfFalse || "assertion failed");
 }
 exports.isArray = Array.isArray;
+var isArrayVdom = exports.isArray;
+function setIsArrayVdom(isArrayFnc) {
+    isArrayVdom = isArrayFnc;
+}
+exports.setIsArrayVdom = setIsArrayVdom;
 var emptyComponent = {};
 function createTextNode(content) {
     return document.createTextNode(content);
@@ -37,6 +118,10 @@ function isString(val) {
     return typeof val == "string";
 }
 exports.isString = isString;
+function isBoolean(val) {
+    return typeof val == "boolean";
+}
+exports.isBoolean = isBoolean;
 function isFunction(val) {
     return typeof val == "function";
 }
@@ -45,18 +130,22 @@ function isObject(val) {
     return typeof val === "object";
 }
 exports.isObject = isObject;
-if (Object.assign == null) {
+function assertNever(switchValue) {
+    throw new Error("Switch is not exhaustive for value: " + JSON.stringify(switchValue));
+}
+exports.assertNever = assertNever;
+if (Object.assign == undefined) {
     Object.assign = function assign(target) {
         var _sources = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             _sources[_i - 1] = arguments[_i];
         }
-        if (target == null)
+        if (target == undefined)
             throw new TypeError("Target in assign cannot be undefined or null");
         var totalArgs = arguments.length;
         for (var i_1 = 1; i_1 < totalArgs; i_1++) {
             var source = arguments[i_1];
-            if (source == null)
+            if (source == undefined)
                 continue;
             var keys = Object.keys(source);
             var totalKeys = keys.length;
@@ -68,10 +157,88 @@ if (Object.assign == null) {
         return target;
     };
 }
+if (!Object.is) {
+    Object.is = function (x, y) {
+        if (x === y) {
+            return x !== 0 || 1 / x === 1 / y;
+        }
+        else {
+            return x !== x && y !== y;
+        }
+    };
+}
+var is = Object.is;
+var hOP = Object.prototype.hasOwnProperty;
 exports.assign = Object.assign;
+function polyfill(prototype, method, value) {
+    if (!prototype[method]) {
+        Object.defineProperty(prototype, method, {
+            value: value,
+            configurable: true,
+            writable: true,
+        });
+    }
+}
+polyfill(Array.prototype, "find", function (pred) {
+    var o = Object(this);
+    var len = o.length >>> 0;
+    var thisArg = arguments[1];
+    for (var k = 0; k < len; k++) {
+        var kValue = o[k];
+        if (pred.call(thisArg, kValue, k, o)) {
+            return kValue;
+        }
+    }
+    return;
+});
+polyfill(Array.prototype, "findIndex", function (pred) {
+    var o = Object(this);
+    var len = o.length >>> 0;
+    var thisArg = arguments[1];
+    for (var k = 0; k < len; k++) {
+        var kValue = o[k];
+        if (pred.call(thisArg, kValue, k, o)) {
+            return k;
+        }
+    }
+    return -1;
+});
+polyfill(Array.prototype, "some", function (pred) {
+    var o = Object(this);
+    var len = o.length >>> 0;
+    var thisArg = arguments[1];
+    for (var i = 0; i < len; i++) {
+        if (i in o && pred.call(thisArg, o[i], i, o)) {
+            return true;
+        }
+    }
+    return false;
+});
+polyfill(String.prototype, "includes", function (search, start) {
+    if (!isNumber(start))
+        start = 0;
+    if (start + search.length > this.length) {
+        return false;
+    }
+    else {
+        return this.indexOf(search, start) !== -1;
+    }
+});
+polyfill(String.prototype, "startsWith", function (search, pos) {
+    return this.substr(!pos || pos < 0 ? 0 : +pos, search.length) === search;
+});
+polyfill(String.prototype, "endsWith", function (search, pos) {
+    var s = this.toString();
+    if (!isNumber(pos) || !isFinite(pos) || Math.floor(pos) !== pos || pos > s.length) {
+        pos = s.length;
+    }
+    pos -= search.length;
+    var lastIndex = s.indexOf(search, pos);
+    return lastIndex !== -1 && lastIndex === pos;
+});
 function flatten(a) {
-    if (!exports.isArray(a)) {
-        if (a == null || a === false || a === true)
+    if (!isArrayVdom(a)) {
+        if (a == undefined || a === false || a === true)
             return [];
         return [a];
     }
@@ -79,12 +246,12 @@ function flatten(a) {
     var aLen = a.length;
     for (var i_2 = 0; i_2 < aLen;) {
         var item = a[i_2];
-        if (exports.isArray(item)) {
+        if (isArrayVdom(item)) {
             a.splice.apply(a, [i_2, 1].concat(item));
             aLen = a.length;
             continue;
         }
-        if (item == null || item === false || item === true) {
+        if (item == undefined || item === false || item === true) {
             a.splice(i_2, 1);
             aLen--;
             continue;
@@ -94,6 +261,12 @@ function flatten(a) {
     return a;
 }
 exports.flatten = flatten;
+function swallowPromise(promise) {
+    promise.catch(function (reason) {
+        console.error("Uncaught exception from swallowPromise", reason);
+    });
+}
+exports.swallowPromise = swallowPromise;
 var inSvg = false;
 var inNotFocusable = false;
 var updateCall = [];
@@ -116,7 +289,7 @@ var testingDivStyle = document.createElement("div").style;
 function testPropExistence(name) {
     return isString(testingDivStyle[name]);
 }
-var mapping = newHashObj();
+var mapping = new Map();
 var isUnitlessNumber = {
     boxFlex: true,
     boxFlexGroup: true,
@@ -135,7 +308,7 @@ var isUnitlessNumber = {
     strokeDashoffset: true,
     widows: true,
     zIndex: true,
-    zoom: true
+    zoom: true,
 };
 function renamer(newName) {
     return function (style, value, oldName) {
@@ -166,21 +339,17 @@ function shimStyle(newValue) {
     var k = Object.keys(newValue);
     for (var i = 0, l = k.length; i < l; i++) {
         var ki = k[i];
-        var mi = mapping[ki];
+        var mi = mapping.get(ki);
         var vi = newValue[ki];
         if (vi === undefined)
             continue; // don't want to map undefined
         if (mi === undefined) {
             if (DEBUG) {
-                if (ki === "float" && window.console && console.error)
-                    console.error("In style instead of 'float' you have to use 'cssFloat'");
                 if (/-/.test(ki) && window.console && console.warn)
-                    console.warn("Style property " +
-                        ki +
-                        " contains dash (must use JS props instead of css names)");
+                    console.warn("Style property " + ki + " contains dash (must use JS props instead of css names)");
             }
             if (testPropExistence(ki)) {
-                mi = isUnitlessNumber[ki] === true ? null : pxAdder;
+                mi = isUnitlessNumber[ki] === true ? noop : pxAdder;
             }
             else {
                 var titleCaseKi = ki.replace(/^\w/, function (match) { return match.toUpperCase(); });
@@ -191,7 +360,7 @@ function shimStyle(newValue) {
                     }
                 }
                 if (mi === undefined) {
-                    mi = isUnitlessNumber[ki] === true ? null : pxAdder;
+                    mi = isUnitlessNumber[ki] === true ? noop : pxAdder;
                     if (DEBUG &&
                         window.console &&
                         console.warn &&
@@ -200,10 +369,9 @@ function shimStyle(newValue) {
                         console.warn("Style property " + ki + " is not supported in this browser");
                 }
             }
-            mapping[ki] = mi;
+            mapping.set(ki, mi);
         }
-        if (mi !== null)
-            mi(newValue, vi, ki);
+        mi(newValue, vi, ki);
     }
 }
 function removeProperty(s, name) {
@@ -213,7 +381,7 @@ function setStyleProperty(s, name, value) {
     if (isString(value)) {
         var len = value.length;
         if (len > 11 && value.substr(len - 11, 11) === " !important") {
-            s.setProperty(name, value.substr(0, len - 11), "important");
+            s.setProperty(hyphenateStyle(name), value.substr(0, len - 11), "important");
             return;
         }
     }
@@ -226,7 +394,9 @@ function updateStyle(el, newStyle, oldStyle) {
         var rule;
         if (isObject(oldStyle)) {
             for (rule in oldStyle) {
-                if (!(rule in newStyle))
+                if (oldStyle[rule] === undefined)
+                    continue;
+                if (newStyle[rule] === undefined)
                     removeProperty(s, rule);
             }
             for (rule in newStyle) {
@@ -235,7 +405,7 @@ function updateStyle(el, newStyle, oldStyle) {
                     if (oldStyle[rule] !== v)
                         setStyleProperty(s, rule, v);
                 }
-                else {
+                else if (oldStyle[rule] !== undefined) {
                     removeProperty(s, rule);
                 }
             }
@@ -272,6 +442,15 @@ function setClassName(el, className) {
 }
 var focusableTag = /^input$|^select$|^textarea$|^button$/;
 var tabindexStr = "tabindex";
+function isNaturallyFocusable(tag, attrs) {
+    if (tag == undefined)
+        return false;
+    if (focusableTag.test(tag))
+        return true;
+    if (tag === "a" && attrs != null && attrs.href != null)
+        return true;
+    return false;
+}
 function updateElement(n, el, newAttrs, oldAttrs, notFocusable) {
     var attrName, newAttr, oldAttr, valueOldAttr, valueNewAttr;
     var wasTabindex = false;
@@ -301,19 +480,18 @@ function updateElement(n, el, newAttrs, oldAttrs, notFocusable) {
                     else
                         el.setAttribute(attrName, newAttr);
                 }
-                else if (attrName in el &&
-                    !(attrName === "list" || attrName === "form")) {
+                else if (attrName in el && !(attrName === "list" || attrName === "form")) {
                     el[attrName] = newAttr;
                 }
                 else
                     el.setAttribute(attrName, newAttr);
             }
         }
-    if (notFocusable && !wasTabindex && n.tag && focusableTag.test(n.tag)) {
+    if (notFocusable && !wasTabindex && isNaturallyFocusable(n.tag, newAttrs)) {
         el.setAttribute(tabindexStr, "-1");
         oldAttrs[tabindexStr] = -1;
     }
-    if (newAttrs == null) {
+    if (newAttrs == undefined) {
         for (attrName in oldAttrs) {
             if (oldAttrs[attrName] !== undefined) {
                 if (notFocusable && attrName === tabindexStr)
@@ -350,6 +528,10 @@ function pushInitCallback(c) {
             updateCall.push(fn);
             updateInstance.push(c);
         }
+        if ((c.ctx.$hookFlags || 0) & hasPostInitDom) {
+            updateCall.push(hookPostInitDom);
+            updateInstance.push(c);
+        }
     }
 }
 function pushUpdateCallback(c) {
@@ -360,9 +542,18 @@ function pushUpdateCallback(c) {
             updateCall.push(fn);
             updateInstance.push(c);
         }
+        var flags = c.ctx.$hookFlags || 0;
+        if (flags & hasPostUpdateDom) {
+            updateCall.push(hookPostUpdateDom);
+            updateInstance.push(c);
+        }
         fn = cc.postUpdateDomEverytime;
         if (fn) {
             updateCall.push(fn);
+            updateInstance.push(c);
+        }
+        if (flags & hasPostUpdateDomEverytime) {
+            updateCall.push(hookPostUpdateDomEverytime);
             updateInstance.push(c);
         }
     }
@@ -375,6 +566,10 @@ function pushUpdateEverytimeCallback(c) {
             updateCall.push(fn);
             updateInstance.push(c);
         }
+        if ((c.ctx.$hookFlags || 0) & hasPostUpdateDomEverytime) {
+            updateCall.push(hookPostUpdateDomEverytime);
+            updateInstance.push(c);
+        }
     }
 }
 function findCfg(parent) {
@@ -383,7 +578,7 @@ function findCfg(parent) {
         cfg = parent.cfg;
         if (cfg !== undefined)
             break;
-        if (parent.ctx) {
+        if (parent.ctx !== undefined && parent.component !== emptyComponent) {
             cfg = parent.ctx.cfg;
             break;
         }
@@ -392,19 +587,23 @@ function findCfg(parent) {
     return cfg;
 }
 function setRef(ref, value) {
-    if (ref == null)
+    if (ref === undefined)
         return;
-    if (isFunction(ref)) {
+    if ("current" in ref) {
+        ref.current = value;
+    }
+    else if (isFunction(ref)) {
         ref(value);
-        return;
     }
-    var ctx = ref[0];
-    var refs = ctx.refs;
-    if (refs == null) {
-        refs = newHashObj();
-        ctx.refs = refs;
+    else if (exports.isArray(ref)) {
+        var ctx = ref[0];
+        var refs = ctx.refs;
+        if (refs === undefined) {
+            refs = newHashObj();
+            ctx.refs = refs;
+        }
+        refs[ref[1]] = value;
     }
-    refs[ref[1]] = value;
 }
 var focusRootStack = [];
 var focusRootTop = null;
@@ -423,6 +622,7 @@ function unregisterFocusRoot(ctx) {
 }
 exports.unregisterFocusRoot = unregisterFocusRoot;
 var currentCtx;
+var hookId = -1;
 function getCurrentCtx() {
     return currentCtx;
 }
@@ -447,7 +647,7 @@ function createNode(n, parentNode, createInto, createBefore) {
         parent: parentNode,
         element: undefined,
         ctx: undefined,
-        orig: n
+        orig: n,
     };
     var backupInSvg = inSvg;
     var backupInNotFocusable = inNotFocusable;
@@ -473,9 +673,11 @@ function createNode(n, parentNode, createInto, createBefore) {
             component.init(ctx, c);
         }
         if (beforeRenderCallback !== emptyBeforeRenderCallback)
-            beforeRenderCallback(n, 0 /* Create */);
+            beforeRenderCallback(n, RenderPhase.Create);
         if (component.render) {
+            hookId = 0;
             component.render(ctx, c);
+            hookId = -1;
         }
         currentCtx = undefined;
     }
@@ -489,6 +691,12 @@ function createNode(n, parentNode, createInto, createBefore) {
         c.tag = undefined;
         c.children = undefined;
         return c;
+    }
+    else if (tag === "@") {
+        createInto = c.data;
+        portalMap.set(createInto, c);
+        createBefore = null;
+        tag = undefined;
     }
     var children = c.children;
     var inSvgForeignObject = false;
@@ -518,7 +726,7 @@ function createNode(n, parentNode, createInto, createBefore) {
         if (htmlText === "") {
             // nothing needs to be created
         }
-        else if (createBefore == null) {
+        else if (createBefore == undefined) {
             var before = createInto.lastChild;
             createInto.insertAdjacentHTML("beforeend", htmlText);
             c.element = [];
@@ -613,41 +821,23 @@ function normalizeNode(n) {
 }
 function createChildren(c, createInto, createBefore) {
     var ch = c.children;
-    if (!ch)
+    if (isString(ch)) {
+        createInto.textContent = ch;
         return;
-    if (!exports.isArray(ch)) {
-        if (isString(ch)) {
-            createInto.textContent = ch;
-            return;
-        }
-        ch = [ch];
     }
-    ch = ch.slice(0);
-    var i = 0, l = ch.length;
-    while (i < l) {
-        var item = ch[i];
-        if (exports.isArray(item)) {
-            ch.splice.apply(ch, [i, 1].concat(item));
-            l = ch.length;
-            continue;
-        }
-        item = normalizeNode(item);
-        if (item == null) {
-            ch.splice(i, 1);
-            l--;
-            continue;
-        }
-        ch[i] = createNode(item, c, createInto, createBefore);
-        i++;
+    var res = [];
+    flattenVdomChildren(res, ch);
+    for (var i_3 = 0; i_3 < res.length; i_3++) {
+        res[i_3] = createNode(res[i_3], c, createInto, createBefore);
     }
-    c.children = ch;
+    c.children = res;
 }
 function destroyNode(c) {
-    setRef(c.ref, null);
+    setRef(c.ref, undefined);
     var ch = c.children;
     if (exports.isArray(ch)) {
-        for (var i_3 = 0, l = ch.length; i_3 < l; i_3++) {
-            destroyNode(ch[i_3]);
+        for (var i_4 = 0, l = ch.length; i_4 < l; i_4++) {
+            destroyNode(ch[i_4]);
         }
     }
     var component = c.component;
@@ -655,37 +845,46 @@ function destroyNode(c) {
         var ctx = c.ctx;
         currentCtx = ctx;
         if (beforeRenderCallback !== emptyBeforeRenderCallback)
-            beforeRenderCallback(c, 3 /* Destroy */);
+            beforeRenderCallback(c, RenderPhase.Destroy);
         if (component.destroy)
             component.destroy(ctx, c, c.element);
         var disposables = ctx.disposables;
         if (exports.isArray(disposables)) {
-            for (var i_4 = disposables.length; i_4-- > 0;) {
-                var d = disposables[i_4];
+            for (var i_5 = disposables.length; i_5-- > 0;) {
+                var d = disposables[i_5];
                 if (isFunction(d))
                     d(ctx);
                 else
                     d.dispose();
             }
         }
+        currentCtx = undefined;
+    }
+    if (c.tag === "@") {
+        portalMap.delete(c.data);
+        removeNodeRecursive(c);
     }
 }
 function addDisposable(ctx, disposable) {
     var disposables = ctx.disposables;
-    if (disposables == null) {
+    if (disposables == undefined) {
         disposables = [];
         ctx.disposables = disposables;
     }
     disposables.push(disposable);
 }
 exports.addDisposable = addDisposable;
+function isDisposable(val) {
+    return isObject(val) && val.dispose;
+}
+exports.isDisposable = isDisposable;
 function removeNodeRecursive(c) {
     var el = c.element;
     if (exports.isArray(el)) {
         var pa = el[0].parentNode;
         if (pa) {
-            for (var i_5 = 0; i_5 < el.length; i_5++) {
-                pa.removeChild(el[i_5]);
+            for (var i_6 = 0; i_6 < el.length; i_6++) {
+                pa.removeChild(el[i_6]);
             }
         }
     }
@@ -708,6 +907,7 @@ function removeNode(c) {
     removeNodeRecursive(c);
 }
 var roots = newHashObj();
+var portalMap = new Map();
 function nodeContainsNode(c, n, resIndex, res) {
     var el = c.element;
     var ch = c.children;
@@ -722,7 +922,7 @@ function nodeContainsNode(c, n, resIndex, res) {
             }
         }
     }
-    else if (el == null) {
+    else if (el == undefined) {
         if (exports.isArray(ch)) {
             for (var i = 0; i < ch.length; i++) {
                 var result = nodeContainsNode(ch[i], n, resIndex, res);
@@ -744,34 +944,52 @@ function nodeContainsNode(c, n, resIndex, res) {
 }
 function vdomPath(n) {
     var res = [];
-    if (n == null)
+    if (n == undefined)
         return res;
     var rootIds = Object.keys(roots);
     var rootElements = rootIds.map(function (i) { return roots[i].e || document.body; });
+    var rootNodes = rootIds.map(function (i) { return roots[i].n; });
+    portalMap.forEach(function (v, k) {
+        rootElements.push(k);
+        rootNodes.push(v);
+    });
     var nodeStack = [];
-    rootFound: while (n) {
-        for (var j = 0; j < rootElements.length; j++) {
-            if (n === rootElements[j])
-                break rootFound;
+    rootReallyFound: while (true) {
+        rootFound: while (n) {
+            for (var j = 0; j < rootElements.length; j++) {
+                if (n === rootElements[j])
+                    break rootFound;
+            }
+            nodeStack.push(n);
+            n = n.parentNode;
         }
-        nodeStack.push(n);
-        n = n.parentNode;
-    }
-    if (!n || nodeStack.length === 0)
-        return res;
-    var currentCacheArray = null;
-    var currentNode = nodeStack.pop();
-    for (j = 0; j < rootElements.length; j++) {
-        if (n === rootElements[j]) {
-            var rn = roots[rootIds[j]].n;
-            if (rn === undefined)
-                continue;
-            var findResult = nodeContainsNode(rn, currentNode, res.length, res);
-            if (findResult !== undefined) {
-                currentCacheArray = findResult;
-                break;
+        if (!n || nodeStack.length === 0)
+            return res;
+        var currentCacheArray = null;
+        var currentNode = nodeStack.pop();
+        for (j = 0; j < rootElements.length; j++) {
+            if (n === rootElements[j]) {
+                var rn = rootNodes[j];
+                if (rn === undefined)
+                    continue;
+                res = [];
+                if (rn.parent !== undefined) {
+                    var rnp = rn;
+                    while ((rnp = rnp.parent)) {
+                        res.push(rnp);
+                    }
+                    res.reverse();
+                }
+                var findResult = nodeContainsNode(rn, currentNode, res.length, res);
+                if (findResult !== undefined) {
+                    currentCacheArray = findResult;
+                    break rootReallyFound;
+                }
             }
         }
+        nodeStack.push(currentNode);
+        nodeStack.push(n);
+        n = n.parentNode;
     }
     subtreeSearch: while (nodeStack.length) {
         currentNode = nodeStack.pop();
@@ -835,7 +1053,7 @@ function updateNode(n, c, createInto, createBefore, deepness, inSelectedUpdate) 
     var ctx = c.ctx;
     if (component != null && ctx != null) {
         var locallyInvalidated = false;
-        if (ctx[ctxInvalidated] === frameCounter) {
+        if (ctx[ctxInvalidated] >= frameCounter) {
             deepness = Math.max(deepness, ctx[ctxDeepness]);
             locallyInvalidated = true;
         }
@@ -849,23 +1067,23 @@ function updateNode(n, c, createInto, createBefore, deepness, inSelectedUpdate) 
             else
                 ctx.cfg = findCfg(c.parent);
             if (component.shouldChange)
-                if (!component.shouldChange(ctx, n, c) &&
-                    !ignoringShouldChange &&
-                    !locallyInvalidated) {
+                if (!component.shouldChange(ctx, n, c) && !ignoringShouldChange && !locallyInvalidated) {
                     finishUpdateNodeWithoutChange(c, createInto, createBefore);
                     return c;
                 }
             ctx.data = n.data || {};
             c.component = component;
             if (beforeRenderCallback !== emptyBeforeRenderCallback)
-                beforeRenderCallback(n, inSelectedUpdate ? 2 /* LocalUpdate */ : 1 /* Update */);
+                beforeRenderCallback(n, inSelectedUpdate ? RenderPhase.LocalUpdate : RenderPhase.Update);
             if (component.render) {
                 c.orig = n;
                 n = exports.assign({}, n); // need to clone me because it should not be modified for next updates
                 c.cfg = undefined;
                 if (n.cfg !== undefined)
                     n.cfg = undefined;
+                hookId = 0;
                 component.render(ctx, n, c);
+                hookId = -1;
                 if (n.cfg !== undefined) {
                     if (c.cfg === undefined)
                         c.cfg = n.cfg;
@@ -878,7 +1096,8 @@ function updateNode(n, c, createInto, createBefore, deepness, inSelectedUpdate) 
     }
     else {
         // In case there is no component and source is same reference it is considered not changed
-        if (c.orig === n) {
+        if (c.orig === n && !ignoringShouldChange) {
+            finishUpdateNodeWithoutChange(c, createInto, createBefore);
             return c;
         }
         c.orig = n;
@@ -898,8 +1117,8 @@ function updateNode(n, c, createInto, createBefore, deepness, inSelectedUpdate) 
         newChildren = "" + newChildren;
     }
     if (bigChange ||
-        (component != null && ctx == null) ||
-        (component == null && ctx != null && ctx.me.component !== emptyComponent)) {
+        (component != undefined && ctx == undefined) ||
+        (component == undefined && ctx != undefined && ctx.me.component !== emptyComponent)) {
         // it is big change of component.id or old one was not even component or old one was component and new is not anymore => recreate
     }
     else if (tag === "/") {
@@ -909,6 +1128,18 @@ function updateNode(n, c, createInto, createBefore, deepness, inSelectedUpdate) 
         }
     }
     else if (tag === c.tag) {
+        if (tag === "@") {
+            if (n.data !== c.data) {
+                var r = createNode(n, c.parent, n.data, null);
+                removeNode(c);
+                return r;
+            }
+            createInto = n.data;
+            createBefore = getLastDomNode(c);
+            if (createBefore != null)
+                createBefore = createBefore.nextSibling;
+            tag = undefined;
+        }
         if (tag === undefined) {
             if (isString(newChildren) && isString(cachedChildren)) {
                 if (newChildren !== cachedChildren) {
@@ -954,7 +1185,7 @@ function updateNode(n, c, createInto, createBefore, deepness, inSelectedUpdate) 
             else {
                 if (deepness <= 0) {
                     if (exports.isArray(cachedChildren))
-                        selectedUpdate(c.children, el, createBefore);
+                        selectedUpdate(c.children, el, null);
                 }
                 else {
                     cachedChildren = updateChildren(el, newChildren, cachedChildren, c, null, deepness - 1);
@@ -981,7 +1212,7 @@ function updateNode(n, c, createInto, createBefore, deepness, inSelectedUpdate) 
     var parEl = c.element;
     if (exports.isArray(parEl))
         parEl = parEl[0];
-    if (parEl == null)
+    if (parEl == undefined)
         parEl = createInto;
     else
         parEl = parEl.parentNode;
@@ -1010,10 +1241,30 @@ function getDomNode(c) {
     return null;
 }
 exports.getDomNode = getDomNode;
+function getLastDomNode(c) {
+    if (c === undefined)
+        return null;
+    var el = c.element;
+    if (el != null) {
+        if (exports.isArray(el))
+            return el[el.length - 1];
+        return el;
+    }
+    var ch = c.children;
+    if (!exports.isArray(ch))
+        return null;
+    for (var i = ch.length; i-- > 0;) {
+        el = getLastDomNode(ch[i]);
+        if (el)
+            return el;
+    }
+    return null;
+}
+exports.getLastDomNode = getLastDomNode;
 function findNextNode(a, i, len, def) {
     while (++i < len) {
         var ai = a[i];
-        if (ai == null)
+        if (ai == undefined)
             continue;
         var n = getDomNode(ai);
         if (n != null)
@@ -1072,39 +1323,45 @@ function reorderAndUpdateNodeInUpdateChildren(newNode, cachedChildren, cachedInd
     }
     cachedChildren[cachedIndex] = updateNode(newNode, cur, element, before, deepness);
 }
-function updateChildren(element, newChildren, cachedChildren, parentNode, createBefore, deepness) {
-    if (newChildren == null)
-        newChildren = [];
-    if (!exports.isArray(newChildren)) {
-        newChildren = [newChildren];
+function recursiveFlattenVdomChildren(res, children) {
+    if (children == undefined)
+        return;
+    if (isArrayVdom(children)) {
+        for (var i_7 = 0; i_7 < children.length; i_7++) {
+            recursiveFlattenVdomChildren(res, children[i_7]);
+        }
     }
-    if (cachedChildren == null)
+    else {
+        var item = normalizeNode(children);
+        if (item !== undefined)
+            res.push(item);
+    }
+}
+function flattenVdomChildren(res, children) {
+    recursiveFlattenVdomChildren(res, children);
+    if (DEBUG) {
+        var set = new Set();
+        for (var i_8 = 0; i_8 < res.length; i_8++) {
+            var key = res[i_8].key;
+            if (key == undefined)
+                continue;
+            if (set.has(key)) {
+                console.warn("Duplicate Bobril node key " + key);
+            }
+            set.add(key);
+        }
+    }
+}
+function updateChildren(element, newChildren, cachedChildren, parentNode, createBefore, deepness) {
+    if (cachedChildren == undefined)
         cachedChildren = [];
     if (!exports.isArray(cachedChildren)) {
         if (element.firstChild)
             element.removeChild(element.firstChild);
         cachedChildren = [];
     }
-    var newCh = newChildren;
-    newCh = newCh.slice(0);
-    var newLength = newCh.length;
-    var newIndex;
-    for (newIndex = 0; newIndex < newLength;) {
-        var item = newCh[newIndex];
-        if (exports.isArray(item)) {
-            newCh.splice.apply(newCh, [newIndex, 1].concat(item));
-            newLength = newCh.length;
-            continue;
-        }
-        item = normalizeNode(item);
-        if (item == null) {
-            newCh.splice(newIndex, 1);
-            newLength--;
-            continue;
-        }
-        newCh[newIndex] = item;
-        newIndex++;
-    }
+    var newCh = [];
+    flattenVdomChildren(newCh, newChildren);
     return updateChildrenCore(element, newCh, cachedChildren, parentNode, createBefore, deepness);
 }
 exports.updateChildren = updateChildren;
@@ -1218,20 +1475,20 @@ function updateChildrenCore(element, newChildren, cachedChildren, parentNode, cr
             continue;
         }
         cachedKey = cachedChildren[cachedIndex].key;
-        if (cachedKey == null) {
+        if (cachedKey == undefined) {
             cachedIndex++;
             continue;
         }
         key = newChildren[newIndex].key;
-        if (key == null) {
+        if (key == undefined) {
             newIndex++;
             while (newIndex < newEnd) {
                 key = newChildren[newIndex].key;
-                if (key != null)
+                if (key != undefined)
                     break;
                 newIndex++;
             }
-            if (key == null)
+            if (key == undefined)
                 break;
         }
         var akPos = cachedKeys[key];
@@ -1346,7 +1603,7 @@ function updateChildrenCore(element, newChildren, cachedChildren, parentNode, cr
                 }
                 continue;
             }
-            while (cachedChildren[cachedIndex].key == null)
+            while (cachedChildren[cachedIndex].key == undefined)
                 cachedIndex++;
             assert(key === cachedChildren[cachedIndex].key);
             cachedChildren.splice(newIndex, 0, cachedChildren[cachedIndex]);
@@ -1388,6 +1645,7 @@ if (nativeRaf) {
             hasNativeRaf = true;
     });
 }
+var setTimeout = window.setTimeout;
 exports.now = Date.now || (function () { return new Date().getTime(); });
 var startTime = exports.now();
 var lastTickTime = 0;
@@ -1399,7 +1657,7 @@ function requestAnimationFrame(callback) {
         var delay = 50 / 3 + lastTickTime - exports.now();
         if (delay < 0)
             delay = 0;
-        window.setTimeout(function () {
+        setTimeout(function () {
             lastTickTime = exports.now();
             callback(lastTickTime - startTime);
         }, delay);
@@ -1409,6 +1667,7 @@ var ctxInvalidated = "$invalidated";
 var ctxDeepness = "$deepness";
 var fullRecreateRequested = true;
 var scheduled = false;
+var isInvalidated = true;
 var initializing = true;
 var uptimeMs = 0;
 var frameCounter = 0;
@@ -1417,7 +1676,7 @@ var renderFrameBegin = 0;
 var regEvents = {};
 var registryEvents;
 function addEvent(name, priority, callback) {
-    if (registryEvents == null)
+    if (registryEvents == undefined)
         registryEvents = {};
     var list = registryEvents[name] || [];
     list.push({ priority: priority, callback: callback });
@@ -1434,6 +1693,19 @@ function emitEvent(name, ev, target, node) {
     return false;
 }
 exports.emitEvent = emitEvent;
+var isPassiveEventHandlerSupported = false;
+try {
+    var options = Object.defineProperty({}, "passive", {
+        get: function () {
+            isPassiveEventHandlerSupported = true;
+        },
+    });
+    window.addEventListener("test", options, options);
+    window.removeEventListener("test", options, options);
+}
+catch (err) {
+    isPassiveEventHandlerSupported = false;
+}
 var listeningEventDeepness = 0;
 function addListener(el, name) {
     if (name[0] == "!")
@@ -1459,7 +1731,7 @@ function addListener(el, name) {
     }
     if ("on" + eventName in window)
         el = window;
-    el.addEventListener(eventName, enhanceEvent, capture);
+    el.addEventListener(eventName, enhanceEvent, isPassiveEventHandlerSupported ? { capture: capture, passive: false } : capture);
 }
 function initEvents() {
     if (registryEvents === undefined)
@@ -1482,8 +1754,8 @@ function selectedUpdate(cache, element, createBefore) {
     for (var i = 0; i < len; i++) {
         var node = cache[i];
         var ctx = node.ctx;
-        if (ctx != null && ctx[ctxInvalidated] === frameCounter) {
-            cache[i] = updateNode(node.orig, node, element, createBefore, ctx[ctxDeepness], true);
+        if (ctx != null && ctx[ctxInvalidated] >= frameCounter) {
+            cache[i] = updateNode(node.orig, node, element, findNextNode(cache, i, len, createBefore), ctx[ctxDeepness], true);
         }
         else if (exports.isArray(node.children)) {
             var backupInSvg = inSvg;
@@ -1494,13 +1766,26 @@ function selectedUpdate(cache, element, createBefore) {
                 inSvg = true;
             else if (inSvg && node.tag === "foreignObject")
                 inSvg = false;
-            selectedUpdate(node.children, node.element || element, findNextNode(cache, i, len, createBefore));
+            var thisElement = node.element;
+            if (thisElement != undefined) {
+                selectedUpdate(node.children, thisElement, null);
+            }
+            else {
+                selectedUpdate(node.children, element, findNextNode(cache, i, len, createBefore));
+            }
             pushUpdateEverytimeCallback(node);
             inSvg = backupInSvg;
             inNotFocusable = backupInNotFocusable;
         }
     }
 }
+var RenderPhase;
+(function (RenderPhase) {
+    RenderPhase[RenderPhase["Create"] = 0] = "Create";
+    RenderPhase[RenderPhase["Update"] = 1] = "Update";
+    RenderPhase[RenderPhase["LocalUpdate"] = 2] = "LocalUpdate";
+    RenderPhase[RenderPhase["Destroy"] = 3] = "Destroy";
+})(RenderPhase = exports.RenderPhase || (exports.RenderPhase = {}));
 var emptyBeforeRenderCallback = function () { };
 var beforeRenderCallback = emptyBeforeRenderCallback;
 var beforeFrameCallback = function () { };
@@ -1535,7 +1820,7 @@ function isLogicalParent(parent, child, rootIds) {
         if (parent === child)
             return true;
         var p = child.parent;
-        if (p == null) {
+        if (p == undefined) {
             for (var i = 0; i < rootIds.length; i++) {
                 var r = roots[rootIds[i]];
                 if (!r)
@@ -1554,6 +1839,7 @@ var deferSyncUpdateRequested = false;
 function syncUpdate() {
     deferSyncUpdateRequested = false;
     internalUpdate(exports.now() - startTime);
+    executeEffectCallbacks();
 }
 exports.syncUpdate = syncUpdate;
 function deferSyncUpdate() {
@@ -1567,6 +1853,7 @@ exports.deferSyncUpdate = deferSyncUpdate;
 function update(time) {
     scheduled = false;
     internalUpdate(time);
+    exports.asap(executeEffectCallbacks);
 }
 var rootIds;
 var RootComponent = createVirtualComponent({
@@ -1579,9 +1866,10 @@ var RootComponent = createVirtualComponent({
         else {
             me.children = c;
         }
-    }
+    },
 });
 function internalUpdate(time) {
+    isInvalidated = false;
     renderFrameBegin = exports.now();
     initEvents();
     reallyBeforeFrameCallback();
@@ -1590,54 +1878,58 @@ function internalUpdate(time) {
     nextIgnoreShouldChange = false;
     uptimeMs = time;
     beforeFrameCallback();
-    focusRootTop =
-        focusRootStack.length === 0
-            ? null
-            : focusRootStack[focusRootStack.length - 1];
-    inNotFocusable = false;
     var fullRefresh = false;
     if (fullRecreateRequested) {
         fullRecreateRequested = false;
         fullRefresh = true;
     }
-    rootIds = Object.keys(roots);
-    for (var i = 0; i < rootIds.length; i++) {
-        var r = roots[rootIds[i]];
-        if (!r)
-            continue;
-        var rc = r.n;
-        var insertBefore = null;
-        for (var j = i + 1; j < rootIds.length; j++) {
-            var rafter = roots[rootIds[j]];
-            if (rafter === undefined)
+    listeningEventDeepness++;
+    for (var repeat = 0; repeat < 2; repeat++) {
+        focusRootTop = focusRootStack.length === 0 ? null : focusRootStack[focusRootStack.length - 1];
+        inNotFocusable = false;
+        rootIds = Object.keys(roots);
+        for (var i = 0; i < rootIds.length; i++) {
+            var r = roots[rootIds[i]];
+            if (!r)
                 continue;
-            insertBefore = getDomNode(rafter.n);
-            if (insertBefore != null)
-                break;
-        }
-        if (focusRootTop)
-            inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds);
-        if (r.e === undefined)
-            r.e = document.body;
-        if (rc) {
-            if (fullRefresh || rc.ctx[ctxInvalidated] === frameCounter) {
-                var node = RootComponent(r);
-                updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1e6 : rc.ctx[ctxDeepness]);
+            var rc = r.n;
+            var insertBefore = null;
+            for (var j = i + 1; j < rootIds.length; j++) {
+                var rafter = roots[rootIds[j]];
+                if (rafter === undefined)
+                    continue;
+                insertBefore = getDomNode(rafter.n);
+                if (insertBefore != null)
+                    break;
+            }
+            if (focusRootTop)
+                inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds);
+            if (r.e === undefined)
+                r.e = document.body;
+            if (rc) {
+                if (fullRefresh || rc.ctx[ctxInvalidated] >= frameCounter) {
+                    var node = RootComponent(r);
+                    updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1e6 : rc.ctx[ctxDeepness]);
+                }
+                else {
+                    if (exports.isArray(r.c))
+                        selectedUpdate(r.c, r.e, insertBefore);
+                }
             }
             else {
-                if (exports.isArray(r.c))
-                    selectedUpdate(r.c, r.e, insertBefore);
+                var node = RootComponent(r);
+                rc = createNode(node, undefined, r.e, insertBefore);
+                r.n = rc;
             }
+            r.c = rc.children;
         }
-        else {
-            var node = RootComponent(r);
-            rc = createNode(node, undefined, r.e, insertBefore);
-            r.n = rc;
-        }
-        r.c = rc.children;
+        rootIds = undefined;
+        callPostCallbacks();
+        if (!deferSyncUpdateRequested)
+            break;
     }
-    rootIds = undefined;
-    callPostCallbacks();
+    deferSyncUpdateRequested = false;
+    listeningEventDeepness--;
     var r0 = roots["0"];
     afterFrameCallback(r0 ? r0.c : null);
     lastFrameDurationMs = exports.now() - renderFrameBegin;
@@ -1671,6 +1963,7 @@ exports.invalidate = function (ctx, deepness) {
     else {
         fullRecreateRequested = true;
     }
+    isInvalidated = true;
     if (scheduled || initializing)
         return;
     scheduled = true;
@@ -1706,7 +1999,7 @@ function updateRoot(id, factory) {
     if (factory != null)
         root.f = factory;
     var rootNode = root.n;
-    if (rootNode == null)
+    if (rootNode == undefined)
         return;
     var ctx = rootNode.ctx;
     ctx[ctxInvalidated] = frameCounter;
@@ -1728,7 +2021,7 @@ function firstInvalidate() {
     beforeInit = finishInitialize;
 }
 function init(factory, element) {
-    assert(rootIds == null, "init should not be called from render");
+    assert(rootIds == undefined, "init should not be called from render");
     removeRoot("0");
     roots["0"] = { f: factory, e: element, c: [], p: undefined, n: undefined };
     firstInvalidate();
@@ -1741,15 +2034,60 @@ function setBeforeInit(callback) {
     };
 }
 exports.setBeforeInit = setBeforeInit;
+var currentCtxWithEvents;
 function bubble(node, name, param) {
+    if (param == undefined) {
+        param = { target: node };
+    }
+    else if (isObject(param) && param.target == undefined) {
+        param.target = node;
+    }
+    var res = captureBroadcast(name, param);
+    if (res != undefined)
+        return res;
+    var prevCtx = currentCtxWithEvents;
     while (node) {
         var c = node.component;
         if (c) {
             var ctx = node.ctx;
+            currentCtxWithEvents = ctx;
+            if (((ctx.$hookFlags || 0) & hasEvents) === hasEvents) {
+                var hooks = ctx.$hooks;
+                for (var i = 0, l = hooks.length; i < l; i++) {
+                    var h = hooks[i];
+                    if (h instanceof EventsHook) {
+                        var m = h.events[name];
+                        if (m !== undefined) {
+                            var eventResult = +m.call(ctx, param);
+                            if (eventResult == EventResult.HandledPreventDefault) {
+                                currentCtxWithEvents = prevCtx;
+                                return ctx;
+                            }
+                            if (eventResult == EventResult.HandledButRunDefault) {
+                                currentCtxWithEvents = prevCtx;
+                                return undefined;
+                            }
+                            if (eventResult == EventResult.NotHandledPreventDefault) {
+                                res = ctx;
+                            }
+                        }
+                    }
+                }
+            }
             var m = c[name];
             if (m) {
-                if (m.call(c, ctx, param))
+                var eventResult = +m.call(c, ctx, param);
+                if (eventResult == EventResult.HandledPreventDefault) {
+                    currentCtxWithEvents = prevCtx;
                     return ctx;
+                }
+                if (eventResult == EventResult.HandledButRunDefault) {
+                    currentCtxWithEvents = prevCtx;
+                    return undefined;
+                }
+                if (eventResult == EventResult.NotHandledPreventDefault) {
+                    res = ctx;
+                }
             }
             m = c.shouldStopBubble;
             if (m) {
@@ -1759,42 +2097,142 @@ function bubble(node, name, param) {
         }
         node = node.parent;
     }
-    return undefined;
+    currentCtxWithEvents = prevCtx;
+    return res;
 }
 exports.bubble = bubble;
 function broadcastEventToNode(node, name, param) {
     if (!node)
         return undefined;
+    var res;
     var c = node.component;
     if (c) {
         var ctx = node.ctx;
+        var prevCtx = currentCtxWithEvents;
+        currentCtxWithEvents = ctx;
+        if (((ctx.$hookFlags || 0) & hasEvents) === hasEvents) {
+            var hooks = ctx.$hooks;
+            for (var i = 0, l = hooks.length; i < l; i++) {
+                var h = hooks[i];
+                if (h instanceof EventsHook) {
+                    var m = h.events[name];
+                    if (m !== undefined) {
+                        var eventResult = +m.call(ctx, param);
+                        if (eventResult == EventResult.HandledPreventDefault) {
+                            currentCtxWithEvents = prevCtx;
+                            return ctx;
+                        }
+                        if (eventResult == EventResult.HandledButRunDefault) {
+                            currentCtxWithEvents = prevCtx;
+                            return undefined;
+                        }
+                        if (eventResult == EventResult.NotHandledPreventDefault) {
+                            res = ctx;
+                        }
+                    }
+                }
+            }
+        }
         var m = c[name];
         if (m) {
-            if (m.call(c, ctx, param))
+            var eventResult = +m.call(c, ctx, param);
+            if (eventResult == EventResult.HandledPreventDefault) {
+                currentCtxWithEvents = prevCtx;
                 return ctx;
+            }
+            if (eventResult == EventResult.HandledButRunDefault) {
+                currentCtxWithEvents = prevCtx;
+                return undefined;
+            }
+            if (eventResult == EventResult.NotHandledPreventDefault) {
+                res = ctx;
+            }
         }
         m = c.shouldStopBroadcast;
         if (m) {
-            if (m.call(c, ctx, name, param))
-                return undefined;
+            if (m.call(c, ctx, name, param)) {
+                currentCtxWithEvents = prevCtx;
+                return res;
+            }
         }
+        currentCtxWithEvents = prevCtx;
     }
     var ch = node.children;
     if (exports.isArray(ch)) {
         for (var i = 0; i < ch.length; i++) {
-            var res = broadcastEventToNode(ch[i], name, param);
+            var res2 = broadcastEventToNode(ch[i], name, param);
+            if (res2 != undefined)
+                return res2;
+        }
+    }
+    return res;
+}
+function broadcastCapturedEventToNode(node, name, param) {
+    if (!node)
+        return undefined;
+    var res;
+    var c = node.component;
+    if (c) {
+        var ctx = node.ctx;
+        if (((ctx.$hookFlags || 0) & hasCaptureEvents) === hasCaptureEvents) {
+            var hooks = ctx.$hooks;
+            var prevCtx = currentCtxWithEvents;
+            currentCtxWithEvents = ctx;
+            for (var i = 0, l = hooks.length; i < l; i++) {
+                var h = hooks[i];
+                if (h instanceof CaptureEventsHook) {
+                    var m = h.events[name];
+                    if (m !== undefined) {
+                        var eventResult = +m.call(ctx, param);
+                        if (eventResult == EventResult.HandledPreventDefault) {
+                            currentCtxWithEvents = prevCtx;
+                            return ctx;
+                        }
+                        if (eventResult == EventResult.HandledButRunDefault) {
+                            currentCtxWithEvents = prevCtx;
+                            return undefined;
+                        }
+                        if (eventResult == EventResult.NotHandledPreventDefault) {
+                            res = ctx;
+                        }
+                    }
+                }
+            }
+            currentCtxWithEvents = prevCtx;
+        }
+    }
+    var ch = node.children;
+    if (exports.isArray(ch)) {
+        for (var i = 0, l = ch.length; i < l; i++) {
+            var res2 = broadcastCapturedEventToNode(ch[i], name, param);
+            if (res2 != undefined)
+                return res2;
+        }
+    }
+    return res;
+}
+function captureBroadcast(name, param) {
+    var k = Object.keys(roots);
+    for (var i = 0; i < k.length; i++) {
+        var ch = roots[k[i]].n;
+        if (ch != null) {
+            var res = broadcastCapturedEventToNode(ch, name, param);
             if (res != null)
                 return res;
         }
     }
     return undefined;
 }
+exports.captureBroadcast = captureBroadcast;
 function broadcast(name, param) {
+    var res = captureBroadcast(name, param);
+    if (res != null)
+        return res;
     var k = Object.keys(roots);
     for (var i = 0; i < k.length; i++) {
         var ch = roots[k[i]].n;
         if (ch != null) {
-            var res = broadcastEventToNode(ch, name, param);
+            res = broadcastEventToNode(ch, name, param);
             if (res != null)
                 return res;
         }
@@ -1802,6 +2240,75 @@ function broadcast(name, param) {
     return undefined;
 }
 exports.broadcast = broadcast;
+function runMethodFrom(ctx, methodId, param) {
+    var done = false;
+    if (DEBUG && ctx == undefined)
+        throw new Error("runMethodFrom ctx is undefined");
+    var currentRoot = ctx.me;
+    var previousRoot;
+    while (currentRoot != undefined) {
+        var children = currentRoot.children;
+        if (exports.isArray(children))
+            loopChildNodes(children);
+        if (done)
+            return true;
+        var comp = currentRoot.component;
+        if (comp && comp.runMethod) {
+            var prevCtx = currentCtxWithEvents;
+            currentCtxWithEvents = currentRoot.ctx;
+            if (comp.runMethod(currentCtxWithEvents, methodId, param))
+                done = true;
+            currentCtxWithEvents = prevCtx;
+        }
+        if (done)
+            return true;
+        previousRoot = currentRoot;
+        currentRoot = currentRoot.parent;
+    }
+    function loopChildNodes(children) {
+        for (var i = children.length - 1; i >= 0; i--) {
+            var child = children[i];
+            if (child === previousRoot)
+                continue;
+            exports.isArray(child.children) && loopChildNodes(child.children);
+            if (done)
+                return;
+            var comp = child.component;
+            if (comp && comp.runMethod) {
+                var prevCtx = currentCtxWithEvents;
+                currentCtxWithEvents = child.ctx;
+                if (comp.runMethod(currentCtxWithEvents, methodId, param)) {
+                    currentCtxWithEvents = prevCtx;
+                    done = true;
+                    return;
+                }
+                currentCtxWithEvents = prevCtx;
+            }
+        }
+    }
+    return done;
+}
+exports.runMethodFrom = runMethodFrom;
+function getCurrentCtxWithEvents() {
+    if (currentCtxWithEvents != undefined)
+        return currentCtxWithEvents;
+    return currentCtx;
+}
+exports.getCurrentCtxWithEvents = getCurrentCtxWithEvents;
+function tryRunMethod(methodId, param) {
+    return runMethodFrom(getCurrentCtxWithEvents(), methodId, param);
+}
+exports.tryRunMethod = tryRunMethod;
+function runMethod(methodId, param) {
+    if (!runMethodFrom(getCurrentCtxWithEvents(), methodId, param))
+        throw Error("runMethod didn't found " + methodId);
+}
+exports.runMethod = runMethod;
+var lastMethodId = 0;
+function allocateMethodId() {
+    return lastMethodId++;
+}
+exports.allocateMethodId = allocateMethodId;
 function merge(f1, f2) {
     return function () {
         var params = [];
@@ -1838,15 +2345,15 @@ function mergeComponents(c1, c2) {
 function overrideComponents(originalComponent, overridingComponent) {
     var res = Object.create(originalComponent);
     res.super = originalComponent;
-    for (var i_6 in overridingComponent) {
-        if (!(i_6 in emptyObject)) {
-            var m = overridingComponent[i_6];
-            var origM = originalComponent[i_6];
-            if (i_6 === "id") {
-                res[i_6] = (origM != null ? origM : "") + "/" + m;
+    for (var i_9 in overridingComponent) {
+        if (!(i_9 in emptyObject)) {
+            var m = overridingComponent[i_9];
+            var origM = originalComponent[i_9];
+            if (i_9 === "id") {
+                res[i_9] = (origM != null ? origM : "") + "/" + m;
             }
             else {
-                res[i_6] = m;
+                res[i_9] = m;
             }
         }
     }
@@ -1914,9 +2421,10 @@ function cloneNode(node) {
 }
 exports.cloneNode = cloneNode;
 function setStyleShim(name, action) {
-    mapping[name] = action;
+    mapping.set(name, action);
 }
 exports.setStyleShim = setStyleShim;
+setStyleShim("float", renamer("cssFloat"));
 // PureFuncs: uptime, lastFrameDuration, frame, invalidated
 function uptime() {
     return uptimeMs;
@@ -1931,13 +2439,21 @@ function frame() {
 }
 exports.frame = frame;
 function invalidated() {
-    return scheduled;
+    return isInvalidated;
 }
 exports.invalidated = invalidated;
+// Bobril.Media
+var BobrilDeviceCategory;
+(function (BobrilDeviceCategory) {
+    BobrilDeviceCategory[BobrilDeviceCategory["Mobile"] = 0] = "Mobile";
+    BobrilDeviceCategory[BobrilDeviceCategory["Tablet"] = 1] = "Tablet";
+    BobrilDeviceCategory[BobrilDeviceCategory["Desktop"] = 2] = "Desktop";
+    BobrilDeviceCategory[BobrilDeviceCategory["LargeDesktop"] = 3] = "LargeDesktop";
+})(BobrilDeviceCategory = exports.BobrilDeviceCategory || (exports.BobrilDeviceCategory = {}));
 var media = null;
 var breaks = [
     [414, 800, 900],
-    [736, 1280, 1440] //landscape widths
+    [736, 1280, 1440],
 ];
 function emitOnMediaChange() {
     media = null;
@@ -1959,17 +2475,19 @@ var viewport = window.document.documentElement;
 var isAndroid = /Android/i.test(navigator.userAgent);
 var weirdPortrait; // Some android devices provide reverted orientation
 function getMedia() {
-    if (media == null) {
+    if (media == undefined) {
         var w = viewport.clientWidth;
         var h = viewport.clientHeight;
         var o = window.orientation;
         var p = h >= w;
-        if (o == null)
+        if (o == undefined)
             o = p ? 0 : 90;
+        else
+            o = +o;
         if (isAndroid) {
             // without this keyboard change screen rotation because h or w changes
             var op = Math.abs(o) % 180 === 90;
-            if (weirdPortrait == null) {
+            if (weirdPortrait == undefined) {
                 weirdPortrait = op === p;
             }
             else {
@@ -1984,7 +2502,8 @@ function getMedia() {
             height: h,
             orientation: o,
             deviceCategory: device,
-            portrait: p
+            portrait: p,
+            dppx: window.devicePixelRatio,
         };
     }
     return media;
@@ -1999,56 +2518,17 @@ exports.asap = (function () {
             cbList[i]();
         }
     }
-    var onreadystatechange = "onreadystatechange";
-    // Modern browsers, fastest async
+    // Mainly IE11, fastest async
     if (window.MutationObserver) {
         var hiddenDiv = document.createElement("div");
         new MutationObserver(executeCallbacks).observe(hiddenDiv, {
-            attributes: true
+            attributes: true,
         });
         return function (callback) {
             if (!callbacks.length) {
                 hiddenDiv.setAttribute("yes", "no");
             }
             callbacks.push(callback);
-        };
-        // Browsers that support postMessage
-    }
-    else if (!window.setImmediate &&
-        window.postMessage &&
-        window.addEventListener) {
-        var MESSAGE_PREFIX = "basap" + Math.random(), hasPostMessage = false;
-        var onGlobalMessage = function (event) {
-            if (event.source === window && event.data === MESSAGE_PREFIX) {
-                hasPostMessage = false;
-                executeCallbacks();
-            }
-        };
-        window.addEventListener("message", onGlobalMessage, false);
-        return function (fn) {
-            callbacks.push(fn);
-            if (!hasPostMessage) {
-                hasPostMessage = true;
-                window.postMessage(MESSAGE_PREFIX, "*");
-            }
-        };
-        // IE browsers without postMessage
-    }
-    else if (!window.setImmediate &&
-        onreadystatechange in document.createElement("script")) {
-        var scriptEl;
-        return function (callback) {
-            callbacks.push(callback);
-            if (!scriptEl) {
-                scriptEl = document.createElement("script");
-                scriptEl[onreadystatechange] = function () {
-                    scriptEl[onreadystatechange] = null;
-                    scriptEl.parentNode.removeChild(scriptEl);
-                    scriptEl = null;
-                    executeCallbacks();
-                };
-                document.body.appendChild(scriptEl);
-            }
         };
         // All other browsers
     }
@@ -2083,7 +2563,7 @@ if (!window.Promise) {
             }
             exports.asap(function () {
                 var cb = _this.s /*tate*/ ? deferred[0] : deferred[1];
-                if (cb == null) {
+                if (cb == undefined) {
                     (_this.s /*tate*/ ? deferred[2] : deferred[3])(_this.v /*alue*/);
                     return;
                 }
@@ -2110,11 +2590,11 @@ if (!window.Promise) {
             finale.call(this);
         }
         /**
-             * Take a potentially misbehaving resolver function and make sure
-             * onFulfilled and onRejected are only called once.
-             *
-             * Makes no guarantees about asynchrony.
-             */
+         * Take a potentially misbehaving resolver function and make sure
+         * onFulfilled and onRejected are only called once.
+         *
+         * Makes no guarantees about asynchrony.
+         */
         function doResolve(fn, onFulfilled, onRejected) {
             var done = false;
             try {
@@ -2173,9 +2653,7 @@ if (!window.Promise) {
             return this.then(undefined, onRejected);
         };
         Promise.all = function () {
-            var args = [].slice.call(arguments.length === 1 && exports.isArray(arguments[0])
-                ? arguments[0]
-                : arguments);
+            var args = [].slice.call(arguments.length === 1 && exports.isArray(arguments[0]) ? arguments[0] : arguments);
             return new Promise(function (resolve, reject) {
                 if (args.length === 0) {
                     resolve(args);
@@ -2184,8 +2662,7 @@ if (!window.Promise) {
                 var remaining = args.length;
                 function res(i, val) {
                     try {
-                        if (val &&
-                            (typeof val === "object" || typeof val === "function")) {
+                        if (val && (typeof val === "object" || typeof val === "function")) {
                             var then = val.then;
                             if (typeof then === "function") {
                                 then.call(val, function (val) {
@@ -2231,96 +2708,6 @@ if (!window.Promise) {
         window["Promise"] = Promise;
     })();
 }
-// Bobril.StyleShim
-if (ieVersion() === 9) {
-    (function () {
-        function addFilter(s, v) {
-            if (s.zoom == null)
-                s.zoom = "1";
-            var f = s.filter;
-            s.filter = f == null ? v : f + " " + v;
-        }
-        var simpleLinearGradient = /^linear\-gradient\(to (.+?),(.+?),(.+?)\)/gi;
-        setStyleShim("background", function (s, v, oldName) {
-            var match = simpleLinearGradient.exec(v);
-            if (match == null)
-                return;
-            var dir = match[1];
-            var color1 = match[2];
-            var color2 = match[3];
-            var tmp;
-            switch (dir) {
-                case "top":
-                    dir = "0";
-                    tmp = color1;
-                    color1 = color2;
-                    color2 = tmp;
-                    break;
-                case "bottom":
-                    dir = "0";
-                    break;
-                case "left":
-                    dir = "1";
-                    tmp = color1;
-                    color1 = color2;
-                    color2 = tmp;
-                    break;
-                case "right":
-                    dir = "1";
-                    break;
-                default:
-                    return;
-            }
-            s[oldName] = "none";
-            addFilter(s, "progid:DXImageTransform.Microsoft.gradient(startColorstr='" +
-                color1 +
-                "',endColorstr='" +
-                color2 +
-                "', gradientType='" +
-                dir +
-                "')");
-        });
-    })();
-}
-else {
-    (function () {
-        var testStyle = document.createElement("div").style;
-        testStyle.cssText = "background:-webkit-linear-gradient(top,red,red)";
-        if (testStyle.background.length > 0) {
-            (function () {
-                var startsWithGradient = /^(?:repeating\-)?(?:linear|radial)\-gradient/gi;
-                var revDirs = {
-                    top: "bottom",
-                    bottom: "top",
-                    left: "right",
-                    right: "left"
-                };
-                function gradientWebkitConvertor(style, value, name) {
-                    if (startsWithGradient.test(value)) {
-                        var pos = value.indexOf("(to ");
-                        if (pos > 0) {
-                            pos += 4;
-                            var posEnd = value.indexOf(",", pos);
-                            var dir = value.slice(pos, posEnd);
-                            dir = dir
-                                .split(" ")
-                                .map(function (v) { return revDirs[v] || v; })
-                                .join(" ");
-                            value =
-                                value.slice(0, pos - 3) +
-                                    dir +
-                                    value.slice(posEnd);
-                        }
-                        value = "-webkit-" + value;
-                    }
-                    style[name] = value;
-                }
-                setStyleShim("background", gradientWebkitConvertor);
-            })();
-        }
-    })();
-}
-// Bobril.OnChange
 var bValue = "b$value";
 var bSelectionStart = "b$selStart";
 var bSelectionEnd = "b$selEnd";
@@ -2363,7 +2750,7 @@ var prevSetValueCallback = setSetValue(function (el, node, newValue, oldValue) {
         return;
     }
     if (node.ctx === undefined) {
-        node.ctx = { me: node };
+        node.ctx = { data: undefined, me: node };
         node.component = emptyComponent;
     }
     if (oldValue === undefined) {
@@ -2395,9 +2782,7 @@ var prevSetValueCallback = setSetValue(function (el, node, newValue, oldValue) {
         if (isInput && isCheckboxLike(el)) {
             var currentChecked = el.checked;
             if (newValue !== currentChecked) {
-                if (oldValue === undefined ||
-                    currentChecked === oldValue ||
-                    newValue !== node.ctx[bValue]) {
+                if (oldValue === undefined || currentChecked === oldValue || newValue !== node.ctx[bValue]) {
                     el.checked = newValue;
                 }
                 else {
@@ -2409,9 +2794,7 @@ var prevSetValueCallback = setSetValue(function (el, node, newValue, oldValue) {
             var isCombobox = isSelect && el.size < 2;
             var currentValue = el[tValue];
             if (newValue !== currentValue) {
-                if (oldValue === undefined ||
-                    currentValue === oldValue ||
-                    newValue !== node.ctx[bValue]) {
+                if (oldValue === undefined || currentValue === oldValue || newValue !== node.ctx[bValue]) {
                     if (isSelect) {
                         if (newValue === "") {
                             el.selectedIndex = isCombobox ? 0 : -1;
@@ -2451,29 +2834,22 @@ function emitOnChange(ev, target, node) {
     if (!node) {
         return false;
     }
-    var c = node.component;
-    var hasProp = node.attrs && node.attrs[bValue];
-    var hasOnChange = c && c.onChange != null;
-    var hasPropOrOnChange = hasProp || hasOnChange;
-    var hasOnSelectionChange = c && c.onSelectionChange != null;
-    if (!hasPropOrOnChange && !hasOnSelectionChange)
-        return false;
+    if (node.ctx === undefined) {
+        node.ctx = { data: undefined, me: node };
+        node.component = emptyComponent;
+    }
     var ctx = node.ctx;
     var tagName = target.tagName;
     var isSelect = tagName === "SELECT";
     var isMultiSelect = isSelect && target.multiple;
-    if (hasPropOrOnChange && isMultiSelect) {
-        var vs = selectedArray(target
-            .options);
+    if (isMultiSelect) {
+        var vs = selectedArray(target.options);
         if (!stringArrayEqual(ctx[bValue], vs)) {
             ctx[bValue] = vs;
-            if (hasProp)
-                hasProp(vs);
-            if (hasOnChange)
-                c.onChange(ctx, vs);
+            emitOnInput(node, vs);
         }
     }
-    else if (hasPropOrOnChange && isCheckboxLike(target)) {
+    else if (isCheckboxLike(target)) {
         // Postpone change event so onClick will be processed before it
         if (ev && ev.type === "change") {
             setTimeout(function () {
@@ -2488,19 +2864,11 @@ function emitOnChange(ev, target, node) {
                 var radioNode = deref(radio);
                 if (!radioNode)
                     continue;
-                var rbHasProp = node.attrs[bValue];
-                var radioComponent = radioNode.component;
-                var rbHasOnChange = radioComponent && radioComponent.onChange != null;
-                if (!rbHasProp && !rbHasOnChange)
-                    continue;
                 var radioCtx = radioNode.ctx;
                 var vrb = radio.checked;
                 if (radioCtx[bValue] !== vrb) {
                     radioCtx[bValue] = vrb;
-                    if (rbHasProp)
-                        rbHasProp(vrb);
-                    if (rbHasOnChange)
-                        radioComponent.onChange(radioCtx, vrb);
+                    emitOnInput(radioNode, vrb);
                 }
             }
         }
@@ -2508,59 +2876,62 @@ function emitOnChange(ev, target, node) {
             var vb = target.checked;
             if (ctx[bValue] !== vb) {
                 ctx[bValue] = vb;
-                if (hasProp)
-                    hasProp(vb);
-                if (hasOnChange)
-                    c.onChange(ctx, vb);
+                emitOnInput(node, vb);
             }
         }
     }
     else {
-        if (hasPropOrOnChange) {
-            var v = target.value;
-            if (ctx[bValue] !== v) {
-                ctx[bValue] = v;
-                if (hasProp)
-                    hasProp(v);
-                if (hasOnChange)
-                    c.onChange(ctx, v);
-            }
+        var v = target.value;
+        if (ctx[bValue] !== v) {
+            ctx[bValue] = v;
+            emitOnInput(node, v);
         }
-        if (hasOnSelectionChange) {
-            var sStart = target.selectionStart;
-            var sEnd = target.selectionEnd;
-            var sDir = target.selectionDirection;
-            var swap = false;
-            var oStart = ctx[bSelectionStart];
-            if (sDir == null) {
-                if (sEnd === oStart)
-                    swap = true;
-            }
-            else if (sDir === "backward") {
+        var sStart = target.selectionStart;
+        var sEnd = target.selectionEnd;
+        var sDir = target.selectionDirection;
+        var swap = false;
+        var oStart = ctx[bSelectionStart];
+        if (sDir == undefined) {
+            if (sEnd === oStart)
                 swap = true;
-            }
-            if (swap) {
-                var s = sStart;
-                sStart = sEnd;
-                sEnd = s;
-            }
-            emitOnSelectionChange(node, sStart, sEnd);
         }
+        else if (sDir === "backward") {
+            swap = true;
+        }
+        if (swap) {
+            var s = sStart;
+            sStart = sEnd;
+            sEnd = s;
+        }
+        emitOnSelectionChange(node, sStart, sEnd);
     }
     return false;
+}
+function emitOnInput(node, value) {
+    var prevCtx = currentCtxWithEvents;
+    var ctx = node.ctx;
+    var component = node.component;
+    currentCtxWithEvents = ctx;
+    var hasProp = node.attrs && node.attrs[bValue];
+    if (isFunction(hasProp))
+        hasProp(value);
+    var hasOnChange = component && component.onChange;
+    if (isFunction(hasOnChange))
+        hasOnChange(ctx, value);
+    currentCtxWithEvents = prevCtx;
+    bubble(node, "onInput", { target: node, value: value });
 }
 function emitOnSelectionChange(node, start, end) {
     var c = node.component;
     var ctx = node.ctx;
-    if (c &&
-        (ctx[bSelectionStart] !== start || ctx[bSelectionEnd] !== end)) {
+    if (c && (ctx[bSelectionStart] !== start || ctx[bSelectionEnd] !== end)) {
         ctx[bSelectionStart] = start;
         ctx[bSelectionEnd] = end;
-        if (c.onSelectionChange)
-            c.onSelectionChange(ctx, {
-                startPosition: start,
-                endPosition: end
-            });
+        bubble(node, "onSelectionChange", {
+            target: node,
+            startPosition: start,
+            endPosition: end,
+        });
     }
 }
 function select(node, start, end) {
@@ -2576,33 +2947,20 @@ function emitOnMouseChange(ev, _target, _node) {
     return false;
 }
 // click here must have lower priority (higher number) over mouse handlers
-var events = [
-    "input",
-    "cut",
-    "paste",
-    "keydown",
-    "keypress",
-    "keyup",
-    "click",
-    "change"
-];
+var events = ["input", "cut", "paste", "keydown", "keypress", "keyup", "click", "change"];
 for (var i = 0; i < events.length; i++)
     addEvent(events[i], 10, emitOnChange);
-var mouseEvents = [
-    "!PointerDown",
-    "!PointerMove",
-    "!PointerUp",
-    "!PointerCancel"
-];
+var mouseEvents = ["!PointerDown", "!PointerMove", "!PointerUp", "!PointerCancel"];
 for (var i = 0; i < mouseEvents.length; i++)
     addEvent(mouseEvents[i], 2, emitOnMouseChange);
 function buildParam(ev) {
     return {
+        target: undefined,
         shift: ev.shiftKey,
         ctrl: ev.ctrlKey,
         alt: ev.altKey,
         meta: ev.metaKey || false,
-        which: ev.which || ev.keyCode
+        which: ev.which || ev.keyCode,
     };
 }
 function emitOnKeyDown(ev, _target, node) {
@@ -2628,7 +2986,8 @@ function emitOnKeyUp(ev, _target, node) {
 function emitOnKeyPress(ev, _target, node) {
     if (!node)
         return false;
-    if (ev.which === 0 // don't want special key presses
+    if (ev.which === 0 || // don't want special key presses
+        ev.altKey // Ignore Alt+num in Firefox
     )
         return false;
     var param = { charCode: ev.which || ev.keyCode };
@@ -2641,6 +3000,12 @@ function emitOnKeyPress(ev, _target, node) {
 addEvent("keydown", 50, emitOnKeyDown);
 addEvent("keyup", 50, emitOnKeyUp);
 addEvent("keypress", 50, emitOnKeyPress);
+var BobrilPointerType;
+(function (BobrilPointerType) {
+    BobrilPointerType[BobrilPointerType["Mouse"] = 0] = "Mouse";
+    BobrilPointerType[BobrilPointerType["Touch"] = 1] = "Touch";
+    BobrilPointerType[BobrilPointerType["Pen"] = 2] = "Pen";
+})(BobrilPointerType = exports.BobrilPointerType || (exports.BobrilPointerType = {}));
 var MoveOverIsNotTap = 13;
 var TapShouldBeShorterThanMs = 750;
 var MaxBustDelay = 500;
@@ -2668,16 +3033,20 @@ function releaseMouseOwner() {
 }
 exports.releaseMouseOwner = releaseMouseOwner;
 function invokeMouseOwner(handlerName, param) {
-    if (ownerCtx == null) {
+    if (ownerCtx == undefined) {
         return false;
     }
-    var handler = ownerCtx.me.component[handlerName];
+    var c = ownerCtx.me.component;
+    var handler = c[handlerName];
     if (!handler) {
         // no handler available
         return false;
     }
     invokingOwner = true;
-    var stop = handler(ownerCtx, param);
+    var prevCtx = currentCtxWithEvents;
+    currentCtxWithEvents = ownerCtx;
+    var stop = handler.call(c, ownerCtx, param);
+    currentCtxWithEvents = prevCtx;
     invokingOwner = false;
     return stop;
 }
@@ -2696,10 +3065,6 @@ function hasPointerEventsNoneB(node) {
     }
     return false;
 }
-function hasPointerEventsNone(target) {
-    var bNode = deref(target);
-    return hasPointerEventsNoneB(bNode);
-}
 function revertVisibilityChanges(hiddenEls) {
     if (hiddenEls.length) {
         for (var i = hiddenEls.length - 1; i >= 0; --i) {
@@ -2713,66 +3078,17 @@ function pushAndHide(hiddenEls, t) {
     hiddenEls.push({ t: t, p: t.style.visibility });
     t.style.visibility = "hidden";
 }
-function pointerThroughIE(ev, target, _node) {
-    var hiddenEls = [];
-    var t = target;
-    while (hasPointerEventsNone(t)) {
-        pushAndHide(hiddenEls, t);
-        t = document.elementFromPoint(ev.x, ev.y);
-    }
-    if (revertVisibilityChanges(hiddenEls)) {
-        try {
-            t.dispatchEvent(ev);
-        }
-        catch (e) {
-            return false;
-        }
-        preventDefault(ev);
-        return true;
-    }
-    return false;
-}
 function addEvent5(name, callback) {
     addEvent(name, 5, callback);
 }
-var pointersEventNames = [
-    "PointerDown",
-    "PointerMove",
-    "PointerUp",
-    "PointerCancel"
-];
+var pointersEventNames = ["PointerDown", "PointerMove", "PointerUp", "PointerCancel"];
 var i;
-if (ieVersion() && ieVersion() < 11) {
-    // emulate pointer-events: none in older ie
-    var mouseEvents = [
-        "click",
-        "dblclick",
-        "drag",
-        "dragend",
-        "dragenter",
-        "dragleave",
-        "dragover",
-        "dragstart",
-        "drop",
-        "mousedown",
-        "mousemove",
-        "mouseout",
-        "mouseover",
-        "mouseup",
-        "mousewheel",
-        "scroll",
-        "wheel"
-    ];
-    for (i = 0; i < mouseEvents.length; ++i) {
-        addEvent(mouseEvents[i], 1, pointerThroughIE);
-    }
-}
 function type2Bobril(t) {
     if (t === "mouse" || t === 4)
-        return 0 /* Mouse */;
+        return BobrilPointerType.Mouse;
     if (t === "pen" || t === 3)
-        return 2 /* Pen */;
-    return 1 /* Touch */;
+        return BobrilPointerType.Pen;
+    return BobrilPointerType.Touch;
 }
 function pointerEventsNoneFix(x, y, target, node) {
     var hiddenEls = [];
@@ -2787,6 +3103,8 @@ function pointerEventsNoneFix(x, y, target, node) {
 }
 function buildHandlerPointer(name) {
     return function handlePointerDown(ev, target, node) {
+        target = document.elementFromPoint(ev.clientX, ev.clientY);
+        node = deref(target);
         if (hasPointerEventsNoneB(node)) {
             var fixed = pointerEventsNoneFix(ev.clientX, ev.clientY, target, node);
             target = fixed[0];
@@ -2795,7 +3113,7 @@ function buildHandlerPointer(name) {
         var button = ev.button + 1;
         var type = type2Bobril(ev.pointerType);
         var buttons = ev.buttons;
-        if (button === 0 && type === 0 /* Mouse */ && buttons) {
+        if (button === 0 && type === BobrilPointerType.Mouse && buttons) {
             button = 1;
             while (!(buttons & 1)) {
                 buttons = buttons >> 1;
@@ -2803,7 +3121,9 @@ function buildHandlerPointer(name) {
             }
         }
         var param = {
+            target: node,
             id: ev.pointerId,
+            cancelable: normalizeCancelable(ev),
             type: type,
             x: ev.clientX,
             y: ev.clientY,
@@ -2812,7 +3132,7 @@ function buildHandlerPointer(name) {
             ctrl: ev.ctrlKey,
             alt: ev.altKey,
             meta: ev.metaKey || false,
-            count: ev.detail
+            count: ev.detail,
         };
         if (emitEvent("!" + name, param, target, node)) {
             preventDefault(ev);
@@ -2829,8 +3149,10 @@ function buildHandlerTouch(name) {
             target = document.elementFromPoint(t.clientX, t.clientY);
             node = deref(target);
             var param = {
+                target: node,
                 id: t.identifier + 2,
-                type: 1 /* Touch */,
+                cancelable: normalizeCancelable(ev),
+                type: BobrilPointerType.Touch,
                 x: t.clientX,
                 y: t.clientY,
                 button: 1,
@@ -2838,7 +3160,7 @@ function buildHandlerTouch(name) {
                 ctrl: ev.ctrlKey,
                 alt: ev.altKey,
                 meta: ev.metaKey || false,
-                count: ev.detail
+                count: ev.detail,
             };
             if (emitEvent("!" + name, param, target, node))
                 preventDef = true;
@@ -2860,8 +3182,10 @@ function buildHandlerMouse(name) {
             node = fixed[1];
         }
         var param = {
+            target: node,
             id: 1,
-            type: 0 /* Mouse */,
+            type: BobrilPointerType.Mouse,
+            cancelable: normalizeCancelable(ev),
             x: ev.clientX,
             y: ev.clientY,
             button: decodeButton(ev),
@@ -2869,7 +3193,7 @@ function buildHandlerMouse(name) {
             ctrl: ev.ctrlKey,
             alt: ev.altKey,
             meta: ev.metaKey || false,
-            count: ev.detail
+            count: ev.detail,
         };
         if (emitEvent("!" + name, param, target, node)) {
             preventDefault(ev);
@@ -2909,7 +3233,7 @@ for (var j = 0; j < 4 /*pointersEventNames.length*/; j++) {
     (function (name) {
         var onName = "on" + name;
         addEvent("!" + name, 50, function (ev, _target, node) {
-            return invokeMouseOwner(onName, ev) || bubble(node, onName, ev) != null;
+            return invokeMouseOwner(onName, ev) || bubble(node, onName, ev) != undefined;
         });
     })(pointersEventNames[j]);
 }
@@ -2926,8 +3250,10 @@ function diffLess(n1, n2, diff) {
 }
 var prevMousePath = [];
 function revalidateMouseIn() {
-    if (lastMouseEv)
+    if (lastMouseEv) {
         mouseEnterAndLeave(lastMouseEv);
+        handlePointerMove(lastMouseEv, undefined, deref(document.elementFromPoint(lastMouseEv.x, lastMouseEv.y)));
+    }
 }
 exports.revalidateMouseIn = revalidateMouseIn;
 function mouseEnterAndLeave(ev) {
@@ -2936,20 +3262,18 @@ function mouseEnterAndLeave(ev) {
     var toPath = vdomPath(t);
     var node = toPath.length == 0 ? undefined : toPath[toPath.length - 1];
     if (hasPointerEventsNoneB(node)) {
-        var fixed = pointerEventsNoneFix(ev.x, ev.y, t, node == null ? undefined : node);
+        var fixed = pointerEventsNoneFix(ev.x, ev.y, t, node == undefined ? undefined : node);
         t = fixed[0];
         toPath = vdomPath(t);
     }
     bubble(node, "onMouseOver", ev);
     var common = 0;
-    while (common < prevMousePath.length &&
-        common < toPath.length &&
-        prevMousePath[common] === toPath[common])
+    while (common < prevMousePath.length && common < toPath.length && prevMousePath[common] === toPath[common])
         common++;
     var n;
     var c;
     var i = prevMousePath.length;
-    if (i > 0) {
+    if (i > 0 && (i > common || i != toPath.length)) {
         n = prevMousePath[i - 1];
         if (n) {
             c = n.component;
@@ -2976,7 +3300,7 @@ function mouseEnterAndLeave(ev) {
         i++;
     }
     prevMousePath = toPath;
-    if (i > 0) {
+    if (i > 0 && (i > common || i != prevMousePath.length)) {
         n = prevMousePath[i - 1];
         if (n) {
             c = n.component;
@@ -3006,9 +3330,7 @@ function bustingPointerDown(ev, _target, _node) {
 }
 function bustingPointerMove(ev, target, node) {
     // Browser forgot to send mouse up? Let's fix it
-    if (ev.type === 0 /* Mouse */ &&
-        ev.button === 0 &&
-        pointersDown[ev.id] != null) {
+    if (ev.type === BobrilPointerType.Mouse && ev.button === 0 && pointersDown[ev.id] != null) {
         ev.button = 1;
         emitEvent("!PointerUp", ev, target, node);
         ev.button = 0;
@@ -3048,16 +3370,18 @@ function bustingPointerUp(ev, target, node) {
     if (firstPointerDown == ev.id) {
         mouseEnterAndLeave(ev);
         firstPointerDown = -1;
-        if (ev.type == 1 /* Touch */ && !tapCanceled) {
+        if (ev.type == BobrilPointerType.Touch && !tapCanceled) {
             if (exports.now() - firstPointerDownTime < TapShouldBeShorterThanMs) {
                 emitEvent("!PointerCancel", ev, target, node);
                 shouldPreventClickingSpree(1);
-                var handled = invokeMouseOwner(onClickText, ev) ||
-                    bubble(node, onClickText, ev) != null;
+                var handled = invokeMouseOwner(onClickText, ev) || bubble(node, onClickText, ev) != null;
                 var delay = ieVersion() ? MaxBustDelayForIE : MaxBustDelay;
                 toBust.push([ev.x, ev.y, exports.now() + delay, handled ? 1 : 0]);
                 return handled;
             }
+        }
+        else if (tapCanceled) {
+            exports.ignoreClick(ev.x, ev.y);
         }
     }
     return false;
@@ -3078,8 +3402,7 @@ function bustingClick(ev, _target, _node) {
             i--;
             continue;
         }
-        if (diffLess(j[0], ev.clientX, BustDistance) &&
-            diffLess(j[1], ev.clientY, BustDistance)) {
+        if (diffLess(j[0], ev.clientX, BustDistance) && diffLess(j[1], ev.clientY, BustDistance)) {
             toBust.splice(i, 1);
             if (j[3])
                 preventDefault(ev);
@@ -3088,19 +3411,13 @@ function bustingClick(ev, _target, _node) {
     }
     return false;
 }
-var bustingEventNames = [
-    "!PointerDown",
-    "!PointerMove",
-    "!PointerUp",
-    "!PointerCancel",
-    "^click"
-];
+var bustingEventNames = ["!PointerDown", "!PointerMove", "!PointerUp", "!PointerCancel", "^click"];
 var bustingEventHandlers = [
     bustingPointerDown,
     bustingPointerMove,
     bustingPointerUp,
     bustingPointerCancel,
-    bustingClick
+    bustingClick,
 ];
 for (var i = 0; i < 5 /*bustingEventNames.length*/; i++) {
     addEvent(bustingEventNames[i], 3, bustingEventHandlers[i]);
@@ -3122,32 +3439,27 @@ for (var i = 0; i < 4; i++) {
 function decodeButton(ev) {
     return ev.which || ev.button;
 }
+function normalizeCancelable(ev) {
+    var c = ev.cancelable;
+    return !isBoolean(c) || c;
+}
 function createHandler(handlerName, allButtons) {
-    return function (ev, target, node) {
-        if (listeningEventDeepness == 1 &&
-            (target.nodeName != "INPUT" || ev.clientX != 0 || ev.clientY != 0)) {
-            // Fix target node only for browser triggered events + crazy heuristic to ignore click
-            target = document.elementFromPoint(ev.clientX, ev.clientY);
-            node = deref(target);
-            if (hasPointerEventsNoneB(node)) {
-                var fixed = pointerEventsNoneFix(ev.clientX, ev.clientY, target, node);
-                target = fixed[0];
-                node = fixed[1];
-            }
-        }
+    return function (ev, _target, node) {
         var button = decodeButton(ev) || 1;
         // Ignore non left mouse click/dblclick event, but not for contextmenu event
         if (!allButtons && button !== 1)
             return false;
         var param = {
+            target: node,
             x: ev.clientX,
             y: ev.clientY,
             button: button,
+            cancelable: normalizeCancelable(ev),
             shift: ev.shiftKey,
             ctrl: ev.ctrlKey,
             alt: ev.altKey,
             meta: ev.metaKey || false,
-            count: ev.detail || 1
+            count: ev.detail || 1,
         };
         if (handlerName == onDoubleClickText)
             param.count = 2;
@@ -3210,27 +3522,28 @@ function handleMouseWheel(ev, target, node) {
     }
     var dx = 0, dy;
     if (wheelSupport == "mousewheel") {
-        dy = -1 / 40 * ev.wheelDelta;
-        ev.wheelDeltaX && (dx = -1 / 40 * ev.wheelDeltaX);
+        dy = (-1 / 40) * ev.wheelDelta;
+        ev.wheelDeltaX && (dx = (-1 / 40) * ev.wheelDeltaX);
     }
     else {
         dx = ev.deltaX;
         dy = ev.deltaY;
     }
     var param = {
+        target: node,
         dx: dx,
         dy: dy,
         x: ev.clientX,
         y: ev.clientY,
+        cancelable: normalizeCancelable(ev),
         button: button,
         shift: ev.shiftKey,
         ctrl: ev.ctrlKey,
         alt: ev.altKey,
         meta: ev.metaKey || false,
-        count: ev.detail
+        count: ev.detail,
     };
-    if (invokeMouseOwner("onMouseWheel", param) ||
-        bubble(node, "onMouseWheel", param)) {
+    if (invokeMouseOwner("onMouseWheel", param) || bubble(node, "onMouseWheel", param)) {
         preventDefault(ev);
         return true;
     }
@@ -3247,26 +3560,26 @@ exports.ignoreClick = function (x, y) {
 var currentActiveElement = undefined;
 var currentFocusedNode = undefined;
 var nodeStack = [];
+var focusChangeRunning = false;
 function emitOnFocusChange(inFocus) {
-    var newActiveElement = document.hasFocus() || inFocus ? document.activeElement : undefined;
-    if (newActiveElement !== currentActiveElement) {
+    if (focusChangeRunning)
+        return false;
+    focusChangeRunning = true;
+    while (true) {
+        var newActiveElement = document.hasFocus() || inFocus ? document.activeElement : undefined;
+        if (newActiveElement === currentActiveElement)
+            break;
         currentActiveElement = newActiveElement;
         var newStack = vdomPath(currentActiveElement);
         var common = 0;
-        while (common < nodeStack.length &&
-            common < newStack.length &&
-            nodeStack[common] === newStack[common])
+        while (common < nodeStack.length && common < newStack.length && nodeStack[common] === newStack[common])
             common++;
         var i = nodeStack.length - 1;
         var n;
         var c;
         if (i >= common) {
             n = nodeStack[i];
-            if (n) {
-                c = n.component;
-                if (c && c.onBlur)
-                    c.onBlur(n.ctx);
-            }
+            bubble(n, "onBlur");
             i--;
         }
         while (i >= common) {
@@ -3290,19 +3603,12 @@ function emitOnFocusChange(inFocus) {
         }
         if (i < newStack.length) {
             n = newStack[i];
-            if (n) {
-                c = n.component;
-                if (c && c.onFocus)
-                    c.onFocus(n.ctx);
-            }
-            i++;
+            bubble(n, "onFocus");
         }
         nodeStack = newStack;
-        currentFocusedNode =
-            nodeStack.length == 0
-                ? undefined
-                : null2undefined(nodeStack[nodeStack.length - 1]);
+        currentFocusedNode = nodeStack.length == 0 ? undefined : null2undefined(nodeStack[nodeStack.length - 1]);
     }
+    focusChangeRunning = false;
     return false;
 }
 function emitOnFocusChangeDelayed() {
@@ -3315,8 +3621,8 @@ function focused() {
     return currentFocusedNode;
 }
 exports.focused = focused;
-function focus(node) {
-    if (node == null)
+function focus(node, backwards) {
+    if (node == undefined)
         return false;
     if (isString(node))
         return false;
@@ -3329,8 +3635,8 @@ function focus(node) {
     }
     var attrs = node.attrs;
     if (attrs != null) {
-        var ti = attrs.tabindex != null ? attrs.tabindex : attrs.tabIndex; // < tabIndex is here because of backward compatibility
-        if (ti !== undefined || (node.tag && focusableTag.test(node.tag))) {
+        var ti = attrs.tabindex;
+        if (ti !== undefined || isNaturallyFocusable(node.tag, attrs)) {
             var el = node.element;
             el.focus();
             emitOnFocusChange(false);
@@ -3340,7 +3646,7 @@ function focus(node) {
     var children = node.children;
     if (exports.isArray(children)) {
         for (var i = 0; i < children.length; i++) {
-            if (focus(children[i]))
+            if (focus(children[backwards ? children.length - 1 - i : i], backwards))
                 return true;
         }
         return false;
@@ -3352,11 +3658,12 @@ exports.focus = focus;
 var callbacks = [];
 function emitOnScroll(_ev, _target, node) {
     var info = {
-        node: node
+        node: node,
     };
     for (var i = 0; i < callbacks.length; i++) {
         callbacks[i](info);
     }
+    captureBroadcast("onScroll", info);
     return false;
 }
 // capturing event to hear everything
@@ -3405,7 +3712,6 @@ function nodePagePos(node) {
     return res;
 }
 exports.nodePagePos = nodePagePos;
-var cachedConvertPointFromClientToNode;
 var CSSMatrix = /** @class */ (function () {
     function CSSMatrix(data) {
         this.data = data;
@@ -3413,24 +3719,7 @@ var CSSMatrix = /** @class */ (function () {
     CSSMatrix.fromString = function (s) {
         var c = s.match(/matrix3?d?\(([^\)]+)\)/i)[1].split(",");
         if (c.length === 6) {
-            c = [
-                c[0],
-                c[1],
-                "0",
-                "0",
-                c[2],
-                c[3],
-                "0",
-                "0",
-                "0",
-                "0",
-                "1",
-                "0",
-                c[4],
-                c[5],
-                "0",
-                "1"
-            ];
+            c = [c[0], c[1], "0", "0", c[2], c[3], "0", "0", "0", "0", "1", "0", c[4], c[5], "0", "1"];
         }
         return new CSSMatrix([
             parseFloat(c[0]),
@@ -3448,7 +3737,7 @@ var CSSMatrix = /** @class */ (function () {
             parseFloat(c[3]),
             parseFloat(c[7]),
             parseFloat(c[11]),
-            parseFloat(c[15])
+            parseFloat(c[15]),
         ]);
     };
     CSSMatrix.identity = function () {
@@ -3473,7 +3762,7 @@ var CSSMatrix = /** @class */ (function () {
             a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + a[15] * b[12],
             a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + a[15] * b[13],
             a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + a[15] * b[14],
-            a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15]
+            a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15],
         ]);
     };
     CSSMatrix.prototype.translate = function (tx, ty, tz) {
@@ -3517,26 +3806,9 @@ var CSSMatrix = /** @class */ (function () {
             0,
             0,
             0,
-            1
+            1,
         ]);
-        var Y = new CSSMatrix([
-            1,
-            0,
-            0,
-            -m[3],
-            0,
-            1,
-            0,
-            -m[7],
-            0,
-            0,
-            1,
-            -m[11],
-            0,
-            0,
-            0,
-            1
-        ]);
+        var Y = new CSSMatrix([1, 0, 0, -m[3], 0, 1, 0, -m[7], 0, 0, 1, -m[11], 0, 0, 0, 1]);
         return X.multiply(Y);
     };
     CSSMatrix.prototype.transformPoint = function (x, y) {
@@ -3587,48 +3859,44 @@ function getTransformationMatrix(element) {
         }
     }
     var rect = element.getBoundingClientRect();
-    transformationMatrix = identity
-        .translate(rect.left - left, rect.top - top, 0)
-        .multiply(transformationMatrix);
+    transformationMatrix = identity.translate(rect.left - left, rect.top - top, 0).multiply(transformationMatrix);
     return transformationMatrix;
 }
 function convertPointFromClientToNode(node, pageX, pageY) {
     var element = getDomNode(node);
-    if (cachedConvertPointFromClientToNode == null) {
-        var nativeConvert_1 = window.webkitConvertPointFromPageToNode;
-        if (nativeConvert_1) {
-            cachedConvertPointFromClientToNode = function (element, x, y) {
-                var scr = getWindowScroll();
-                var res = nativeConvert_1(element, new WebKitPoint(scr[0] + x, scr[1] + y));
-                return [res.x, res.y];
-            };
-        }
-        else {
-            cachedConvertPointFromClientToNode = function (element, x, y) {
-                return getTransformationMatrix(element)
-                    .inverse()
-                    .transformPoint(x, y);
-            };
-        }
-    }
-    return cachedConvertPointFromClientToNode(element, pageX, pageY);
+    if (element == undefined)
+        element = document.body;
+    return getTransformationMatrix(element).inverse().transformPoint(pageX, pageY);
 }
 exports.convertPointFromClientToNode = convertPointFromClientToNode;
+// Bobril.Dnd
+var DndOp;
+(function (DndOp) {
+    DndOp[DndOp["None"] = 0] = "None";
+    DndOp[DndOp["Link"] = 1] = "Link";
+    DndOp[DndOp["Copy"] = 2] = "Copy";
+    DndOp[DndOp["Move"] = 3] = "Move";
+})(DndOp = exports.DndOp || (exports.DndOp = {}));
+var DndEnabledOps;
+(function (DndEnabledOps) {
+    DndEnabledOps[DndEnabledOps["None"] = 0] = "None";
+    DndEnabledOps[DndEnabledOps["Link"] = 1] = "Link";
+    DndEnabledOps[DndEnabledOps["Copy"] = 2] = "Copy";
+    DndEnabledOps[DndEnabledOps["LinkCopy"] = 3] = "LinkCopy";
+    DndEnabledOps[DndEnabledOps["Move"] = 4] = "Move";
+    DndEnabledOps[DndEnabledOps["MoveLink"] = 5] = "MoveLink";
+    DndEnabledOps[DndEnabledOps["MoveCopy"] = 6] = "MoveCopy";
+    DndEnabledOps[DndEnabledOps["MoveCopyLink"] = 7] = "MoveCopyLink";
+})(DndEnabledOps = exports.DndEnabledOps || (exports.DndEnabledOps = {}));
 var lastDndId = 0;
 var dnds = [];
 var systemDnd = null;
 var rootId = null;
-var bodyCursorBackup;
-var userSelectBackup;
-var shimmedStyle = { userSelect: "" };
-shimStyle(shimmedStyle);
-var shimedStyleKeys = Object.keys(shimmedStyle);
-var userSelectPropName = shimedStyleKeys[shimedStyleKeys.length - 1]; // renamed is last
 var DndCtx = function (pointerId) {
     this.id = ++lastDndId;
     this.pointerid = pointerId;
-    this.enabledOperations = 7 /* MoveCopyLink */;
-    this.operation = 0 /* None */;
+    this.enabledOperations = DndEnabledOps.MoveCopyLink;
+    this.operation = DndOp.None;
     this.started = false;
     this.beforeDrag = true;
     this.local = true;
@@ -3658,12 +3926,11 @@ var DndCtx = function (pointerId) {
         pointer2Dnd[pointerId] = this;
     dnds.push(this);
 };
+var draggingStyle = "b-dragging";
 function lazyCreateRoot() {
-    if (rootId == null) {
-        var dbs = document.body.style;
-        bodyCursorBackup = dbs.cursor;
-        userSelectBackup = dbs[userSelectPropName];
-        dbs[userSelectPropName] = "none";
+    if (rootId == undefined) {
+        var dd = document.documentElement;
+        dd.classList.add(draggingStyle);
         rootId = addRoot(dndRootFactory);
     }
 }
@@ -3673,7 +3940,7 @@ var DndComp = {
         me.tag = "div";
         me.style = { position: "absolute", left: dnd.x, top: dnd.y };
         me.children = dnd.dragView(dnd);
-    }
+    },
 };
 function currentCursor() {
     var cursor = "no-drop";
@@ -3686,13 +3953,13 @@ function currentCursor() {
         if (dnd.system)
             return "";
         switch (dnd.operation) {
-            case 3 /* Move */:
+            case DndOp.Move:
                 cursor = "move";
                 break;
-            case 1 /* Link */:
+            case DndOp.Link:
                 cursor = "alias";
                 break;
-            case 2 /* Copy */:
+            case DndOp.Copy:
                 cursor = "copy";
                 break;
         }
@@ -3713,23 +3980,29 @@ var DndRootComp = {
         me.tag = "div";
         me.style = {
             position: "fixed",
+            zIndex: 1000000000,
             pointerEvents: "none",
             userSelect: "none",
             left: 0,
             top: 0,
             right: 0,
-            bottom: 0
+            bottom: 0,
         };
-        var dbs = document.body.style;
+        var dds = document.documentElement.style;
         var cur = currentCursor();
-        if (cur && dbs.cursor !== cur)
-            dbs.cursor = cur;
+        if (cur) {
+            if (dds.cursor !== cur)
+                dds.setProperty("cursor", cur, "important");
+        }
+        else {
+            dds.setProperty("cursor", "");
+        }
         me.children = res;
     },
     onDrag: function (ctx) {
         exports.invalidate(ctx);
         return false;
-    }
+    },
 };
 function dndRootFactory() {
     return { component: DndRootComp };
@@ -3778,9 +4051,9 @@ dndProto.destroy = function () {
     if (dnds.length === 0 && rootId != null) {
         removeRoot(rootId);
         rootId = null;
-        var dbs = document.body.style;
-        dbs.cursor = bodyCursorBackup;
-        dbs[userSelectPropName] = userSelectBackup;
+        var dd = document.documentElement;
+        dd.classList.remove(draggingStyle);
+        dd.style.setProperty("cursor", "");
     }
 };
 var pointer2Dnd = newHashObj();
@@ -3800,7 +4073,7 @@ function handlePointerDown(ev, _target, node) {
         var sourceCtx = bubble(node, "onDragStart", dnd);
         if (sourceCtx) {
             var htmlNode = getDomNode(sourceCtx.me);
-            if (htmlNode == null) {
+            if (htmlNode == undefined) {
                 dnd.destroy();
                 return false;
             }
@@ -3826,8 +4099,8 @@ function handlePointerDown(ev, _target, node) {
 function dndMoved(node, dnd) {
     dnd.overNode = node;
     dnd.targetCtx = bubble(node, "onDragOver", dnd);
-    if (dnd.targetCtx == null) {
-        dnd.operation = 0 /* None */;
+    if (dnd.targetCtx == undefined) {
+        dnd.operation = DndOp.None;
     }
     broadcast("onDrag", dnd);
 }
@@ -3907,16 +4180,7 @@ function updateFromNative(dnd, ev) {
     dnd.lastX = dnd.x;
     dnd.lastY = dnd.y;
 }
-var effectAllowedTable = [
-    "none",
-    "link",
-    "copy",
-    "copyLink",
-    "move",
-    "linkMove",
-    "copyMove",
-    "all"
-];
+var effectAllowedTable = ["none", "link", "copy", "copyLink", "move", "linkMove", "copyMove", "all"];
 function handleDragStart(ev, _target, node) {
     var dnd = systemDnd;
     if (dnd != null) {
@@ -3942,7 +4206,7 @@ function handleDragStart(ev, _target, node) {
         var sourceCtx = bubble(node, "onDragStart", dnd);
         if (sourceCtx) {
             var htmlNode = getDomNode(sourceCtx.me);
-            if (htmlNode == null) {
+            if (htmlNode == undefined) {
                 dnd.destroy();
                 return false;
             }
@@ -3980,7 +4244,7 @@ function handleDragStart(ev, _target, node) {
         style.width = "0";
         style.height = "0";
         style.padding = "0";
-        window.setTimeout(function () {
+        setTimeout(function () {
             style.opacity = opacityBackup;
             style.width = widthBackup;
             style.height = heightBackup;
@@ -4011,7 +4275,7 @@ function setDropEffect(ev, op) {
 }
 function handleDragOver(ev, _target, _node) {
     var dnd = systemDnd;
-    if (dnd == null) {
+    if (dnd == undefined) {
         dnd = new DndCtx(-1);
         dnd.system = true;
         systemDnd = dnd;
@@ -4050,7 +4314,7 @@ function handleDragOver(ev, _target, _node) {
     }
     updateFromNative(dnd, ev);
     setDropEffect(ev, dnd.operation);
-    if (dnd.operation != 0 /* None */) {
+    if (dnd.operation != DndOp.None) {
         preventDefault(ev);
         return true;
     }
@@ -4060,14 +4324,13 @@ function handleDrag(ev, _target, _node) {
     var x = ev.clientX;
     var y = ev.clientY;
     var m = getMedia();
-    if (systemDnd != null &&
-        ((x === 0 && y === 0) || x < 0 || y < 0 || x >= m.width || y >= m.height)) {
+    if (systemDnd != null && ((x === 0 && y === 0) || x < 0 || y < 0 || x >= m.width || y >= m.height)) {
         systemDnd.x = 0;
         systemDnd.y = 0;
-        systemDnd.operation = 0 /* None */;
+        systemDnd.operation = DndOp.None;
         broadcast("onDrag", systemDnd);
     }
-    return false;
+    return true;
 }
 function handleDragEnd(_ev, _target, _node) {
     if (systemDnd != null) {
@@ -4077,15 +4340,15 @@ function handleDragEnd(_ev, _target, _node) {
 }
 function handleDrop(ev, _target, _node) {
     var dnd = systemDnd;
-    if (dnd == null)
+    if (dnd == undefined)
         return false;
     dnd.x = ev.clientX;
     dnd.y = ev.clientY;
     if (!dnd.local) {
         var dataKeys = Object.keys(dnd.data);
         var dt = ev.dataTransfer;
-        for (var i_7 = 0; i_7 < dataKeys.length; i_7++) {
-            var k = dataKeys[i_7];
+        for (var i_10 = 0; i_10 < dataKeys.length; i_10++) {
+            var k = dataKeys[i_10];
             var d;
             if (k === "Files") {
                 d = [].slice.call(dt.files, 0); // What a useless FileList type! Get rid of it.
@@ -4119,8 +4382,8 @@ function handleDndSelectStart(ev, _target, _node) {
     return true;
 }
 function anyActiveDnd() {
-    for (var i_8 = 0; i_8 < dnds.length; i_8++) {
-        var dnd = dnds[i_8];
+    for (var i_11 = 0; i_11 < dnds.length; i_11++) {
+        var dnd = dnds[i_11];
         if (dnd.beforeDrag)
             continue;
         return dnd;
@@ -4141,6 +4404,12 @@ addEvent("drop", 5, handleDrop);
 addEvent("dragenter", 5, justPreventDefault);
 addEvent("dragleave", 5, justPreventDefault);
 exports.getDnds = function () { return dnds; };
+var RouteTransitionType;
+(function (RouteTransitionType) {
+    RouteTransitionType[RouteTransitionType["Push"] = 0] = "Push";
+    RouteTransitionType[RouteTransitionType["Replace"] = 1] = "Replace";
+    RouteTransitionType[RouteTransitionType["Pop"] = 2] = "Pop";
+})(RouteTransitionType = exports.RouteTransitionType || (exports.RouteTransitionType = {}));
 var waitingForPopHashChange = -1;
 function emitOnHashChange() {
     if (waitingForPopHashChange >= 0)
@@ -4183,15 +4452,15 @@ var nameRouteMap = {};
 function encodeUrl(url) {
     return encodeURIComponent(url).replace(/%20/g, "+");
 }
+exports.encodeUrl = encodeUrl;
 function decodeUrl(url) {
     return decodeURIComponent(url.replace(/\+/g, " "));
 }
+exports.decodeUrl = decodeUrl;
 function encodeUrlPath(path) {
-    return String(path)
-        .split("/")
-        .map(encodeUrl)
-        .join("/");
+    return String(path).split("/").map(encodeUrl).join("/");
 }
+exports.encodeUrlPath = encodeUrlPath;
 var paramCompileMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$]*)|[*.()\[\]\\+|{}^$]/g;
 var paramInjectMatcher = /:([a-zA-Z_$][a-zA-Z0-9_$?]*[?]?)|[*]/g;
 var compiledPatterns = {};
@@ -4213,7 +4482,7 @@ function compilePattern(pattern) {
         });
         compiledPatterns[pattern] = {
             matcher: new RegExp("^" + source + "$", "i"),
-            paramNames: paramNames
+            paramNames: paramNames,
         };
     }
     return compiledPatterns[pattern];
@@ -4242,19 +4511,19 @@ function injectParams(pattern, params) {
         paramName = paramName || "splat";
         // If param is optional don't check for existence
         if (paramName.slice(-1) !== "?") {
-            if (params[paramName] == null)
+            if (params[paramName] == undefined)
                 throw new Error('Missing "' + paramName + '" parameter for path "' + pattern + '"');
         }
         else {
             paramName = paramName.slice(0, -1);
-            if (params[paramName] == null) {
+            if (params[paramName] == undefined) {
                 return "";
             }
         }
         var segment;
         if (paramName === "splat" && Array.isArray(params[paramName])) {
             segment = params[paramName][splatIndex++];
-            if (segment == null)
+            if (segment == undefined)
                 throw new Error("Missing splat # " + splatIndex + ' for path "' + pattern + '"');
         }
         else {
@@ -4329,7 +4598,7 @@ function getSetterOfNodesArray(idx) {
         setterOfNodesArray.push((function (a, i) { return function (n) {
             if (n)
                 a[i] = n;
-        }; })(nodesArray, idx));
+        }; })(nodesArray, setterOfNodesArray.length));
     }
     return setterOfNodesArray[idx];
 }
@@ -4347,26 +4616,22 @@ function rootNodeFactory() {
         firstRouting = false;
         currentTransition = {
             inApp: true,
-            type: 2 /* Pop */,
+            type: RouteTransitionType.Pop,
             name: undefined,
-            params: undefined
+            params: undefined,
         };
         transitionState = -1;
         programPath = browserPath;
     }
     else {
-        if (!currentTransition &&
-            matches.length > 0 &&
-            browserPath != programPath) {
+        if (!currentTransition && matches.length > 0 && browserPath != programPath) {
             runTransition(createRedirectPush(matches[0].name, out.p));
         }
     }
-    if (currentTransition &&
-        currentTransition.type === 2 /* Pop */ &&
-        transitionState < 0) {
+    if (currentTransition && currentTransition.type === RouteTransitionType.Pop && transitionState < 0) {
         programPath = browserPath;
         currentTransition.inApp = true;
-        if (currentTransition.name == null && matches.length > 0) {
+        if (currentTransition.name == undefined && matches.length > 0) {
             currentTransition.name = matches[0].name;
             currentTransition.params = out.p;
             nextIteration();
@@ -4376,12 +4641,12 @@ function rootNodeFactory() {
         else
             return undefined;
     }
-    if (currentTransition == null) {
+    if (currentTransition == undefined) {
         activeRoutes = matches;
         while (nodesArray.length > activeRoutes.length)
-            nodesArray.pop();
+            nodesArray.shift();
         while (nodesArray.length < activeRoutes.length)
-            nodesArray.push(undefined);
+            nodesArray.unshift(undefined);
         activeParams = out.p;
     }
     var fn = noop;
@@ -4395,14 +4660,14 @@ function rootNodeFactory() {
                 var handler = r.handler;
                 var res;
                 if (isFunction(handler)) {
-                    res = handler(data);
+                    res = { key: undefined, ref: undefined, children: handler(data) };
                 }
                 else {
                     res = {
                         key: undefined,
                         ref: undefined,
                         data: data,
-                        component: handler
+                        component: handler,
                     };
                 }
                 if (r.keyBuilder)
@@ -4468,7 +4733,7 @@ function route(config, nestedRoutes) {
         data: config.data,
         handler: config.handler,
         keyBuilder: config.keyBuilder,
-        children: nestedRoutes
+        children: nestedRoutes,
     };
 }
 exports.route = route;
@@ -4478,7 +4743,7 @@ function routeDefault(config) {
         data: config.data,
         handler: config.handler,
         keyBuilder: config.keyBuilder,
-        isDefault: true
+        isDefault: true,
     };
 }
 exports.routeDefault = routeDefault;
@@ -4488,7 +4753,7 @@ function routeNotFound(config) {
         data: config.data,
         handler: config.handler,
         keyBuilder: config.keyBuilder,
-        isNotFound: true
+        isNotFound: true,
     };
 }
 exports.routeNotFound = routeNotFound;
@@ -4513,9 +4778,9 @@ function urlOfRoute(name, params) {
     if (isInApp(name)) {
         var r = nameRouteMap[name];
         if (DEBUG) {
-            if (rootRoutes == null)
+            if (rootRoutes == undefined)
                 throw Error("Cannot use urlOfRoute before defining routes");
-            if (r == null)
+            if (r == undefined)
                 throw Error("Route with name " + name + " if not defined in urlOfRoute");
         }
         return "#" + injectParams(r.url, params);
@@ -4523,6 +4788,25 @@ function urlOfRoute(name, params) {
     return name;
 }
 exports.urlOfRoute = urlOfRoute;
+function Link(data) {
+    return style({
+        tag: "a",
+        component: {
+            id: "link",
+            onClick: function () {
+                runTransition((data.replace ? createRedirectReplace : createRedirectPush)(data.name, data.params));
+                return true;
+            },
+        },
+        children: data.children,
+        attrs: { href: urlOfRoute(data.name, data.params) },
+    }, isActive(data.name, data.params)
+        ? data.activeStyle != undefined
+            ? data.activeStyle
+            : [data.style, "active"]
+        : data.style);
+}
+exports.Link = Link;
 function link(node, name, params) {
     node.data = node.data || {};
     node.data.routeName = name;
@@ -4543,7 +4827,7 @@ function link(node, name, params) {
             var data = ctx.data;
             runTransition(createRedirectPush(data.routeName, data.routeParams));
             return true;
-        }
+        },
     });
     return node;
 }
@@ -4551,18 +4835,18 @@ exports.link = link;
 function createRedirectPush(name, params) {
     return {
         inApp: isInApp(name),
-        type: 0 /* Push */,
+        type: RouteTransitionType.Push,
         name: name,
-        params: params || {}
+        params: params || {},
     };
 }
 exports.createRedirectPush = createRedirectPush;
 function createRedirectReplace(name, params) {
     return {
         inApp: isInApp(name),
-        type: 1 /* Replace */,
+        type: RouteTransitionType.Replace,
         name: name,
-        params: params || {}
+        params: params || {},
     };
 }
 exports.createRedirectReplace = createRedirectReplace;
@@ -4570,10 +4854,10 @@ function createBackTransition(distance) {
     distance = distance || 1;
     return {
         inApp: myAppHistoryDeepness >= distance,
-        type: 2 /* Pop */,
+        type: RouteTransitionType.Pop,
         name: undefined,
         params: {},
-        distance: distance
+        distance: distance,
     };
 }
 exports.createBackTransition = createBackTransition;
@@ -4582,13 +4866,13 @@ var nextTransition = null;
 var transitionState = 0;
 function doAction(transition) {
     switch (transition.type) {
-        case 0 /* Push */:
+        case RouteTransitionType.Push:
             push(urlOfRoute(transition.name, transition.params), transition.inApp);
             break;
-        case 1 /* Replace */:
+        case RouteTransitionType.Replace:
             replace(urlOfRoute(transition.name, transition.params), transition.inApp);
             break;
-        case 2 /* Pop */:
+        case RouteTransitionType.Pop:
             pop(transition.distance);
             break;
     }
@@ -4602,6 +4886,12 @@ function nextIteration() {
             if (!node)
                 continue;
             var comp = node.component;
+            if (!comp && exports.isArray(node.children)) {
+                node = node.children[0];
+                if (!node)
+                    continue;
+                comp = node.component;
+            }
             if (!comp)
                 continue;
             var fn = comp.canDeactivate;
@@ -4635,16 +4925,14 @@ function nextIteration() {
         }
         else if (transitionState == activeRoutes.length) {
             if (nextTransition) {
-                if (currentTransition &&
-                    currentTransition.type == 0 /* Push */) {
+                if (currentTransition && currentTransition.type == RouteTransitionType.Push) {
                     push(urlOfRoute(currentTransition.name, currentTransition.params), currentTransition.inApp);
                 }
                 currentTransition = nextTransition;
                 nextTransition = null;
             }
             transitionState = -1;
-            if (!currentTransition.inApp ||
-                currentTransition.type === 2 /* Pop */) {
+            if (!currentTransition.inApp || currentTransition.type === RouteTransitionType.Pop) {
                 var tr = currentTransition;
                 if (!currentTransition.inApp)
                     currentTransition = null;
@@ -4668,7 +4956,7 @@ function nextIteration() {
                 transitionState = activeRoutes.length;
                 continue;
             }
-            if (currentTransition.type !== 2 /* Pop */) {
+            if (currentTransition.type !== RouteTransitionType.Pop) {
                 var tr = currentTransition;
                 currentTransition = null;
                 doAction(tr);
@@ -4689,8 +4977,8 @@ function nextIteration() {
             var handler = rr.handler;
             var comp = undefined;
             if (isFunction(handler)) {
-                var node = handler({});
-                if (!node)
+                var node = handler({ activeRouteHandler: function () { return undefined; }, routeParams: currentTransition.params });
+                if (!node || !isObject(node) || exports.isArray(node))
                     continue;
                 comp = node.component;
             }
@@ -4747,27 +5035,33 @@ function anchor(children, name, params) {
         component: {
             id: "anchor",
             postUpdateDom: function (ctx, me) {
-                var routeName;
-                if (name) {
-                    routeName = name;
-                }
-                else {
-                    var firstChild = (me.children && me.children[0]);
-                    routeName = firstChild.attrs && firstChild.attrs.id;
-                }
-                if (!isActive(routeName, params)) {
-                    ctx.l = 0;
-                    return;
-                }
-                if (ctx.l === exports.transitionRunCount)
-                    return;
-                getDomNode(me).scrollIntoView();
-                ctx.l = exports.transitionRunCount;
-            }
-        }
+                handleAnchorRoute(ctx, me, name, params);
+            },
+            postInitDom: function (ctx, me) {
+                handleAnchorRoute(ctx, me, name, params);
+            },
+        },
     };
 }
 exports.anchor = anchor;
+function handleAnchorRoute(ctx, me, name, params) {
+    var routeName;
+    if (name) {
+        routeName = name;
+    }
+    else {
+        var firstChild = (me.children && me.children[0]);
+        routeName = firstChild.attrs && firstChild.attrs.id;
+    }
+    if (!isActive(routeName, params)) {
+        ctx.l = 0;
+        return;
+    }
+    if (ctx.l === exports.transitionRunCount)
+        return;
+    getDomNode(me).scrollIntoView();
+    ctx.l = exports.transitionRunCount;
+}
 function getRoutes() {
     return rootRoutes;
 }
@@ -4781,15 +5075,18 @@ function getActiveParams() {
 }
 exports.getActiveParams = getActiveParams;
 var allStyles = newHashObj();
+var allAnimations = newHashObj();
+var allMediaQueries = newHashObj();
 var allSprites = newHashObj();
+var bundledSprites = newHashObj();
 var allNameHints = newHashObj();
 var dynamicSprites = [];
+var bundledDynamicSprites = [];
 var imageCache = newHashObj();
 var injectedCss = "";
 var rebuildStyles = false;
 var htmlStyle = null;
 var globalCounter = 0;
-var isIE9 = ieVersion() === 9;
 var chainedBeforeFrame = setBeforeFrame(beforeFrame);
 var cssSubRuleDelimiter = /\:|\ |\>/;
 function buildCssSubRule(parent) {
@@ -4797,17 +5094,17 @@ function buildCssSubRule(parent) {
     if (!matchSplit)
         return allStyles[parent].name;
     var posSplit = matchSplit.index;
-    return (allStyles[parent.substring(0, posSplit)].name + parent.substring(posSplit));
+    return allStyles[parent.substring(0, posSplit)].name + parent.substring(posSplit);
 }
 function buildCssRule(parent, name) {
     var result = "";
     if (parent) {
         if (exports.isArray(parent)) {
-            for (var i_9 = 0; i_9 < parent.length; i_9++) {
-                if (i_9 > 0) {
+            for (var i_12 = 0; i_12 < parent.length; i_12++) {
+                if (i_12 > 0) {
                     result += ",";
                 }
-                result += "." + buildCssSubRule(parent[i_9]) + "." + name;
+                result += "." + buildCssSubRule(parent[i_12]) + "." + name;
             }
         }
         else {
@@ -4831,13 +5128,13 @@ function flattenStyle(cur, curPseudo, style, stylePseudo) {
         style(cur, curPseudo);
     }
     else if (exports.isArray(style)) {
-        for (var i_10 = 0; i_10 < style.length; i_10++) {
-            flattenStyle(cur, curPseudo, style[i_10], undefined);
+        for (var i_13 = 0; i_13 < style.length; i_13++) {
+            flattenStyle(cur, curPseudo, style[i_13], undefined);
         }
     }
     else if (typeof style === "object") {
         for (var key in style) {
-            if (!Object.prototype.hasOwnProperty.call(style, key))
+            if (!hOP.call(style, key))
                 continue;
             var val = style[key];
             if (isFunction(val)) {
@@ -4846,7 +5143,7 @@ function flattenStyle(cur, curPseudo, style, stylePseudo) {
             cur[key] = val;
         }
     }
-    if (stylePseudo != null && curPseudo != null) {
+    if (stylePseudo != undefined && curPseudo != undefined) {
         for (var pseudoKey in stylePseudo) {
             var curPseudoVal = curPseudo[pseudoKey];
             if (curPseudoVal === undefined) {
@@ -4857,31 +5154,101 @@ function flattenStyle(cur, curPseudo, style, stylePseudo) {
         }
     }
 }
-var firstStyles = false;
+var lastDppx = 0;
+var lastSpriteUrl = "";
+var lastSpriteDppx = 1;
+var hasBundledSprites = false;
+var wasSpriteUrlChanged = true;
 function beforeFrame() {
-    var dbs = document.body.style;
-    if (firstStyles && uptimeMs >= 150) {
-        dbs.opacity = "1";
-        firstStyles = false;
+    var _a, e_1, _b;
+    if (hasBundledSprites && lastDppx != getMedia().dppx) {
+        lastDppx = getMedia().dppx;
+        var newSpriteUrl = bundlePath;
+        var newSpriteDppx = 1;
+        if (lastDppx > 1) {
+            for (var i_14 = 0; i_14 < bundlePath2.length; i_14++) {
+                if (i_14 == bundlePath2.length - 1 || bundlePath2[i_14][1] >= lastDppx) {
+                    newSpriteUrl = bundlePath2[i_14][0];
+                    newSpriteDppx = bundlePath2[i_14][1];
+                }
+                else
+                    break;
+            }
+        }
+        if (lastSpriteUrl != newSpriteUrl) {
+            lastSpriteUrl = newSpriteUrl;
+            lastSpriteDppx = newSpriteDppx;
+            rebuildStyles = true;
+            wasSpriteUrlChanged = true;
+        }
     }
     if (rebuildStyles) {
-        // Hack around bug in Chrome to not have flash of unstyled content
-        if (frameCounter === 1 && "webkitAnimation" in dbs) {
-            firstStyles = true;
-            dbs.opacity = "0";
-            setTimeout(exports.invalidate, 200);
+        if (hasBundledSprites) {
+            var imageSprite = imageCache[lastSpriteUrl];
+            if (imageSprite === undefined) {
+                imageSprite = null;
+                imageCache[lastSpriteUrl] = imageSprite;
+                loadImage(lastSpriteUrl, function (image) {
+                    imageCache[lastSpriteUrl] = image;
+                    invalidateStyles();
+                });
+            }
+            if (imageSprite != null) {
+                for (var i_15 = 0; i_15 < bundledDynamicSprites.length; i_15++) {
+                    var dynSprite = bundledDynamicSprites[i_15];
+                    var colorStr = dynSprite.color;
+                    if (!isString(colorStr))
+                        colorStr = colorStr();
+                    if (wasSpriteUrlChanged || colorStr !== dynSprite.lastColor) {
+                        dynSprite.lastColor = colorStr;
+                        var mulWidth = (dynSprite.width * lastSpriteDppx) | 0;
+                        var mulHeight = (dynSprite.height * lastSpriteDppx) | 0;
+                        var lastUrl = recolorAndClip(imageSprite, colorStr, mulWidth, mulHeight, (dynSprite.left * lastSpriteDppx) | 0, (dynSprite.top * lastSpriteDppx) | 0);
+                        var stDef = allStyles[dynSprite.styleId];
+                        stDef.style = {
+                            backgroundImage: "url(" + lastUrl + ")",
+                            width: dynSprite.width,
+                            height: dynSprite.height,
+                            backgroundPosition: 0,
+                            backgroundSize: "100%",
+                        };
+                    }
+                }
+                if (wasSpriteUrlChanged) {
+                    var iWidth = imageSprite.width / lastSpriteDppx;
+                    var iHeight = imageSprite.height / lastSpriteDppx;
+                    for (var key_1 in bundledSprites) {
+                        var sprite_1 = bundledSprites[key_1];
+                        if (sprite_1.color !== undefined)
+                            continue;
+                        var stDef = allStyles[sprite_1.styleId];
+                        var width = sprite_1.width;
+                        var height = sprite_1.height;
+                        var percentWidth = (100 * iWidth) / width;
+                        var percentHeight = (100 * iHeight) / height;
+                        stDef.style = {
+                            backgroundImage: "url(" + lastSpriteUrl + ")",
+                            width: width,
+                            height: height,
+                            backgroundPosition: (100 * sprite_1.left) / (iWidth - width) + "% " + (100 * sprite_1.top) / (iHeight - height) + "%",
+                            backgroundSize: percentWidth + "% " + percentHeight + "%",
+                        };
+                    }
+                }
+                wasSpriteUrlChanged = false;
+            }
         }
-        for (var i_11 = 0; i_11 < dynamicSprites.length; i_11++) {
-            var dynSprite = dynamicSprites[i_11];
+        for (var i_16 = 0; i_16 < dynamicSprites.length; i_16++) {
+            var dynSprite = dynamicSprites[i_16];
             var image = imageCache[dynSprite.url];
-            if (image == null)
+            if (image == undefined)
                 continue;
             var colorStr = dynSprite.color();
             if (colorStr !== dynSprite.lastColor) {
                 dynSprite.lastColor = colorStr;
-                if (dynSprite.width == null)
+                if (dynSprite.width == undefined)
                     dynSprite.width = image.width;
-                if (dynSprite.height == null)
+                if (dynSprite.height == undefined)
                     dynSprite.height = image.height;
                 var lastUrl = recolorAndClip(image, colorStr, dynSprite.width, dynSprite.height, dynSprite.left, dynSprite.top);
                 var stDef = allStyles[dynSprite.styleId];
@@ -4889,11 +5256,28 @@ function beforeFrame() {
                     backgroundImage: "url(" + lastUrl + ")",
                     width: dynSprite.width,
                     height: dynSprite.height,
-                    backgroundPosition: 0
+                    backgroundPosition: 0,
                 };
             }
         }
         var styleStr = injectedCss;
+        for (var key in allAnimations) {
+            var anim = allAnimations[key];
+            styleStr += "@keyframes " + anim.name + " {";
+            for (var key2 in anim.def) {
+                var item = anim.def[key2];
+                var style_1 = newHashObj();
+                flattenStyle(style_1, undefined, item, undefined);
+                shimStyle(style_1);
+                styleStr +=
+                    key2 +
+                        (key2 == "from" || key2 == "to" ? "" : "%") +
+                        " {" +
+                        inlineStyleToCssDeclaration(style_1) +
+                        "}\n";
+            }
+            styleStr += "}\n";
+        }
         for (var key in allStyles) {
             var ss = allStyles[key];
             var parent_1 = ss.parent;
@@ -4901,51 +5285,61 @@ function beforeFrame() {
             var ssPseudo = ss.pseudo;
             var ssStyle = ss.style;
             if (isFunction(ssStyle) && ssStyle.length === 0) {
-                _a = ssStyle(), ssStyle = _a[0], ssPseudo = _a[1];
+                _a = __read(ssStyle(), 2), ssStyle = _a[0], ssPseudo = _a[1];
             }
-            if (isString(ssStyle) && ssPseudo == null) {
+            if (isString(ssStyle) && ssPseudo == undefined) {
                 ss.realName = ssStyle;
-                assert(name_1 != null, "Cannot link existing class to selector");
+                assert(name_1 != undefined, "Cannot link existing class to selector");
                 continue;
             }
             ss.realName = name_1;
-            var style_1 = newHashObj();
+            var style_2 = newHashObj();
             var flattenPseudo = newHashObj();
             flattenStyle(undefined, flattenPseudo, undefined, ssPseudo);
-            flattenStyle(style_1, flattenPseudo, ssStyle, undefined);
+            flattenStyle(style_2, flattenPseudo, ssStyle, undefined);
             var extractedInlStyle = null;
-            if (style_1["pointerEvents"]) {
+            if (style_2["pointerEvents"]) {
                 extractedInlStyle = newHashObj();
-                extractedInlStyle["pointerEvents"] = style_1["pointerEvents"];
-            }
-            if (isIE9) {
-                if (style_1["userSelect"]) {
-                    if (extractedInlStyle == null)
-                        extractedInlStyle = newHashObj();
-                    extractedInlStyle["userSelect"] = style_1["userSelect"];
-                    delete style_1["userSelect"];
-                }
+                extractedInlStyle["pointerEvents"] = style_2["pointerEvents"];
             }
             ss.inlStyle = extractedInlStyle;
-            shimStyle(style_1);
-            var cssStyle = inlineStyleToCssDeclaration(style_1);
+            shimStyle(style_2);
+            var cssStyle = inlineStyleToCssDeclaration(style_2);
             if (cssStyle.length > 0)
-                styleStr +=
-                    (name_1 == null ? parent_1 : buildCssRule(parent_1, name_1)) +
-                        " {" +
-                        cssStyle +
-                        "}\n";
+                styleStr += (name_1 == undefined ? parent_1 : buildCssRule(parent_1, name_1)) + " {" + cssStyle + "}\n";
             for (var key2 in flattenPseudo) {
                 var item = flattenPseudo[key2];
                 shimStyle(item);
                 styleStr +=
-                    (name_1 == null
-                        ? parent_1 + ":" + key2
-                        : buildCssRule(parent_1, name_1 + ":" + key2)) +
+                    (name_1 == undefined ? parent_1 + ":" + key2 : buildCssRule(parent_1, name_1 + ":" + key2)) +
                         " {" +
                         inlineStyleToCssDeclaration(item) +
                         "}\n";
             }
+        }
+        for (var key in allMediaQueries) {
+            var mediaQuery = allMediaQueries[key];
+            styleStr += "@media " + key + "{";
+            try {
+                for (var mediaQuery_1 = (e_1 = void 0, __values(mediaQuery)), mediaQuery_1_1 = mediaQuery_1.next(); !mediaQuery_1_1.done; mediaQuery_1_1 = mediaQuery_1.next()) {
+                    var definition = mediaQuery_1_1.value;
+                    for (var key2 in definition) {
+                        var item = definition[key2];
+                        var style_3 = newHashObj();
+                        flattenStyle(style_3, undefined, item, undefined);
+                        shimStyle(style_3);
+                        styleStr += "." + key2 + " {" + inlineStyleToCssDeclaration(style_3) + "}\n";
+                    }
+                }
+            }
+            catch (e_1_1) { e_1 = { error: e_1_1 }; }
+            finally {
+                try {
+                    if (mediaQuery_1_1 && !mediaQuery_1_1.done && (_b = mediaQuery_1.return)) _b.call(mediaQuery_1);
+                }
+                finally { if (e_1) throw e_1.error; }
+            }
+            styleStr += "}\n";
         }
         var styleElement = document.createElement("style");
         styleElement.type = "text/css";
@@ -4966,7 +5360,6 @@ function beforeFrame() {
         rebuildStyles = false;
     }
     chainedBeforeFrame();
-    var _a;
 }
 function style(node) {
     var styles = [];
@@ -4987,25 +5380,33 @@ function style(node) {
             continue;
         }
         var s = ca[i];
-        if (s == null || s === true || s === false || s === "") {
+        if (s == undefined || s === true || s === false || s === "" || s === 0) {
             // skip
         }
         else if (isString(s)) {
             var sd = allStyles[s];
-            if (className == null)
-                className = sd.realName;
-            else
-                className = className + " " + sd.realName;
-            var inlS = sd.inlStyle;
-            if (inlS) {
-                if (inlineStyle == null)
-                    inlineStyle = {};
-                inlineStyle = exports.assign(inlineStyle, inlS);
+            if (sd != undefined) {
+                if (className == undefined)
+                    className = sd.realName;
+                else
+                    className = className + " " + sd.realName;
+                var inlS = sd.inlStyle;
+                if (inlS) {
+                    if (inlineStyle == undefined)
+                        inlineStyle = {};
+                    inlineStyle = exports.assign(inlineStyle, inlS);
+                }
+            }
+            else {
+                if (className == undefined)
+                    className = s;
+                else
+                    className = className + " " + s;
             }
         }
         else if (exports.isArray(s)) {
             if (ca.length > i + 1) {
-                if (stack == null)
+                if (stack == undefined)
                     stack = [];
                 stack.push(i);
                 stack.push(ca);
@@ -5015,7 +5416,7 @@ function style(node) {
             continue;
         }
         else {
-            if (inlineStyle == null)
+            if (inlineStyle == undefined)
                 inlineStyle = {};
             for (var key in s) {
                 if (s.hasOwnProperty(key)) {
@@ -5038,10 +5439,7 @@ var msPattern = /^ms-/;
 function hyphenateStyle(s) {
     if (s === "cssFloat")
         return "float";
-    return s
-        .replace(uppercasePattern, "-$1")
-        .toLowerCase()
-        .replace(msPattern, "-ms-");
+    return s.replace(uppercasePattern, "-$1").toLowerCase().replace(msPattern, "-ms-");
 }
 function inlineStyleToCssDeclaration(style) {
     var res = "";
@@ -5059,7 +5457,7 @@ function styleDef(style, pseudo, nameHint) {
     return styleDefEx(undefined, style, pseudo, nameHint);
 }
 exports.styleDef = styleDef;
-function styleDefEx(parent, style, pseudo, nameHint) {
+function makeName(nameHint) {
     if (nameHint && nameHint !== "b-") {
         nameHint = nameHint.replace(/[^a-z0-9_-]/gi, "_").replace(/^[0-9]/, "_$&");
         if (allNameHints[nameHint]) {
@@ -5073,13 +5471,65 @@ function styleDefEx(parent, style, pseudo, nameHint) {
     else {
         nameHint = "b-" + globalCounter++;
     }
+    return nameHint;
+}
+function keyframesDef(def, nameHint) {
+    nameHint = makeName(nameHint);
+    allAnimations[nameHint] = { name: nameHint, def: def };
+    invalidateStyles();
+    var res = function (params) {
+        if (isString(params))
+            return params + " " + nameHint;
+        return nameHint;
+    };
+    res.toString = res;
+    return res;
+}
+exports.keyframesDef = keyframesDef;
+/**
+ * create media query
+ * @example
+ * // can be called with string query definition
+ * mediaQueryDef("only screen (min-width: 1200px)", {
+                [style]: {
+                    opacity: 1
+                }
+            });
+ * @example
+ * // also build can be used @see MediaRuleBuilder
+ * mediaQueryDef((createMediaQuery()
+ .rule("only", "screen")
+    .and({type: "max-width", value: 1200, unit: "px"})
+    .and({type: "min-width", value: 768, unit: "px"})
+ .or()
+ .rule()
+    .and({type: "aspect-ratio", width: 11, height: 5})
+ .build(), {
+        [style]: {
+            opacity: 1
+        }
+    });
+ *
+ **/
+function mediaQueryDef(def, mediaQueryDefinition) {
+    var mediaQuery = allMediaQueries[def];
+    if (!mediaQuery) {
+        mediaQuery = [];
+        allMediaQueries[def] = mediaQuery;
+    }
+    mediaQuery.push(mediaQueryDefinition);
+    invalidateStyles();
+}
+exports.mediaQueryDef = mediaQueryDef;
+function styleDefEx(parent, style, pseudo, nameHint) {
+    nameHint = makeName(nameHint);
     allStyles[nameHint] = {
         name: nameHint,
         realName: nameHint,
         parent: parent,
         style: style,
-        inlStyle: null,
-        pseudo: pseudo
+        inlStyle: undefined,
+        pseudo: pseudo,
     };
     invalidateStyles();
     return nameHint;
@@ -5091,8 +5541,8 @@ function selectorStyleDef(selector, style, pseudo) {
         realName: null,
         parent: selector,
         style: style,
-        inlStyle: null,
-        pseudo: pseudo
+        inlStyle: undefined,
+        pseudo: pseudo,
     };
     invalidateStyles();
 }
@@ -5107,9 +5557,10 @@ function updateSprite(spDef) {
     var style = {
         backgroundImage: "url(" + spDef.url + ")",
         width: spDef.width,
-        height: spDef.height
+        height: spDef.height,
+        backgroundPosition: -spDef.left + "px " + -spDef.top + "px",
+        backgroundSize: spDef.width + "px " + spDef.height + "px",
     };
-    style.backgroundPosition = -spDef.left + "px " + -spDef.top + "px";
     stDef.style = style;
     invalidateStyles();
 }
@@ -5200,22 +5651,12 @@ function sprite(url, color, width, height, left, top) {
     if (isFunction(color)) {
         isVarColor = true;
         colorId = color[funcIdName];
-        if (colorId == null) {
+        if (colorId == undefined) {
             colorId = "" + lastFuncId++;
             color[funcIdName] = colorId;
         }
     }
-    var key = url +
-        ":" +
-        colorId +
-        ":" +
-        (width || 0) +
-        ":" +
-        (height || 0) +
-        ":" +
-        left +
-        ":" +
-        top;
+    var key = url + ":" + colorId + ":" + (width || 0) + ":" + (height || 0) + ":" + left + ":" + top;
     var spDef = allSprites[key];
     if (spDef)
         return spDef.styleId;
@@ -5235,13 +5676,13 @@ function sprite(url, color, width, height, left, top) {
         }
         invalidateStyles();
     }
-    else if (width == null || height == null || color != null) {
+    else if (width == undefined || height == undefined || color != undefined) {
         loadImage(url, function (image) {
-            if (spDef.width == null)
+            if (spDef.width == undefined)
                 spDef.width = image.width;
-            if (spDef.height == null)
+            if (spDef.height == undefined)
                 spDef.height = image.height;
-            if (color != null) {
+            if (color != undefined) {
                 spDef.url = recolorAndClip(image, color, spDef.width, spDef.height, spDef.left, spDef.top);
                 spDef.left = 0;
                 spDef.top = 0;
@@ -5257,32 +5698,73 @@ function sprite(url, color, width, height, left, top) {
 }
 exports.sprite = sprite;
 var bundlePath = window["bobrilBPath"] || "bundle.png";
+var bundlePath2 = window["bobrilBPath2"] || [];
 function setBundlePngPath(path) {
     bundlePath = path;
 }
 exports.setBundlePngPath = setBundlePngPath;
+function getSpritePaths() {
+    return [bundlePath, bundlePath2];
+}
+exports.getSpritePaths = getSpritePaths;
+function setSpritePaths(main, others) {
+    bundlePath = main;
+    bundlePath2 = others;
+}
+exports.setSpritePaths = setSpritePaths;
 function spriteb(width, height, left, top) {
-    var url = bundlePath;
-    var key = url + "::" + width + ":" + height + ":" + left + ":" + top;
-    var spDef = allSprites[key];
+    var key = ":" + width + ":" + height + ":" + left + ":" + top;
+    var spDef = bundledSprites[key];
     if (spDef)
         return spDef.styleId;
-    var styleId = styleDef({ width: 0, height: 0 });
+    hasBundledSprites = true;
+    var styleId = styleDef({ width: width, height: height });
     spDef = {
         styleId: styleId,
-        url: url,
         width: width,
         height: height,
         left: left,
-        top: top
+        top: top,
     };
-    updateSprite(spDef);
-    allSprites[key] = spDef;
+    bundledSprites[key] = spDef;
+    wasSpriteUrlChanged = true;
     return styleId;
 }
 exports.spriteb = spriteb;
 function spritebc(color, width, height, left, top) {
-    return sprite(bundlePath, color, width, height, left, top);
+    if (color == undefined) {
+        return spriteb(width, height, left, top);
+    }
+    var colorId;
+    if (isString(color)) {
+        colorId = color;
+    }
+    else {
+        colorId = color[funcIdName];
+        if (colorId == undefined) {
+            colorId = "" + lastFuncId++;
+            color[funcIdName] = colorId;
+        }
+    }
+    var key = colorId + ":" + width + ":" + height + ":" + left + ":" + top;
+    var spDef = bundledSprites[key];
+    if (spDef)
+        return spDef.styleId;
+    hasBundledSprites = true;
+    var styleId = styleDef({ width: width, height: height });
+    spDef = {
+        styleId: styleId,
+        width: width,
+        height: height,
+        left: left,
+        top: top,
+    };
+    spDef.color = color;
+    spDef.lastColor = "";
+    spDef.lastUrl = "";
+    bundledDynamicSprites.push(spDef);
+    bundledSprites[key] = spDef;
+    return styleId;
 }
 exports.spritebc = spritebc;
 function injectCss(css) {
@@ -5294,12 +5776,13 @@ function asset(path) {
     return path;
 }
 exports.asset = asset;
+selectorStyleDef("html." + draggingStyle + " *", { cursor: "inherit !important", userSelect: "none !important" });
 // Bobril.svgExtensions
 function polarToCartesian(centerX, centerY, radius, angleInDegrees) {
-    var angleInRadians = angleInDegrees * Math.PI / 180.0;
+    var angleInRadians = (angleInDegrees * Math.PI) / 180.0;
     return {
         x: centerX + radius * Math.sin(angleInRadians),
-        y: centerY - radius * Math.cos(angleInRadians)
+        y: centerY - radius * Math.cos(angleInRadians),
     };
 }
 function svgDescribeArc(x, y, radius, startAngle, endAngle, startWithLine) {
@@ -5334,7 +5817,7 @@ function svgDescribeArc(x, y, radius, startAngle, endAngle, startWithLine) {
         arcSweep,
         largeArg,
         end.x,
-        end.y
+        end.y,
     ].join(" ");
     if (close)
         d += "Z";
@@ -5349,9 +5832,7 @@ function svgPie(x, y, radiusBig, radiusSmall, startAngle, endAngle) {
         if (!nextWithLine)
             return p;
     }
-    return (p +
-        svgDescribeArc(x, y, radiusSmall, endAngle, startAngle, nextWithLine) +
-        "Z");
+    return p + svgDescribeArc(x, y, radiusSmall, endAngle, startAngle, nextWithLine) + "Z";
 }
 exports.svgPie = svgPie;
 function svgCircle(x, y, radius) {
@@ -5370,7 +5851,7 @@ function withKey(content, key) {
     }
     return {
         key: key,
-        children: content
+        children: content,
     };
 }
 exports.withKey = withKey;
@@ -5403,7 +5884,7 @@ exports.styledDiv = styledDiv;
 function createVirtualComponent(component) {
     return function (data, children) {
         if (children !== undefined) {
-            if (data == null)
+            if (data == undefined)
                 data = {};
             data.children = children;
         }
@@ -5481,7 +5962,7 @@ function propa(prop) {
 exports.propa = propa;
 function propim(value, ctx, onChange) {
     return function (val) {
-        if (val !== undefined && val !== value) {
+        if (val !== undefined && !is(val, value)) {
             var oldVal = val;
             value = val;
             if (onChange !== undefined)
@@ -5492,6 +5973,47 @@ function propim(value, ctx, onChange) {
     };
 }
 exports.propim = propim;
+function debounceProp(from, delay) {
+    if (delay === void 0) { delay = 500; }
+    var current = from();
+    var lastSet = current;
+    var timer;
+    function clearTimer() {
+        if (timer !== undefined) {
+            clearTimeout(timer);
+            timer = undefined;
+        }
+    }
+    return function (value) {
+        if (value === undefined) {
+            var origin_1 = from();
+            if (origin_1 === lastSet)
+                return current;
+            current = origin_1;
+            lastSet = origin_1;
+            clearTimer();
+            return origin_1;
+        }
+        else {
+            clearTimer();
+            // setting same value means flush
+            if (current === value) {
+                lastSet = value;
+                from(value);
+            }
+            else {
+                current = value;
+                timer = setTimeout(function () {
+                    lastSet = current;
+                    from(current);
+                    timer = undefined;
+                }, delay);
+            }
+            return value;
+        }
+    };
+}
+exports.debounceProp = debounceProp;
 function getValue(value) {
     if (isFunction(value)) {
         return value();
@@ -5520,53 +6042,639 @@ if (!window.b)
         setAfterFrame: setAfterFrame,
         setBeforeFrame: setBeforeFrame,
         getDnds: exports.getDnds,
-        setBeforeInit: setBeforeInit
+        setBeforeInit: setBeforeInit,
     };
+function shallowEqual(a, b) {
+    if (is(a, b)) {
+        return true;
+    }
+    if (!isObject(a) || !isObject(b)) {
+        return false;
+    }
+    var kA = Object.keys(a);
+    var kB = Object.keys(b);
+    if (kA.length !== kB.length) {
+        return false;
+    }
+    for (var i_17 = 0; i_17 < kA.length; i_17++) {
+        if (!hOP.call(b, kA[i_17]) || !is(a[kA[i_17]], b[kA[i_17]])) {
+            return false;
+        }
+    }
+    return true;
+}
+exports.shallowEqual = shallowEqual;
+// TSX reactNamespace emulation
+// PureFuncs: createElement, getAllPropertyNames, component
+var jsxFactoryCache = new Map();
+function getStringPropertyDescriptors(obj) {
+    var props = new Map();
+    do {
+        Object.getOwnPropertyNames(obj).forEach(function (prop) {
+            if (!this.has(prop))
+                this.set(prop, Object.getOwnPropertyDescriptor(obj, prop));
+        }, props);
+    } while ((obj = Object.getPrototypeOf(obj)));
+    return props;
+}
 function createElement(name, props) {
-    var children = [];
-    for (var i = 2; i < arguments.length; i++) {
-        var ii = arguments[i];
-        children.push(ii);
+    var children;
+    var argumentsCount = arguments.length - 2;
+    if (argumentsCount === 0) {
+    }
+    else if (argumentsCount === 1) {
+        children = arguments[2];
+    }
+    else {
+        children = new Array(argumentsCount);
+        for (var i_18 = 0; i_18 < argumentsCount; i_18++) {
+            children[i_18] = arguments[i_18 + 2];
+        }
     }
     if (isString(name)) {
-        var res = { tag: name, children: children };
-        if (props == null) {
+        var res = argumentsCount === 0 ? { tag: name } : { tag: name, children: children };
+        if (props == undefined) {
             return res;
         }
-        var attrs = {};
-        var someAttrs = false;
+        var attrs;
+        var component;
         for (var n in props) {
             if (!props.hasOwnProperty(n))
                 continue;
+            var propValue = props[n];
             if (n === "style") {
-                style(res, props[n]);
+                style(res, propValue);
                 continue;
             }
-            if (n === "key" ||
-                n === "ref" ||
-                n === "className" ||
-                n === "component" ||
-                n === "data") {
-                res[n] = props[n];
+            if (n === "ref") {
+                if (isString(propValue)) {
+                    assert(getCurrentCtx() != undefined);
+                    res.ref = [getCurrentCtx(), propValue];
+                }
+                else
+                    res.ref = propValue;
                 continue;
             }
-            someAttrs = true;
-            attrs[n] = props[n];
+            if (n === "key" || n === "className" || n === "component" || n === "data" || n === "children") {
+                res[n] = propValue;
+                continue;
+            }
+            if (n.startsWith("on") && isFunction(propValue)) {
+                if (component == undefined) {
+                    component = {};
+                    res.component = component;
+                }
+                component[n] = propValue.call.bind(propValue);
+                continue;
+            }
+            if (attrs == undefined) {
+                attrs = {};
+                res.attrs = attrs;
+            }
+            attrs[n] = propValue;
         }
-        if (someAttrs)
-            res.attrs = attrs;
         return res;
     }
     else {
-        var res_1 = name(props, children);
-        if (props != null) {
-            if (props.key != null)
+        var res_1;
+        var factory = jsxFactoryCache.get(name);
+        if (factory === undefined) {
+            factory = createFactory(name);
+            jsxFactoryCache.set(name, factory);
+        }
+        if (argumentsCount == 0) {
+            res_1 = factory(props);
+        }
+        else {
+            if (factory.length == 1) {
+                if (props == undefined)
+                    props = { children: children };
+                else
+                    props.children = children;
+                res_1 = factory(props);
+            }
+            else {
+                res_1 = factory(props, children);
+            }
+        }
+        if (props != undefined) {
+            if (props.key != undefined)
                 res_1.key = props.key;
-            if (props.ref != null)
+            if (props.ref != undefined)
                 res_1.ref = props.ref;
         }
         return res_1;
     }
 }
 exports.createElement = createElement;
+function Fragment(data) {
+    return data;
+}
+exports.Fragment = Fragment;
+function Portal(data) {
+    var _a;
+    return { tag: "@", data: (_a = data.element) !== null && _a !== void 0 ? _a : document.body, children: data.children, key: data.key, ref: data.ref };
+}
+exports.Portal = Portal;
 exports.__spread = exports.assign;
+var EventResult;
+(function (EventResult) {
+    /// event propagation will continue. It's like returning falsy value.
+    EventResult[EventResult["NotHandled"] = 0] = "NotHandled";
+    /// event propagation will stop and default handing will be prevented. returning true has same meaning
+    EventResult[EventResult["HandledPreventDefault"] = 1] = "HandledPreventDefault";
+    /// event propagation will stop but default handing will still run
+    EventResult[EventResult["HandledButRunDefault"] = 2] = "HandledButRunDefault";
+    /// event propagation will continue but default handing will be prevented
+    EventResult[EventResult["NotHandledPreventDefault"] = 3] = "NotHandledPreventDefault";
+})(EventResult = exports.EventResult || (exports.EventResult = {}));
+var Component = /** @class */ (function () {
+    function Component(data, me) {
+        this.data = data;
+        this.me = me;
+        this.cfg = undefined;
+        this.refs = undefined;
+    }
+    return Component;
+}());
+exports.Component = Component;
+var PureComponent = /** @class */ (function (_super) {
+    __extends(PureComponent, _super);
+    function PureComponent() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    PureComponent.prototype.shouldChange = function (newData, oldData) {
+        return !shallowEqual(newData, oldData);
+    };
+    return PureComponent;
+}(Component));
+exports.PureComponent = PureComponent;
+function forwardRender(m) {
+    return function (ctx, me, _oldMe) {
+        me.children = m.call(ctx, ctx.data);
+    };
+}
+function forwardInit(m) {
+    return function (ctx) {
+        m.call(ctx, ctx.data);
+    };
+}
+function forwardShouldChange(m) {
+    return function (ctx, me, oldMe) {
+        return m.call(ctx, me.data, oldMe.data);
+    };
+}
+function forwardMe(m) {
+    return m.call.bind(m);
+}
+function combineWithForwardMe(component, name, func) {
+    var existing = component[name];
+    if (existing != undefined) {
+        component[name] = function (ctx, me) {
+            existing(ctx, me);
+            func.call(ctx, me);
+        };
+    }
+    else {
+        component[name] = forwardMe(func);
+    }
+}
+var methodsWithMeParam = ["destroy", "postInitDom", "postUpdateDom", "postUpdateDomEverytime"];
+function component(component, name) {
+    var bobrilComponent = {};
+    if (component.prototype instanceof Component) {
+        var proto = component.prototype;
+        var protoStatic = proto.constructor;
+        bobrilComponent.id = getId(name, protoStatic);
+        var protoMap = getStringPropertyDescriptors(proto);
+        protoMap.forEach(function (descriptor, key) {
+            var value = descriptor.value;
+            if (value == undefined)
+                return;
+            var set = undefined;
+            if (key === "render") {
+                set = forwardRender(value);
+            }
+            else if (key === "init") {
+                set = forwardInit(value);
+            }
+            else if (key === "shouldChange") {
+                set = forwardShouldChange(value);
+            }
+            else if (methodsWithMeParam.indexOf(key) >= 0) {
+                combineWithForwardMe(bobrilComponent, key, value);
+            }
+            else if (key === "postRenderDom") {
+                combineWithForwardMe(bobrilComponent, methodsWithMeParam[1], value);
+                combineWithForwardMe(bobrilComponent, methodsWithMeParam[2], value);
+            }
+            else if (isFunction(value) && /^(?:canDeactivate$|on[A-Z])/.test(key)) {
+                set = forwardMe(value);
+            }
+            if (set !== undefined) {
+                bobrilComponent[key] = set;
+            }
+        });
+        bobrilComponent.ctxClass = component;
+        bobrilComponent.canActivate = protoStatic.canActivate;
+    }
+    else {
+        bobrilComponent.id = getId(name, component);
+        bobrilComponent.render = forwardRender(component);
+    }
+    return function (data) {
+        return { data: data, component: bobrilComponent };
+    };
+}
+exports.component = component;
+function getId(name, classOrFunction) {
+    return name || classOrFunction.id || classOrFunction.name + "_" + allocateMethodId();
+}
+function createFactory(comp) {
+    if (comp.prototype instanceof Component) {
+        return component(comp);
+    }
+    else if (comp.length == 2) {
+        // classic bobril factory method
+        return comp;
+    }
+    else {
+        return component(comp);
+    }
+}
+function checkCurrentRenderCtx() {
+    assert(currentCtx != undefined && hookId >= 0, "Hooks could be used only in Render method");
+}
+function _getHooks() {
+    checkCurrentRenderCtx();
+    var hooks = currentCtx.$hooks;
+    if (hooks === undefined) {
+        hooks = [];
+        currentCtx.$hooks = hooks;
+    }
+    return hooks;
+}
+exports._getHooks = _getHooks;
+function _allocHook() {
+    return hookId++;
+}
+exports._allocHook = _allocHook;
+function useState(initValue) {
+    var myHookId = hookId++;
+    var hooks = _getHooks();
+    var ctx = currentCtx;
+    var hook = hooks[myHookId];
+    if (hook === undefined) {
+        if (isFunction(initValue)) {
+            initValue = initValue();
+        }
+        hook = function (value) {
+            if (value !== undefined && !is(value, hook[0])) {
+                hook[0] = value;
+                exports.invalidate(ctx);
+            }
+            return hook[0];
+        };
+        hook[0] = initValue;
+        hook[1] = function (value) {
+            if (isFunction(value)) {
+                value = value(hook[0]);
+            }
+            if (!is(value, hook[0])) {
+                hook[0] = value;
+                exports.invalidate(ctx);
+            }
+        };
+        hooks[myHookId] = hook;
+    }
+    return hook;
+}
+exports.useState = useState;
+function createContext(defaultValue, id) {
+    if (id === undefined) {
+        id = "__b#" + allocateMethodId();
+    }
+    return { id: id, dv: defaultValue };
+}
+exports.createContext = createContext;
+function context(key) {
+    return function (target, propertyKey) {
+        Object.defineProperty(target, propertyKey, {
+            configurable: true,
+            get: function () {
+                var cfg = this.me.cfg || this.cfg;
+                if (cfg == undefined || !(key.id in cfg))
+                    return key.dv;
+                return cfg[key.id];
+            },
+            set: function (value) {
+                extendCfg(this, key.id, value);
+            },
+        });
+    };
+}
+exports.context = context;
+function useContext(key) {
+    checkCurrentRenderCtx();
+    var cfg = currentCtx.me.cfg || currentCtx.cfg;
+    if (isString(key)) {
+        if (cfg == undefined)
+            return undefined;
+        return cfg[key];
+    }
+    else {
+        if (cfg == undefined || !(key.id in cfg))
+            return key.dv;
+        return cfg[key.id];
+    }
+}
+exports.useContext = useContext;
+function useProvideContext(key, value) {
+    checkCurrentRenderCtx();
+    extendCfg(currentCtx, isString(key) ? key : key.id, value);
+}
+exports.useProvideContext = useProvideContext;
+function useRef(initialValue) {
+    var myHookId = hookId++;
+    var hooks = _getHooks();
+    var hook = hooks[myHookId];
+    if (hook === undefined) {
+        hook = function (value) {
+            if (value !== undefined) {
+                hook.current = value;
+            }
+            return hook.current;
+        };
+        hook.current = initialValue;
+        hooks[myHookId] = hook;
+    }
+    return hook;
+}
+exports.useRef = useRef;
+function useStore(factory) {
+    var myHookId = hookId++;
+    var hooks = _getHooks();
+    var hook = hooks[myHookId];
+    if (hook === undefined) {
+        hook = factory();
+        if (isDisposable(hook)) {
+            addDisposable(currentCtx, hook);
+        }
+        hooks[myHookId] = hook;
+    }
+    return hook;
+}
+exports.useStore = useStore;
+function hookPostInitDom(ctx) {
+    var hooks = ctx.$hooks;
+    var len = hooks.length;
+    for (var i_19 = 0; i_19 < len; i_19++) {
+        var hook = hooks[i_19];
+        var fn = hook.postInitDom;
+        if (fn !== undefined) {
+            fn.call(hook, ctx);
+        }
+    }
+}
+function hookPostUpdateDom(ctx) {
+    var hooks = ctx.$hooks;
+    var len = hooks.length;
+    for (var i_20 = 0; i_20 < len; i_20++) {
+        var hook = hooks[i_20];
+        var fn = hook.postUpdateDom;
+        if (fn !== undefined) {
+            fn.call(hook, ctx);
+        }
+    }
+}
+function hookPostUpdateDomEverytime(ctx) {
+    var hooks = ctx.$hooks;
+    var len = hooks.length;
+    for (var i_21 = 0; i_21 < len; i_21++) {
+        var hook = hooks[i_21];
+        var fn = hook.postUpdateDomEverytime;
+        if (fn !== undefined) {
+            fn.call(hook, ctx);
+        }
+    }
+}
+function bind(target, propertyKey, descriptor) {
+    if (propertyKey != undefined && descriptor != undefined) {
+        var fn_1 = descriptor.value;
+        assert(isFunction(fn_1), "Only methods can be decorated with @bind. '" + propertyKey + "' is not a method!");
+        var definingProperty_1 = false;
+        return {
+            configurable: true,
+            get: function () {
+                if (definingProperty_1) {
+                    return fn_1;
+                }
+                var value = fn_1.bind(this);
+                definingProperty_1 = true;
+                Object.defineProperty(this, propertyKey, {
+                    value: value,
+                    configurable: true,
+                    writable: true,
+                });
+                definingProperty_1 = false;
+                return value;
+            },
+        };
+    }
+    var proto = target.prototype;
+    var keys = Object.getOwnPropertyNames(proto);
+    keys.forEach(function (key) {
+        if (key === "constructor") {
+            return;
+        }
+        var descriptor = Object.getOwnPropertyDescriptor(proto, key);
+        if (isFunction(descriptor.value)) {
+            Object.defineProperty(proto, key, bind(target, key, descriptor));
+        }
+    });
+    return target;
+}
+exports.bind = bind;
+var DepsChangeDetector = /** @class */ (function () {
+    function DepsChangeDetector() {
+    }
+    DepsChangeDetector.prototype.detectChange = function (deps) {
+        var changed = false;
+        if (deps != undefined) {
+            var lastDeps = this.deps;
+            if (lastDeps == undefined) {
+                changed = true;
+            }
+            else {
+                var depsLen = deps.length;
+                if (depsLen != lastDeps.length)
+                    changed = true;
+                else {
+                    for (var i_22 = 0; i_22 < depsLen; i_22++) {
+                        if (!is(deps[i_22], lastDeps[i_22])) {
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        else
+            changed = true;
+        this.deps = deps;
+        return changed;
+    };
+    return DepsChangeDetector;
+}());
+var MemoHook = /** @class */ (function (_super) {
+    __extends(MemoHook, _super);
+    function MemoHook() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    MemoHook.prototype.memoize = function (factory, deps) {
+        if (this.detectChange(deps)) {
+            this.current = factory();
+        }
+        return this.current;
+    };
+    return MemoHook;
+}(DepsChangeDetector));
+function useMemo(factory, deps) {
+    var myHookId = hookId++;
+    var hooks = _getHooks();
+    var hook = hooks[myHookId];
+    if (hook === undefined) {
+        hook = new MemoHook();
+        hooks[myHookId] = hook;
+    }
+    return hook.memoize(factory, deps);
+}
+exports.useMemo = useMemo;
+var effectCallbacks = [];
+function executeEffectCallbacks() {
+    var cbList = effectCallbacks;
+    effectCallbacks = [];
+    for (var i = 0, len = cbList.length; i < len; i++) {
+        cbList[i]();
+    }
+}
+var EffectHook = /** @class */ (function (_super) {
+    __extends(EffectHook, _super);
+    function EffectHook() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    EffectHook.prototype.update = function (callback, deps) {
+        this.callback = callback;
+        if (this.detectChange(deps)) {
+            this.doRun();
+        }
+    };
+    EffectHook.prototype.doRun = function () {
+        effectCallbacks.push(this.run);
+    };
+    EffectHook.prototype.run = function () {
+        var c = this.callback;
+        if (c != undefined) {
+            this.dispose();
+            this.lastDisposer = c();
+        }
+    };
+    EffectHook.prototype.dispose = function () {
+        this.callback = undefined;
+        if (isFunction(this.lastDisposer))
+            this.lastDisposer();
+        this.lastDisposer = undefined;
+    };
+    return EffectHook;
+}(DepsChangeDetector));
+function useEffect(callback, deps) {
+    var myHookId = hookId++;
+    var hooks = _getHooks();
+    var hook = hooks[myHookId];
+    if (hook === undefined) {
+        hook = new EffectHook();
+        hook.run = hook.run.bind(hook);
+        addDisposable(currentCtx, hook);
+        hooks[myHookId] = hook;
+    }
+    hook.update(callback, deps);
+}
+exports.useEffect = useEffect;
+var LayoutEffectHook = /** @class */ (function (_super) {
+    __extends(LayoutEffectHook, _super);
+    function LayoutEffectHook() {
+        var _this = _super.call(this) || this;
+        _this.shouldRun = false;
+        return _this;
+    }
+    LayoutEffectHook.prototype.postInitDom = function (ctx) {
+        this.postUpdateDomEverytime(ctx);
+    };
+    LayoutEffectHook.prototype.postUpdateDomEverytime = function (ctx) {
+        if (this.shouldRun) {
+            this.shouldRun = false;
+            this.run();
+            if (ctx[ctxInvalidated] > frameCounter) {
+                deferSyncUpdate();
+            }
+        }
+    };
+    LayoutEffectHook.prototype.doRun = function () {
+        this.shouldRun = true;
+    };
+    return LayoutEffectHook;
+}(EffectHook));
+function useLayoutEffect(callback, deps) {
+    var myHookId = hookId++;
+    var hooks = _getHooks();
+    var hook = hooks[myHookId];
+    if (hook === undefined) {
+        currentCtx.$hookFlags |= hasPostInitDom | hasPostUpdateDomEverytime;
+        hook = new LayoutEffectHook();
+        addDisposable(currentCtx, hook);
+        hooks[myHookId] = hook;
+    }
+    hook.update(callback, deps);
+}
+exports.useLayoutEffect = useLayoutEffect;
+var EventsHook = /** @class */ (function () {
+    function EventsHook() {
+    }
+    return EventsHook;
+}());
+function useEvents(events) {
+    var myHookId = hookId++;
+    var hooks = _getHooks();
+    var hook = hooks[myHookId];
+    if (hook === undefined) {
+        currentCtx.$hookFlags |= hasEvents;
+        hook = new EventsHook();
+        hooks[myHookId] = hook;
+    }
+    else {
+        assert(hook instanceof EventsHook);
+    }
+    hook.events = events;
+}
+exports.useEvents = useEvents;
+var CaptureEventsHook = /** @class */ (function () {
+    function CaptureEventsHook() {
+    }
+    return CaptureEventsHook;
+}());
+function useCaptureEvents(events) {
+    var myHookId = hookId++;
+    var hooks = _getHooks();
+    var hook = hooks[myHookId];
+    if (hook === undefined) {
+        currentCtx.$hookFlags |= hasCaptureEvents;
+        hook = new CaptureEventsHook();
+        hooks[myHookId] = hook;
+    }
+    else {
+        assert(hook instanceof CaptureEventsHook);
+    }
+    hook.events = events;
+}
+exports.useCaptureEvents = useCaptureEvents;
+//# sourceMappingURL=bobril.js.map

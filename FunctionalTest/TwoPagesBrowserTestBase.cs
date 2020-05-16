@@ -21,7 +21,7 @@ namespace FunctionalTest
         protected IReadOnlyList<string> StdoutB => _stdoutB;
         protected IReadOnlyList<string> StderrA => _stderrA;
         protected IReadOnlyList<string> StderrB => _stderrB;
-        protected Task TaskA => _taskCompletionSourceA.Task; 
+        protected Task TaskA => _taskCompletionSourceA.Task;
         protected Task TaskB => _taskCompletionSourceB.Task;
 
         public TwoPagesBrowserTestBase(BrowserFixture browserFixture)
@@ -30,9 +30,9 @@ namespace FunctionalTest
             PageB = browserFixture.Browser.NewPageAsync().GetAwaiter().GetResult();
             SetupPages();
         }
-        
+
         protected abstract string RuntimeTemplate { get; }
-        
+
         protected string InjectScriptToRuntimeTemplate(string testName, string injectCode)
         {
             return RuntimeTemplate
@@ -60,8 +60,8 @@ namespace FunctionalTest
                             if (args.Message.Text == "ASYNC_TEST")
                             {
                                 isAsyncTest = true;
-                            } 
-                            else if (isAsyncTest && args.Message.Text == "TEST_ASYNC_FINISH" || 
+                            }
+                            else if (isAsyncTest && args.Message.Text == "TEST_ASYNC_FINISH" ||
                                      !isAsyncTest && args.Message.Text == "TEST_FINISH")
                             {
                                 taskCompletionSource.SetResult(true);
@@ -79,10 +79,10 @@ namespace FunctionalTest
                             throw new NotSupportedException();
                     }
                 };
-                
+
                 string ParseErrorMessage(string message)
                 {
-                    var firstLine = message.Split("\n")[0];
+                    var firstLine = message!.Split("\n")[0];
                     return firstLine;
                 }
             }
@@ -93,7 +93,7 @@ namespace FunctionalTest
             if (command == string.Empty)
             {
                 return Task.CompletedTask;
-            } 
+            }
             if (command.StartsWith("MoveMouse "))
             {
                 var data = command.Split(" ");
@@ -107,7 +107,7 @@ namespace FunctionalTest
             {
                 return page.Keyboard.TypeAsync(command.Substring("Type ".Length));
             }
-            
+
             throw new NotSupportedException();
         }
 
