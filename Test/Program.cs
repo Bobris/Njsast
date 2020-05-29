@@ -201,7 +201,7 @@ namespace Test
             var errors = 0;
             foreach (var bundlerTestData in new BundlerDataProviderAttribute("Input/Bundler").GetTypedData())
             {
-                if (bundlerTestData.Name != "Bobril") continue;
+                if (bundlerTestData.Name != "ExportVarFunction") continue;
                 var outFiles = BundlerTest.BundlerTestCore(bundlerTestData);
                 tests++;
                 foreach (var pair in outFiles)
