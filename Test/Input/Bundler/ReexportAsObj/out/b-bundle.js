@@ -264,10 +264,6 @@
     function fn(a, b) {
         return a + b;
     }
-    var __export_$ = {
-        fn: fn
-    };
-    var lib = __export_$;
-    console.log(lib.fn(1, 2));
+    console.log(fn(1, 2));
 }.call(this);
 

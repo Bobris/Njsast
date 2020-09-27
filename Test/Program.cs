@@ -201,7 +201,7 @@ namespace Test
             var errors = 0;
             foreach (var bundlerTestData in new BundlerDataProviderAttribute("Input/Bundler").GetTypedData())
             {
-                if (bundlerTestData.Name != "ExportAsNamespace") continue;
+                if (bundlerTestData.Name != "SplitWithAllSharedMain") continue;
                 var outFiles = BundlerTest.BundlerTestCore(bundlerTestData);
                 tests++;
                 foreach (var pair in outFiles)
@@ -215,47 +215,10 @@ namespace Test
             }
         }
 
-        static void SourceMapEmitDebug()
-        {
-            var source = SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js"));
-            var parser = new Parser(new Options(),
-                source
-            );
-            var toplevel = parser.Parse();
-            toplevel.FigureOutScope();
-            var files = new InMemoryImportResolver();
-            var ctx = new ResolvingConstEvalCtx("src/a.js", files);
-            var sourceInfo = GatherBobrilSourceInfo.Gather(toplevel, ctx,
-                (myctx, text) => { return PathUtils.Join(PathUtils.Parent(myctx.SourceName), text); });
-
-            var builder = new SourceMapBuilder();
-            //builder.AddText("// first comment");
-            var adder = builder.CreateSourceAdder(source,
-                SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
-            var sourceReplacer = new SourceReplacer();
-            var m1 = sourceInfo.Assets![0];
-            sourceReplacer.Replace(m1.StartLine, m1.StartCol, m1.EndLine, m1.EndCol, "\"" + m1.Name + "\"");
-            sourceReplacer.Apply(adder);
-            //builder.AddSource(SourceMap.RemoveLinkToSourceMap(File.ReadAllText("Sample/index.js")), SourceMap.Parse(File.ReadAllText("Sample/index.js.map"), "../Sample"));
-            Directory.CreateDirectory("Output");
-            File.WriteAllText("Output/out.js", builder.Content() + "//# sourceMappingURL=out.js.map");
-            File.WriteAllText("Output/out.js.map", builder.Build("..", "..").ToString());
-        }
-
-        static void UnreachableCodeDebug()
-        {
-            var parser = new Parser(new Options(), File.ReadAllText("Input/Compress/UnreachableCode/simpleIf.js"));
-            var toplevel = parser.Parse();
-            toplevel.FigureOutScope();
-            toplevel.Compress();
-        }
-
         static void Main()
         {
             RunAllTests();
-            //UnreachableCodeDebug();
             //Debug();
-            //SourceMapEmitDebug();
         }
     }
 }

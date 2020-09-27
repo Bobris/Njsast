@@ -11,3 +11,5 @@ Input/ModuleParser/lib1
 Input/ModuleParser/lib2
 Self exports:
 method: method
+Uses Input/ModuleParser/lib1 a
+Uses Input/ModuleParser/lib2 b

@@ -1,13 +1,8 @@
 (function(undefined) {
     "use strict";
-    var __export_$, lib;
     function fn(a, b) {
         return a + b;
     }
-    __export_$ = {
-        fn: fn
-    };
-    lib = __export_$;
-    console.log(lib.fn(1, 2));
+    console.log(fn(1, 2));
 }).call(this);
 

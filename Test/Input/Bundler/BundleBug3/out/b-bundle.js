@@ -264,9 +264,11 @@
     var __export_c1 = 1;
     var __export_c2 = 2;
     var __export_create = 10;
+    var __export_ToolboxA = __export_create;
     var __export_create_toolboxB = 20;
-    console.log("A", __export_create);
-    console.log("B", __export_create_toolboxB);
+    var __export_ToolboxB = __export_create_toolboxB;
+    console.log("A", __export_ToolboxA);
+    console.log("B", __export_ToolboxB);
     console.log("Ac1", __export_c1);
     console.log("Bc1", __export_c1);
 }.call(this);

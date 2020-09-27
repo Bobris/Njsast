@@ -1,3 +1,4 @@
+using System;
 using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Utils;
@@ -55,9 +56,14 @@ namespace Test.Bundler
                     }
                 }
 
-                if (sf.WholeExport != null)
+                if (sf.Exports != null && sf.Exports.TryFindLongestPrefix(new ReadOnlySpan<string>(), out _, out var wholeExport))
                 {
-                    outNiceJs += "Whole Export: " + sf.WholeExport.PrintToString() + "\n";
+                    outNiceJs += "Whole Export: " + wholeExport!.PrintToString() + "\n";
+                }
+
+                foreach (var import in sf.NeedsImports)
+                {
+                    outNiceJs += "Uses " + import.Item1 + " " + string.Join('.', import.Item2) + "\n";
                 }
             }
             catch (SyntaxError e)

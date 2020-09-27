@@ -5796,6 +5796,7 @@
             ref: data.ref
         };
     }
+    var __export___spread = __export_assign;
     var EventResult_bobril;
     (function(EventResult) {
         EventResult[EventResult["NotHandled"] = 0] = "NotHandled";

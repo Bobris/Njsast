@@ -2,7 +2,7 @@ var __bbb = {};
 
 (function(undefined) {
     "use strict";
-    var __import, __export_$;
+    var __import;
     __import = function(url, prop) {
         var bbb, res;
         bbb = __bbb;
@@ -33,17 +33,10 @@ var __bbb = {};
     function shared() {
         console.log("shared");
     }
-    function unused() {
-        return "unused";
-    }
-    __export_$ = {
-        shared: shared,
-        unused: unused
-    };
     shared();
     __import("cb-lib.js", "a").then(function(lib) {
         console.log(lib.hello());
     });
-    __bbb.b = __export_$;
+    __bbb.b = shared;
 }).call(this);
 

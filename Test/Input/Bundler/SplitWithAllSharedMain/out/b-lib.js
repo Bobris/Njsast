@@ -286,10 +286,8 @@
         return bbb[prop] = res;
     };
     var DEBUG = false;
-    var ___shared = __bbb.b;
-    var shared = ___shared;
-    var allshared = ___shared;
-    allshared.shared();
+    var __shared_shared = __bbb.b;
+    __shared_shared();
     function hello() {
         return "Hello";
     }

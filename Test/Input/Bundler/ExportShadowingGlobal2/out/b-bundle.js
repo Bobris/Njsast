@@ -268,7 +268,6 @@
         console.log("Hello");
     };
     var exports_bobril = Url;
-    var URL_lib2 = exports_bobril;
     var exports_lib2 = {
         test: function() {
             console.log(new exports_bobril(1));

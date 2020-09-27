@@ -1,9 +1,8 @@
 (function(undefined) {
     "use strict";
-    var ___shared, allshared, __export_$;
-    ___shared = __bbb.b;
-    allshared = ___shared;
-    allshared.shared();
+    var __shared_shared, __export_$;
+    __shared_shared = __bbb.b;
+    __shared_shared();
     function hello() {
         return "Hello";
     }

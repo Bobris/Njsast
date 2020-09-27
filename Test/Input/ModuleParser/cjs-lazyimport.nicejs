@@ -13,3 +13,4 @@ Requires:
 Input/ModuleParser/shared
 Lazy requires:
 Input/ModuleParser/lib
+Uses Input/ModuleParser/shared shared

@@ -2,4 +2,4 @@
 Requires:
 Input/ModuleParser/exp
 Self exports:
-*: Input/ModuleParser/exp
+* from Input/ModuleParser/exp

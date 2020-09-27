@@ -280,7 +280,6 @@
         });
         return param;
     };
-    var param_lib = exports_param;
     var exports_lib = exports_wrapper(exports_param);
     if ("test" in window) {
         setTimeout(window.test, 1);

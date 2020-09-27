@@ -262,10 +262,6 @@
     };
     var DEBUG = false;
     var __export_SessionCursor = "session";
-    var __export_$ = {
-        SessionCursor: __export_SessionCursor
-    };
-    var __export_session = __export_$;
-    console.log(__export_session.SessionCursor);
+    console.log(__export_SessionCursor);
 }.call(this);
 

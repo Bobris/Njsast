@@ -294,14 +294,10 @@ var __bbb = {};
     function unused() {
         return "unused";
     }
-    var __export_$ = {
-        shared: shared,
-        unused: unused
-    };
     shared();
     __import("b-lib.js", "a").then(function(lib) {
         console.log(lib.hello());
     });
-    __bbb.b = __export_$;
+    __bbb.b = shared;
 }.call(this);
 

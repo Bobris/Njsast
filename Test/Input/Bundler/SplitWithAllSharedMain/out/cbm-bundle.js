@@ -1,48 +1,41 @@
 var __bbb = {};
 
-(function(e) {
+(function(r) {
     "use strict";
-    var r, o;
-    r = function(r, o) {
-        var t, n;
+    var e;
+    e = function(e, o) {
+        var t, i;
         t = __bbb;
-        n = t[o];
-        if (n !== e) {
-            if (n instanceof Promise) return n;
-            return Promise.resolve(n);
+        i = t[o];
+        if (i !== r) {
+            if (i instanceof Promise) return i;
+            return Promise.resolve(i);
         }
-        n = new Promise(function(s, i) {
-            var u, b;
-            u = document.createElement("script");
-            b = setTimeout(p, 12e4);
+        i = new Promise(function(n, s) {
+            var b, c;
+            b = document.createElement("script");
+            c = setTimeout(p, 12e4);
             function p() {
-                u.onload = u.onerror = e;
-                clearTimeout(b);
-                if (t[o] === n) {
-                    t[o] = e;
-                    i(new Error("Fail to load " + r));
-                } else s(t[o]);
+                b.onload = b.onerror = r;
+                clearTimeout(c);
+                if (t[o] === i) {
+                    t[o] = r;
+                    s(new Error("Fail to load " + e));
+                } else n(t[o]);
             }
-            u.charset = "utf-8";
-            u.onload = u.onerror = p;
-            u.src = r;
-            document.head.appendChild(u);
+            b.charset = "utf-8";
+            b.onload = b.onerror = p;
+            b.src = e;
+            document.head.appendChild(b);
         });
-        return t[o] = n;
+        return t[o] = i;
     };
-    function t() {
+    function o() {
         console.log("shared");
     }
-    function n() {
-        return "unused";
-    }
-    o = {
-        shared: t,
-        unused: n
-    };
-    t();
-    r("cbm-lib.js", "a").then(function(e) {
-        console.log(e.hello());
+    o();
+    e("cbm-lib.js", "a").then(function(r) {
+        console.log(r.hello());
     });
     __bbb.b = o;
 }).call(this);

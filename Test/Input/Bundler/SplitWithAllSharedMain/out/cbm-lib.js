@@ -1,14 +1,13 @@
 (function(_) {
     "use strict";
-    var e, l, r;
+    var e, r;
     e = __bbb.b;
-    l = e;
-    l.shared();
-    function a() {
+    e();
+    function l() {
         return "Hello";
     }
     r = {
-        hello: a
+        hello: l
     };
     __bbb.a = r;
 }).call(this);

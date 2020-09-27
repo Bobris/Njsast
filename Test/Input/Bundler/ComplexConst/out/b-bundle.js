@@ -263,6 +263,7 @@
     var DEBUG = false;
     var __export_aaa = 42;
     var __export_bbb = __export_aaa;
-    console.log(__export_bbb);
+    var __export_ccc = __export_bbb;
+    console.log(__export_ccc);
 }.call(this);
 
