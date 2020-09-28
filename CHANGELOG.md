@@ -4,6 +4,7 @@
 
 ### Added
 
+- Compress optimization for cloned constant variables
 - Improved bundling dead code elimination of export as namespace
 
 ### Fixed

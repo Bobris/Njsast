@@ -18,15 +18,16 @@ namespace Test
 {
     class Program
     {
-        static void RunAllTests()
+        static void RunAllTests(string? match = null)
         {
             var tests = 0;
             var errors = 0;
             foreach (var parserData in new ParserTestDataProviderAttribute("Input/Parser").GetParserData())
             {
                 tests++;
-                var (outAst, outMinJs, outMinJsMap, outNiceJs, outNiceJsMap) = ParserTest.ParseTestCore(parserData);
                 var file = parserData.Name;
+                if (match != null && !file.Contains(match)) continue;
+                var (outAst, outMinJs, outMinJsMap, outNiceJs, outNiceJsMap) = ParserTest.ParseTestCore(parserData);
                 CheckError(parserData.ExpectedAst, outAst, ref errors, "AST", file, "txt");
                 CheckError(parserData.ExpectedMinJs, outMinJs, ref errors, "minified js", file, "minjs");
                 CheckError(parserData.ExpectedMinJsMap, outMinJsMap, ref errors, "minified js map", file, "minjs.map");
@@ -38,6 +39,7 @@ namespace Test
             foreach (var constEvalData in new ConstEvalDataProviderAttribute("Input/ConstEval").GetTypedData())
             {
                 var file = constEvalData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var outNiceJs = ConstEvalTest.ConstEvalTestCore(constEvalData);
                 tests++;
                 CheckError(constEvalData.ExpectedNiceJs, outNiceJs, ref errors, "const eval", file, "nicejs");
@@ -47,6 +49,7 @@ namespace Test
                 .Concat(new ModuleParserDataProviderAttribute("Input/ModuleParser", "*.json").GetTypedData()))
             {
                 var file = testData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var outNiceJs = ModuleParserTest.ModuleParserTestCore(testData);
                 tests++;
                 CheckError(testData.ExpectedNiceJs, outNiceJs, ref errors, "module parser", file, "nicejs");
@@ -55,6 +58,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute(
                 "Input/Compress/UnreachableCode/AnotherOptimizationsEnabled").GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.UnreachableCodeBlocksAndEmptyStatementsCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -63,6 +68,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnreachableCode/Only")
                 .GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.UnreachableCodeBlocksCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -71,6 +78,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/RemoveBlock")
                 .GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.BlockEliminationCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -79,6 +88,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/EmptyStatement")
                 .GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.EmptyStatementEliminationCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -87,6 +98,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/BooleanCompress")
                 .GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) =
                     CompressTest.CompressTestCore(compressTestData, CompressTest.BooleanCompressCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -95,6 +108,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/FunctionReturn")
                 .GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.FunctionReturnCompressCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -103,6 +118,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/VariableHoisting",
                 "*.js", false).GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) =
                     CompressTest.CompressTestCore(compressTestData, CompressTest.VariableHostingCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -111,6 +128,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute(
                 "Input/Compress/VariableHoisting/2Passes").GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.VariableHosting2PassesCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -119,6 +138,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/UnusedFunction")
                 .GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.UnusedFunctionEliminationCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -127,6 +148,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/RemoveSideEffectFreeCode")
                 .GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressTest.RemoveSideEffectFreeCodeCompressOptions);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -135,6 +158,8 @@ namespace Test
             foreach (var compressTestData in new CompressDataProviderAttribute("Input/Compress/All")
                 .GetTypedData())
             {
+                var file = compressTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var (outAst, outMinJs, outNiceJs) = CompressTest.CompressTestCore(compressTestData,
                     CompressOptions.Default);
                 CheckCompressError(compressTestData, outAst, outMinJs, outNiceJs);
@@ -142,6 +167,8 @@ namespace Test
 
             foreach (var bundlerTestData in new BundlerDataProviderAttribute("Input/Bundler").GetTypedData())
             {
+                var file = bundlerTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var outFiles = BundlerTest.BundlerTestCore(bundlerTestData);
                 tests++;
                 foreach (var pair in outFiles)
@@ -156,6 +183,8 @@ namespace Test
 
             foreach (var bundlerTestData in new BobrilSourceInfoDataProviderAttribute("Input/BobrilSourceInfo").GetTypedData())
             {
+                var file = bundlerTestData.Name;
+                if (match != null && !file.Contains(match)) continue;
                 var outFiles = BobrilSourceInfoTest.BobrilSourceInfoTestCore(bundlerTestData);
                 tests++;
                 foreach (var pair in outFiles)
@@ -179,7 +208,7 @@ namespace Test
                 tests++;
                 CheckError(compressTestData.ExpectedAst, outAst, ref errors, "AST", file, "txt");
                 CheckError(compressTestData.ExpectedMinJs, outMinJs, ref errors, "minified js", file, "minjs");
-                CheckError(compressTestData.ExpectedNiceJs, outNiceJs, ref errors, "beutified js", file, "nicejs");
+                CheckError(compressTestData.ExpectedNiceJs, outNiceJs, ref errors, "beautified js", file, "nicejs");
             }
         }
 
