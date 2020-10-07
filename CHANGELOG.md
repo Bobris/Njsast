@@ -4,6 +4,7 @@
 
 ### Added
 
+- Support for export { x } from "y"; and export { x as y } from "z"; patterns
 - Compress optimization for cloned constant variables
 - Improved bundling dead code elimination of export as namespace
 
