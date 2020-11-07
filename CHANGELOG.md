@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## 0.4.0
+
 ### Added
 
 - Unused classes are eliminated by optimizer.
