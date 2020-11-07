@@ -304,10 +304,24 @@
         return value;
     };
     var DEBUG = false;
-    out: while (true) {
-        while (true) {
-            if (Math.random() > .5) break out;
+    var Base_index = function() {
+        function Base() {}
+        Base.prototype.render = function() {
+            return "Hello";
+        };
+        Base.Id = "A";
+        return Base;
+    }();
+    var Deriv_index = function(_super) {
+        __extends(Deriv, _super);
+        function Deriv() {
+            return _super !== null && _super.apply(this, arguments) || this;
         }
-    }
+        Deriv.prototype.render = function() {
+            return _super.prototype.render.call(this);
+        };
+        Deriv.Id = "B";
+        return Deriv;
+    }(Base_index);
 }.call(this);
 

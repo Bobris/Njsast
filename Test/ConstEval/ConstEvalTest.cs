@@ -31,7 +31,7 @@ namespace Test.ConstEval
                 new ScopeParser().FigureOutScope(toplevel);
                 var lastStatement = ((AstSimpleStatement) toplevel.Body.Last).Body;
                 var val = lastStatement.ConstValue(ctx);
-                outNiceJs = (val != null) ? "Const\n" : "Not const\n";
+                outNiceJs = val != null ? "Const\n" : "Not const\n";
                 if (val != null)
                 {
                     var valAst = TypeConverter.ToAst(val);

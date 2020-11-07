@@ -152,8 +152,8 @@
             };
         }
     };
-    var __exportStar = function(m, exports) {
-        for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+    var __exportStar = function(m, o) {
+        for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(o, p)) __createBinding(o, m, p);
     };
     var __createBinding = function(o, m, k, k2) {
         if (k2 === undefined) k2 = k;
@@ -161,6 +161,9 @@
             enumerable: true,
             get: function() {
                 return m[k];
+            },
+            set: function(v) {
+                m[k] = v;
             }
         });
     };
@@ -302,7 +305,7 @@
     };
     var DEBUG = false;
     var global = window;
-    var exports_param = {
+    var exports = {
         doIt: function(p) {
             console.log(p);
         },
@@ -320,7 +323,7 @@
         });
         return param;
     };
-    var exports_lib = exports_wrapper(exports_param);
+    var exports_lib = exports_wrapper(exports);
     if ("test" in window) {
         setTimeout(window.test, 1);
     }
