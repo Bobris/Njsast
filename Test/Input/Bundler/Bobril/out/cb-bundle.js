@@ -1,21 +1,6 @@
 (function(undefined) {
     "use strict";
-    var __extendStatics, __extends, __values, __read, hasPostInitDom, hasPostUpdateDom, hasPostUpdateDomEverytime, hasEvents, hasCaptureEvents, __export_isArray, isArrayVdom, emptyComponent, is, hOP, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, portalMap, hasNativeRaf, nativeRaf, setTimeout, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, frameCounter, regEvents, isPassiveEventHandlerSupported, options_bobril, listeningEventDeepness, RenderPhase_bobril, __export_RenderPhase, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, __export_BobrilDeviceCategory, media, breaks, events_bobril, i_bobril, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, BobrilPointerType_bobril, __export_BobrilPointerType, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name_bobril, j_bobril, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack_bobril, focusChangeRunning, callbacks_bobril, DndOp_bobril, __export_DndOp, DndEnabledOps_bobril, __export_DndEnabledOps, lastDndId, dnds, systemDnd, rootId_bobril, DndCtx, draggingStyle, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, __export_RouteTransitionType, waitingForPopHashChange, allStyles, allAnimations, allMediaQueries, bundledSprites, dynamicSprites, bundledDynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, globalCounter, chainedBeforeFrame, cssSubRuleDelimiter, lastDppx, lastSpriteUrl, lastSpriteDppx, hasBundledSprites, wasSpriteUrlChanged, uppercasePattern, msPattern, rgbaRegex, imagesWithCredentials, bundlePath, bundlePath2, EventResult_bobril, __export_EventResult, Component_bobril, DepsChangeDetector_bobril, effectCallbacks, EffectHook_bobril, EventsHook_bobril, CaptureEventsHook_bobril, currentCtx, registryEvents, rootIds_bobril, currentCtxWithEvents, weirdPortrait;
-    __extendStatics = Object.setPrototypeOf || {
-        __proto__: []
-    } instanceof Array && function(d, b) {
-        d.__proto__ = b;
-    } || function(d, b) {
-        var p;
-        for (p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    };
-    __extends = function(d, b) {
-        __extendStatics(d, b);
-        function __() {
-            this.constructor = d;
-        }
-        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-    };
+    var __values, __read, hasPostInitDom, hasPostUpdateDom, hasPostUpdateDomEverytime, hasEvents, hasCaptureEvents, __export_isArray, isArrayVdom, emptyComponent, hOP, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, portalMap, hasNativeRaf, nativeRaf, setTimeout, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, frameCounter, regEvents, isPassiveEventHandlerSupported, options_bobril, listeningEventDeepness, RenderPhase_bobril, __export_RenderPhase, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, __export_BobrilDeviceCategory, media, breaks, events_bobril, i_bobril, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, BobrilPointerType_bobril, __export_BobrilPointerType, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name_bobril, j_bobril, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack_bobril, focusChangeRunning, callbacks_bobril, DndOp_bobril, __export_DndOp, DndEnabledOps_bobril, __export_DndEnabledOps, lastDndId, dnds, systemDnd, rootId_bobril, DndCtx, draggingStyle, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, __export_RouteTransitionType, waitingForPopHashChange, allStyles, allAnimations, allMediaQueries, bundledSprites, dynamicSprites, bundledDynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, globalCounter, chainedBeforeFrame, cssSubRuleDelimiter, lastDppx, lastSpriteUrl, lastSpriteDppx, hasBundledSprites, wasSpriteUrlChanged, uppercasePattern, msPattern, rgbaRegex, imagesWithCredentials, bundlePath, bundlePath2, EventResult_bobril, __export_EventResult, effectCallbacks, EventsHook_bobril, CaptureEventsHook_bobril, currentCtx, registryEvents, rootIds_bobril, currentCtxWithEvents, weirdPortrait;
     __values = function(o) {
         var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
         if (m) return m.call(o);
@@ -55,99 +40,6 @@
     hasPostUpdateDomEverytime = 4;
     hasEvents = 8;
     hasCaptureEvents = 16;
-    (function() {
-        function MediaRuleBuilder() {
-            this.tokens = [];
-        }
-        MediaRuleBuilder.prototype.pushOptionalTokens = function(behaviour, mediaType) {
-            !!behaviour && this.tokens.push({
-                type: behaviour
-            });
-            !!mediaType && this.tokens.push({
-                type: mediaType
-            });
-        };
-        MediaRuleBuilder.prototype.rule = function(behaviour, mediaType) {
-            if (mediaType === void 0) {
-                mediaType = "all";
-            }
-            this.pushOptionalTokens(behaviour, mediaType);
-            return this;
-        };
-        MediaRuleBuilder.prototype.and = function(mediaRule) {
-            this.tokens.push({
-                type: "and"
-            });
-            this.tokens.push(mediaRule);
-            return this;
-        };
-        MediaRuleBuilder.prototype.or = function() {
-            this.tokens.push({
-                type: "or"
-            });
-            return this;
-        };
-        MediaRuleBuilder.prototype.build = function() {
-            return this.tokens.reduce(toRule, "");
-        };
-        return MediaRuleBuilder;
-    })();
-    function toRule(buffer, token) {
-        var str = "";
-        switch (token.type) {
-          case "aspect-ratio":
-            str = "(" + token.type + ": " + token.width + "/" + token.height + ")";
-            break;
-
-          case "all":
-          case "and":
-          case "not":
-          case "only":
-          case "print":
-          case "screen":
-          case "speech":
-            str = "" + token.type;
-            break;
-
-          case "or":
-            str = ",";
-            break;
-
-          case "color":
-            str = "(" + token.type + ")";
-            break;
-
-          case "max-height":
-          case "max-width":
-          case "min-height":
-          case "min-width":
-            str = "(" + token.type + ": " + token.value + token.unit + ")";
-            break;
-
-          case "min-color":
-          case "orientation":
-            str = "(" + token.type + ": " + token.value + ")";
-            break;
-
-          default:
-            str = emptyQuery(token);
-        }
-        return buffer + str + " ";
-    }
-    function emptyQuery(_token) {
-        return "";
-    }
-    (function() {
-        function BobrilCtx(data, me) {
-            this.data = data;
-            this.me = me;
-            this.cfg = undefined;
-            this.refs = undefined;
-            this.disposables = undefined;
-            this.$bobxCtx = undefined;
-        }
-        return BobrilCtx;
-    })();
     __export_isArray = Array.isArray;
     isArrayVdom = __export_isArray;
     emptyComponent = {};
@@ -205,7 +97,6 @@
             }
         };
     }
-    is = Object.is;
     hOP = Object.prototype.hasOwnProperty;
     __export_assign = Object.assign;
     function polyfill(prototype, method, value) {
@@ -1614,13 +1505,6 @@
         deferSyncUpdateRequested = !1;
         internalUpdate(__export_now() - startTime);
         executeEffectCallbacks();
-    }
-    function deferSyncUpdate() {
-        if (listeningEventDeepness > 0) {
-            deferSyncUpdateRequested = !0;
-            return;
-        }
-        syncUpdate();
     }
     function update(time) {
         scheduled = !1;
@@ -3088,41 +2972,6 @@
         return !1;
     }
     addEvent("^scroll", 10, emitOnScroll);
-    (function() {
-        function CSSMatrix(data) {
-            this.data = data;
-        }
-        CSSMatrix.fromString = function(s) {
-            var c = s.match(/matrix3?d?\(([^\)]+)\)/i)[1].split(",");
-            if (c.length === 6) {
-                c = [ c[0], c[1], "0", "0", c[2], c[3], "0", "0", "0", "0", "1", "0", c[4], c[5], "0", "1" ];
-            }
-            return new CSSMatrix([ parseFloat(c[0]), parseFloat(c[4]), parseFloat(c[8]), parseFloat(c[12]), parseFloat(c[1]), parseFloat(c[5]), parseFloat(c[9]), parseFloat(c[13]), parseFloat(c[2]), parseFloat(c[6]), parseFloat(c[10]), parseFloat(c[14]), parseFloat(c[3]), parseFloat(c[7]), parseFloat(c[11]), parseFloat(c[15]) ]);
-        };
-        CSSMatrix.identity = function() {
-            return new CSSMatrix([ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]);
-        };
-        CSSMatrix.prototype.multiply = function(m) {
-            var a = this.data, b;
-            b = m.data;
-            return new CSSMatrix([ a[0] * b[0] + a[1] * b[4] + a[2] * b[8] + a[3] * b[12], a[0] * b[1] + a[1] * b[5] + a[2] * b[9] + a[3] * b[13], a[0] * b[2] + a[1] * b[6] + a[2] * b[10] + a[3] * b[14], a[0] * b[3] + a[1] * b[7] + a[2] * b[11] + a[3] * b[15], a[4] * b[0] + a[5] * b[4] + a[6] * b[8] + a[7] * b[12], a[4] * b[1] + a[5] * b[5] + a[6] * b[9] + a[7] * b[13], a[4] * b[2] + a[5] * b[6] + a[6] * b[10] + a[7] * b[14], a[4] * b[3] + a[5] * b[7] + a[6] * b[11] + a[7] * b[15], a[8] * b[0] + a[9] * b[4] + a[10] * b[8] + a[11] * b[12], a[8] * b[1] + a[9] * b[5] + a[10] * b[9] + a[11] * b[13], a[8] * b[2] + a[9] * b[6] + a[10] * b[10] + a[11] * b[14], a[8] * b[3] + a[9] * b[7] + a[10] * b[11] + a[11] * b[15], a[12] * b[0] + a[13] * b[4] + a[14] * b[8] + a[15] * b[12], a[12] * b[1] + a[13] * b[5] + a[14] * b[9] + a[15] * b[13], a[12] * b[2] + a[13] * b[6] + a[14] * b[10] + a[15] * b[14], a[12] * b[3] + a[13] * b[7] + a[14] * b[11] + a[15] * b[15] ]);
-        };
-        CSSMatrix.prototype.translate = function(tx, ty, tz) {
-            var z = new CSSMatrix([ 1, 0, 0, tx, 0, 1, 0, ty, 0, 0, 1, tz, 0, 0, 0, 1 ]);
-            return this.multiply(z);
-        };
-        CSSMatrix.prototype.inverse = function() {
-            var m = this.data, a = m[0], b = m[1], c = m[2], d = m[4], e = m[5], f = m[6], g = m[8], h = m[9], k = m[10], A = e * k - f * h, B = f * g - d * k, C = d * h - e * g, D = c * h - b * k, E = a * k - c * g, F = b * g - a * h, G = b * f - c * e, H = c * d - a * f, K = a * e - b * d, det = a * A + b * B + c * C, X, Y;
-            X = new CSSMatrix([ A / det, D / det, G / det, 0, B / det, E / det, H / det, 0, C / det, F / det, K / det, 0, 0, 0, 0, 1 ]);
-            Y = new CSSMatrix([ 1, 0, 0, -m[3], 0, 1, 0, -m[7], 0, 0, 1, -m[11], 0, 0, 0, 1 ]);
-            return X.multiply(Y);
-        };
-        CSSMatrix.prototype.transformPoint = function(x, y) {
-            var m = this.data;
-            return [ m[0] * x + m[1] * y + m[3], m[4] * x + m[5] * y + m[7] ];
-        };
-        return CSSMatrix;
-    })();
     (function(DndOp) {
         DndOp[DndOp["None"] = 0] = "None";
         DndOp[DndOp["Link"] = 1] = "Link";
@@ -4036,26 +3885,6 @@
         getDnds: __export_getDnds,
         setBeforeInit: setBeforeInit
     };
-    function shallowEqual(a, b) {
-        var kA, kB, i_17;
-        if (is(a, b)) {
-            return !0;
-        }
-        if (!isObject(a) || !isObject(b)) {
-            return !1;
-        }
-        kA = Object.keys(a);
-        kB = Object.keys(b);
-        if (kA.length !== kB.length) {
-            return !1;
-        }
-        for (i_17 = 0; i_17 < kA.length; i_17++) {
-            if (!hOP.call(b, kA[i_17]) || !is(a[kA[i_17]], b[kA[i_17]])) {
-                return !1;
-            }
-        }
-        return !0;
-    }
     new Map();
     (function(EventResult) {
         EventResult[EventResult["NotHandled"] = 0] = "NotHandled";
@@ -4063,25 +3892,6 @@
         EventResult[EventResult["HandledButRunDefault"] = 2] = "HandledButRunDefault";
         EventResult[EventResult["NotHandledPreventDefault"] = 3] = "NotHandledPreventDefault";
     })(EventResult_bobril = __export_EventResult || (__export_EventResult = {}));
-    Component_bobril = function() {
-        function Component(data, me) {
-            this.data = data;
-            this.me = me;
-            this.cfg = undefined;
-            this.refs = undefined;
-        }
-        return Component;
-    }();
-    (function(_super) {
-        __extends(PureComponent, _super);
-        function PureComponent() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        PureComponent.prototype.shouldChange = function(newData, oldData) {
-            return !shallowEqual(newData, oldData);
-        };
-        return PureComponent;
-    })(Component_bobril);
     function hookPostInitDom(ctx) {
         var hooks, len, i_19, hook, fn;
         hooks = ctx.$hooks;
@@ -4118,44 +3928,6 @@
             }
         }
     }
-    DepsChangeDetector_bobril = function() {
-        function DepsChangeDetector() {}
-        DepsChangeDetector.prototype.detectChange = function(deps) {
-            var changed = !1, lastDeps, depsLen, i_22;
-            if (deps != undefined) {
-                lastDeps = this.deps;
-                if (lastDeps == undefined) {
-                    changed = !0;
-                } else {
-                    depsLen = deps.length;
-                    if (depsLen != lastDeps.length) changed = !0; else {
-                        for (i_22 = 0; i_22 < depsLen; i_22++) {
-                            if (!is(deps[i_22], lastDeps[i_22])) {
-                                changed = !0;
-                                break;
-                            }
-                        }
-                    }
-                }
-            } else changed = !0;
-            this.deps = deps;
-            return changed;
-        };
-        return DepsChangeDetector;
-    }();
-    (function(_super) {
-        __extends(MemoHook, _super);
-        function MemoHook() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        MemoHook.prototype.memoize = function(factory, deps) {
-            if (this.detectChange(deps)) {
-                this.current = factory();
-            }
-            return this.current;
-        };
-        return MemoHook;
-    })(DepsChangeDetector_bobril);
     effectCallbacks = [];
     function executeEffectCallbacks() {
         var cbList, i, len;
@@ -4165,58 +3937,6 @@
             cbList[i]();
         }
     }
-    EffectHook_bobril = function(_super) {
-        __extends(EffectHook, _super);
-        function EffectHook() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        EffectHook.prototype.update = function(callback, deps) {
-            this.callback = callback;
-            if (this.detectChange(deps)) {
-                this.doRun();
-            }
-        };
-        EffectHook.prototype.doRun = function() {
-            effectCallbacks.push(this.run);
-        };
-        EffectHook.prototype.run = function() {
-            var c = this.callback;
-            if (c != undefined) {
-                this.dispose();
-                this.lastDisposer = c();
-            }
-        };
-        EffectHook.prototype.dispose = function() {
-            this.callback = undefined;
-            if (isFunction(this.lastDisposer)) this.lastDisposer();
-            this.lastDisposer = undefined;
-        };
-        return EffectHook;
-    }(DepsChangeDetector_bobril);
-    (function(_super) {
-        __extends(LayoutEffectHook, _super);
-        function LayoutEffectHook() {
-            var _this = _super.call(this) || this;
-            _this.shouldRun = !1;
-            return _this;
-        }
-        LayoutEffectHook.prototype.postInitDom = function(ctx) {
-            this.postUpdateDomEverytime(ctx);
-        };
-        LayoutEffectHook.prototype.postUpdateDomEverytime = function(ctx) {
-            if (this.shouldRun) {
-                this.shouldRun = !1;
-                this.run();
-                if (ctx[ctxInvalidated] > frameCounter) {
-                    deferSyncUpdate();
-                }
-            }
-        };
-        LayoutEffectHook.prototype.doRun = function() {
-            this.shouldRun = !0;
-        };
-        return LayoutEffectHook;
-    })(EffectHook_bobril);
     EventsHook_bobril = function() {
         function EventsHook() {}
         return EventsHook;

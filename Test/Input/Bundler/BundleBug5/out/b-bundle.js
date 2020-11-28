@@ -308,6 +308,5 @@
         console.log("ok");
     }
     a_lib2();
-    var _b = undefined;
 }.call(this);
 

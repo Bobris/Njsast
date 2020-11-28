@@ -16,13 +16,13 @@ namespace Test.SourceInfo
             clone.FigureOutScope();
             var consts = new Dictionary<string, AstNode>();
             consts["DEBUG"] = AstTrue.Instance;
-            clone = (AstToplevel) new EnvExpanderTransformer(consts, (name) => name == "BBVERSION" ? "42" : null)
+            clone = (AstToplevel) new EnvExpanderTransformer(consts, (name) => name == "BBVERSION" ? "42" : null, null)
                 .Transform(clone);
             Assert.Equal("debug", (clone.Body.Last as AstSimpleStatement)?.Body.ConstValue());
             clone = program.DeepClone();
             clone.FigureOutScope();
             consts["DEBUG"] = AstFalse.Instance;
-            clone = (AstToplevel) new EnvExpanderTransformer(consts, (name) => name == "BBVERSION" ? "42" : null)
+            clone = (AstToplevel) new EnvExpanderTransformer(consts, (name) => name == "BBVERSION" ? "42" : null, null)
                 .Transform(clone);
             Assert.Equal("42", (clone.Body.Last as AstSimpleStatement)?.Body.ConstValue());
         }
