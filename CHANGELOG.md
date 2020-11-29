@@ -2,6 +2,11 @@
 
 ## [unreleased]
 
+### Added
+
+- Optimize TypeScript enums
+- dead code elimination of result unused `new Map()`
+
 ## 0.4.0
 
 ### Added

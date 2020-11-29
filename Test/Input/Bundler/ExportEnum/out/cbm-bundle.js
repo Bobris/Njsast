@@ -1,10 +1,12 @@
-(function(t) {
+(function(o) {
     "use strict";
-    var p;
-    (function(t) {
-        t[t["Start"] = 0] = "Start";
-        t[t["Stop"] = 1] = "Stop";
-    })(p || (p = {}));
-    console.log(p.Start);
+    var _ = {};
+    (function(o) {
+        o[o["A"] = 0] = "A";
+        o[o["B"] = 1] = "B";
+    })(_);
+    console.log(0);
+    console.log(_[1]);
+    console.log("No");
 }).call(this);
 

@@ -1,15 +1,15 @@
 (function(n) {
     "use strict";
-    var _;
-    function u() {
+    var u = {};
+    function f() {
         console.log("fun");
     }
     (function(n) {
-        function _() {
-            u();
+        function u() {
+            f();
         }
-        n.fun = _;
-    })(_ || (_ = {}));
-    _.fun();
+        n.fun = u;
+    })(u);
+    u.fun();
 }).call(this);
 

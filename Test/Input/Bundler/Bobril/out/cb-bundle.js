@@ -1,6 +1,6 @@
 (function(undefined) {
     "use strict";
-    var __values, __read, hasPostInitDom, hasPostUpdateDom, hasPostUpdateDomEverytime, hasEvents, hasCaptureEvents, __export_isArray, isArrayVdom, emptyComponent, hOP, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, portalMap, hasNativeRaf, nativeRaf, setTimeout, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, frameCounter, regEvents, isPassiveEventHandlerSupported, options_bobril, listeningEventDeepness, RenderPhase_bobril, __export_RenderPhase, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, __export_BobrilDeviceCategory, media, breaks, events_bobril, i_bobril, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, BobrilPointerType_bobril, __export_BobrilPointerType, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name_bobril, j_bobril, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack_bobril, focusChangeRunning, callbacks_bobril, DndOp_bobril, __export_DndOp, DndEnabledOps_bobril, __export_DndEnabledOps, lastDndId, dnds, systemDnd, rootId_bobril, DndCtx, draggingStyle, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, __export_RouteTransitionType, waitingForPopHashChange, allStyles, allAnimations, allMediaQueries, bundledSprites, dynamicSprites, bundledDynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, globalCounter, chainedBeforeFrame, cssSubRuleDelimiter, lastDppx, lastSpriteUrl, lastSpriteDppx, hasBundledSprites, wasSpriteUrlChanged, uppercasePattern, msPattern, rgbaRegex, imagesWithCredentials, bundlePath, bundlePath2, EventResult_bobril, __export_EventResult, effectCallbacks, EventsHook_bobril, CaptureEventsHook_bobril, currentCtx, registryEvents, rootIds_bobril, currentCtxWithEvents, weirdPortrait;
+    var __values, __read, hasPostInitDom, hasPostUpdateDom, hasPostUpdateDomEverytime, hasEvents, hasCaptureEvents, __export_isArray, isArrayVdom, emptyComponent, hOP, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, portalMap, hasNativeRaf, nativeRaf, setTimeout, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, frameCounter, regEvents, isPassiveEventHandlerSupported, options_bobril, listeningEventDeepness, __export_RenderPhase = {}, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events_bobril, i_bobril, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name_bobril, j_bobril, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack_bobril, focusChangeRunning, callbacks_bobril, lastDndId, dnds, systemDnd, rootId_bobril, DndCtx, draggingStyle, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, allAnimations, allMediaQueries, bundledSprites, dynamicSprites, bundledDynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, globalCounter, chainedBeforeFrame, cssSubRuleDelimiter, lastDppx, lastSpriteUrl, lastSpriteDppx, hasBundledSprites, wasSpriteUrlChanged, uppercasePattern, msPattern, rgbaRegex, imagesWithCredentials, bundlePath, bundlePath2, __export_EventResult = {}, effectCallbacks, EventsHook_bobril, CaptureEventsHook_bobril, currentCtx, registryEvents, rootIds_bobril, currentCtxWithEvents, weirdPortrait;
     __values = function(o) {
         var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
         if (m) return m.call(o);
@@ -503,7 +503,7 @@
             if (component.init) {
                 component.init(ctx, c);
             }
-            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, RenderPhase_bobril.Create);
+            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, __export_RenderPhase.Create);
             if (component.render) {
                 component.render(ctx, c);
             }
@@ -657,7 +657,7 @@
         if (component) {
             ctx = c.ctx;
             currentCtx = ctx;
-            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(c, RenderPhase_bobril.Destroy);
+            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(c, __export_RenderPhase.Destroy);
             if (component.destroy) component.destroy(ctx, c, c.element);
             disposables = ctx.disposables;
             if (__export_isArray(disposables)) {
@@ -855,7 +855,7 @@
                 }
                 ctx.data = n.data || {};
                 c.component = component;
-                if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, inSelectedUpdate ? RenderPhase_bobril.LocalUpdate : RenderPhase_bobril.Update);
+                if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, inSelectedUpdate ? __export_RenderPhase.LocalUpdate : __export_RenderPhase.Update);
                 if (component.render) {
                     c.orig = n;
                     n = __export_assign({}, n);
@@ -1465,7 +1465,7 @@
         RenderPhase[RenderPhase["Update"] = 1] = "Update";
         RenderPhase[RenderPhase["LocalUpdate"] = 2] = "LocalUpdate";
         RenderPhase[RenderPhase["Destroy"] = 3] = "Destroy";
-    })(RenderPhase_bobril = __export_RenderPhase || (__export_RenderPhase = {}));
+    })(__export_RenderPhase);
     emptyBeforeRenderCallback = function() {};
     beforeRenderCallback = emptyBeforeRenderCallback;
     beforeFrameCallback = function() {};
@@ -1686,15 +1686,15 @@
                             m = h.events[name];
                             if (m !== undefined) {
                                 eventResult = +m.call(ctx, param);
-                                if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                                if (eventResult == __export_EventResult.HandledPreventDefault) {
                                     currentCtxWithEvents = prevCtx;
                                     return ctx;
                                 }
-                                if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                                if (eventResult == __export_EventResult.HandledButRunDefault) {
                                     currentCtxWithEvents = prevCtx;
                                     return undefined;
                                 }
-                                if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                                if (eventResult == __export_EventResult.NotHandledPreventDefault) {
                                     res = ctx;
                                 }
                             }
@@ -1704,15 +1704,15 @@
                 m = c[name];
                 if (m) {
                     eventResult = +m.call(c, ctx, param);
-                    if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                    if (eventResult == __export_EventResult.HandledPreventDefault) {
                         currentCtxWithEvents = prevCtx;
                         return ctx;
                     }
-                    if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                    if (eventResult == __export_EventResult.HandledButRunDefault) {
                         currentCtxWithEvents = prevCtx;
                         return undefined;
                     }
-                    if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                    if (eventResult == __export_EventResult.NotHandledPreventDefault) {
                         res = ctx;
                     }
                 }
@@ -1742,15 +1742,15 @@
                         m = h.events[name];
                         if (m !== undefined) {
                             eventResult = +m.call(ctx, param);
-                            if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                            if (eventResult == __export_EventResult.HandledPreventDefault) {
                                 currentCtxWithEvents = prevCtx;
                                 return ctx;
                             }
-                            if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                            if (eventResult == __export_EventResult.HandledButRunDefault) {
                                 currentCtxWithEvents = prevCtx;
                                 return undefined;
                             }
-                            if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                            if (eventResult == __export_EventResult.NotHandledPreventDefault) {
                                 res = ctx;
                             }
                         }
@@ -1760,15 +1760,15 @@
             m = c[name];
             if (m) {
                 eventResult = +m.call(c, ctx, param);
-                if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                if (eventResult == __export_EventResult.HandledPreventDefault) {
                     currentCtxWithEvents = prevCtx;
                     return ctx;
                 }
-                if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                if (eventResult == __export_EventResult.HandledButRunDefault) {
                     currentCtxWithEvents = prevCtx;
                     return undefined;
                 }
-                if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                if (eventResult == __export_EventResult.NotHandledPreventDefault) {
                     res = ctx;
                 }
             }
@@ -1806,15 +1806,15 @@
                         m = h.events[name];
                         if (m !== undefined) {
                             eventResult = +m.call(ctx, param);
-                            if (eventResult == EventResult_bobril.HandledPreventDefault) {
+                            if (eventResult == __export_EventResult.HandledPreventDefault) {
                                 currentCtxWithEvents = prevCtx;
                                 return ctx;
                             }
-                            if (eventResult == EventResult_bobril.HandledButRunDefault) {
+                            if (eventResult == __export_EventResult.HandledButRunDefault) {
                                 currentCtxWithEvents = prevCtx;
                                 return undefined;
                             }
-                            if (eventResult == EventResult_bobril.NotHandledPreventDefault) {
+                            if (eventResult == __export_EventResult.NotHandledPreventDefault) {
                                 res = ctx;
                             }
                         }
@@ -1898,12 +1898,6 @@
         mapping.set(name, action);
     }
     setStyleShim("float", renamer("cssFloat"));
-    (function(BobrilDeviceCategory) {
-        BobrilDeviceCategory[BobrilDeviceCategory["Mobile"] = 0] = "Mobile";
-        BobrilDeviceCategory[BobrilDeviceCategory["Tablet"] = 1] = "Tablet";
-        BobrilDeviceCategory[BobrilDeviceCategory["Desktop"] = 2] = "Desktop";
-        BobrilDeviceCategory[BobrilDeviceCategory["LargeDesktop"] = 3] = "LargeDesktop";
-    })(__export_BobrilDeviceCategory || (__export_BobrilDeviceCategory = {}));
     media = null;
     breaks = [ [ 414, 800, 900 ], [ 736, 1280, 1440 ] ];
     function emitOnMediaChange() {
@@ -2401,11 +2395,6 @@
     addEvent("keydown", 50, emitOnKeyDown);
     addEvent("keyup", 50, emitOnKeyUp);
     addEvent("keypress", 50, emitOnKeyPress);
-    (function(BobrilPointerType) {
-        BobrilPointerType[BobrilPointerType["Mouse"] = 0] = "Mouse";
-        BobrilPointerType[BobrilPointerType["Touch"] = 1] = "Touch";
-        BobrilPointerType[BobrilPointerType["Pen"] = 2] = "Pen";
-    })(BobrilPointerType_bobril = __export_BobrilPointerType || (__export_BobrilPointerType = {}));
     MoveOverIsNotTap = 13;
     TapShouldBeShorterThanMs = 750;
     MaxBustDelay = 500;
@@ -2467,9 +2456,9 @@
     }
     pointersEventNames = [ "PointerDown", "PointerMove", "PointerUp", "PointerCancel" ];
     function type2Bobril(t) {
-        if (t === "mouse" || t === 4) return BobrilPointerType_bobril.Mouse;
-        if (t === "pen" || t === 3) return BobrilPointerType_bobril.Pen;
-        return BobrilPointerType_bobril.Touch;
+        if (t === "mouse" || t === 4) return 0;
+        if (t === "pen" || t === 3) return 2;
+        return 1;
     }
     function pointerEventsNoneFix(x, y, target, node) {
         var hiddenEls = [], t;
@@ -2495,7 +2484,7 @@
             button = ev.button + 1;
             type = type2Bobril(ev.pointerType);
             buttons = ev.buttons;
-            if (button === 0 && type === BobrilPointerType_bobril.Mouse && buttons) {
+            if (button === 0 && type === 0 && buttons) {
                 button = 1;
                 while (!(buttons & 1)) {
                     buttons = buttons >> 1;
@@ -2534,7 +2523,7 @@
                     target: node,
                     id: t.identifier + 2,
                     cancelable: normalizeCancelable(ev),
-                    type: BobrilPointerType_bobril.Touch,
+                    type: 1,
                     x: t.clientX,
                     y: t.clientY,
                     button: 1,
@@ -2566,7 +2555,7 @@
             param = {
                 target: node,
                 id: 1,
-                type: BobrilPointerType_bobril.Mouse,
+                type: 0,
                 cancelable: normalizeCancelable(ev),
                 x: ev.clientX,
                 y: ev.clientY,
@@ -2693,7 +2682,7 @@
         return !1;
     }
     function bustingPointerMove(ev, target, node) {
-        if (ev.type === BobrilPointerType_bobril.Mouse && ev.button === 0 && pointersDown[ev.id] != null) {
+        if (ev.type === 0 && ev.button === 0 && pointersDown[ev.id] != null) {
             ev.button = 1;
             emitEvent("!PointerUp", ev, target, node);
             ev.button = 0;
@@ -2726,7 +2715,7 @@
         if (firstPointerDown == ev.id) {
             mouseEnterAndLeave(ev);
             firstPointerDown = -1;
-            if (ev.type == BobrilPointerType_bobril.Touch && !tapCanceled) {
+            if (ev.type == 1 && !tapCanceled) {
                 if (__export_now() - firstPointerDownTime < TapShouldBeShorterThanMs) {
                     emitEvent("!PointerCancel", ev, target, node);
                     shouldPreventClickingSpree(1);
@@ -2972,22 +2961,6 @@
         return !1;
     }
     addEvent("^scroll", 10, emitOnScroll);
-    (function(DndOp) {
-        DndOp[DndOp["None"] = 0] = "None";
-        DndOp[DndOp["Link"] = 1] = "Link";
-        DndOp[DndOp["Copy"] = 2] = "Copy";
-        DndOp[DndOp["Move"] = 3] = "Move";
-    })(DndOp_bobril = __export_DndOp || (__export_DndOp = {}));
-    (function(DndEnabledOps) {
-        DndEnabledOps[DndEnabledOps["None"] = 0] = "None";
-        DndEnabledOps[DndEnabledOps["Link"] = 1] = "Link";
-        DndEnabledOps[DndEnabledOps["Copy"] = 2] = "Copy";
-        DndEnabledOps[DndEnabledOps["LinkCopy"] = 3] = "LinkCopy";
-        DndEnabledOps[DndEnabledOps["Move"] = 4] = "Move";
-        DndEnabledOps[DndEnabledOps["MoveLink"] = 5] = "MoveLink";
-        DndEnabledOps[DndEnabledOps["MoveCopy"] = 6] = "MoveCopy";
-        DndEnabledOps[DndEnabledOps["MoveCopyLink"] = 7] = "MoveCopyLink";
-    })(DndEnabledOps_bobril = __export_DndEnabledOps || (__export_DndEnabledOps = {}));
     lastDndId = 0;
     dnds = [];
     systemDnd = null;
@@ -2995,8 +2968,8 @@
     DndCtx = function(pointerId) {
         this.id = ++lastDndId;
         this.pointerid = pointerId;
-        this.enabledOperations = DndEnabledOps_bobril.MoveCopyLink;
-        this.operation = DndOp_bobril.None;
+        this.enabledOperations = 7;
+        this.operation = 0;
         this.started = !1;
         this.beforeDrag = !0;
         this.local = !0;
@@ -3054,15 +3027,15 @@
             if (dnd.cursor != null) return dnd.cursor;
             if (dnd.system) return "";
             switch (dnd.operation) {
-              case DndOp_bobril.Move:
+              case 3:
                 cursor = "move";
                 break;
 
-              case DndOp_bobril.Link:
+              case 1:
                 cursor = "alias";
                 break;
 
-              case DndOp_bobril.Copy:
+              case 2:
                 cursor = "copy";
             }
         }
@@ -3205,7 +3178,7 @@
         dnd.overNode = node;
         dnd.targetCtx = bubble(node, "onDragOver", dnd);
         if (dnd.targetCtx == undefined) {
-            dnd.operation = DndOp_bobril.None;
+            dnd.operation = 0;
         }
         broadcast("onDrag", dnd);
     }
@@ -3401,7 +3374,7 @@
         }
         updateFromNative(dnd, ev);
         setDropEffect(ev, dnd.operation);
-        if (dnd.operation != DndOp_bobril.None) {
+        if (dnd.operation != 0) {
             preventDefault(ev);
             return !0;
         }
@@ -3415,7 +3388,7 @@
         if (systemDnd != null && (x === 0 && y === 0 || x < 0 || y < 0 || x >= m.width || y >= m.height)) {
             systemDnd.x = 0;
             systemDnd.y = 0;
-            systemDnd.operation = DndOp_bobril.None;
+            systemDnd.operation = 0;
             broadcast("onDrag", systemDnd);
         }
         return !0;
@@ -3480,11 +3453,6 @@
     __export_getDnds = function() {
         return dnds;
     };
-    (function(RouteTransitionType) {
-        RouteTransitionType[RouteTransitionType["Push"] = 0] = "Push";
-        RouteTransitionType[RouteTransitionType["Replace"] = 1] = "Replace";
-        RouteTransitionType[RouteTransitionType["Pop"] = 2] = "Pop";
-    })(__export_RouteTransitionType || (__export_RouteTransitionType = {}));
     waitingForPopHashChange = -1;
     function emitOnHashChange() {
         if (waitingForPopHashChange >= 0) clearTimeout(waitingForPopHashChange);
@@ -3885,13 +3853,12 @@
         getDnds: __export_getDnds,
         setBeforeInit: setBeforeInit
     };
-    new Map();
     (function(EventResult) {
         EventResult[EventResult["NotHandled"] = 0] = "NotHandled";
         EventResult[EventResult["HandledPreventDefault"] = 1] = "HandledPreventDefault";
         EventResult[EventResult["HandledButRunDefault"] = 2] = "HandledButRunDefault";
         EventResult[EventResult["NotHandledPreventDefault"] = 3] = "NotHandledPreventDefault";
-    })(EventResult_bobril = __export_EventResult || (__export_EventResult = {}));
+    })(__export_EventResult);
     function hookPostInitDom(ctx) {
         var hooks, len, i_19, hook, fn;
         hooks = ctx.$hooks;

@@ -305,11 +305,25 @@
     };
     var DEBUG = false;
     var __export_Opts;
+    var __export_E2;
+    var __export_StringEnum;
     var Opts_lib;
     (function(Opts) {
         Opts[Opts["Start"] = 0] = "Start";
         Opts[Opts["Stop"] = 1] = "Stop";
     })(Opts_lib = __export_Opts || (__export_Opts = {}));
+    var E2_lib;
+    (function(E2) {
+        E2[E2["A"] = 0] = "A";
+        E2[E2["B"] = 1] = "B";
+    })(E2_lib = __export_E2 || (__export_E2 = {}));
+    var StringEnum_lib;
+    (function(StringEnum) {
+        StringEnum["A"] = "Yes";
+        StringEnum["B"] = "No";
+    })(StringEnum_lib = __export_StringEnum || (__export_StringEnum = {}));
     console.log(__export_Opts.Start);
+    console.log(__export_E2[1]);
+    console.log(__export_StringEnum.B);
 }.call(this);
 

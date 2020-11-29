@@ -1,4 +1,14 @@
 export enum Opts {
-	Start,
-	Stop
+  Start,
+  Stop,
+}
+
+export enum E2 {
+  A,
+  B,
+}
+
+export enum StringEnum {
+  A = "Yes",
+  B = "No",
 }

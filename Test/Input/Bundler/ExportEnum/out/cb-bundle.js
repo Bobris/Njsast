@@ -1,10 +1,12 @@
 (function(undefined) {
     "use strict";
-    var __export_Opts;
-    (function(Opts) {
-        Opts[Opts["Start"] = 0] = "Start";
-        Opts[Opts["Stop"] = 1] = "Stop";
-    })(__export_Opts || (__export_Opts = {}));
-    console.log(__export_Opts.Start);
+    var __export_E2 = {};
+    (function(E2) {
+        E2[E2["A"] = 0] = "A";
+        E2[E2["B"] = 1] = "B";
+    })(__export_E2);
+    console.log(0);
+    console.log(__export_E2[1]);
+    console.log("No");
 }).call(this);
 
