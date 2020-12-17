@@ -33,7 +33,13 @@ namespace Njsast.Bundler
                 var init = new AstObject(Ast);
                 foreach (var (propName, value) in tuples)
                 {
-                    init.Properties.Add(new AstObjectKeyVal(new AstString(propName), value));
+                    var valueRef = value;
+                    if (value is AstSymbolDeclaration decl)
+                    {
+                        valueRef = new AstSymbolRef(value, decl.Thedef!, SymbolUsage.Read);
+                    }
+                    
+                    init.Properties.Add(new AstObjectKeyVal(new AstString(propName), valueRef));
                 }
 
                 var wholeExport = new AstSymbolVar(Ast, wholeExportName);
