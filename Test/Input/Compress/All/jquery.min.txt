@@ -1574,7 +1574,7 @@ Toplevel 1:1 - 5496:1
                   ObjectKeyVal 155:7 - 155:26
                     SymbolProperty 155:7 - 155:11 [Write]
                       Name: noop
-                    Function 155:13 - 155:26
+                    Function 155:13 - 155:26 [Pure]
                   ObjectKeyVal 156:7 - 165:8
                     SymbolProperty 156:7 - 156:20 [Write]
                       Name: isPlainObject
@@ -45430,7 +45430,7 @@ Toplevel 1:1 - 5496:1
                             ObjectKeyVal 4972:23 - 4972:51
                               String 4972:23 - 4972:36
                                 Value: text script
-                              Function 4972:38 - 4972:51
+                              Function 4972:38 - 4972:51 [Pure]
                         ObjectKeyVal 4973:9 - 4975:10
                           SymbolProperty 4973:9 - 4973:19 [Write]
                             Name: dataFilter

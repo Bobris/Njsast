@@ -3,7 +3,7 @@ Toplevel 1:1 - 8:1 [HasUseStrictDirective]
     VarDef 2:5 - 2:22
       SymbolVar 2:5 - 2:6 [Write]
         Name: k
-      Function 2:9 - 2:22
+      Function 2:9 - 2:22 [Pure]
   SimpleStatement 3:1 - 7:3
     Assign 3:1 - 7:2
       Operator: Assignment
@@ -21,7 +21,7 @@ Toplevel 1:1 - 8:1 [HasUseStrictDirective]
                 Operator: LogicalAnd
                 Array 5:12 - 5:14
                 Call 5:18 - 5:47
-                  Function 5:19 - 5:35
+                  Function 5:19 - 5:35 [Pure]
                     SymbolLambda 5:28 - 5:29 [Write]
                       Name: n
                     SymbolFunarg 5:30 - 5:31 [Write]
