@@ -494,8 +494,8 @@ namespace Njsast.Compress
                         NeedValue = true;
                         astIf.Condition = Transform(astIf.Condition);
                         NeedValue = false;
-                        astIf.Body = (AstStatement)Transform(astIf.Body);
-                        if (astIf.Alternative != null) astIf.Alternative = (AstStatement)Transform(astIf.Alternative);
+                        astIf.Body = (AstStatement) Transform(astIf.Body);
+                        if (astIf.Alternative != null) astIf.Alternative = (AstStatement) Transform(astIf.Alternative);
 
                         return node;
                     }
@@ -509,6 +509,7 @@ namespace Njsast.Compress
                             astCase.Expression = Transform(astCase.Expression);
                             NeedValue = false;
                         }
+
                         TransformList(ref block.Body);
                         return node;
                     }
@@ -517,21 +518,35 @@ namespace Njsast.Compress
                         NeedValue = true;
                         forIn.Object = Transform(forIn.Object);
                         NeedValue = false;
-                        forIn.Body = (AstStatement)Transform(forIn.Body);
+                        forIn.Body = (AstStatement) Transform(forIn.Body);
                         return node;
                     }
                     case AstFor astFor:
                     {
-                        if (astFor.Init != null) astFor.Init = Transform(astFor.Init);
+                        if (astFor.Init != null)
+                        {
+                            var init = Transform(astFor.Init);
+                            if (init == Remove) init = null;
+                            astFor.Init = init;
+                        }
+
                         if (astFor.Condition != null)
                         {
                             NeedValue = true;
-                            astFor.Condition = Transform(astFor.Condition);
+                            var cond = Transform(astFor.Condition);
+                            if (cond == Remove) cond = null;
+                            astFor.Condition = cond;
                             NeedValue = false;
                         }
 
-                        if (astFor.Step != null) astFor.Step = Transform(astFor.Step);
-                        astFor.Body = (AstStatement)Transform(astFor.Body);
+                        if (astFor.Step != null)
+                        {
+                            var step = Transform(astFor.Step);
+                            if (step == Remove) step = null;
+                            astFor.Step = step;
+                        }
+
+                        astFor.Body = (AstStatement) Transform(astFor.Body);
                         return node;
                     }
                     case AstDefinitions def:
