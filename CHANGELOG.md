@@ -4,6 +4,28 @@
 
 ### Added
 
+- Upgrade to .Net 6.0
+
+### Fixes
+
+- Fixing ES6+ support
+
+## 0.5.0
+
+### Added
+
+- Optimize TypeScript enums
+- dead code elimination of result unused `new Map()`
+
+### Fixed
+
+- Bundler with import default when there is not default export
+
+## 0.4.0
+
+### Added
+
+- Unused classes are eliminated by optimizer.
 - Support for export { x } from "y"; and export { x as y } from "z"; patterns
 - Compress optimization for cloned constant variables
 - Improved bundling dead code elimination of export as namespace

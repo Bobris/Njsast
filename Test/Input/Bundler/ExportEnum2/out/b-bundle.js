@@ -209,10 +209,6 @@
         for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
         return r;
     };
-    var __spreadArray = function(to, from) {
-        for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
-        return to;
-    };
     var __await = function(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
     };
@@ -309,25 +305,18 @@
     };
     var DEBUG = false;
     var __export_Opts;
-    var __export_E2;
-    var __export_StringEnum;
     var Opts_lib;
     (function(Opts) {
         Opts[Opts["Start"] = 0] = "Start";
         Opts[Opts["Stop"] = 1] = "Stop";
     })(Opts_lib = __export_Opts || (__export_Opts = {}));
-    var E2_lib;
-    (function(E2) {
-        E2[E2["A"] = 0] = "A";
-        E2[E2["B"] = 1] = "B";
-    })(E2_lib = __export_E2 || (__export_E2 = {}));
-    var StringEnum_lib;
-    (function(StringEnum) {
-        StringEnum["A"] = "Yes";
-        StringEnum["B"] = "No";
-    })(StringEnum_lib = __export_StringEnum || (__export_StringEnum = {}));
-    console.log(__export_Opts.Start);
-    console.log(__export_E2[1]);
-    console.log(__export_StringEnum.B);
+    function ok() {
+        console.log(Opts_lib.Stop);
+    }
+    var __export_$ = {
+        Opts: __export_Opts,
+        ok: ok
+    };
+    if (__export_$ != null) ok();
 }.call(this);
 

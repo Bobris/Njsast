@@ -3,11 +3,13 @@
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
         <LangVersion>latest</LangVersion>
+        <TargetFramework>net5.0</TargetFramework>
+        <LangVersion>8</LangVersion>
         <RuntimeIdentifiers>linux-x64;win-x64;osx-x64</RuntimeIdentifiers>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
         <PackageId>Njsast</PackageId>
-        <Version>0.3.0</Version> 
+        <Version>0.5.0</Version> 
         <Authors>Boris Letocha, Miroslav Pokorný</Authors>
         <PackageProjectUrl>http://github.com/Bobris/Njsast</PackageProjectUrl>
         <PackageLicenseUrl>http://www.opensource.org/licenses/mit-license.php</PackageLicenseUrl>
@@ -20,6 +22,8 @@
     <ItemGroup>
       <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     </ItemGroup>
 
     <ItemGroup>
