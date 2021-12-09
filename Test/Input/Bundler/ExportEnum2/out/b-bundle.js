@@ -209,6 +209,10 @@
         for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
         return r;
     };
+    var __spreadArray = function(to, from) {
+        for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
+        return to;
+    };
     var __await = function(v) {
         return this instanceof __await ? (this.v = v, this) : new __await(v);
     };
