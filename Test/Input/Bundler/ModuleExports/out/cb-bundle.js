@@ -1,8 +1,8 @@
 (function(undefined) {
     "use strict";
-    var global, exports_param, exports_wrapper, exports_lib;
+    var global, exports, exports_wrapper, exports_lib;
     global = window;
-    exports_param = {
+    exports = {
         doIt: function(p) {
             console.log(p);
         },
@@ -20,7 +20,7 @@
         });
         return param;
     };
-    exports_lib = exports_wrapper(exports_param);
+    exports_lib = exports_wrapper(exports);
     if ("test" in window) {
         setTimeout(window.test, 1);
     }

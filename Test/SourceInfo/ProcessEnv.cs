@@ -18,7 +18,7 @@ namespace Test.SourceInfo
             var ctx = new ResolvingConstEvalCtx("src/a.js", files);
             var sourceInfo = GatherBobrilSourceInfo.Gather(top, ctx,
                 (myctx, text) => PathUtils.Join(PathUtils.Parent(myctx.SourceName), text));
-            var processEnv = sourceInfo.ProcessEnvs.Single();
+            var processEnv = sourceInfo.ProcessEnvs!.Single();
             Assert.Equal("NODE_ENV", processEnv.Name);
             Assert.Equal(0, processEnv.StartLine);
             Assert.Equal(4, processEnv.StartCol);

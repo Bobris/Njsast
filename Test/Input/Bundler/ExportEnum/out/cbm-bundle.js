@@ -1,10 +1,5 @@
-(function(t) {
+(function(n) {
     "use strict";
-    var p;
-    (function(t) {
-        t[t["Start"] = 0] = "Start";
-        t[t["Stop"] = 1] = "Stop";
-    })(p || (p = {}));
-    console.log(p.Start);
+    console.log(0);
 }).call(this);
 

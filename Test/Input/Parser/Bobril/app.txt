@@ -53,12 +53,12 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
             Name: b
         Object 7:30 - 7:71
           ObjectKeyVal 7:32 - 7:56
-            SymbolProperty 7:32 - 7:47 [Write]
+            SymbolProperty 7:32 - 7:47
               Name: backgroundColor
             String 7:49 - 7:56
               Value: green
           ObjectKeyVal 7:58 - 7:69
-            SymbolProperty 7:58 - 7:65 [Write]
+            SymbolProperty 7:58 - 7:65
               Name: padding
             Number 7:67 - 7:69
               Value: 10
@@ -96,7 +96,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
   Defun 10:1 - 12:2
     SymbolDefun 10:10 - 10:20 [Write]
       Name: dontDoThis
-    SymbolFunarg 10:21 - 10:23 [Write]
+    SymbolFunarg 10:21 - 10:23
       Name: cn
     SimpleStatement 11:5 - 11:35
       Call 11:5 - 11:34
@@ -131,10 +131,10 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
             Name: b
         Object 15:37 - 95:2
           ObjectKeyVal 16:5 - 22:6
-            SymbolProperty 16:5 - 16:9 [Write]
+            SymbolProperty 16:5 - 16:9
               Name: init
             Function 16:11 - 22:6
-              SymbolFunarg 16:21 - 16:24 [Write]
+              SymbolFunarg 16:21 - 16:24
                 Name: ctx
               SimpleStatement 17:9 - 17:25
                 Assign 17:9 - 17:24
@@ -168,14 +168,14 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                     Value: 1000
                     Literal: 1000
           ObjectKeyVal 23:5 - 94:6
-            SymbolProperty 23:5 - 23:11 [Write]
+            SymbolProperty 23:5 - 23:11
               Name: render
             Function 23:13 - 94:6
-              SymbolFunarg 23:23 - 23:26 [Write]
+              SymbolFunarg 23:23 - 23:26
                 Name: ctx
-              SymbolFunarg 23:28 - 23:30 [Write]
+              SymbolFunarg 23:28 - 23:30
                 Name: me
-              SymbolFunarg 23:32 - 23:38 [Write]
+              SymbolFunarg 23:32 - 23:38
                 Name: _oldMe
               Var 24:9 - 24:31
                 VarDef 24:13 - 24:30
@@ -207,12 +207,12 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                           Name: b
                       Object 27:21 - 30:14
                         ObjectKeyVal 28:17 - 28:26
-                          SymbolProperty 28:17 - 28:20 [Write]
+                          SymbolProperty 28:17 - 28:20
                             Name: tag
                           String 28:22 - 28:26
                             Value: h1
                         ObjectKeyVal 29:17 - 29:78
-                          SymbolProperty 29:17 - 29:25 [Write]
+                          SymbolProperty 29:17 - 29:25
                             Name: children
                           Call 29:27 - 29:78
                             Dot 29:27 - 29:30
@@ -223,7 +223,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                               Value: Hello World! {c, number}
                             Object 29:59 - 29:77
                               ObjectKeyVal 29:61 - 29:75
-                                SymbolProperty 29:61 - 29:62 [Write]
+                                SymbolProperty 29:61 - 29:62
                                   Name: c
                                 Dot 29:64 - 29:75
                                   Property: counter
@@ -233,33 +233,33 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                         Name: headerStyle
                     Object 31:13 - 41:14
                       ObjectKeyVal 32:17 - 32:25
-                        SymbolProperty 32:17 - 32:20 [Write]
+                        SymbolProperty 32:17 - 32:20
                           Name: tag
                         String 32:22 - 32:25
                           Value: p
                       ObjectKeyVal 33:17 - 40:18
-                        SymbolProperty 33:17 - 33:25 [Write]
+                        SymbolProperty 33:17 - 33:25
                           Name: children
                         Array 33:27 - 40:18
                           String 34:21 - 34:39
                             Value: See examples on 
                           Object 35:21 - 39:22
                             ObjectKeyVal 36:25 - 36:33
-                              SymbolProperty 36:25 - 36:28 [Write]
+                              SymbolProperty 36:25 - 36:28
                                 Name: tag
                               String 36:30 - 36:33
                                 Value: a
                             ObjectKeyVal 37:25 - 37:76
-                              SymbolProperty 37:25 - 37:30 [Write]
+                              SymbolProperty 37:25 - 37:30
                                 Name: attrs
                               Object 37:32 - 37:76
                                 ObjectKeyVal 37:34 - 37:74
-                                  SymbolProperty 37:34 - 37:38 [Write]
+                                  SymbolProperty 37:34 - 37:38
                                     Name: href
                                   String 37:40 - 37:74
                                     Value: https://github.com/Bobris/Bobril
                             ObjectKeyVal 38:25 - 38:61
-                              SymbolProperty 38:25 - 38:33 [Write]
+                              SymbolProperty 38:25 - 38:33
                                 Name: children
                               Call 38:35 - 38:61
                                 Dot 38:35 - 38:38
@@ -270,12 +270,12 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                                   Value: Bobril GitHub pages
                     Object 42:13 - 49:14
                       ObjectKeyVal 43:17 - 43:25
-                        SymbolProperty 43:17 - 43:20 [Write]
+                        SymbolProperty 43:17 - 43:20
                           Name: tag
                         String 43:22 - 43:25
                           Value: p
                       ObjectKeyVal 44:17 - 48:18
-                        SymbolProperty 44:17 - 44:25 [Write]
+                        SymbolProperty 44:17 - 44:25
                           Name: children
                         Array 44:27 - 48:18
                           Conditional 45:21 - 47:40
@@ -305,30 +305,30 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                               Value: Loading ...
                     Object 50:13 - 54:14
                       ObjectKeyVal 51:17 - 51:27
-                        SymbolProperty 51:17 - 51:20 [Write]
+                        SymbolProperty 51:17 - 51:20
                           Name: tag
                         String 51:22 - 51:27
                           Value: img
                       ObjectKeyVal 52:17 - 52:75
-                        SymbolProperty 52:17 - 52:22 [Write]
+                        SymbolProperty 52:17 - 52:22
                           Name: style
                         Object 52:24 - 52:75
                           ObjectKeyVal 52:26 - 52:49
-                            SymbolProperty 52:26 - 52:33 [Write]
+                            SymbolProperty 52:26 - 52:33
                               Name: display
                             String 52:35 - 52:49
                               Value: inline-block
                           ObjectKeyVal 52:51 - 52:73
-                            SymbolProperty 52:51 - 52:64 [Write]
+                            SymbolProperty 52:51 - 52:64
                               Name: verticalAlign
                             String 52:66 - 52:73
                               Value: unset
                       ObjectKeyVal 53:17 - 53:53
-                        SymbolProperty 53:17 - 53:22 [Write]
+                        SymbolProperty 53:17 - 53:22
                           Name: attrs
                         Object 53:24 - 53:53
                           ObjectKeyVal 53:26 - 53:51
-                            SymbolProperty 53:26 - 53:29 [Write]
+                            SymbolProperty 53:26 - 53:29
                               Name: src
                             Call 53:31 - 53:51
                               Dot 53:31 - 53:38
@@ -346,12 +346,12 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                         Value:  
                       Object 55:30 - 55:82
                         ObjectKeyVal 55:32 - 55:55
-                          SymbolProperty 55:32 - 55:47 [Write]
+                          SymbolProperty 55:32 - 55:47
                             Name: backgroundColor
                           String 55:49 - 55:55
                             Value: blue
                         ObjectKeyVal 55:57 - 55:80
-                          SymbolProperty 55:57 - 55:64 [Write]
+                          SymbolProperty 55:57 - 55:64
                             Name: display
                           String 55:66 - 55:80
                             Value: inline-block
@@ -366,12 +366,12 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                         Value:  
                       Object 56:30 - 56:83
                         ObjectKeyVal 56:32 - 56:56
-                          SymbolProperty 56:32 - 56:47 [Write]
+                          SymbolProperty 56:32 - 56:47
                             Name: backgroundColor
                           String 56:49 - 56:56
                             Value: green
                         ObjectKeyVal 56:58 - 56:81
-                          SymbolProperty 56:58 - 56:65 [Write]
+                          SymbolProperty 56:58 - 56:65
                             Name: display
                           String 56:67 - 56:81
                             Value: inline-block
@@ -386,7 +386,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                         Value:  
                       Object 57:30 - 57:57
                         ObjectKeyVal 57:32 - 57:55
-                          SymbolProperty 57:32 - 57:39 [Write]
+                          SymbolProperty 57:32 - 57:39
                             Name: display
                           String 57:41 - 57:55
                             Value: inline-block
@@ -400,12 +400,12 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                           Name: lightSwitch_1
                       Object 58:38 - 63:14
                         ObjectKeyVal 59:17 - 59:35
-                          SymbolProperty 59:17 - 59:22 [Write]
+                          SymbolProperty 59:17 - 59:22
                             Name: value
                           SymbolRef 59:24 - 59:35 [Read]
                             Name: switchValue
                         ObjectKeyVal 60:17 - 62:18
-                          SymbolProperty 60:17 - 60:25 [Write]
+                          SymbolProperty 60:17 - 60:25
                             Name: onChange
                           Function 60:27 - 62:18
                             SimpleStatement 61:21 - 61:48
@@ -419,31 +419,31 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                                     Name: switchValue
                     Object 64:13 - 68:14
                       ObjectKeyVal 65:17 - 65:28
-                        SymbolProperty 65:17 - 65:20 [Write]
+                        SymbolProperty 65:17 - 65:20
                           Name: tag
                         String 65:22 - 65:28
                           Value: span
                       ObjectKeyVal 66:17 - 66:54
-                        SymbolProperty 66:17 - 66:26 [Write]
+                        SymbolProperty 66:17 - 66:26
                           Name: className
                         String 66:28 - 66:54
                           Value: glyphicon glyphicon-star
                       ObjectKeyVal 67:17 - 67:44
-                        SymbolProperty 67:17 - 67:22 [Write]
+                        SymbolProperty 67:17 - 67:22
                           Name: attrs
                         Object 67:24 - 67:44
                           ObjectKeyVal 67:26 - 67:42
-                            SymbolProperty 67:26 - 67:36 [Write]
+                            SymbolProperty 67:26 - 67:36
                               Name: ariaHidden
                             True 67:38 - 67:42
                     Object 69:13 - 72:14
                       ObjectKeyVal 70:17 - 70:25
-                        SymbolProperty 70:17 - 70:20 [Write]
+                        SymbolProperty 70:17 - 70:20
                           Name: tag
                         String 70:22 - 70:25
                           Value: p
                       ObjectKeyVal 71:17 - 71:61
-                        SymbolProperty 71:17 - 71:25 [Write]
+                        SymbolProperty 71:17 - 71:25
                           Name: children
                         Binary 71:27 - 71:61
                           Operator: Addition
@@ -456,12 +456,12 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                                 Name: g
                     Object 73:13 - 77:14
                       ObjectKeyVal 74:17 - 74:25
-                        SymbolProperty 74:17 - 74:20 [Write]
+                        SymbolProperty 74:17 - 74:20
                           Name: tag
                         String 74:22 - 74:25
                           Value: p
                       ObjectKeyVal 75:17 - 76:55
-                        SymbolProperty 75:17 - 75:25 [Write]
+                        SymbolProperty 75:17 - 75:25
                           Name: children
                         Binary 75:27 - 76:55
                           Operator: Addition
@@ -479,12 +479,12 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                               Value: L
                     Object 78:13 - 82:14
                       ObjectKeyVal 79:17 - 79:25
-                        SymbolProperty 79:17 - 79:20 [Write]
+                        SymbolProperty 79:17 - 79:20
                           Name: tag
                         String 79:22 - 79:25
                           Value: p
                       ObjectKeyVal 80:17 - 81:87
-                        SymbolProperty 80:17 - 80:25 [Write]
+                        SymbolProperty 80:17 - 80:25
                           Name: children
                         Binary 80:27 - 81:87
                           Operator: Addition
@@ -499,28 +499,28 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                               Value: {arg, number, custom, format:{0,0.00}}
                             Object 81:67 - 81:86
                               ObjectKeyVal 81:69 - 81:84
-                                SymbolProperty 81:69 - 81:72 [Write]
+                                SymbolProperty 81:69 - 81:72
                                   Name: arg
                                 Number 81:74 - 81:84
                                   Value: 123456.789
                                   Literal: 123456.789
                     Object 83:13 - 92:14
                       ObjectKeyVal 84:17 - 84:25
-                        SymbolProperty 84:17 - 84:20 [Write]
+                        SymbolProperty 84:17 - 84:20
                           Name: tag
                         String 84:22 - 84:25
                           Value: p
                       ObjectKeyVal 85:17 - 85:34
-                        SymbolProperty 85:17 - 85:25 [Write]
+                        SymbolProperty 85:17 - 85:25
                           Name: children
                         String 85:27 - 85:34
                           Value: cs-CZ
                       ObjectKeyVal 86:17 - 91:18
-                        SymbolProperty 86:17 - 86:26 [Write]
+                        SymbolProperty 86:17 - 86:26
                           Name: component
                         Object 86:28 - 91:18
                           ObjectKeyVal 87:21 - 90:22
-                            SymbolProperty 87:21 - 87:28 [Write]
+                            SymbolProperty 87:21 - 87:28
                               Name: onClick
                             Function 87:30 - 90:22
                               SimpleStatement 88:25 - 88:46

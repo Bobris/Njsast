@@ -11,7 +11,7 @@ Toplevel 1:1 - 7:2
             Name: log
           SymbolRef 4:9 - 4:10 [Read]
             Name: e
-      SymbolCatch 3:10 - 3:11 [Write]
+      SymbolCatch 3:10 - 3:11
         Name: e
     Finally 5:10 - 7:2
       SimpleStatement 6:5 - 6:11

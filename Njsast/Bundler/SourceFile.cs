@@ -1,3 +1,5 @@
+using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using Njsast.Ast;
 
 namespace Njsast.Bundler
@@ -25,17 +27,29 @@ namespace Njsast.Bundler
 
         public void CreateWholeExport(string[] needPath)
         {
+            if (needPath.Length >= 1 && needPath[0] == "default" &&
+                !Exports!.TryFindLongestPrefix(new[] {"default"}, out _, out _))
+            {
+                needPath = needPath.Skip(1).ToArray();
+            }
+
             Exports!.EnsureKeyExists(needPath, tuples =>
             {
-                var wholeExportName = BundlerHelpers.MakeUniqueName("__export_$", Ast.Variables!,
-                    Ast.CalcNonRootSymbolNames(),
-                    "_" + BundlerHelpers.FileNameToIdent(Name));
                 var init = new AstObject(Ast);
                 foreach (var (propName, value) in tuples)
                 {
-                    init.Properties.Add(new AstObjectKeyVal(new AstString(propName), value));
+                    var valueRef = value;
+                    if (value is AstSymbolDeclaration decl)
+                    {
+                        valueRef = new AstSymbolRef(value, decl.Thedef!, SymbolUsage.Read);
+                    }
+
+                    init.Properties.Add(new AstObjectKeyVal(new AstString(propName), valueRef));
                 }
 
+                var wholeExportName = BundlerHelpers.MakeUniqueName("__export_$", Ast.Variables!,
+                    Ast.CalcNonRootSymbolNames(),
+                    "_" + BundlerHelpers.FileNameToIdent(Name));
                 var wholeExport = new AstSymbolVar(Ast, wholeExportName);
                 var symbolDef = new SymbolDef(Ast, wholeExport, init);
                 wholeExport.Thedef = symbolDef;
@@ -117,7 +131,7 @@ namespace Njsast.Bundler
 
         public override string ToString()
         {
-            return $"{string.Join('.',Path)} as {AsName} from {SourceName}";
+            return $"{string.Join('.', Path)} as {AsName} from {SourceName}";
         }
     }
 }

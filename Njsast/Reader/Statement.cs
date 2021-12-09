@@ -546,13 +546,11 @@ namespace Njsast.Reader
             newlabel.IsLoop = TokenInformation.Types[Type].IsLoop;
             _labels.Add(newlabel);
             var body = ParseStatement(true);
-            if (body is AstClass ||
-                body is AstLet || body is AstConst ||
-                body is AstFunction functionDeclaration && (_strict || functionDeclaration.IsGenerator))
+            if (body is AstClass or AstLet or AstConst || body is AstFunction functionDeclaration && (_strict || functionDeclaration.IsGenerator))
                 RaiseRecoverable(body.Start, "Invalid labelled declaration");
             _labels.Pop();
 
-            return new AstLabeledStatement(SourceFile, nodeStart, _lastTokEnd, (AstStatement) body, newlabel);
+            return new(SourceFile, nodeStart, _lastTokEnd, body, newlabel);
         }
 
         AstSimpleStatement ParseExpressionStatement(Position nodeStart, AstNode expr)
@@ -563,7 +561,7 @@ namespace Njsast.Reader
             }
 
             Semicolon();
-            return new AstSimpleStatement(SourceFile, nodeStart, _lastTokEnd, expr);
+            return new(SourceFile, nodeStart, _lastTokEnd, expr);
         }
 
         // Parse a semicolon-enclosed block of statements, handling `"use
@@ -670,23 +668,38 @@ namespace Njsast.Reader
         {
             var id = ParseBindingAtom();
             CheckLVal(id, true, kind);
-            if (id is AstSymbol)
-            {
-                if (kind == VariableKind.Let)
-                {
-                    id = new AstSymbolLet((AstSymbol) id);
-                }
-                else if (kind == VariableKind.Const)
-                {
-                    id = new AstSymbolConst((AstSymbol) id);
-                }
-                else
-                {
-                    id = new AstSymbolVar((AstSymbol) id);
-                }
-            }
+            id = ToRightDeclarationSymbolKind(id, kind);
 
             return id;
+        }
+
+        static AstNode ToRightDeclarationSymbolKind(AstNode id, VariableKind kind)
+        {
+            switch (id)
+            {
+                case AstSymbol symbol:
+                    return kind switch
+                    {
+                        VariableKind.Let => new AstSymbolLet(symbol),
+                        VariableKind.Const => new AstSymbolConst(symbol),
+                        VariableKind.Var => new AstSymbolVar(symbol),
+                        _ => throw new ArgumentOutOfRangeException(nameof(kind))
+                    };
+                case AstDestructuring destructuring:
+                {
+                    for(var i = 0; i<destructuring.Names.Count;i++)
+                    {
+                        destructuring.Names[i] = ToRightDeclarationSymbolKind(destructuring.Names[i], kind);
+                    }
+
+                    return id;
+                }
+                case AstObjectProperty prop:
+                    prop.Value = ToRightDeclarationSymbolKind(prop.Value, kind);
+                    return id;
+                default:
+                    throw new ArgumentException("Unexpected node type " + id.GetType().Name);
+            }
         }
 
         // Parse a function declaration or literal (depending on the
@@ -876,12 +889,12 @@ namespace Njsast.Reader
 
             if (isStatement || isNullableId)
             {
-                return new AstClass(SourceFile, nodeStart, _lastTokEnd, id != null ? new AstSymbolDefClass(id) : null,
+                return new(SourceFile, nodeStart, _lastTokEnd, id != null ? new AstSymbolDefClass(id) : null,
                     superClass, ref body);
             }
 
             return new AstClassExpression(SourceFile, nodeStart, _lastTokEnd,
-                id != null ? new AstSymbolClass(id) : null, superClass, ref body);
+                id != null ? new AstSymbolDefClass(id) : null, superClass, ref body);
         }
 
         AstSymbol? ParseClassId(bool isStatement)

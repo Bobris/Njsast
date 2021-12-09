@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
-        <LangVersion>8</LangVersion>
+        <TargetFramework>net6.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
         <RuntimeIdentifiers>linux-x64;win-x64;osx-x64</RuntimeIdentifiers>
         <Nullable>enable</Nullable>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -15,12 +15,11 @@
         <Description>JavaScript AST Parsing, Optimization, Mangling, Bundling, Printing also with SourceMaps</Description>
         <PackageTags>JavaScript AST Bundling Minification SourceMap</PackageTags>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <DebugSymbols>true</DebugSymbols>
-        <DebugType>embedded</DebugType> 
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+      <PackageReference Include="JetBrains.Annotations" Version="2021.3.0" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     </ItemGroup>
 
     <ItemGroup>

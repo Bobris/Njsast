@@ -8,7 +8,7 @@ namespace Njsast.Runtime
 {
     public class TypeConverter
     {
-        public static AstNode ToAst(object o)
+        public static AstNode ToAst(object? o)
         {
             if (o is AstNode node) return node;
             if (o is string str) return new AstString(str);
@@ -70,7 +70,7 @@ namespace Njsast.Runtime
                     return false;
                 case double d:
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
-                    return (d != 0 && !double.IsNaN(d));
+                    return d != 0 && !double.IsNaN(d);
                 case string s:
                     return s.Length != 0;
                 case int i:
@@ -82,7 +82,7 @@ namespace Njsast.Runtime
                     return true;
                 case AstNumber number:
                     // ReSharper disable once CompareOfFloatsByEqualityOperator
-                    return (number.Value != 0 && !double.IsNaN(number.Value));
+                    return number.Value != 0 && !double.IsNaN(number.Value);
                 case AstString str:
                     return str.Value.Length != 0;
                 default:

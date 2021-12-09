@@ -5,11 +5,11 @@ Toplevel 1:1 - 12:1
         Name: a
       Object 1:9 - 1:31
         ObjectKeyVal 1:11 - 1:19
-          SymbolProperty 1:11 - 1:12 [Write]
+          SymbolProperty 1:11 - 1:12
             Name: b
           False 1:14 - 1:19
         ObjectKeyVal 1:21 - 1:29
-          SymbolProperty 1:21 - 1:22 [Write]
+          SymbolProperty 1:21 - 1:22
             Name: c
           False 1:24 - 1:29
   Defun 3:1 - 5:2

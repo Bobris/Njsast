@@ -5,7 +5,7 @@ Toplevel 1:1 - 1:38
         Name: hi
       Function 1:10 - 1:37
         Expansion 1:20 - 1:24
-          SymbolFunarg 1:23 - 1:24 [Write]
+          SymbolFunarg 1:23 - 1:24
             Name: r
         SimpleStatement 1:28 - 1:35
           Call 1:28 - 1:35

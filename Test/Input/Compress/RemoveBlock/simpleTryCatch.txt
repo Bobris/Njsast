@@ -11,5 +11,5 @@ Toplevel 1:1 - 5:3
             Name: log
           SymbolRef 4:9 - 4:10 [Read]
             Name: e
-      SymbolCatch 3:10 - 3:11 [Write]
+      SymbolCatch 3:10 - 3:11
         Name: e

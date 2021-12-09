@@ -219,7 +219,7 @@ namespace Test
                 errors++;
                 Console.WriteLine("Difference in " + whatText + " " + file);
                 var outfile = "Wrong/" + file.Substring(6, file.Length - 6) + (ext != "" ? "." + ext : "");
-                Directory.CreateDirectory(Path.GetDirectoryName(outfile));
+                Directory.CreateDirectory(Path.GetDirectoryName(outfile)!);
                 File.WriteAllText(outfile, outText);
             }
         }

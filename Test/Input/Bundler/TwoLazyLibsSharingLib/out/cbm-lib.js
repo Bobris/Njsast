@@ -1,7 +1,7 @@
 (function(_) {
     "use strict";
     var e, r;
-    e = __bbb.e;
+    e = __bbb.d;
     e();
     function l() {
         return "Hello";

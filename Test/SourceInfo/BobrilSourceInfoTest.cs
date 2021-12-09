@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.Unicode;
 using Njsast.Bobril;
 using Njsast.ConstEval;
@@ -57,7 +58,7 @@ namespace Test.SourceInfo
             sourceReplacer.Apply(adder);
             builder.AddText("//# sourceMappingURL=index.js.map");
             output["index.sourceinfo.json"] = JsonSerializer
-                .Serialize(sourceInfo, new JsonSerializerOptions {WriteIndented = true, IgnoreNullValues = true})
+                .Serialize(sourceInfo, new JsonSerializerOptions {WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull})
                 .Replace("\r\n", "\n");
             output["index.js"] = builder.Content();
             output["index.js.map"] = builder.Build(".", "..").ToString();
@@ -78,7 +79,7 @@ namespace Test.SourceInfo
             builder.AddText("//# sourceMappingURL=cov.js.map");
             output["cov.info.json"] = JsonSerializer
                 .Serialize(coverageInstrumentation.InstrumentedFiles,
-                    new JsonSerializerOptions {WriteIndented = true, IgnoreNullValues = true})
+                    new JsonSerializerOptions {WriteIndented = true, DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull })
                 .Replace("\r\n", "\n");
             output["cov.js"] = builder.Content();
             output["cov.js.map"] = builder.Build(".", "..").ToString();

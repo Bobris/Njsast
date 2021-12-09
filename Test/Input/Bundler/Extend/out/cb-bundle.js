@@ -23,16 +23,6 @@
         };
         return Base;
     }();
-    (function(_super) {
-        __extends(Derived, _super);
-        function Derived() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        Derived.prototype.hello = function() {
-            console.log("Derived");
-        };
-        return Derived;
-    })(Base_lib);
     Main_index = function(_super) {
         __extends(Main, _super);
         function Main() {

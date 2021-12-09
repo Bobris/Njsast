@@ -11,7 +11,7 @@ Toplevel 1:1 - 1:66
             Name: say
           SymbolRef 1:35 - 1:36 [Read]
             Name: e
-      SymbolCatch 1:26 - 1:27 [Write]
+      SymbolCatch 1:26 - 1:27
         Name: e
     Finally 1:47 - 1:66
       SimpleStatement 1:50 - 1:64

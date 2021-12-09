@@ -1,7 +1,7 @@
 (function(_) {
     "use strict";
     var r, e;
-    r = __bbb.e;
+    r = __bbb.d;
     r();
     function d() {
         return "World";

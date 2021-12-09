@@ -4,7 +4,7 @@ Toplevel 1:1 - 55:1
       Operator: LogicalNot
       Call 1:2 - 54:5
         Function 1:3 - 54:2 [HasUseStrictDirective]
-          SymbolFunarg 1:12 - 1:21 [Write]
+          SymbolFunarg 1:12 - 1:21
             Name: undefined
           LabeledStatement 49:3 - 53:4
             Label 49:3 - 49:7 [IsLoop]

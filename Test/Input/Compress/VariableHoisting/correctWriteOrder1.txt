@@ -19,7 +19,7 @@ Toplevel 1:1 - 8:1
         Name: c
       Object 1:9 - 3:2
         ObjectKeyVal 2:5 - 2:27
-          SymbolProperty 2:5 - 2:14 [Write]
+          SymbolProperty 2:5 - 2:14
             Name: component
           Dot 2:16 - 2:27
             Property: component

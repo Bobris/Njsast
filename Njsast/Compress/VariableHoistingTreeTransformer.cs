@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Njsast.Ast;
 using Njsast.Reader;
@@ -19,7 +18,7 @@ namespace Njsast.Compress
             public AstVarDef AstVarDef { get; }
             public bool CanMoveInitialization { get; }
 
-            public static readonly HashSet<AstBlock> CreatedIfBlocks = new HashSet<AstBlock>();
+            public static readonly HashSet<AstBlock> CreatedIfBlocks = new();
 
             public VariableDefinition(AstBlock parentBlock, AstNode parent, AstVar astVar, AstVarDef astVarDef, bool canMoveInitialization, int originalIndexInVar)
             {

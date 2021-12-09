@@ -1,8 +1,8 @@
-(function(e) {
+(function(s) {
     "use strict";
-    function s() {
+    function n() {
         console.log("shared");
     }
-    __bbb.e = s;
+    __bbb.d = n;
 }).call(this);
 

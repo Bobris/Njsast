@@ -3,6 +3,6 @@
     function shared() {
         console.log("shared");
     }
-    __bbb.e = shared;
+    __bbb.d = shared;
 }).call(this);
 

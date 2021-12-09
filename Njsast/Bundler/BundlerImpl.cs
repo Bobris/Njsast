@@ -43,9 +43,9 @@ namespace Njsast.Bundler
         public IReadOnlyDictionary<string, object> GlobalDefines;
         readonly IBundlerCtx _ctx;
 
-        StructList<SourceFile> _order = new StructList<SourceFile>();
-        readonly Dictionary<string, SourceFile> _cache = new Dictionary<string, SourceFile>();
-        readonly Dictionary<string, SplitInfo> _splitMap = new Dictionary<string, SplitInfo>();
+        StructList<SourceFile> _order;
+        readonly Dictionary<string, SourceFile> _cache = new();
+        readonly Dictionary<string, SplitInfo> _splitMap = new();
         SourceFile? _currentSourceFile;
         string? _currentFileIdent;
 
@@ -143,13 +143,15 @@ namespace Njsast.Bundler
                         , BeforeAdd);
                 }
 
+                IfNeededPolyfillGlobal(topLevelAst);
+
                 AddExportsFromLazyBundle(splitInfo, topLevelAst);
 
-                BundlerHelpers.WrapByIIFE(topLevelAst);
+                BundlerHelpers.WrapByIIFE(topLevelAst, (OutputOptions?.Ecma ?? 5) >= 6);
                 if (lazySplitCounter > 0 && PartToMainFilesMap.ContainsKey(splitName))
                 {
                     var astVar = new AstVar(topLevelAst);
-                    astVar.Definitions.Add(new AstVarDef(new AstSymbolVar("__bbb"), new AstObject()));
+                    astVar.Definitions.Add(new(new AstSymbolVar("__bbb"), new AstObject()));
                     topLevelAst.Body.Insert(0) = astVar;
                 }
 
@@ -201,6 +203,17 @@ namespace Njsast.Bundler
             }
         }
 
+        /// If there is global variable named `global`, then define it as `window`, because we are bundling for browser
+        static void IfNeededPolyfillGlobal(AstToplevel topLevelAst)
+        {
+            if (topLevelAst.Globals!.ContainsKey("global"))
+            {
+                var astVar = new AstVar(topLevelAst);
+                astVar.Definitions.Add(new AstVarDef(new AstSymbolVar("global"), new AstSymbolRef("window")));
+                topLevelAst.Body.Insert(0) = astVar;
+            }
+        }
+
         void DetectBundleExportsImports(ref int lazySplitCounter)
         {
             foreach (var f in _order)
@@ -238,10 +251,22 @@ namespace Njsast.Bundler
                     var fromSplit = _splitMap[fromFile.PartOfBundle!];
                     if (sourceSplit == fromSplit)
                         continue;
-                    var astNode = fromFile.Exports![exportName];
-                    sourceSplit.ImportsFromOtherBundles[astNode] =
-                        new ImportFromOtherBundle(fromSplit, fromFile, exportName);
-                    fromSplit.ExportsUsedFromLazyBundles[astNode] = BundlerHelpers.NumberToIdent(lazySplitCounter++);
+                    if (!fromFile.Exports!.TryFindLongestPrefix(exportName, out var prefixLen, out var astNode))
+                    {
+                        throw new NotSupportedException("Cannot find " + string.Join('.', exportName) + " in " +
+                                                        fromFile.Name + " used in " + f.Name);
+                    }
+
+                    if (!sourceSplit.ImportsFromOtherBundles.ContainsKey(astNode))
+                    {
+                        sourceSplit.ImportsFromOtherBundles[astNode] =
+                            new(fromSplit, fromFile, exportName.AsSpan().Slice(0,prefixLen).ToArray());
+                    }
+
+                    if (!fromSplit.ExportsUsedFromLazyBundles.ContainsKey(astNode))
+                    {
+                        fromSplit.ExportsUsedFromLazyBundles[astNode] = BundlerHelpers.NumberToIdent(lazySplitCounter++);
+                    }
                 }
             }
 
@@ -292,11 +317,11 @@ namespace Njsast.Bundler
                 var newVar = new AstVar(toplevel);
                 var astSymbolVar = new AstSymbolVar(toplevel, name);
                 var trueValue = new AstDot(new AstSymbolRef("__bbb"), shortenedPropertyName);
-                astSymbolVar.Thedef = new SymbolDef(toplevel, astSymbolVar, trueValue);
+                astSymbolVar.Thedef = new(toplevel, astSymbolVar, trueValue);
                 toplevel.Variables!.Add(name, astSymbolVar.Thedef);
-                newVar.Definitions.Add(new AstVarDef(astSymbolVar, trueValue));
+                newVar.Definitions.Add(new(astSymbolVar, trueValue));
                 toplevel.Body.Add(newVar);
-                importFromOtherBundle.Ref = new AstSymbolRef(toplevel, astSymbolVar.Thedef, SymbolUsage.Read);
+                importFromOtherBundle.Ref = new(toplevel, astSymbolVar.Thedef, SymbolUsage.Read);
             }
         }
 
@@ -329,13 +354,13 @@ namespace Njsast.Bundler
             }
         }
 
-        void BeforeAdd(AstToplevel top)
+        AstToplevel BeforeAdd(AstToplevel top)
         {
             var transformer =
                 new BundlerTreeTransformer(_cache, _ctx, _currentSourceFile!, top.Variables!,
                     top.CalcNonRootSymbolNames(), _currentFileIdent!,
                     _splitMap, _splitMap[_currentSourceFile!.PartOfBundle!]);
-            transformer.Transform(top);
+            return (AstToplevel)transformer.Transform(top);
         }
 
         void MarkRequiredAs(SourceFile sourceFile, string fromSplitName)
@@ -374,6 +399,17 @@ namespace Njsast.Bundler
             cached.PartOfBundle = splitName;
             cached.PlainJsDependencies.AddRange(_ctx.GetPlainJsDependencies(fileName).ToArray());
             _cache[fileName] = cached;
+
+            cached.Exports ??= new();
+
+            foreach (var exp in cached.SelfExports)
+            {
+                if (exp is SimpleSelfExport simpleExp)
+                {
+                    cached.Exports![new[] {simpleExp.Name}] = simpleExp.Symbol;
+                }
+            }
+
             foreach (var r in cached.Requires)
             {
                 if (_cache.TryGetValue(r, out var rCached))
@@ -396,7 +432,6 @@ namespace Njsast.Bundler
                 Check(r, r);
             }
 
-            cached.Exports ??= new StringTrie<AstNode>();
             foreach (var exp in cached.SelfExports)
             {
                 if (exp is SimpleSelfExport simpleExp)
@@ -406,53 +441,28 @@ namespace Njsast.Bundler
                 else if (exp is ReexportSelfExport reexportExp)
                 {
                     var module = _cache[reexportExp.SourceName];
-                    if (module.Exports != null)
+                    foreach (var keyValuePair in module.Exports!.IteratePrefix(reexportExp.Path.AsSpan()))
                     {
-                        if (module.Exports.TryFindLongestPrefix(reexportExp.Path.AsSpan(), out _, out var node))
-                            cached.Exports![new[] {reexportExp.AsName}] = node;
+                        cached.Exports![
+                                Concat(reexportExp.AsName, keyValuePair.Key.AsSpan(reexportExp.Path.Length))] =
+                            keyValuePair.Value;
                     }
                 }
                 else if (exp is ExportAsNamespaceSelfExport asNamespaceExp)
                 {
                     var asNamespaceModule = _cache[asNamespaceExp.SourceName];
-                    if (asNamespaceModule.Exports != null)
+                    foreach (var asNamespaceModuleExport in asNamespaceModule.Exports!)
                     {
-                        foreach (var asNamespaceModuleExport in asNamespaceModule.Exports)
-                        {
-                            cached.Exports[Concat(asNamespaceExp.AsName, asNamespaceModuleExport.Key)] =
-                                asNamespaceModuleExport.Value;
-                        }
-                    }
-                    else
-                    {
-                        foreach (var reexModuleSelfExport in asNamespaceModule.SelfExports)
-                        {
-                            if (reexModuleSelfExport is SimpleSelfExport simpleExp2)
-                            {
-                                cached.Exports![new[] {simpleExp2.Name}] = simpleExp2.Symbol;
-                            }
-                        }
+                        cached.Exports[Concat(asNamespaceExp.AsName, asNamespaceModuleExport.Key)] =
+                            asNamespaceModuleExport.Value;
                     }
                 }
                 else if (exp is ExportStarSelfExport starExp)
                 {
                     var reexModule = _cache[starExp.SourceName];
-                    if (reexModule.Exports != null)
+                    foreach (var reexModuleExport in reexModule.Exports!)
                     {
-                        foreach (var reexModuleExport in reexModule.Exports)
-                        {
-                            cached.Exports[reexModuleExport.Key] = reexModuleExport.Value;
-                        }
-                    }
-                    else
-                    {
-                        foreach (var reexModuleSelfExport in reexModule.SelfExports)
-                        {
-                            if (reexModuleSelfExport is SimpleSelfExport simpleExp2)
-                            {
-                                cached.Exports![new[] {simpleExp2.Name}] = simpleExp2.Symbol;
-                            }
-                        }
+                        cached.Exports[reexModuleExport.Key] = reexModuleExport.Value;
                     }
                 }
             }

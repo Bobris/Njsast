@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <TargetFramework>net6.0</TargetFramework>
         <IsPackable>false</IsPackable>
-        <LangVersion>8</LangVersion>
+        <LangVersion>latest</LangVersion>
         <Nullable>enable</Nullable>
         <RuntimeIdentifiers>linux-x64;win-x64;osx-x64</RuntimeIdentifiers>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

@@ -30,12 +30,14 @@ namespace Njsast.Compress
                     foreach (var varDef in astVar.Definitions)
                     {
                         varDef.Value = null;
-                        ((AstVar) _result).Definitions.AddUnique(varDef);
+                        ((AstVar)_result).Definitions.AddUnique(varDef);
                     }
 
                     StopDescending();
                     break;
                 }
+                case AstLet _:
+                case AstConst _:
                 case AstSimpleStatement _:
                 case AstDefinitions _:
                 case AstLambda _:
@@ -51,6 +53,7 @@ namespace Njsast.Compress
     public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
     {
         bool NeedValue = true;
+
         // Symbol is considered cloned when there is just single initialization by constant symbol
         // var a = 42; var b = a;
         // b could be replaced by a and that what this map contains _clonedSymbolMap[Symbol"b"] = Symbol"a";
@@ -70,92 +73,69 @@ namespace Njsast.Compress
                         return node;
                     case AstSymbolRef symbolRef:
                     {
-                        if (!symbolRef.Usage.HasFlag(SymbolUsage.Write) && _clonedSymbolMap.TryGetValue(symbolRef.Thedef!, out var replaceSymbol))
+                        if (!symbolRef.Usage.HasFlag(SymbolUsage.Write) &&
+                            _clonedSymbolMap.TryGetValue(symbolRef.Thedef!, out var replaceSymbol))
                         {
                             return new AstSymbolRef(node, replaceSymbol, symbolRef.Usage);
                         }
+
                         return node;
                     }
-                    case AstDefun defun:
+                    case AstLambda lambda:
                     {
-                        if (defun.Name!.IsSymbolDef()!.OnlyDeclared)
-                            return Remove;
-                        if (defun.Body.Count == 0) defun.Pure = true;
-                        return null;
+                        if (lambda.Body.Count == 0) lambda.Pure = true;
+                        if (lambda.Purpose == null)
+                            lambda.Purpose = DetectPurpose(lambda);
+
+                        NeedValue = false;
+                        TransformList(ref lambda.Body);
+                        NeedValue = true;
+                        return node;
                     }
                     case AstBlock block:
                     {
-                        for (var i = 0; i < block.Body.Count; i++)
-                        {
-                            var si = block.Body[i];
-                            if (si is AstVar astVar && i < block.Body.Count - 1)
-                            {
-                                var si2 = block.Body[i + 1];
-                                if (si2 is AstVar astVar2)
-                                {
-                                    astVar.Definitions.AddRange(astVar2.Definitions);
-                                    block.Body.RemoveAt(i + 1);
-                                    Modified = true;
-                                    i--;
-                                }
-                            }
-                            else if (si is AstLet astLet && i < block.Body.Count - 1)
-                            {
-                                var si2 = block.Body[i + 1];
-                                if (si2 is AstLet astLet2)
-                                {
-                                    astLet.Definitions.AddRange(astLet2.Definitions);
-                                    block.Body.RemoveAt(i + 1);
-                                    Modified = true;
-                                    i--;
-                                }
-                            }
-                            else if (si is AstConst astConst && i < block.Body.Count - 1)
-                            {
-                                var si2 = block.Body[i + 1];
-                                if (si2 is AstConst astConst2)
-                                {
-                                    astConst.Definitions.AddRange(astConst2.Definitions);
-                                    block.Body.RemoveAt(i + 1);
-                                    Modified = true;
-                                    i--;
-                                }
-                            }
-                            else if (si is AstBlockStatement statement)
-                            {
-                                if (statement.BlockScope!.IsSafelyInlinenable())
-                                {
-                                    block.Body.ReplaceItemAt(i, statement.Body.AsReadOnlySpan());
-                                    Modified = true;
-                                    i--;
-                                }
-                            }
-                        }
+                        // Need value for Block is nonsense - optimize like it would not be needed
+                        OptimizeBlock(block);
 
-                        return null;
+                        NeedValue = false;
+                        TransformList(ref block.Body);
+                        NeedValue = true;
+                        return block;
                     }
                     case AstAssign assign:
                     {
                         if (assign.Operator == Operator.Assignment)
                         {
-                            if (assign.Left.IsSymbolDef()?.NeverRead ?? false)
+                            var leftSymbol = assign.Left.IsSymbolDef();
+                            if (leftSymbol?.NeverRead ?? false)
                             {
                                 return Transform(assign.Right);
                             }
-                        }
 
-                        return null;
-                    }
-                    case AstIf astIf:
-                    {
-                        var b = astIf.Condition.ConstValue();
-                        if (b != null)
-                        {
-                            return TypeConverter.ToBoolean(b)
-                                ? MakeBlockFrom(astIf, GatherVarDeclarations.Calc(astIf.Alternative),
-                                    Transform(astIf.Body))
-                                : MakeBlockFrom(astIf, GatherVarDeclarations.Calc(astIf.Body),
-                                    astIf.Alternative != null ? Transform(astIf.Alternative) : Remove);
+                            var rightSymbol = assign.Right.IsSymbolDef();
+                            if (rightSymbol is { } && leftSymbol is
+                                {
+                                    Global: false, Orig.Count: 1
+                                } && leftSymbol.Orig[0] is AstSymbolDeclaration
+                                {
+                                    Init: AstVarDef
+                                    {
+                                        Value: null
+                                    }
+                                } && Parent() is AstCall { Expression: AstLambda { Purpose: EnumDefinitionPurpose } } &&
+                                leftSymbol.References.All(r =>
+                                    r == assign.Left || !r.Usage.HasFlag(SymbolUsage.Write | SymbolUsage.PropWrite)))
+                            {
+                                foreach (var leftSymbolReference in leftSymbol.References)
+                                {
+                                    if (leftSymbolReference == assign.Left) continue;
+                                    leftSymbolReference.Name = rightSymbol.Name;
+                                    leftSymbolReference.Thedef = rightSymbol;
+                                    rightSymbol.References.Add(leftSymbolReference);
+                                }
+
+                                return assign.Right;
+                            }
                         }
 
                         return null;
@@ -173,6 +153,23 @@ namespace Njsast.Compress
                                 }
 
                                 return Transform(binary.Right);
+                            }
+
+                            // x || (x = {}) when x is only written in this expression
+                            if (binary.Left.IsSymbolDef() is { } symbolX
+                                && binary.Right is AstAssign { Operator: Operator.Assignment } astAssign
+                                && astAssign.Left.IsSymbolDef() == symbolX
+                                && astAssign.Right is AstObject { Properties: { Count: 0 } }
+                                && symbolX.References.All(r =>
+                                    r == astAssign.Left || !r.Usage.HasFlag(SymbolUsage.Write | SymbolUsage.PropWrite)))
+                            {
+                                if (!(symbolX.Orig is { Count: 1 }) || !(symbolX.Orig[0] is AstSymbolVar
+                                    {
+                                        Init: AstVarDef varDef
+                                    } symbolVar)) return Transform(binary.Right);
+                                varDef.Value = astAssign.Right;
+                                symbolVar.Usage = SymbolUsage.Write;
+                                return binary.Left;
                             }
                         }
 
@@ -192,92 +189,36 @@ namespace Njsast.Compress
 
                         return null;
                     }
-                    case AstSimpleStatement simple:
+                    case AstCall call:
                     {
-                        NeedValue = false;
-                        node.Transform(this);
-                        NeedValue = true;
-                        return simple.Body == Remove
-                            ? inList ? Remove : new AstEmptyStatement(node.Source, node.Start, node.End)
-                            : simple;
+                        if (call.Expression is AstLambda { Purpose: { } purpose } && purpose is EnumDefinitionPurpose &&
+                            call.Args is
+                            {
+                                Count: 1
+                            } && call.Args[0].IsSymbolDef() is { } symbolDef)
+                        {
+                            if (symbolDef.References.Count == 1)
+                            {
+                                return Remove;
+                            }
+
+                            symbolDef.Purpose ??= purpose;
+                        }
+
+                        return null;
                     }
-                    case AstDefinitions def:
-                        NeedValue = false;
-                        try
+                    case AstPropAccess propAccess:
+                    {
+                        if (propAccess.Expression.IsSymbolDef() is
+                                { Purpose: EnumDefinitionPurpose enumDefinitionPurpose } &&
+                            propAccess.PropertyAsString is { } propName &&
+                            enumDefinitionPurpose.Values.TryGetValue(propName, out var value))
                         {
-                            if (inList)
-                            {
-                                var defsResult = new StructList<AstNode>();
-                                defsResult.Reserve(def.Definitions.Count);
-                                var wasChange = 0;
-                                foreach (var defi in def.Definitions)
-                                {
-                                    var defo = Transform(defi);
-                                    if (defo == Remove)
-                                    {
-                                        wasChange |= 1;
-                                        continue;
-                                    }
-
-                                    if (defo != defi) wasChange |= 2;
-                                    defsResult.Add(defo);
-                                }
-
-                                if (wasChange != 0)
-                                {
-                                    Modified = true;
-                                    if (defsResult.Count == 0)
-                                        return Remove;
-                                    if (wasChange == 1)
-                                    {
-                                        def.Definitions.Clear();
-                                        foreach (var defi in defsResult)
-                                        {
-                                            def.Definitions.Add((AstVarDef) defi);
-                                        }
-
-                                        return node;
-                                    }
-
-                                    for (var i = 0; i < defsResult.Count; i++)
-                                    {
-                                        var defi = defsResult[i];
-                                        if (defi is AstVarDef)
-                                        {
-                                            var me = (AstDefinitions) node.ShallowClone();
-                                            me.Definitions.ClearAndTruncate();
-                                            me.Definitions.Add((AstVarDef) defi);
-                                            defsResult[i] = me;
-                                        }
-                                        else
-                                        {
-                                            defsResult[i] = new AstSimpleStatement(defi);
-                                        }
-                                    }
-
-                                    return SpreadStructList(ref defsResult);
-                                }
-
-                                return node;
-                            }
-                            else if (def.Definitions.Count == 1)
-                            {
-                                var defi = def.Definitions[0];
-                                var defo = Transform(defi);
-                                if (defo == Remove) return Remove;
-                                if (defi != defo)
-                                {
-                                    Modified = true;
-                                    return new AstSimpleStatement(defo);
-                                }
-                            }
-
-                            return node;
+                            return value;
                         }
-                        finally
-                        {
-                            NeedValue = true;
-                        }
+
+                        return null;
+                    }
                 }
 
                 return null;
@@ -287,6 +228,10 @@ namespace Njsast.Compress
             {
                 switch (node)
                 {
+                    case AstEmptyStatement _:
+                    {
+                        return inList ? Remove : node;
+                    }
                     case AstConstant _:
                         return Remove;
                     case AstSymbolRef _:
@@ -349,15 +294,14 @@ namespace Njsast.Compress
                     {
                         if (unaryPrefix.Operator == Operator.LogicalNot)
                         {
-                            if (unaryPrefix.Expression is AstCall call && call.Expression is AstFunction)
+                            if (unaryPrefix.Expression is AstCall { Expression: AstFunction })
                                 goto default;
                             node = unaryPrefix.Expression;
                             continue;
                         }
 
-                        if (unaryPrefix.Operator == Operator.TypeOf ||
-                            unaryPrefix.Operator == Operator.BitwiseNot || unaryPrefix.Operator == Operator.Void ||
-                            unaryPrefix.Operator == Operator.Subtraction || unaryPrefix.Operator == Operator.Addition)
+                        if (unaryPrefix.Operator is Operator.TypeOf or Operator.BitwiseNot or Operator.Void
+                            or Operator.Subtraction or Operator.Addition)
                         {
                             node = unaryPrefix.Expression;
                             continue;
@@ -365,20 +309,30 @@ namespace Njsast.Compress
 
                         goto default;
                     }
-                    case AstFunction function:
+                    case AstLambda lambda:
                     {
-                        if (function.Name == null || function.Name.Thedef!.OnlyDeclared)
+                        if (lambda.Name == null || lambda.Name.Thedef!.OnlyDeclared)
                         {
                             return Remove;
                         }
 
+                        if (lambda.Name.Thedef.References.Count == CountReferences(lambda, lambda.Name.Thedef))
+                        {
+                            return Remove;
+                        }
+
+                        if (lambda.Body.Count == 0) lambda.Pure = true;
+                        if (lambda.Purpose == null)
+                            lambda.Purpose = DetectPurpose(lambda);
+
+                        TransformList(ref lambda.Body);
                         return node;
                     }
                     case AstCall call:
                     {
                         var symbol = call.Expression.IsSymbolDef();
-                        if (symbol != null && symbol.IsSingleInit && symbol.Init is AstLambda func &&
-                            func.Pure == true || IsWellKnownPureFunction(call.Expression))
+                        if (symbol != null && symbol.IsSingleInit && symbol.Init is AstLambda { Pure: true } ||
+                            IsWellKnownPureFunction(call.Expression, call is AstNew))
                         {
                             var res = new AstSequence(node.Source, node.Start, node.End);
                             foreach (var arg in call.Args)
@@ -392,6 +346,20 @@ namespace Njsast.Compress
                                 1 => res.Expressions[0],
                                 _ => res
                             };
+                        }
+
+                        if (call.Expression is AstLambda { Purpose: { } purpose } && purpose is EnumDefinitionPurpose &&
+                            call.Args is
+                            {
+                                Count: 1
+                            } && call.Args[0].IsSymbolDef() is { } symbolDef)
+                        {
+                            if (symbolDef.References.Count == 1)
+                            {
+                                return Remove;
+                            }
+
+                            symbolDef.Purpose ??= purpose;
                         }
 
                         goto default;
@@ -490,17 +458,172 @@ namespace Njsast.Compress
                                 node = value;
                                 continue;
                             }
-                            if (varDef.Value is AstLambda && def.References.Count==CountReferences(varDef.Value, def))
+
+                            if (varDef.Value is AstLambda && def.References.Count == CountReferences(varDef.Value, def))
                             {
                                 return Remove;
                             }
-                            if (varDef.Value.IsSymbolDef() is {} rightSymbolDef && def.IsSingleInit && rightSymbolDef.IsSingleInit)
+
+                            if (varDef.Value.IsSymbolDef() is { } rightSymbolDef && def.IsSingleInit &&
+                                rightSymbolDef.IsSingleInit)
                             {
                                 _clonedSymbolMap.GetOrAddValueRef(def) = rightSymbolDef;
                             }
                         }
+
                         goto default;
                     }
+                    case AstSimpleStatement simple:
+                    {
+                        node.Transform(this);
+                        return simple.Body == Remove
+                            ? inList ? Remove : new AstEmptyStatement(node.Source, node.Start, node.End)
+                            : simple;
+                    }
+                    case AstIf astIf:
+                    {
+                        var b = astIf.Condition.ConstValue();
+                        if (b != null)
+                        {
+                            return TypeConverter.ToBoolean(b)
+                                ? MakeBlockFrom(astIf, GatherVarDeclarations.Calc(astIf.Alternative),
+                                    Transform(astIf.Body))
+                                : MakeBlockFrom(astIf, GatherVarDeclarations.Calc(astIf.Body),
+                                    astIf.Alternative != null ? Transform(astIf.Alternative) : Remove);
+                        }
+
+                        NeedValue = true;
+                        astIf.Condition = Transform(astIf.Condition);
+                        NeedValue = false;
+                        astIf.Body = (AstStatement)Transform(astIf.Body);
+
+                        if (astIf.Alternative != null)
+                        {
+                            var alternative = Transform(astIf.Alternative);
+                            astIf.Alternative = alternative == Remove ? null : (AstStatement)alternative;
+                        }
+
+                        return node;
+                    }
+                    case AstBlock block:
+                    {
+                        OptimizeBlock(block);
+
+                        if (block is AstCase astCase)
+                        {
+                            NeedValue = true;
+                            astCase.Expression = Transform(astCase.Expression);
+                            NeedValue = false;
+                        }
+
+                        TransformList(ref block.Body);
+                        return node;
+                    }
+                    case AstForIn forIn:
+                    {
+                        NeedValue = true;
+                        forIn.Object = Transform(forIn.Object);
+                        NeedValue = false;
+                        forIn.Body = (AstStatement)Transform(forIn.Body);
+                        return node;
+                    }
+                    case AstFor astFor:
+                    {
+                        if (astFor.Init != null)
+                        {
+                            var init = Transform(astFor.Init);
+                            if (init == Remove) init = null;
+                            astFor.Init = init;
+                        }
+
+                        if (astFor.Condition != null)
+                        {
+                            NeedValue = true;
+                            var cond = Transform(astFor.Condition);
+                            if (cond == Remove) cond = null;
+                            astFor.Condition = cond;
+                            NeedValue = false;
+                        }
+
+                        if (astFor.Step != null)
+                        {
+                            var step = Transform(astFor.Step);
+                            if (step == Remove) step = null;
+                            astFor.Step = step;
+                        }
+
+                        astFor.Body = (AstStatement)Transform(astFor.Body);
+                        return node;
+                    }
+                    case AstDefinitions def:
+                        if (inList)
+                        {
+                            var defsResult = new StructList<AstNode>();
+                            defsResult.Reserve(def.Definitions.Count);
+                            var wasChange = 0;
+                            foreach (var defi in def.Definitions)
+                            {
+                                var defo = Transform(defi);
+                                if (defo == Remove)
+                                {
+                                    wasChange |= 1;
+                                    continue;
+                                }
+
+                                if (defo != defi) wasChange |= 2;
+                                defsResult.Add(defo);
+                            }
+
+                            if (wasChange != 0)
+                            {
+                                Modified = true;
+                                if (defsResult.Count == 0)
+                                    return Remove;
+                                if (wasChange == 1)
+                                {
+                                    def.Definitions.Clear();
+                                    foreach (var defi in defsResult)
+                                    {
+                                        def.Definitions.Add((AstVarDef)defi);
+                                    }
+
+                                    return node;
+                                }
+
+                                for (var i = 0; i < defsResult.Count; i++)
+                                {
+                                    var defi = defsResult[i];
+                                    if (defi is AstVarDef)
+                                    {
+                                        var me = (AstDefinitions)node.ShallowClone();
+                                        me.Definitions.ClearAndTruncate();
+                                        me.Definitions.Add((AstVarDef)defi);
+                                        defsResult[i] = me;
+                                    }
+                                    else
+                                    {
+                                        defsResult[i] = new AstSimpleStatement(defi);
+                                    }
+                                }
+
+                                return SpreadStructList(ref defsResult);
+                            }
+
+                            return node;
+                        }
+                        else if (def.Definitions.Count == 1)
+                        {
+                            var defi = def.Definitions[0];
+                            var defo = Transform(defi);
+                            if (defo == Remove) return Remove;
+                            if (defi != defo)
+                            {
+                                Modified = true;
+                                return new AstSimpleStatement(defo);
+                            }
+                        }
+
+                        return node;
                     default:
                         NeedValue = true;
                         node.Transform(this);
@@ -508,6 +631,66 @@ namespace Njsast.Compress
                         return node;
                 }
             }
+        }
+
+        void OptimizeBlock(AstBlock block)
+        {
+            for (var i = 0; i < block.Body.Count; i++)
+            {
+                var si = block.Body[i];
+                if (si is AstVar astVar && i < block.Body.Count - 1)
+                {
+                    var si2 = block.Body[i + 1];
+                    if (si2 is AstVar astVar2)
+                    {
+                        astVar.Definitions.AddRange(astVar2.Definitions);
+                        block.Body.RemoveAt(i + 1);
+                        Modified = true;
+                        i--;
+                    }
+                }
+                else if (si is AstLet astLet && i < block.Body.Count - 1)
+                {
+                    var si2 = block.Body[i + 1];
+                    if (si2 is AstLet astLet2)
+                    {
+                        astLet.Definitions.AddRange(astLet2.Definitions);
+                        block.Body.RemoveAt(i + 1);
+                        Modified = true;
+                        i--;
+                    }
+                }
+                else if (si is AstConst astConst && i < block.Body.Count - 1)
+                {
+                    var si2 = block.Body[i + 1];
+                    if (si2 is AstConst astConst2)
+                    {
+                        astConst.Definitions.AddRange(astConst2.Definitions);
+                        block.Body.RemoveAt(i + 1);
+                        Modified = true;
+                        i--;
+                    }
+                }
+                else if (si is AstBlockStatement statement)
+                {
+                    if (statement.BlockScope!.IsSafelyInlinenable())
+                    {
+                        block.Body.ReplaceItemAt(i, statement.Body.AsReadOnlySpan());
+                        Modified = true;
+                        i--;
+                    }
+                }
+            }
+        }
+
+        static IPurpose DetectPurpose(AstLambda lambda)
+        {
+            if (Helpers.DetectEnumTypeScriptFunction(lambda) is { } enumValues)
+            {
+                return new EnumDefinitionPurpose(enumValues);
+            }
+
+            return NoPurpose.Instance;
         }
 
         class CountReferencesWalker : TreeWalker
@@ -550,8 +733,18 @@ namespace Njsast.Compress
             return res;
         }
 
-        static bool IsWellKnownPureFunction(AstNode callExpression)
+        static bool IsWellKnownPureFunction(AstNode callExpression, bool isNew)
         {
+            if (callExpression is AstFunction classFactory && (classFactory.Pure ?? false))
+            {
+                return true;
+            }
+
+            if (isNew && callExpression.IsSymbolDef().IsGlobalSymbol() is { } globalConstructor &&
+                (globalConstructor == "Map" || globalConstructor == "HashSet" || globalConstructor == "Set" ||
+                 globalConstructor == "HashSet"))
+                return true;
+
             if (callExpression is AstPropAccess propAccess)
             {
                 var globalSymbol = propAccess.Expression.IsSymbolDef().IsGlobalSymbol();
@@ -566,7 +759,7 @@ namespace Njsast.Compress
         {
             return globalSymbol switch
             {
-                "Object" => (propName switch
+                "Object" => propName switch
                 {
                     "constructor" => true,
                     "create" => true,
@@ -591,8 +784,8 @@ namespace Njsast.Compress
                     "valueOf" => true,
                     "values" => true,
                     _ => false
-                }),
-                "Math" => (propName switch
+                },
+                "Math" => propName switch
                 {
                     "abs" => true,
                     "acos" => true,
@@ -629,7 +822,7 @@ namespace Njsast.Compress
                     "tanh" => true,
                     "trunc" => true,
                     _ => false
-                }),
+                },
                 _ => false
             };
         }
@@ -638,7 +831,7 @@ namespace Njsast.Compress
         {
             return globalSymbol switch
             {
-                "Object" => (propName switch
+                "Object" => propName switch
                 {
                     "assign" => true,
                     "constructor" => true,
@@ -670,8 +863,8 @@ namespace Njsast.Compress
                     "valueOf" => true,
                     "values" => true,
                     _ => false
-                }),
-                "Math" => (propName switch
+                },
+                "Math" => propName switch
                 {
                     "E" => true,
                     "LN10" => true,
@@ -717,7 +910,7 @@ namespace Njsast.Compress
                     "tanh" => true,
                     "trunc" => true,
                     _ => false
-                }),
+                },
                 _ => false
             };
         }

@@ -5,7 +5,7 @@ Toplevel 1:1 - 2:1
         Name: a
       Object 1:9 - 1:48
         ObjectKeyVal 1:11 - 1:46
-          SymbolProperty 1:11 - 1:27 [Write]
+          SymbolProperty 1:11 - 1:27
             Name: MIN_SAFE_INTEGER
           UnaryPrefix 1:29 - 1:46
             Operator: Subtraction

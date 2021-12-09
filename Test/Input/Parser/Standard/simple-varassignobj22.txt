@@ -6,10 +6,10 @@ Toplevel 1:1 - 1:35
         Name: x
       Object 1:5 - 1:35
         ObjectSetter 1:7 - 1:33
-          SymbolMethod 1:11 - 1:15 [Write]
+          SymbolMethod 1:11 - 1:15
             Name: null
           Accessor 1:15 - 1:33
-            SymbolFunarg 1:16 - 1:17 [Write]
+            SymbolFunarg 1:16 - 1:17
               Name: w
             SimpleStatement 1:21 - 1:31
               Assign 1:21 - 1:31
