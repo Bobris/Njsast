@@ -753,6 +753,8 @@ namespace Njsast.Output
             AstNode? p;
             for (var i = 0; (p = Parent(i)) != null; i++)
             {
+                if (p is AstArrow { Body: { Count: 1 } body } && body[0] == node)
+                    return true;
                 if (p is IAstStatementWithBody statementWithBody && statementWithBody.GetBody() == node)
                     return true;
                 if (p is AstSequence sequence && sequence.Expressions[0] == node ||

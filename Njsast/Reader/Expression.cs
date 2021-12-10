@@ -1090,7 +1090,7 @@ namespace Njsast.Reader
             if (isExpression)
             {
                 var simpleBody = ParseMaybeAssign(Start);
-                body.Add(new AstSimpleStatement(SourceFile, simpleBody.Start, simpleBody.End, simpleBody));
+                body.Add(simpleBody);
                 expression = true;
                 CheckParams(parameters, false);
             }

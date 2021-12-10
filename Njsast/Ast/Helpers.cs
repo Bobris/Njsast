@@ -101,11 +101,9 @@ namespace Njsast.Ast
                     }
                 }
 
-                if (node is AstSimpleStatement simpleStatement && simpleStatement.Body is AstAssign assigment &&
-                    assigment.Operator == Operator.Assignment)
+                if (node is AstSimpleStatement { Body: AstAssign { Operator: Operator.Assignment } assigment })
                 {
-                    if (assigment.Left is AstDot dot && dot.PropertyAsString == "exports" &&
-                        dot.Expression.IsSymbolDef().IsGlobalSymbol() == "module")
+                    if (assigment.Left is AstDot { PropertyAsString: "exports" } dot && dot.Expression.IsSymbolDef().IsGlobalSymbol() == "module")
                     {
                         var res = new AstVar(node);
                         var newVar = new AstSymbolVar(assigment.Left, _varName);
@@ -118,13 +116,13 @@ namespace Njsast.Ast
                 return null;
             }
 
-            protected override AstNode? After(AstNode node, bool inList)
+            protected override AstNode After(AstNode node, bool inList)
             {
                 if (node is AstToplevel toplevel && _shadowedWindow)
                 {
                     var newVar = new AstVar(toplevel);
                     var name = new AstSymbolVar("global");
-                    newVar.Definitions.Add(new AstVarDef(toplevel, name, new AstSymbolRef("window")));
+                    newVar.Definitions.Add(new(toplevel, name, new AstSymbolRef("window")));
                     toplevel.Body.Insert(0) = newVar;
                 }
 

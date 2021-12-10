@@ -1,3 +1,4 @@
+using System;
 using Njsast.AstDump;
 using Njsast.Reader;
 
@@ -5,9 +6,15 @@ namespace Njsast.Ast
 {
     public static class Extensions
     {
+        public static bool IsExpression(this AstNode node)
+        {
+            return node is AstUnary or AstBinary or AstConstant or AstConditional or AstObject or AstArray
+                or AstClassExpression or AstArrow or AstFunction or AstNew;
+        }
+
         public static string? IsGlobalSymbol(this SymbolDef? symbol)
         {
-            if (symbol != null && symbol.Undeclared && symbol.Global) return symbol.Name;
+            if (symbol is { Undeclared: true, Global: true }) return symbol.Name;
             return null;
         }
 
@@ -36,8 +43,7 @@ namespace Njsast.Ast
 
         public static string? IsRequireCall(this AstNode? node)
         {
-            if (!(node is AstCall call) || call.Args.Count != 1 || !(call.Expression is AstSymbol methodNameSymbol) ||
-                !methodNameSymbol.Thedef.IsRequireSymbol()) return null;
+            if (node is not AstCall { Args.Count: 1, Expression: AstSymbol methodNameSymbol } call || !methodNameSymbol.Thedef.IsRequireSymbol()) return null;
             var arg = call.Args[0];
             if (arg is AstString str)
                 return str.Value;
@@ -48,8 +54,7 @@ namespace Njsast.Ast
         /// Detects process.env.RESULT pattern
         public static string? IsProcessEnv(this AstNode? node)
         {
-            if (node is AstPropAccess propAccess && propAccess.Expression is AstDot dot &&
-                dot.Expression.IsSymbolDef().IsProcessSymbol() && dot.PropertyAsString == "env")
+            if (node is AstPropAccess { Expression: AstDot dot } propAccess && dot.Expression.IsSymbolDef().IsProcessSymbol() && dot.PropertyAsString == "env")
             {
                 return propAccess.PropertyAsString;
             }
@@ -73,7 +78,7 @@ namespace Njsast.Ast
                         return str.Value;
                     return null;
                 }
-                case AstCall call when call.Args.Count == 1:
+                case AstCall { Args.Count: 1 } call:
                 {
                     var then = call.Expression;
                     if (then is AstDot dot && dot.Property as string == "then")
@@ -94,8 +99,7 @@ namespace Njsast.Ast
                     else return null;
 
                     if (
-                        call.Args[0] is AstFunction argumentFunction &&
-                        argumentFunction.ArgNames.Count == 0)
+                        call.Args[0] is AstFunction { ArgNames.Count: 0 } argumentFunction)
                     {
                         if (argumentFunction.Body.Count == 1)
                         {
@@ -124,12 +128,10 @@ namespace Njsast.Ast
                 node = simpleStatement.Body;
             }
 
-            if (!(node is AstAssign assign)) return null;
-            if (assign.Operator != Operator.Assignment) return null;
-            if (!(assign.Left is AstPropAccess propAccess)) return null;
+            if (node is not AstAssign { Operator: Operator.Assignment, Left: AstPropAccess propAccess } assign) return null;
             if (allowLocalExports)
             {
-                if (!(propAccess.Expression is AstSymbolRef symb) || symb.Name != "exports") return null;
+                if (propAccess.Expression is not AstSymbolRef { Name: "exports" }) return null;
             }
             else
             {
@@ -147,11 +149,9 @@ namespace Njsast.Ast
             if (node is AstCall call)
             {
                 if (call.Args.Count != 3) return false;
-                if (!(call.Args[0] is AstSymbolRef symb) || symb.Name != "exports" ||
-                    !(call.Args[1] is AstString str) || str.Value != "__esModule") return false;
-                if (!(call.Expression is AstPropAccess propAccess)) return false;
-                if (propAccess.PropertyAsString != "defineProperty") return false;
-                return propAccess.Expression is AstSymbolRef symb2 && symb2.Name == "Object";
+                if (call.Args[0] is not AstSymbolRef { Name: "exports" } || call.Args[1] is not AstString { Value: "__esModule" }) return false;
+                if (call.Expression is not AstPropAccess { PropertyAsString: "defineProperty" } propAccess) return false;
+                return propAccess.Expression is AstSymbolRef { Name: "Object" };
             }
 
             if (node is AstSimpleStatement simpleStatement)

@@ -71,40 +71,10 @@ namespace Njsast.Ast
         {
             if (Body.Count == 1)
             {
-                // We expect that only scope (function, class,...), simple statement, constants or array is valid expression
-                // Invalid expressions are: AstBreak, AstCatch, AstConst, AstContinue, AstDwLoop, AstDebugger,
-                // AstDefinitions, AstDo, AstEmptyStatement, AstExit, AstExport, AstFinally, AstFor, AstForIn, AstForOf,
-                // AstIf, AstImport, AstIterationStatement, AstJump, AstLabeledStatement, AstLet, AstLoopControl,
-                // AstReturn, AstStatementWithBody, AstSwitch, AstThrow, AstTry, AstVar, AstWhile, AstWith
-                // At this level it should not be: AstAccessor, AstBlockStatement, AstCase, AstDefClass, AstDefault,
-                // AstSwitchBranch, AstToplevel
-                if (Body.Last is AstScope scope)
+                var last = Body.Last;
+                if (last.IsExpression())
                 {
-                    scope.CodeGen(output);
-                    return;
-                }
-
-                if (Body.Last is AstSimpleStatement simpleStatement)
-                {
-                    simpleStatement.Body.Print(output);
-                    return;
-                }
-
-                if (Body.Last is AstConstant constant)
-                {
-                    constant.CodeGen(output);
-                    return;
-                }
-
-                if (Body.Last is AstArray array)
-                {
-                    array.CodeGen(output);
-                    return;
-                }
-
-                if (Body.Last is AstObject obj)
-                {
-                    obj.CodeGen(output);
+                    last.Print(output);
                     return;
                 }
             }
