@@ -6,11 +6,11 @@ namespace Njsast.Reader
 
     public sealed class Options
     {
-        public const int DefaultEcmaVersion = 7;
+        public const int DefaultEcmaVersion = 8;
         // `ecmaVersion` indicates the ECMAScript version to parse. Must
         // be either 3, 5, 6 (2015), 7 (2016), or 8 (2017). This influences support
         // for strict mode, the set of reserved words, and support for
-        // new syntax features. The default is 7.
+        // new syntax features. The default is 8.
         public int EcmaVersion;
         // `sourceType` indicates the mode the code should be parsed in.
         // Can be either `"script"` or `"module"`. This influences global

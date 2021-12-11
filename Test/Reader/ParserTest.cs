@@ -77,14 +77,21 @@ namespace Test.Reader
 
                 outAst = strSink.ToString();
                 var outMinJsBuilder = new SourceMapBuilder();
-                var outputOptions = new OutputOptions();
+                var outputOptions = new OutputOptions
+                {
+                    Shorthand = testData.EcmaScriptVersion >= 6
+                };
                 toplevel.PrintToBuilder(outMinJsBuilder, outputOptions);
                 outMinJsBuilder.AddText(
                     $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "minjs.map")}");
                 outMinJs = outMinJsBuilder.Content();
                 outMinJsMap = outMinJsBuilder.Build(".", ".").ToString();
                 var outNiceJsBuilder = new SourceMapBuilder();
-                outputOptions = new OutputOptions {Beautify = true};
+                outputOptions = new()
+                {
+                    Beautify = true,
+                    Shorthand = testData.EcmaScriptVersion >= 6
+                };
                 toplevel.PrintToBuilder(outNiceJsBuilder, outputOptions);
                 outNiceJsBuilder.AddText(
                     $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "nicejs.map")}");
@@ -106,6 +113,7 @@ namespace Test.Reader
                 {
                     throw new Exception("Dump of clone is not identical");
                 }
+
                 toplevel.Mangle();
             }
             catch (SyntaxError e)

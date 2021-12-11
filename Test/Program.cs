@@ -246,7 +246,7 @@ namespace Test
 
         static void Main()
         {
-            RunAllTests();
+            RunAllTests("simple-destructuring");
             //Debug();
         }
     }

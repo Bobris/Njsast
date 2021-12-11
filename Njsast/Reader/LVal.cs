@@ -263,6 +263,9 @@ namespace Njsast.Reader
                     CheckLVal(restElement.Expression, isBinding, bindingType, checkClashes);
                     break;
 
+                case AstHole:
+                    break;
+
                 default:
                     Raise(expr.Start, (bindingType != null ? "Binding" : "Assigning to") + " rvalue");
                     break;

@@ -697,6 +697,8 @@ namespace Njsast.Reader
                 case AstObjectProperty prop:
                     prop.Value = ToRightDeclarationSymbolKind(prop.Value, kind);
                     return id;
+                case AstHole:
+                    return id;
                 default:
                     throw new ArgumentException("Unexpected node type " + id.GetType().Name);
             }

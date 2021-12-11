@@ -38,8 +38,8 @@ namespace Njsast.Ast
             };
 
             if (allowShortHand &&
-                Value is AstSymbol && keyString != null &&
-                GetName((AstSymbol) Value) == keyString &&
+                Value is AstSymbol value && keyString != null &&
+                GetName(value) == keyString &&
                 OutputContext.IsIdentifierString(keyString) &&
                 OutputContext.IsIdentifier(keyString)
             )
@@ -48,9 +48,9 @@ namespace Njsast.Ast
             }
             else if (allowShortHand &&
                      Value is AstDefaultAssign defAssign && keyString != null &&
-                     defAssign.Left is AstSymbol &&
+                     defAssign.Left is AstSymbol left &&
                      OutputContext.IsIdentifierString(keyString) &&
-                     GetName((AstSymbol) defAssign.Left) == keyString
+                     GetName(left) == keyString
             )
             {
                 output.PrintPropertyName(keyString);
