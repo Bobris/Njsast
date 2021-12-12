@@ -6,12 +6,12 @@ Toplevel 1:1 - 24:1
           ObjectKeyVal 2:11 - 2:13
             SymbolProperty 2:11 - 2:13
               Name: aa
-            SymbolConst 2:11 - 2:13 [Read]
+            SymbolConst 2:11 - 2:13 [Write]
               Name: aa
           ObjectKeyVal 2:15 - 2:17
             SymbolProperty 2:15 - 2:17
               Name: bb
-            SymbolConst 2:15 - 2:17 [Read]
+            SymbolConst 2:15 - 2:17 [Write]
               Name: bb
         Object 2:22 - 2:38
           ObjectKeyVal 2:24 - 2:29
@@ -33,7 +33,7 @@ Toplevel 1:1 - 24:1
           ObjectKeyVal 6:5 - 6:7
             SymbolProperty 6:5 - 6:7
               Name: aa
-            SymbolConst 6:5 - 6:7 [Read]
+            SymbolConst 6:5 - 6:7 [Write]
               Name: aa
           ObjectKeyVal 7:5 - 7:19
             SymbolProperty 7:5 - 7:7
@@ -42,12 +42,12 @@ Toplevel 1:1 - 24:1
               ObjectKeyVal 7:11 - 7:13
                 SymbolProperty 7:11 - 7:13
                   Name: cc
-                SymbolConst 7:11 - 7:13 [Read]
+                SymbolConst 7:11 - 7:13 [Write]
                   Name: cc
               ObjectKeyVal 7:15 - 7:17
                 SymbolProperty 7:15 - 7:17
                   Name: dd
-                SymbolConst 7:15 - 7:17 [Read]
+                SymbolConst 7:15 - 7:17 [Write]
                   Name: dd
         Object 8:7 - 8:38
           ObjectKeyVal 8:9 - 8:14
@@ -79,12 +79,12 @@ Toplevel 1:1 - 24:1
           ObjectKeyVal 11:9 - 11:11
             SymbolProperty 11:9 - 11:11
               Name: aa
-            SymbolLet 11:9 - 11:11 [Read]
+            SymbolLet 11:9 - 11:11 [Write]
               Name: aa
           ObjectKeyVal 11:13 - 11:15
             SymbolProperty 11:13 - 11:15
               Name: bb
-            SymbolLet 11:13 - 11:15 [Read]
+            SymbolLet 11:13 - 11:15 [Write]
               Name: bb
         Object 11:20 - 11:36
           ObjectKeyVal 11:22 - 11:27
@@ -106,7 +106,7 @@ Toplevel 1:1 - 24:1
           ObjectKeyVal 15:5 - 15:7
             SymbolProperty 15:5 - 15:7
               Name: aa
-            SymbolLet 15:5 - 15:7 [Read]
+            SymbolLet 15:5 - 15:7 [Write]
               Name: aa
           ObjectKeyVal 16:5 - 16:19
             SymbolProperty 16:5 - 16:7
@@ -115,12 +115,12 @@ Toplevel 1:1 - 24:1
               ObjectKeyVal 16:11 - 16:13
                 SymbolProperty 16:11 - 16:13
                   Name: cc
-                SymbolLet 16:11 - 16:13 [Read]
+                SymbolLet 16:11 - 16:13 [Write]
                   Name: cc
               ObjectKeyVal 16:15 - 16:17
                 SymbolProperty 16:15 - 16:17
                   Name: dd
-                SymbolLet 16:15 - 16:17 [Read]
+                SymbolLet 16:15 - 16:17 [Write]
                   Name: dd
         Object 17:7 - 17:38
           ObjectKeyVal 17:9 - 17:14
@@ -151,12 +151,12 @@ Toplevel 1:1 - 24:1
         ObjectKeyVal 19:7 - 19:9
           SymbolProperty 19:7 - 19:9
             Name: aa
-          SymbolVar 19:7 - 19:9 [Read]
+          SymbolVar 19:7 - 19:9 [Write]
             Name: aa
         ObjectKeyVal 19:11 - 19:13
           SymbolProperty 19:11 - 19:13
             Name: bb
-          SymbolVar 19:11 - 19:13 [Read]
+          SymbolVar 19:11 - 19:13 [Write]
             Name: bb
       Object 19:18 - 19:34
         ObjectKeyVal 19:20 - 19:25
@@ -177,7 +177,7 @@ Toplevel 1:1 - 24:1
         ObjectKeyVal 21:3 - 21:5
           SymbolProperty 21:3 - 21:5
             Name: aa
-          SymbolVar 21:3 - 21:5 [Read]
+          SymbolVar 21:3 - 21:5 [Write]
             Name: aa
         ObjectKeyVal 22:3 - 22:17
           SymbolProperty 22:3 - 22:5
@@ -186,12 +186,12 @@ Toplevel 1:1 - 24:1
             ObjectKeyVal 22:9 - 22:11
               SymbolProperty 22:9 - 22:11
                 Name: cc
-              SymbolVar 22:9 - 22:11 [Read]
+              SymbolVar 22:9 - 22:11 [Write]
                 Name: cc
             ObjectKeyVal 22:13 - 22:15
               SymbolProperty 22:13 - 22:15
                 Name: dd
-              SymbolVar 22:13 - 22:15 [Read]
+              SymbolVar 22:13 - 22:15 [Write]
                 Name: dd
       Object 23:5 - 23:36
         ObjectKeyVal 23:7 - 23:12

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json.Serialization;
 using Njsast.Ast;
 using Njsast.Reader;
 
@@ -173,7 +174,7 @@ namespace Njsast.Scope
                     }
                     else
                     {
-                        usage |= SymbolUsage.Read;
+                        DetectSymbolUsage(parent, deepness + 1, ref usage, astSymbol);
                     }
 
                     break;
@@ -204,9 +205,11 @@ namespace Njsast.Scope
                 case AstPrefixedTemplateString _:
                 case AstTemplateString _:
                 case AstYield _:
+                case AstObject _:
                 case AstClass _: // extends
                     usage |= SymbolUsage.Read;
                     break;
+
                 case AstDestructuring _:
                     DetectSymbolUsage(parent, deepness + 1, ref usage, astSymbol);
                     break;

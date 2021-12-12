@@ -11,14 +11,17 @@ namespace Njsast.Reader
         [return: NotNullIfNotNull("node")]
         AstNode? ToAssignable(AstNode? node, bool isBinding = false)
         {
-            if (Options.EcmaVersion >= 6 && node != null)
+            if (node != null)
             {
                 switch (node)
                 {
-                    case AstSymbol identifierNode:
+                    case AstSymbolRef identifierNode:
                         if (_inAsync && identifierNode.Name == "await")
                             Raise(node.Start, "Can not use 'await' as identifier inside an async function");
                         break;
+
+                    case AstSymbolProperty property:
+                        return new AstSymbolRef(property);
 
                     case AstPropAccess _:
                         if (!isBinding) break;
@@ -30,8 +33,8 @@ namespace Njsast.Reader
                     case AstObject objectExpression:
                         var newProperties = new StructList<AstNode>();
                         newProperties.Reserve(objectExpression.Properties.Count);
-                        for (var i = 0; i < newProperties.Count; i++)
-                            newProperties[(uint) i] = ToAssignable(objectExpression.Properties[(uint) i], isBinding)!;
+                        for (var i = 0; i < objectExpression.Properties.Count; i++)
+                            newProperties.Add(ToAssignable(objectExpression.Properties[(uint) i], isBinding));
                         node = new AstDestructuring(SourceFile, node.Start, node.End, ref newProperties, false);
                         break;
 
@@ -83,7 +86,7 @@ namespace Njsast.Reader
             if (!(property is AstObjectKeyVal))
                 Raise(property.Start, "Object pattern can't contain getter or setter");
 
-            property.Value = ToAssignable(property.Value, isBinding)!;
+            property.Value = ToAssignable(property.Value, isBinding);
             return property;
         }
 
