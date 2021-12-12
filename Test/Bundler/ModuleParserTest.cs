@@ -5,78 +5,77 @@ using Njsast.Utils;
 using Test.ConstEval;
 using Xunit;
 
-namespace Test.Bundler
+namespace Test.Bundler;
+
+public class ModuleParserTest
 {
-    public class ModuleParserTest
+    [Theory]
+    [ModuleParserDataProvider("Input/ModuleParser")]
+    [ModuleParserDataProvider("Input/ModuleParser", "*.json")]
+    public void ShouldCorrectlyEvaluateConstantsOrProduceSyntaxError(ConstEvalTestData testData)
     {
-        [Theory]
-        [ModuleParserDataProvider("Input/ModuleParser")]
-        [ModuleParserDataProvider("Input/ModuleParser", "*.json")]
-        public void ShouldCorrectlyEvaluateConstantsOrProduceSyntaxError(ConstEvalTestData testData)
-        {
-            var outNiceJs = ModuleParserTestCore(testData);
+        var outNiceJs = ModuleParserTestCore(testData);
 
-            Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
-        }
+        Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
+    }
 
-        public static string ModuleParserTestCore(ConstEvalTestData testData)
+    public static string ModuleParserTestCore(ConstEvalTestData testData)
+    {
+        string outNiceJs;
+        try
         {
-            string outNiceJs;
-            try
+            var sf = Njsast.Bundler.BundlerHelpers.BuildSourceFile(testData.InputFileName, testData.InputContent,
+                null, Resolver);
+
+            outNiceJs = sf.Ast.PrintToString(new OutputOptions {Beautify = true});
+
+            if (sf.Requires.Count > 0)
             {
-                var sf = Njsast.Bundler.BundlerHelpers.BuildSourceFile(testData.InputFileName, testData.InputContent,
-                    null, Resolver);
-
-                outNiceJs = sf.Ast.PrintToString(new OutputOptions {Beautify = true});
-
-                if (sf.Requires.Count > 0)
+                outNiceJs += "Requires:\n";
+                foreach (var name in sf.Requires)
                 {
-                    outNiceJs += "Requires:\n";
-                    foreach (var name in sf.Requires)
-                    {
-                        outNiceJs += name + "\n";
-                    }
-                }
-
-                if (sf.LazyRequires.Count > 0)
-                {
-                    outNiceJs += "Lazy requires:\n";
-                    foreach (var name in sf.LazyRequires)
-                    {
-                        outNiceJs += name + "\n";
-                    }
-                }
-
-                if (sf.SelfExports.Count > 0)
-                {
-                    outNiceJs += "Self exports:\n";
-                    foreach (var selfExport in sf.SelfExports)
-                    {
-                        outNiceJs += selfExport + "\n";
-                    }
-                }
-
-                if (sf.Exports != null && sf.Exports.TryFindLongestPrefix(new ReadOnlySpan<string>(), out _, out var wholeExport))
-                {
-                    outNiceJs += "Whole Export: " + wholeExport!.PrintToString() + "\n";
-                }
-
-                foreach (var import in sf.NeedsImports)
-                {
-                    outNiceJs += "Uses " + import.Item1 + " " + string.Join('.', import.Item2) + "\n";
+                    outNiceJs += name + "\n";
                 }
             }
-            catch (SyntaxError e)
+
+            if (sf.LazyRequires.Count > 0)
             {
-                outNiceJs = e.Message;
+                outNiceJs += "Lazy requires:\n";
+                foreach (var name in sf.LazyRequires)
+                {
+                    outNiceJs += name + "\n";
+                }
             }
 
-            return outNiceJs;
+            if (sf.SelfExports.Count > 0)
+            {
+                outNiceJs += "Self exports:\n";
+                foreach (var selfExport in sf.SelfExports)
+                {
+                    outNiceJs += selfExport + "\n";
+                }
+            }
+
+            if (sf.Exports != null && sf.Exports.TryFindLongestPrefix(new ReadOnlySpan<string>(), out _, out var wholeExport))
+            {
+                outNiceJs += "Whole Export: " + wholeExport!.PrintToString() + "\n";
+            }
+
+            foreach (var import in sf.NeedsImports)
+            {
+                outNiceJs += "Uses " + import.Item1 + " " + string.Join('.', import.Item2) + "\n";
+            }
+        }
+        catch (SyntaxError e)
+        {
+            outNiceJs = e.Message;
         }
 
-        static string Resolver(string from, string param)
-        {
-            return PathUtils.Join(PathUtils.Parent(from), param);
-        }
+        return outNiceJs;
+    }
+
+    static string Resolver(string from, string param)
+    {
+        return PathUtils.Join(PathUtils.Parent(from), param);
     }
 }

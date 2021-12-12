@@ -1,9 +1,8 @@
 using Xunit;
 
-namespace FunctionalTest
+namespace FunctionalTest;
+
+[CollectionDefinition("Browser collection")]
+public class BrowserCollection : ICollectionFixture<BrowserFixture>
 {
-    [CollectionDefinition("Browser collection")]
-    public class BrowserCollection : ICollectionFixture<BrowserFixture>
-    {
-    }
 }

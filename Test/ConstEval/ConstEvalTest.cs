@@ -6,45 +6,44 @@ using Njsast.Runtime;
 using Njsast.Scope;
 using Xunit;
 
-namespace Test.ConstEval
+namespace Test.ConstEval;
+
+public class ConstEvalTest
 {
-    public class ConstEvalTest
+    [Theory]
+    [ConstEvalDataProvider("Input/ConstEval")]
+    public void ShouldCorrectlyEvaluateConstantsOrProduceSyntaxError(ConstEvalTestData testData)
     {
-        [Theory]
-        [ConstEvalDataProvider("Input/ConstEval")]
-        public void ShouldCorrectlyEvaluateConstantsOrProduceSyntaxError(ConstEvalTestData testData)
-        {
-            var outNiceJs = ConstEvalTestCore(testData);
+        var outNiceJs = ConstEvalTestCore(testData);
 
-            Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
+        Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
+    }
+
+    public static string ConstEvalTestCore(ConstEvalTestData testData)
+    {
+        string outNiceJs;
+        try
+        {
+            var files = new TestImportResolver();
+            var ctx = new ResolvingConstEvalCtx(testData.InputFileName, files);
+            var parser = new Parser(new Options(), testData.InputContent);
+            var toplevel = parser.Parse();
+            new ScopeParser().FigureOutScope(toplevel);
+            var lastStatement = ((AstSimpleStatement) toplevel.Body.Last).Body;
+            var val = lastStatement.ConstValue(ctx);
+            outNiceJs = val != null ? "Const\n" : "Not const\n";
+            if (val != null)
+            {
+                var valAst = TypeConverter.ToAst(val);
+                var outputOptions = new OutputOptions {Beautify = true};
+                outNiceJs += valAst.PrintToString(outputOptions);
+            }
+        }
+        catch (SyntaxError e)
+        {
+            outNiceJs = e.Message;
         }
 
-        public static string ConstEvalTestCore(ConstEvalTestData testData)
-        {
-            string outNiceJs;
-            try
-            {
-                var files = new TestImportResolver();
-                var ctx = new ResolvingConstEvalCtx(testData.InputFileName, files);
-                var parser = new Parser(new Options(), testData.InputContent);
-                var toplevel = parser.Parse();
-                new ScopeParser().FigureOutScope(toplevel);
-                var lastStatement = ((AstSimpleStatement) toplevel.Body.Last).Body;
-                var val = lastStatement.ConstValue(ctx);
-                outNiceJs = val != null ? "Const\n" : "Not const\n";
-                if (val != null)
-                {
-                    var valAst = TypeConverter.ToAst(val);
-                    var outputOptions = new OutputOptions {Beautify = true};
-                    outNiceJs += valAst.PrintToString(outputOptions);
-                }
-            }
-            catch (SyntaxError e)
-            {
-                outNiceJs = e.Message;
-            }
-
-            return outNiceJs;
-        }
+        return outNiceJs;
     }
 }
