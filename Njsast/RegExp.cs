@@ -15,6 +15,7 @@ namespace Njsast
             if (mods.Contains('m', StringComparison.Ordinal)) res |= RegExpFlags.Multiline;
             if (mods.Contains('u', StringComparison.Ordinal)) res |= RegExpFlags.Unicode;
             if (mods.Contains('y', StringComparison.Ordinal)) res |= RegExpFlags.Sticky;
+            if (mods.Contains('s', StringComparison.Ordinal)) res |= RegExpFlags.DotAll;
             return res;
         }
     }

@@ -43,6 +43,8 @@ namespace Njsast.Ast
                 output.Print("y");
             if (f.HasFlag(RegExpFlags.Unicode))
                 output.Print("u");
+            if (f.HasFlag(RegExpFlags.DotAll))
+                output.Print("s");
         }
     }
 }

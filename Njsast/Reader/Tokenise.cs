@@ -499,8 +499,12 @@ namespace Njsast.Reader
             var mods = ReadWord1();
             if (!string.IsNullOrEmpty(mods))
             {
-                var validFlags = new Regex("^[gim]*$");
-                if (Options.EcmaVersion >= 6) validFlags = new Regex("^[gimuy]*$");
+                Regex validFlags = Options.EcmaVersion switch
+                {
+                    >= 9 => new Regex("^[gimuys]*$"),
+                    >= 6 => new Regex("^[gimuy]*$"),
+                    _ => new Regex("^[gim]*$")
+                };
                 if (!validFlags.IsMatch(mods)) Raise(start, "Invalid regular expression flag");
             }
             FinishToken(TokenType.Regexp, new RegExp
