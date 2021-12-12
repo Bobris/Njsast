@@ -8,4 +8,9 @@ public class AstForOf : AstForIn
     public AstForOf(string? source, Position startPos, Position endPos, AstStatement body, AstNode init, AstNode @object) : base(source, startPos, endPos, body, init, @object)
     {
     }
+
+    public override AstNode ShallowClone()
+    {
+        return new AstForOf(Source, Start, End, Body, Init, Object);
+    }
 }
