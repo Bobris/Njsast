@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text.RegularExpressions;
 using Njsast.Ast;
 
@@ -528,8 +529,10 @@ public sealed partial class Parser
                 return new AstRegExp(SourceFile, startLocation, _lastTokEnd, r);
             case TokenType.Num:
                 if (Value is long intValue)
-                    return ParseLiteral(intValue);
+                    return ParseLiteral((double)intValue);
                 return ParseLiteral((double) GetValue());
+            case TokenType.BigInt:
+                return ParseLiteral((BigInteger)GetValue());
             case TokenType.String:
                 var s = (string) GetValue();
                 Next();
@@ -581,6 +584,13 @@ public sealed partial class Parser
         var raw = _input.Substring(Start.Index, End.Index - Start.Index);
         Next();
         return new AstNumber(SourceFile, startLoc, _lastTokEnd, value, raw);
+    }
+
+    AstNode ParseLiteral(BigInteger value)
+    {
+        var startLoc = Start;
+        Next();
+        return new AstBigInt(SourceFile, startLoc, _lastTokEnd, value);
     }
 
     AstNode ParseParenExpression()

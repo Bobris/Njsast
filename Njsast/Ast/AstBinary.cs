@@ -111,7 +111,7 @@ public class AstBinary : AstNode
             var sp = OutputContext.Precedence(Operator);
             if (pp > sp
                 || pp == sp
-                && (this == binary.Right || po == Operator.Power))
+                && (this == binary.Right && po != Operator.Power || this == binary.Left && po == Operator.Power))
             {
                 return true;
             }

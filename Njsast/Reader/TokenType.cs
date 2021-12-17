@@ -3,9 +3,6 @@
 // allows the tokenizer to store the information it has about a
 // token in a way that is very cheap for the parser to look up.
 
-// All token type variables start with an underscore, to make them
-// easy to recognize.
-
 // The `beforeExpr` property is used to disambiguate between regular
 // expressions and divisions. It is set on all token types that can
 // be followed by an expression (thus, a slash after them would be a
@@ -23,6 +20,7 @@ public enum TokenType
 {
     Eof,
     Num,
+    BigInt,
     Regexp,
     String,
     Name,

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Numerics;
 using System.Text.RegularExpressions;
 
 namespace Njsast.Reader;
@@ -41,7 +42,7 @@ public sealed partial class Parser : IEnumerable<Token>
     // pedantic tests (`"use strict"; 010;` should fail).
     TokContext CurContext()
     {
-        return _context[_context.Count - 1];
+        return _context[^1];
     }
 
     // Read a single token, updating the parser object's token-related
@@ -49,7 +50,7 @@ public sealed partial class Parser : IEnumerable<Token>
     internal void NextToken()
     {
         var curContext = CurContext();
-        if (curContext == null || curContext.PreserveSpace != true) SkipSpace();
+        if (curContext is not { PreserveSpace: true }) SkipSpace();
 
         Start = CurPosition();
         if (_pos.Index >= _input.Length)
@@ -541,11 +542,55 @@ public sealed partial class Parser : IEnumerable<Token>
     void ReadRadixNumber(int radix)
     {
         _pos = _pos.Increment(2); // 0x
+        var start = _pos;
         var val = ReadInt(radix);
         if (!val.HasValue)
         {
             throw NewSyntaxError(Start.Increment(2), "Expected number in radix " + radix);
         }
+        var next = _input.Get(_pos.Index);
+
+        if (next == 'n' && Options.EcmaVersion >= 11)
+        {
+            BigInteger bigInt = 0;
+            switch (radix)
+            {
+                case 16:
+                {
+                    if (!BigInteger.TryParse(_input.AsSpan(start.Index, _pos - start), NumberStyles.AllowHexSpecifier, null , out bigInt))
+                    {
+                        Raise(_pos, "Cannot parse BigInteger");
+                    }
+
+                    break;
+                }
+                case 2:
+                {
+                    foreach(var c in _input.AsSpan(start.Index, _pos - start))
+                    {
+                        bigInt <<= 1;
+                        bigInt += c - '0';
+                    }
+
+                    break;
+                }
+                case 8:
+                {
+                    foreach(var c in _input.AsSpan(start.Index, _pos - start))
+                    {
+                        bigInt <<= 3;
+                        bigInt += c - '0';
+                    }
+
+                    break;
+                }
+            }
+            _pos = _pos.Increment(1);
+            if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
+            FinishToken(TokenType.BigInt, bigInt);
+            return;
+        }
+
         if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
         FinishToken(TokenType.Num, val.Value);
     }
@@ -562,6 +607,17 @@ public sealed partial class Parser : IEnumerable<Token>
         if (octal && Test89.IsMatch(_input.Substring(start.Index, _pos - start))) octal = false;
         var next = _input.Get(_pos.Index);
 
+        if (next == 'n' && !octal && !startsWithDot && Options.EcmaVersion >= 11)
+        {
+            if (!BigInteger.TryParse(_input.AsSpan(start.Index, _pos - start), out var bigInt))
+            {
+                Raise(_pos, "Cannot parse BigInteger");
+            }
+            _pos = _pos.Increment(1);
+            if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
+            FinishToken(TokenType.BigInt, bigInt);
+            return;
+        }
         if (next == 46 && !octal)
         {
             // '.'

@@ -7,7 +7,7 @@ sealed class TokenInformation
 {
     public static readonly Dictionary<TokenType, TokenInformation> Types;
 
-    public static readonly Dictionary<string, TokenType> Keywords = new Dictionary<string, TokenType>
+    public static readonly Dictionary<string, TokenType> Keywords = new()
     {
         {"break", TokenType.Break},
         {"case", TokenType.Case},
@@ -50,6 +50,7 @@ sealed class TokenInformation
     static TokenInformation()
     {
         var num = new TokenInformation(startsExpr: true);
+        var bigint = new TokenInformation(startsExpr: true);
         var regexp = new TokenInformation(startsExpr: true);
         var @string = new TokenInformation(startsExpr: true);
         var name = new TokenInformation(startsExpr: true);
@@ -134,6 +135,7 @@ sealed class TokenInformation
         Types = new Dictionary<TokenType, TokenInformation>
         {
             {TokenType.Num, num},
+            {TokenType.BigInt, bigint},
             {TokenType.Regexp, regexp},
             {TokenType.String, @string},
             {TokenType.Name, name},

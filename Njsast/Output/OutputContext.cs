@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Numerics;
 using System.Text.RegularExpressions;
 using Njsast.Ast;
 using Njsast.Reader;
@@ -139,7 +140,7 @@ public class OutputContext
             if (Parser.IsIdentifierChar(_lastChar)
                 && (Parser.IsIdentifierChar(ch) || ch == '\\')
                 || ch == '/' && ch == _lastChar
-                || (ch == '+' || ch == '-') && ch == _lastChar
+                || ch is '+' or '-' && ch == _lastChar
                )
             {
                 TruePrint(" ");
@@ -595,6 +596,20 @@ public class OutputContext
         Print(str);
         _needDotAfterNumber = !(str.Contains('.') ||
                                 str.Contains('e'));
+    }
+
+    public void PrintBigInt(BigInteger value)
+    {
+        Span<char> buf = stackalloc char[512];
+        if (value.TryFormat(buf, out var len))
+        {
+            Print(buf[..len]);
+        }
+        else
+        {
+            Print(value.ToString());
+        }
+        TruePrint("n");
     }
 
     public void PrintPropertyName(string name)
