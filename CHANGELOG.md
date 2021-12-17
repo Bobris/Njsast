@@ -6,7 +6,7 @@
 
 -   Upgrade to .Net 6.0
 -   Basic BigInt ES2020 support
--   Removed unnecessary parensis from nested power binary expression
+-   Removed unnecessary parentis from nested power binary expression
 
 ### Fixes
 
