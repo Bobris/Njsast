@@ -16,9 +16,9 @@ Toplevel 1:1 - 8:3
             String 3:26 - 3:31
               Value: err
         Catch 4:7 - 6:6
-          Continue 5:9 - 5:18
           SymbolCatch 4:14 - 4:15
             Name: e
+          Continue 5:9 - 5:18
       SimpleStatement 7:5 - 7:12
         Call 7:5 - 7:11
           SymbolRef 7:5 - 7:9 [Read]

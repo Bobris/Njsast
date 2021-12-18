@@ -452,7 +452,7 @@ public sealed partial class Parser
             Raise(_lastTokEnd, "Illegal newline after throw");
         var argument = ParseExpression(Start);
         Semicolon();
-        return new AstThrow(SourceFile, nodeStart, _lastTokEnd, argument);
+        return new(SourceFile, nodeStart, _lastTokEnd, argument);
     }
 
     AstTry ParseTryStatement(Position nodeStart)
@@ -464,15 +464,22 @@ public sealed partial class Parser
         {
             var startLocation = Start;
             Next();
-            Expect(TokenType.ParenL);
-            var param = ParseBindingAtom();
-            EnterLexicalScope();
-            CheckLVal(param, true, VariableKind.Let);
-            param = new AstSymbolCatch((AstSymbol) param);
-            Expect(TokenType.ParenR);
+            AstNode? param = null;
+            if (Eat(TokenType.ParenL))
+            {
+                param = ParseBindingAtom();
+                EnterLexicalScope();
+                CheckLVal(param, true, VariableKind.Let);
+                param = new AstSymbolCatch((AstSymbol) param);
+                Expect(TokenType.ParenR);
+            }
+            else
+            {
+                EnterLexicalScope();
+            }
             var body = ParseBlock(false);
             ExitLexicalScope();
-            handler = new AstCatch(SourceFile, startLocation, _lastTokEnd, param, ref body.Body);
+            handler = new(SourceFile, startLocation, _lastTokEnd, param, ref body.Body);
         }
 
         var startOfFinally = CurPosition();
@@ -482,7 +489,7 @@ public sealed partial class Parser
         var finalizer = finalizerBody != null
             ? new AstFinally(SourceFile, startOfFinally, finalizerBody.End, ref finalizerBody.Body)
             : null;
-        return new AstTry(SourceFile, nodeStart, _lastTokEnd, ref block.Body, handler, finalizer);
+        return new(SourceFile, nodeStart, _lastTokEnd, ref block.Body, handler, finalizer);
     }
 
     AstDefinitions ParseVarStatement(Position nodeStart, VariableKind kind)

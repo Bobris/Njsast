@@ -3285,6 +3285,8 @@ Toplevel 1:1 - 5496:1
                             SymbolRef 370:9 - 370:10 [Read]
                               Name: t
                     Catch 371:7 - 384:6
+                      SymbolCatch 371:14 - 371:15
+                        Name: e
                       SimpleStatement 372:7 - 383:9
                         Assign 372:7 - 383:8
                           Operator: Assignment
@@ -3370,8 +3372,6 @@ Toplevel 1:1 - 5496:1
                                         Number 381:30 - 381:31
                                           Value: 1
                                           Literal: 1
-                      SymbolCatch 371:14 - 371:15
-                        Name: e
                   Defun 385:5 - 444:6
                     SymbolDefun 385:14 - 385:16 [Write]
                       Name: se
@@ -3955,6 +3955,8 @@ Toplevel 1:1 - 5496:1
                                   SymbolRef 435:55 - 435:56 [Read]
                                     Name: n
                               Catch 436:13 - 438:12
+                                SymbolCatch 436:20 - 436:21
+                                  Name: e
                                 SimpleStatement 437:13 - 437:22
                                   Call 437:13 - 437:21
                                     SymbolRef 437:13 - 437:14 [Read]
@@ -3966,8 +3968,6 @@ Toplevel 1:1 - 5496:1
                                       Number 437:19 - 437:20
                                         Value: 0
                                         Literal: 0
-                                SymbolCatch 436:20 - 436:21
-                                  Name: e
                               Finally 438:20 - 440:12
                                 SimpleStatement 439:13 - 439:48
                                   Binary 439:13 - 439:47
@@ -4113,14 +4113,14 @@ Toplevel 1:1 - 5496:1
                               SymbolRef 460:20 - 460:21 [Read]
                                 Name: t
                       Catch 461:9 - 463:8
+                        SymbolCatch 461:16 - 461:17
+                          Name: e
                         Return 462:9 - 462:19
                           UnaryPrefix 462:16 - 462:18
                             Operator: LogicalNot
                             Number 462:17 - 462:18
                               Value: 1
                               Literal: 1
-                        SymbolCatch 461:16 - 461:17
-                          Name: e
                       Finally 463:16 - 465:8
                         SimpleStatement 464:9 - 464:65
                           Sequence 464:9 - 464:64
@@ -6743,6 +6743,8 @@ Toplevel 1:1 - 5496:1
                                   SymbolRef 777:20 - 777:21 [Read]
                                     Name: n
                               Catch 778:11 - 780:10
+                                SymbolCatch 778:18 - 778:19
+                                  Name: e
                                 SimpleStatement 779:11 - 779:20
                                   Call 779:11 - 779:19
                                     SymbolRef 779:11 - 779:12 [Read]
@@ -6754,8 +6756,6 @@ Toplevel 1:1 - 5496:1
                                       Number 779:17 - 779:18
                                         Value: 0
                                         Literal: 0
-                                SymbolCatch 778:18 - 778:19
-                                  Name: e
                           Return 781:7 - 781:45
                             Binary 781:14 - 781:44
                               Operator: LessThan
@@ -16016,6 +16016,8 @@ Toplevel 1:1 - 5496:1
                         SymbolRef 1747:37 - 1747:38 [Read]
                           Name: r
               Catch 1748:7 - 1750:6
+                SymbolCatch 1748:14 - 1748:15
+                  Name: e
                 SimpleStatement 1749:7 - 1749:28
                   Call 1749:7 - 1749:27
                     Dot 1749:7 - 1749:14
@@ -16030,8 +16032,6 @@ Toplevel 1:1 - 5496:1
                     Array 1749:23 - 1749:26
                       SymbolRef 1749:24 - 1749:25 [Read]
                         Name: e
-                SymbolCatch 1748:14 - 1748:15
-                  Name: e
           SimpleStatement 1752:3 - 2013:8
             Sequence 1752:3 - 2013:7
               Assign 1752:4 - 1841:4
@@ -17322,6 +17322,8 @@ Toplevel 1:1 - 5496:1
                                                     SymbolRef 1934:29 - 1934:30 [Read]
                                                       Name: e
                                                 Catch 1935:29 - 1941:28
+                                                  SymbolCatch 1935:36 - 1935:37
+                                                    Name: e
                                                   SimpleStatement 1936:29 - 1940:53
                                                     Sequence 1936:29 - 1940:52
                                                       Binary 1936:29 - 1937:72
@@ -17393,8 +17395,6 @@ Toplevel 1:1 - 5496:1
                                                               Name: n
                                                             SymbolRef 1940:49 - 1940:50 [Read]
                                                               Name: r
-                                                  SymbolCatch 1935:36 - 1935:37
-                                                    Name: e
                                       SimpleStatement 1943:19 - 1947:40
                                         Conditional 1943:19 - 1947:39
                                           SymbolRef 1943:19 - 1943:20 [Read]
@@ -41238,6 +41238,8 @@ Toplevel 1:1 - 5496:1
                         String 4507:48 - 4507:58
                           Value: text/xml
                   Catch 4508:7 - 4510:6
+                    SymbolCatch 4508:14 - 4508:15
+                      Name: e
                     SimpleStatement 4509:7 - 4509:18
                       Assign 4509:7 - 4509:17
                         Operator: Assignment
@@ -41248,8 +41250,6 @@ Toplevel 1:1 - 5496:1
                           Number 4509:16 - 4509:17
                             Value: 0
                             Literal: 0
-                    SymbolCatch 4508:14 - 4508:15
-                      Name: e
                 Return 4511:5 - 4515:7
                   Sequence 4512:7 - 4515:5
                     Binary 4512:7 - 4513:37
@@ -43318,6 +43318,8 @@ Toplevel 1:1 - 5496:1
                                         SymbolRef 4754:69 - 4754:70 [Read]
                                           Name: r
                             Catch 4755:13 - 4757:12
+                              SymbolCatch 4755:20 - 4755:21
+                                Name: e
                               SimpleStatement 4756:13 - 4756:32
                                 Assign 4756:13 - 4756:31
                                   Operator: Assignment
@@ -43330,8 +43332,6 @@ Toplevel 1:1 - 5496:1
                                     Number 4756:30 - 4756:31
                                       Value: 0
                                       Literal: 0
-                              SymbolCatch 4755:20 - 4755:21
-                                Name: e
                       If 4759:9 - 4767:20
                         Sequence 4760:12 - 4765:12
                           Binary 4760:12 - 4763:54
@@ -44046,6 +44046,8 @@ Toplevel 1:1 - 5496:1
                                   SymbolRef 4822:33 - 4822:34 [Read]
                                     Name: l
                             Catch 4823:13 - 4826:12
+                              SymbolCatch 4823:20 - 4823:21
+                                Name: e
                               If 4824:13 - 4824:28
                                 SymbolRef 4824:17 - 4824:18 [Read]
                                   Name: h
@@ -44063,8 +44065,6 @@ Toplevel 1:1 - 5496:1
                                       Literal: 1
                                   SymbolRef 4825:19 - 4825:20 [Read]
                                     Name: e
-                              SymbolCatch 4823:20 - 4823:21
-                                Name: e
                         SimpleStatement 4827:16 - 4827:38
                           Call 4827:16 - 4827:37
                             SymbolRef 4827:16 - 4827:17 [Read]
@@ -44836,6 +44836,8 @@ Toplevel 1:1 - 5496:1
                                                           SymbolRef 4908:33 - 4908:34 [Read]
                                                             Name: t
                                                     Catch 4909:27 - 4916:26
+                                                      SymbolCatch 4909:34 - 4909:35
+                                                        Name: e
                                                       Return 4910:27 - 4915:29
                                                         Object 4910:34 - 4915:28
                                                           ObjectKeyVal 4911:29 - 4911:49
@@ -44865,8 +44867,6 @@ Toplevel 1:1 - 5496:1
                                                                     Value:  to 
                                                                 SymbolRef 4914:70 - 4914:71 [Read]
                                                                   Name: o
-                                                      SymbolCatch 4909:34 - 4909:35
-                                                        Name: e
                                     Return 4918:15 - 4918:52
                                       Object 4918:22 - 4918:51
                                         ObjectKeyVal 4918:24 - 4918:40
@@ -46360,14 +46360,14 @@ Toplevel 1:1 - 5496:1
                                           Name: i
                                     Null 5094:50 - 5094:54
                               Catch 5095:15 - 5097:14
+                                SymbolCatch 5095:22 - 5095:23
+                                  Name: e
                                 If 5096:15 - 5096:30
                                   SymbolRef 5096:19 - 5096:20 [Read]
                                     Name: o
                                   Throw 5096:22 - 5096:30
                                     SymbolRef 5096:28 - 5096:29 [Read]
                                       Name: e
-                                SymbolCatch 5095:22 - 5095:23
-                                  Name: e
                         ObjectKeyVal 5099:11 - 5101:12
                           SymbolProperty 5099:11 - 5099:16
                             Name: abort

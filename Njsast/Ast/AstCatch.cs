@@ -7,15 +7,15 @@ namespace Njsast.Ast;
 public class AstCatch : AstBlock
 {
     /// [AstSymbolCatch|AstDestructuring|AstExpansion|AstDefaultAssign] symbol for the exception
-    public AstNode Argname;
+    public AstNode? Argname;
 
-    public AstCatch(string? source, Position startPos, Position endPos, AstNode argname,
+    public AstCatch(string? source, Position startPos, Position endPos, AstNode? argname,
         ref StructList<AstNode> body) : base(source, startPos, endPos, ref body)
     {
         Argname = argname;
     }
 
-    AstCatch(string? source, Position startPos, Position endPos, AstNode argname) : base(source, startPos, endPos)
+    AstCatch(string? source, Position startPos, Position endPos, AstNode? argname) : base(source, startPos, endPos)
     {
         Argname = argname;
     }
@@ -29,14 +29,15 @@ public class AstCatch : AstBlock
 
     public override void Visit(TreeWalker w)
     {
-        base.Visit(w);
         w.Walk(Argname);
+        base.Visit(w);
     }
 
     public override void Transform(TreeTransformer tt)
     {
+        if (Argname != null)
+            Argname = tt.Transform(Argname);
         base.Transform(tt);
-        Argname = tt.Transform(Argname)!;
     }
 
     public override void CodeGen(OutputContext output)
