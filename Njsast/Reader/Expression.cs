@@ -394,18 +394,53 @@ public sealed partial class Parser
 
     AstNode ParseSubscripts(AstNode @base, Position startLoc, bool noCalls = false)
     {
-        var maybeAsyncArrow = Options.EcmaVersion >= 8 && @base is AstSymbol identifierNode &&
-                              identifierNode.Name == "async" &&
-                              _lastTokEnd.Index == @base.End.Index && !CanInsertSemicolon();
+        var maybeAsyncArrow = @base is AstSymbol { Name: "async" } && _lastTokEnd.Index == @base.End.Index && !CanInsertSemicolon();
+        var expectImport = @base is AstSymbol { Name: "!import" };
         for (;;)
         {
+            if (expectImport)
+            {
+                expectImport = false;
+                if (Eat(TokenType.Dot))
+                {
+                    var prop = ParseIdent(true);
+                    if (prop.Name != "meta")
+                    {
+                        Raise(prop.Start, "Only meta property allowed");
+                    }
+
+                    @base = new AstImportMeta(SourceFile, @base.Start, prop.End);
+                } else if (!noCalls && Eat(TokenType.ParenL))
+                {
+                    var refDestructuringErrors = new DestructuringErrors();
+                    var oldYieldPos = _yieldPos;
+                    var oldAwaitPos = _awaitPos;
+                    _yieldPos = default;
+                    _awaitPos = default;
+                    var expressionList = new StructList<AstNode>();
+                    ParseExpressionList(ref expressionList, TokenType.ParenR, true, false,
+                        refDestructuringErrors);
+                    CheckExpressionErrors(refDestructuringErrors, true);
+                    _yieldPos = oldYieldPos.Line != 0 ? oldYieldPos : _yieldPos;
+                    _awaitPos = oldAwaitPos.Line != 0 ? oldAwaitPos : _awaitPos;
+                    if (expressionList.Count != 1)
+                    {
+                        Raise(startLoc, "dynamic import must have one parameter");
+                    }
+                    @base = new AstImportExpression(SourceFile, startLoc, _lastTokEnd, expressionList[0]);
+                }
+                else
+                {
+                    Raise(@base.Start, "Wrong import expression");
+                }
+            }
             bool computed;
             if ((computed = Eat(TokenType.BracketL)) || Eat(TokenType.Dot))
             {
                 var property = computed ? ParseExpression(Start) : ParseIdent(true);
-                if (computed) Expect(TokenType.BracketR);
                 if (computed)
                 {
+                    Expect(TokenType.BracketR);
                     @base = new AstSub(SourceFile, startLoc, _lastTokEnd, @base, property);
                 }
                 else
@@ -435,18 +470,7 @@ public sealed partial class Parser
                 CheckExpressionErrors(refDestructuringErrors, true);
                 _yieldPos = oldYieldPos.Line != 0 ? oldYieldPos : _yieldPos;
                 _awaitPos = oldAwaitPos.Line != 0 ? oldAwaitPos : _awaitPos;
-                if (@base is AstSymbolRef symbol && symbol.Name == "!import")
-                {
-                    if (expressionList.Count != 1)
-                    {
-                        Raise(startLoc, "dynamic import must have one parameter");
-                    }
-                    @base = new AstImportExpression(SourceFile, startLoc, _lastTokEnd, expressionList[0]);
-                }
-                else
-                {
-                    @base = new AstCall(SourceFile, startLoc, _lastTokEnd, @base, ref expressionList);
-                }
+                @base = new AstCall(SourceFile, startLoc, _lastTokEnd, @base, ref expressionList);
             }
             else if (Type == TokenType.BackQuote)
             {
@@ -1268,7 +1292,7 @@ public sealed partial class Parser
             // `class` and `function` keywords push new context into this.context.
             // But there is no chance to pop the context if the keyword is consumed as an identifier such as a property name.
             // If the previous token is a dot, this does not apply because the context-managing code already ignored the keyword
-            if ((name == "class" || name == "function") &&
+            if (name is "class" or "function" &&
                 (_lastTokEnd.Index != _lastTokStart.Index + 1 || _input.Get(_lastTokStart.Index) != 46))
             {
                 _context.Pop();

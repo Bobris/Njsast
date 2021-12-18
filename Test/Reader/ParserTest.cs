@@ -48,14 +48,15 @@ public class ParserTest
             var comments = new List<(bool block, string content, SourceLocation location)>();
             var commentListener = new CommentListener();
             var parser = new Parser(
-                new Options
+                new()
                 {
                     SourceFile = testData.SourceName, EcmaVersion = testData.EcmaScriptVersion, OnComment =
                         (block, content, location) =>
                         {
                             commentListener.OnComment(block, content, location);
                             comments.Add((block, content, location));
-                        }
+                        },
+                    SourceType = testData.SourceName.StartsWith("module-") ? SourceType.Module : SourceType.Script
                 },
                 testData.Input);
             var toplevel = parser.Parse();

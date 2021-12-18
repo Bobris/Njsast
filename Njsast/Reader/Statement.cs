@@ -157,7 +157,7 @@ public sealed partial class Parser
             case TokenType.Export:
             case TokenType.Import:
                 Next();
-                if (starttype == TokenType.Import && Type == TokenType.ParenL)
+                if (starttype == TokenType.Import && Type is TokenType.ParenL or TokenType.Dot)
                 {
                     _wasImportKeyword = true;
                     break;
