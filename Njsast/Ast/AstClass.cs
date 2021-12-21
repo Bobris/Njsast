@@ -15,8 +15,6 @@ public class AstClass : AstScope
     /// [AstObjectProperty*] array of properties
     public StructList<AstObjectProperty> Properties;
 
-    public bool Inlined;
-
     public AstClass(string? source, Position startPos, Position endPos, AstSymbolDeclaration? name, AstNode? extends,
         ref StructList<AstObjectProperty> properties) : base(source, startPos, endPos)
     {
@@ -31,6 +29,13 @@ public class AstClass : AstScope
         w.Walk(Name);
         w.Walk(Extends);
         w.WalkList(Properties);
+    }
+
+    public override AstNode ShallowClone()
+    {
+        var prop = new StructList<AstObjectProperty>();
+        prop.AddRange(Properties);
+        return new AstClass(Source, Start, End, Name, Extends, ref prop);
     }
 
     public override void Transform(TreeTransformer tt)
@@ -77,7 +82,6 @@ public class AstClass : AstScope
             output.Print("{");
             output.Newline();
             output.Indentation += output.Options.IndentLevel;
-            output.Indent();
             for (var i = 0u; i < Properties.Count; i++)
             {
                 if (i > 0)

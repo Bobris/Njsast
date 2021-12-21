@@ -885,7 +885,7 @@ public sealed partial class Parser
             {
                 body.Add(new AstObjectSetter(SourceFile, methodStart, _lastTokEnd, key, methodValue, @static));
             }
-            else if (kind == PropertyKind.Method || kind == PropertyKind.Constructor)
+            else if (kind is PropertyKind.Method or PropertyKind.Constructor)
             {
                 body.Add(new AstConciseMethod(SourceFile, methodStart, _lastTokEnd, key, methodValue, @static,
                     isGenerator, isAsync));

@@ -875,6 +875,8 @@ public sealed partial class Parser
 
         if (kind == PropertyKind.Initialise)
         {
+            if (method)
+                return new AstConciseMethod(SourceFile, nodeStart, _lastTokEnd, key, value, false, isGenerator, isAsync);
             return new AstObjectKeyVal(SourceFile, nodeStart, _lastTokEnd, key, value);
         }
 
@@ -907,10 +909,7 @@ public sealed partial class Parser
             return (value, PropertyKind.Initialise, true, false, computed, key);
         }
 
-        if (!isPattern &&
-            Options.EcmaVersion >= 5 && !computed && key is AstSymbol identifierNode &&
-            (identifierNode.Name == "get" || identifierNode.Name == "set") &&
-            Type != TokenType.Comma && Type != TokenType.BraceR)
+        if (!isPattern && !computed && key is AstSymbol { Name: "get" or "set" } identifierNode && Type != TokenType.Comma && Type != TokenType.BraceR)
         {
             if (isGenerator || isAsync)
             {
@@ -1059,16 +1058,31 @@ public sealed partial class Parser
 
     static AstNode MakeSymbolFunArg(AstNode par)
     {
-        if (par is AstSymbolFunarg) return par;
-        if (par is AstSymbol)
+        switch (par)
         {
-            return new AstSymbolFunarg((AstSymbol) par);
-        }
+            case AstSymbolFunarg:
+                break;
+            case AstSymbol symbol:
+                return new AstSymbolFunarg(symbol);
+            case AstExpansion expansion:
+                expansion.Expression = MakeSymbolFunArg(expansion.Expression);
+                break;
+            case AstDestructuring destructuring:
+            {
+                ref var n = ref destructuring.Names;
+                for (var i = 0; i < n.Count; i++)
+                {
+                    n[i] = MakeSymbolFunArg(n[i]);
+                }
 
-        if (par is AstExpansion expansion)
-        {
-            expansion.Expression = MakeSymbolFunArg(expansion.Expression);
-            return par;
+                break;
+            }
+            case AstObjectKeyVal keyVal:
+                keyVal.Value = MakeSymbolFunArg(keyVal.Value);
+                break;
+            case AstDefaultAssign defaultAssign:
+                defaultAssign.Left = MakeSymbolFunArg(defaultAssign.Left);
+                break;
         }
 
         return par;

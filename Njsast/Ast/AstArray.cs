@@ -38,7 +38,7 @@ public class AstArray : AstNode
     public override AstNode ShallowClone()
     {
         var res = new AstArray(Source, Start, End);
-        res.Elements.AddRange(Elements.AsReadOnlySpan());
+        res.Elements.AddRange(Elements);
         return res;
     }
 

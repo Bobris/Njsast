@@ -8,4 +8,9 @@ public class AstDefaultAssign : AstBinary
     public AstDefaultAssign(string? source, Position startLoc, Position endLoc, AstNode left, AstNode right) : base(source, startLoc, endLoc, left, right, Operator.Assignment)
     {
     }
+
+    public override AstNode ShallowClone()
+    {
+        return new AstDefaultAssign(Source, Start, End, Left, Right);
+    }
 }
