@@ -1,0 +1,13 @@
+Toplevel 1:1 - 2:1
+  Class 1:1 - 1:63
+    SymbolDefClass 1:7 - 1:16
+      Name: Rectangle
+    Call 1:25 - 1:60
+      SymbolRef 1:25 - 1:36 [Read]
+        Name: aggregation
+      SymbolRef 1:37 - 1:42 [Read]
+        Name: Shape
+      SymbolRef 1:44 - 1:51 [Read]
+        Name: Colored
+      SymbolRef 1:53 - 1:59 [Read]
+        Name: ZCoord
