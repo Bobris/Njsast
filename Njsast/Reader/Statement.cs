@@ -45,7 +45,7 @@ public sealed partial class Parser
 
     bool IsLet()
     {
-        if (Type != TokenType.Name || Options.EcmaVersion < 6 || !"let".Equals(Value)) return false;
+        if (Type != TokenType.Name || !"let".Equals(Value)) return false;
         var skip = SkipWhiteSpace.Match(_input, _pos.Index);
         var next = _pos.Index + skip.Groups[0].Length;
         var nextCh = _input[next];
@@ -68,7 +68,7 @@ public sealed partial class Parser
     // - 'async /*\n*/ function' is invalid.
     bool IsAsyncFunction()
     {
-        if (Type != TokenType.Name || Options.EcmaVersion < 8 || !"async".Equals(Value))
+        if (Type != TokenType.Name || !"async".Equals(Value))
             return false;
 
         var skip = SkipWhiteSpace.Match(_input, _pos.Index);
@@ -296,11 +296,12 @@ public sealed partial class Parser
     AstIterationStatement ParseForStatement(Position nodeStart)
     {
         Next();
+        var isAwait = EatContextual("await");
         EnterLexicalScope();
         Expect(TokenType.ParenL);
         if (Type == TokenType.Semi) return ParseFor(nodeStart, null);
         var isLet = IsLet();
-        if (Type == TokenType.Var || Type == TokenType.Const || isLet)
+        if (Type is TokenType.Var or TokenType.Const || isLet)
         {
             var startLoc = Start;
             var kind = isLet ? VariableKind.Let : ToVariableKind((string) GetValue());
@@ -321,25 +322,27 @@ public sealed partial class Parser
                 init = new AstVar(SourceFile, startLoc, _lastTokEnd, ref declarations);
             }
 
-            if ((Type == TokenType.In || Options.EcmaVersion >= 6 && IsContextual("of")) &&
+            if ((Type == TokenType.In || IsContextual("of")) &&
                 init.Definitions.Count == 1 &&
                 !(kind != VariableKind.Var && init.Definitions[0].Value != null))
-                return ParseForIn(nodeStart, init);
+                return ParseForIn(nodeStart, init, isAwait);
+            if (isAwait) Raise(nodeStart, "Simple for cannot be awaited");
             return ParseFor(nodeStart, init);
         }
         else
         {
             var refDestructuringErrors = new DestructuringErrors();
             var init = ParseExpression(Start, true, refDestructuringErrors);
-            if (Type == TokenType.In || Options.EcmaVersion >= 6 && IsContextual("of"))
+            if (Type == TokenType.In || IsContextual("of"))
             {
                 init = ToAssignable(init)!;
                 CheckLVal(init, false, null);
                 CheckPatternErrors(refDestructuringErrors, true);
-                return ParseForIn(nodeStart, init);
+                return ParseForIn(nodeStart, init, isAwait);
             }
 
             CheckExpressionErrors(refDestructuringErrors, true);
+            if (isAwait) Raise(nodeStart, "Simple for cannot be awaited");
             return ParseFor(nodeStart, init);
         }
     }
@@ -621,7 +624,7 @@ public sealed partial class Parser
 
     // Parse a `for`/`in` and `for`/`of` loop, which are almost
     // same from parser's perspective.
-    AstForIn ParseForIn(Position nodeStart, AstNode init)
+    AstForIn ParseForIn(Position nodeStart, AstNode init, bool @await)
     {
         var isIn = Type == TokenType.In;
         Next();
@@ -637,10 +640,10 @@ public sealed partial class Parser
         _allowContinue = backupAllowContinue;
         if (isIn)
         {
-            return new AstForIn(SourceFile, nodeStart, _lastTokEnd, body, init, right);
+            return new AstForIn(SourceFile, nodeStart, _lastTokEnd, body, init, right, @await);
         }
 
-        return new AstForOf(SourceFile, nodeStart, _lastTokEnd, body, init, right);
+        return new AstForOf(SourceFile, nodeStart, _lastTokEnd, body, init, right, @await);
     }
 
     // Parse a list of variable declarations.
@@ -718,10 +721,8 @@ public sealed partial class Parser
         bool isAsync = false)
     {
         var generator = false;
-        if (Options.EcmaVersion >= 6 && !isAsync)
+        if (!isAsync)
             generator = Eat(TokenType.Star);
-        if (Options.EcmaVersion < 8 && isAsync)
-            throw new InvalidOperationException();
 
         AstSymbol? id = null;
         if (isStatement || isNullableId)
@@ -819,10 +820,8 @@ public sealed partial class Parser
                 (computed, key) = ParsePropertyName();
             }
 
-            if (Options.EcmaVersion >= 8 && !isGenerator && !computed &&
-                key is AstSymbol identifierNode && identifierNode.Name == "async" &&
-                Type != TokenType.ParenL &&
-                !CanInsertSemicolon())
+            if (!isGenerator && !computed &&
+                key is AstSymbol { Name: "async" } && Type != TokenType.ParenL && !CanInsertSemicolon())
             {
                 isAsync = true;
                 (computed, key) = ParsePropertyName();
@@ -833,7 +832,7 @@ public sealed partial class Parser
             if (!computed)
             {
                 if (!isGenerator && !isAsync && key is AstSymbol identifierNode2 && Type != TokenType.ParenL &&
-                    (identifierNode2.Name == "get" || identifierNode2.Name == "set"))
+                    identifierNode2.Name is "get" or "set")
                 {
                     isGetSet = true;
                     kind = identifierNode2.Name == "get" ? PropertyKind.Get : PropertyKind.Set;
@@ -841,8 +840,7 @@ public sealed partial class Parser
                 }
 
                 if (!@static && !computed &&
-                    (key is AstSymbol identifierNode3 && identifierNode3.Name == "constructor" ||
-                     key is AstString literal && literal.Value == "constructor"))
+                    key is AstSymbol { Name: "constructor" } or AstString { Value: "constructor" })
                 {
                     if (hadConstructor) Raise(key.Start, "Duplicate constructor in the same class");
                     if (isGetSet) Raise(key.Start, "Constructor can't have get/set modifier");

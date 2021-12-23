@@ -1,4 +1,5 @@
-﻿using Njsast.Output;
+﻿using Njsast.AstDump;
+using Njsast.Output;
 using Njsast.Reader;
 
 namespace Njsast.Ast;
@@ -15,10 +16,11 @@ public class AstForIn : AstIterationStatement
     public AstNode Object;
 
     public AstForIn(string? source, Position startPos, Position endPos, AstStatement body, AstNode init,
-        AstNode @object) : base(source, startPos, endPos, body)
+        AstNode @object, bool @await) : base(source, startPos, endPos, body)
     {
         Init = init;
         Object = @object;
+        Await = @await;
     }
 
     public override void Visit(TreeWalker w)
@@ -37,7 +39,7 @@ public class AstForIn : AstIterationStatement
 
     public override AstNode ShallowClone()
     {
-        return new AstForIn(Source, Start, End, Body, Init, Object);
+        return new AstForIn(Source, Start, End, Body, Init, Object, Await);
     }
 
     public override void CodeGen(OutputContext output)
@@ -59,5 +61,11 @@ public class AstForIn : AstIterationStatement
         output.Print(")");
         output.Space();
         output.PrintBody(Body);
+    }
+
+    public override void DumpScalars(IAstDumpWriter writer)
+    {
+        base.DumpScalars(writer);
+        writer.PrintProp("await", Await);
     }
 }
