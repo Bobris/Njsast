@@ -299,7 +299,10 @@ public sealed partial class Parser
         var isAwait = EatContextual("await");
         EnterLexicalScope();
         Expect(TokenType.ParenL);
-        if (Type == TokenType.Semi) return ParseFor(nodeStart, null);
+        if (Type == TokenType.Semi)
+        {
+            return ParseFor(nodeStart, null, isAwait);
+        }
         var isLet = IsLet();
         if (Type is TokenType.Var or TokenType.Const || isLet)
         {
@@ -326,8 +329,7 @@ public sealed partial class Parser
                 init.Definitions.Count == 1 &&
                 !(kind != VariableKind.Var && init.Definitions[0].Value != null))
                 return ParseForIn(nodeStart, init, isAwait);
-            if (isAwait) Raise(nodeStart, "Simple for cannot be awaited");
-            return ParseFor(nodeStart, init);
+            return ParseFor(nodeStart, init, isAwait);
         }
         else
         {
@@ -342,8 +344,7 @@ public sealed partial class Parser
             }
 
             CheckExpressionErrors(refDestructuringErrors, true);
-            if (isAwait) Raise(nodeStart, "Simple for cannot be awaited");
-            return ParseFor(nodeStart, init);
+            return ParseFor(nodeStart, init, isAwait);
         }
     }
 
@@ -604,8 +605,9 @@ public sealed partial class Parser
     // Parse a regular `for` loop. The disambiguation code in
     // `parseStatement` will already have parsed the init statement or
     // expression.
-    AstFor ParseFor(Position nodeStart, AstNode? init)
+    AstFor ParseFor(Position nodeStart, AstNode? init, bool isAwait)
     {
+        if (isAwait) Raise(nodeStart, "Simple for cannot be awaited");
         Expect(TokenType.Semi);
         var test = Type == TokenType.Semi ? null : ParseExpression(Start);
         Expect(TokenType.Semi);
@@ -627,6 +629,7 @@ public sealed partial class Parser
     AstForIn ParseForIn(Position nodeStart, AstNode init, bool @await)
     {
         var isIn = Type == TokenType.In;
+        if (isIn && @await) Raise(nodeStart, "for in cannot be awaited");
         Next();
         var right = ParseExpression(Start);
         Expect(TokenType.ParenR);
@@ -635,7 +638,7 @@ public sealed partial class Parser
         var backupAllowContinue = _allowContinue;
         _allowBreak = true;
         _allowContinue = true;
-        var body = ParseStatement(false) as AstStatement;
+        var body = ParseStatement(false);
         _allowBreak = backupAllowBreak;
         _allowContinue = backupAllowContinue;
         if (isIn)
