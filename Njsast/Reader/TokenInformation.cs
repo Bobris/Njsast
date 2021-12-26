@@ -81,6 +81,7 @@ sealed class TokenInformation
         var incDec = new TokenInformation(prefix: true, postfix: true, startsExpr: true);
         var prefix = new TokenInformation(beforeExpr: true, prefix: true, startsExpr: true);
         var logicalOr = CreateBinaryOperation(1);
+        var nullishCoalescing = CreateBinaryOperation(1);
         var logicalAnd = CreateBinaryOperation(2);
         var bitwiseOr = CreateBinaryOperation(3);
         var bitwiseXor = CreateBinaryOperation(4);
@@ -179,6 +180,7 @@ sealed class TokenInformation
             {TokenType.IncDec, incDec},
             {TokenType.Prefix, prefix},
             {TokenType.LogicalOr, logicalOr},
+            {TokenType.NullishCoalescing, nullishCoalescing},
             {TokenType.LogicalAnd, logicalAnd},
             {TokenType.BitwiseOr, bitwiseOr},
             {TokenType.BitwiseXor, bitwiseXor},

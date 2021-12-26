@@ -129,6 +129,11 @@ public class AstBinary : AstNode
             if (TypeConverter.ToBoolean(left)) return left;
         }
 
+        if (Operator == Operator.NullishCoalescing) // Short circuit ??
+        {
+            if (left is not AstNull and not AstUndefined) return left;
+        }
+
         if (Operator == Operator.LogicalAnd) // Short circuit &&
         {
             if (!TypeConverter.ToBoolean(left)) return left;
@@ -140,6 +145,7 @@ public class AstBinary : AstNode
         {
             case Operator.LogicalOr: // we know that left is false
             case Operator.LogicalAnd: // we know that left is true
+            case Operator.NullishCoalescing: // we know that left is nullish
                 return right;
             case Operator.BitwiseOr:
                 return TypeConverter.ToInt32(left) | TypeConverter.ToInt32(right);

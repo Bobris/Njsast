@@ -102,7 +102,9 @@ public sealed partial class Parser : IEnumerable<Token>
             _pos = new Position(_pos.Line + 1, _pos.Index - lineStart, _pos.Index);
             lastIndex = lineStart;
         }
-        Options.OnComment?.Invoke(true, _input.Substring(startLocation.Index + 2, end - (startLocation.Index + 2)), new SourceLocation(startLocation, _pos, SourceFile));
+
+        Options.OnComment?.Invoke(true, _input.Substring(startLocation.Index + 2, end - (startLocation.Index + 2)),
+            new SourceLocation(startLocation, _pos, SourceFile));
     }
 
     void SkipLineComment(int startSkip)
@@ -115,7 +117,10 @@ public sealed partial class Parser : IEnumerable<Token>
             _pos = _pos.Increment(1);
             ch = _input.Get(_pos.Index);
         }
-        Options.OnComment?.Invoke(false, _input.Substring(start.Index + startSkip, _pos.Index - (start.Index + startSkip)), new SourceLocation(start, _pos, SourceFile));
+
+        Options.OnComment?.Invoke(false,
+            _input.Substring(start.Index + startSkip, _pos.Index - (start.Index + startSkip)),
+            new SourceLocation(start, _pos, SourceFile));
     }
 
     // Called at the start of the parse and after every token. Skips
@@ -152,9 +157,11 @@ public sealed partial class Parser : IEnumerable<Token>
                         default:
                             return;
                     }
+
                     break;
                 default:
-                    if (ch > CharCode.BackSpace && ch < CharCode.ShiftOut || ch >= CharCode.OghamSpaceMark && NonAsciIwhitespace.IsMatch(((char)ch).ToString()))
+                    if (ch > CharCode.BackSpace && ch < CharCode.ShiftOut || ch >= CharCode.OghamSpaceMark &&
+                        NonAsciIwhitespace.IsMatch(((char)ch).ToString()))
                     {
                         _pos = _pos.Increment(1);
                         break;
@@ -198,6 +205,7 @@ public sealed partial class Parser : IEnumerable<Token>
             ReadNumber(true);
             return;
         }
+
         var next2 = _input[_pos.Index + 2];
         if (Options.EcmaVersion >= 6 && next == CharCode.Dot && next2 == CharCode.Dot)
         {
@@ -212,7 +220,8 @@ public sealed partial class Parser : IEnumerable<Token>
     }
 
     void readToken_slash()
-    { // '/'
+    {
+        // '/'
         var next = _input.Get(_pos.Index + 1);
         if (_exprAllowed)
         {
@@ -220,6 +229,7 @@ public sealed partial class Parser : IEnumerable<Token>
             ReadRegexp();
             return;
         }
+
         if (next == 61) FinishOp(TokenType.Assign, 2);
         else FinishOp(TokenType.Slash, 1);
     }
@@ -247,9 +257,9 @@ public sealed partial class Parser : IEnumerable<Token>
     {
         // '|&'
         var next = _input[_pos.Index + 1];
-        if (next == code) FinishOp(code == 124 ? TokenType.LogicalOr : TokenType.LogicalAnd, 2);
+        if (next == code) FinishOp(code == '|' ? TokenType.LogicalOr : TokenType.LogicalAnd, 2);
         else if (next == 61) FinishOp(TokenType.Assign, 2);
-        else FinishOp(code == 124 ? TokenType.BitwiseOr : TokenType.BitwiseAnd, 1);
+        else FinishOp(code == '|' ? TokenType.BitwiseOr : TokenType.BitwiseAnd, 1);
     }
 
     void readToken_caret()
@@ -275,6 +285,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 NextToken();
                 return;
             }
+
             FinishOp(TokenType.IncDec, 2);
         }
         else if (next == 61) FinishOp(TokenType.Assign, 2);
@@ -293,6 +304,7 @@ public sealed partial class Parser : IEnumerable<Token>
             else FinishOp(TokenType.BitShift, size);
             return;
         }
+
         if (next == 33 && code == 60 && !_inModule && _input[_pos.Index + 2] == 45 &&
             _input[_pos.Index + 3] == 45)
         {
@@ -302,6 +314,7 @@ public sealed partial class Parser : IEnumerable<Token>
             NextToken();
             return;
         }
+
         if (next == 61) size = 2;
         FinishOp(TokenType.Relational, size);
     }
@@ -326,7 +339,7 @@ public sealed partial class Parser : IEnumerable<Token>
         {
             // The interpretation of a dot depends on whether it is followed
             // by a digit or another two dots.
-            case 46: // '.'
+            case '.':
                 readToken_dot();
                 return;
 
@@ -368,8 +381,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 FinishToken(TokenType.Colon);
                 return;
             case 63:
-                _pos = _pos.Increment(1);
-                FinishToken(TokenType.Question);
+                ReadTokenQuestion();
                 return;
 
             case 96: // '`'
@@ -385,6 +397,7 @@ public sealed partial class Parser : IEnumerable<Token>
                     ReadRadixNumber(16); // '0x', '0X' - hex number
                     return;
                 }
+
                 if (Options.EcmaVersion >= 6)
                 {
                     if (next == 111 || next == 79)
@@ -392,12 +405,14 @@ public sealed partial class Parser : IEnumerable<Token>
                         ReadRadixNumber(8); // '0o', '0O' - octal number
                         return;
                     }
+
                     if (next == 98 || next == 66)
                     {
                         ReadRadixNumber(2); // '0b', '0B' - binary number
                         return;
                     }
                 }
+
                 goto case 49;
             // Anything else beginning with a digit is an integer, octal
             // number, or float.
@@ -472,6 +487,18 @@ public sealed partial class Parser : IEnumerable<Token>
         FinishToken(type, str);
     }
 
+    void ReadTokenQuestion()
+    {
+        var next = _input[_pos.Index + 1];
+        if (next == '?')
+        {
+            FinishOp(TokenType.NullishCoalescing, 2);
+            return;
+        }
+
+        FinishOp(TokenType.Question, 1);
+    }
+
     void ReadRegexp()
     {
         var escaped = false;
@@ -490,6 +517,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 escaped = ch == '\\';
             }
             else escaped = false;
+
             _pos = _pos.Increment(1);
         }
 
@@ -508,6 +536,7 @@ public sealed partial class Parser : IEnumerable<Token>
             };
             if (!validFlags.IsMatch(mods)) Raise(start, "Invalid regular expression flag");
         }
+
         FinishToken(TokenType.Regexp, new RegExp
         {
             Pattern = content,
@@ -548,6 +577,7 @@ public sealed partial class Parser : IEnumerable<Token>
         {
             throw NewSyntaxError(Start.Increment(2), "Expected number in radix " + radix);
         }
+
         var next = _input.Get(_pos.Index);
 
         if (next == 'n' && Options.EcmaVersion >= 11)
@@ -557,7 +587,8 @@ public sealed partial class Parser : IEnumerable<Token>
             {
                 case 16:
                 {
-                    if (!BigInteger.TryParse(_input.AsSpan(start.Index, _pos - start), NumberStyles.AllowHexSpecifier, null , out bigInt))
+                    if (!BigInteger.TryParse(_input.AsSpan(start.Index, _pos - start), NumberStyles.AllowHexSpecifier,
+                            null, out bigInt))
                     {
                         Raise(_pos, "Cannot parse BigInteger");
                     }
@@ -566,7 +597,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 }
                 case 2:
                 {
-                    foreach(var c in _input.AsSpan(start.Index, _pos - start))
+                    foreach (var c in _input.AsSpan(start.Index, _pos - start))
                     {
                         bigInt <<= 1;
                         bigInt += c - '0';
@@ -576,7 +607,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 }
                 case 8:
                 {
-                    foreach(var c in _input.AsSpan(start.Index, _pos - start))
+                    foreach (var c in _input.AsSpan(start.Index, _pos - start))
                     {
                         bigInt <<= 3;
                         bigInt += c - '0';
@@ -585,6 +616,7 @@ public sealed partial class Parser : IEnumerable<Token>
                     break;
                 }
             }
+
             _pos = _pos.Increment(1);
             if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
             FinishToken(TokenType.BigInt, bigInt);
@@ -613,11 +645,13 @@ public sealed partial class Parser : IEnumerable<Token>
             {
                 Raise(_pos, "Cannot parse BigInteger");
             }
+
             _pos = _pos.Increment(1);
             if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
             FinishToken(TokenType.BigInt, bigInt);
             return;
         }
+
         if (next == 46 && !octal)
         {
             // '.'
@@ -631,9 +665,10 @@ public sealed partial class Parser : IEnumerable<Token>
             // 'eE'
             _pos = _pos.Increment(1);
             next = _input.Get(_pos.Index);
-            if (next == 43 || next == 45) _pos = _pos.Increment(1);// '+-'
+            if (next == 43 || next == 45) _pos = _pos.Increment(1); // '+-'
             if (ReadInt(10) == null) Raise(start, "Invalid number");
         }
+
         if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
 
         var str = _input.Substring(start.Index, _pos - start);
@@ -654,6 +689,7 @@ public sealed partial class Parser : IEnumerable<Token>
             {
                 Raise(Start, "Unexpected token");
             }
+
             var codePos = _pos = _pos.Increment(1);
             code = ReadHexChar(_input.IndexOf("}", _pos.Index, StringComparison.Ordinal) - _pos.Index);
             _pos = _pos.Increment(1);
@@ -663,13 +699,14 @@ public sealed partial class Parser : IEnumerable<Token>
         {
             code = ReadHexChar(4);
         }
+
         return code;
     }
 
     static string CodePointToString(int code)
     {
         if (code <= 65535)
-            return ((char) code).ToString();
+            return ((char)code).ToString();
         return char.ConvertFromUtf32(code);
     }
 
@@ -695,6 +732,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 _pos = _pos.Increment(1);
             }
         }
+
         @out += _input.Substring(chunkStart.Index, _pos - chunkStart);
         _pos = _pos.Increment(1);
         FinishToken(TokenType.String, @out);
@@ -754,10 +792,12 @@ public sealed partial class Parser : IEnumerable<Token>
                     FinishToken(TokenType.BackQuote);
                     return;
                 }
+
                 @out += _input.Substring(chunkStart.Index, _pos - chunkStart);
                 FinishToken(TokenType.Template, @out);
                 return;
             }
+
             if (ch == 92)
             {
                 // '\'
@@ -782,6 +822,7 @@ public sealed partial class Parser : IEnumerable<Token>
                         @out += ch.ToString();
                         break;
                 }
+
                 _pos = new Position(_pos.Line + 1, 0, _pos.Index);
                 chunkStart = _pos;
             }
@@ -791,6 +832,7 @@ public sealed partial class Parser : IEnumerable<Token>
             }
         }
     }
+
     // Reads a template token to search for the end, without validating any escape sequences
     void ReadInvalidTemplateToken()
     {
@@ -807,6 +849,7 @@ public sealed partial class Parser : IEnumerable<Token>
                     {
                         break;
                     }
+
                     goto case '`';
                 // falls through
 
@@ -817,6 +860,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 // no default
             }
         }
+
         Raise(Start, "Unterminated template");
     }
 
@@ -846,20 +890,25 @@ public sealed partial class Parser : IEnumerable<Token>
             default:
                 if (ch >= 48 && ch <= 55)
                 {
-                    var octalStr = new Regex("^[0-7]+").Match(_input.Substring(_pos.Index - 1, Math.Min(3, _input.Length - _pos.Index + 1))).Groups[0].Value;
+                    var octalStr = new Regex("^[0-7]+")
+                        .Match(_input.Substring(_pos.Index - 1, Math.Min(3, _input.Length - _pos.Index + 1))).Groups[0]
+                        .Value;
                     var octal = ParseInt(octalStr, 8);
                     if (octal > 255)
                     {
                         octalStr = octalStr.Substring(0, octalStr.Length - 1);
                         octal = ParseInt(octalStr, 8);
                     }
+
                     if (octalStr != "0" && (_strict || inTemplate))
                     {
                         InvalidStringToken(_pos.Increment(-2), "Octal literal in strict mode");
                     }
+
                     _pos = _pos.Increment(octalStr.Length - 1);
                     return ((char)octal).ToString();
                 }
+
                 return ch.ToString();
         }
     }
@@ -893,6 +942,7 @@ public sealed partial class Parser : IEnumerable<Token>
             InvalidStringToken(codePos, "Bad character escape sequence");
             return 0;
         }
+
         return (int)n.Value;
     }
 
@@ -935,8 +985,10 @@ public sealed partial class Parser : IEnumerable<Token>
             {
                 break;
             }
+
             first = false;
         }
+
         return word + _input.Substring(chunkStart.Index, _pos - chunkStart);
     }
 
@@ -951,6 +1003,7 @@ public sealed partial class Parser : IEnumerable<Token>
             if (_containsEsc) RaiseRecoverable(Start, "Escape sequence in keyword " + word);
             type = TokenInformation.Keywords[word];
         }
+
         FinishToken(type, word);
     }
 }

@@ -483,6 +483,8 @@ public class OutputContext
                 return "&&";
             case Operator.LogicalOr:
                 return "||";
+            case Operator.NullishCoalescing:
+                return "??";
             case Operator.Assignment:
                 return "=";
             case Operator.AdditionAssignment:
@@ -810,6 +812,7 @@ public class OutputContext
             Operator.BitwiseXOrAssignment => 0,
             Operator.RightShiftUnsignedAssignment => 0,
             Operator.LogicalOr => 1,
+            Operator.NullishCoalescing => 1,
             Operator.LogicalAnd => 2,
             Operator.BitwiseOr => 3,
             Operator.BitwiseXOr => 4,

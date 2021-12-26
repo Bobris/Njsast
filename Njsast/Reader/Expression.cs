@@ -228,6 +228,7 @@ public sealed partial class Parser
             case ">": return Operator.GreaterThan;
             case ">=": return Operator.GreaterEquals;
             case "&&": return Operator.LogicalAnd;
+            case "??": return Operator.NullishCoalescing;
             case "||": return Operator.LogicalOr;
 
             case "=": return Operator.Assignment;

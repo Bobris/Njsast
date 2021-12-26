@@ -15,7 +15,7 @@ public sealed partial class Parser
     public static SyntaxError NewSyntaxError(Position position, string message)
     {
         message += " (" + (position.Line + 1) + ":" + (position.Column + 1) + ")";
-        return new SyntaxError(message, position);
+        return new(message, position);
     }
 
     static void RaiseRecoverable(Position position, string message)

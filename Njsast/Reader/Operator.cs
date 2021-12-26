@@ -24,6 +24,7 @@ public enum Operator
     GreaterThan,
     GreaterEquals,
     LogicalAnd,
+    NullishCoalescing,
     LogicalOr,
 
     Assignment,
@@ -50,5 +51,5 @@ public enum Operator
     In,
     InstanceOf,
     Void,
-    TypeOf
+    TypeOf,
 }

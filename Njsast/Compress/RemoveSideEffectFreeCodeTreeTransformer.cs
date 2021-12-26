@@ -159,17 +159,26 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         if (binary.Left.IsSymbolDef() is { } symbolX
                             && binary.Right is AstAssign { Operator: Operator.Assignment } astAssign
                             && astAssign.Left.IsSymbolDef() == symbolX
-                            && astAssign.Right is AstObject { Properties: { Count: 0 } }
+                            && astAssign.Right is AstObject { Properties.Count: 0 }
                             && symbolX.References.All(r =>
                                 r == astAssign.Left || !r.Usage.HasFlag(SymbolUsage.Write | SymbolUsage.PropWrite)))
                         {
-                            if (!(symbolX.Orig is { Count: 1 }) || !(symbolX.Orig[0] is AstSymbolVar
+                            if (symbolX.Orig is not { Count: 1 } || symbolX.Orig[0] is not AstSymbolVar
                                 {
                                     Init: AstVarDef varDef
-                                } symbolVar)) return Transform(binary.Right);
+                                } symbolVar) return Transform(binary.Right);
                             varDef.Value = astAssign.Right;
                             symbolVar.Usage = SymbolUsage.Write;
                             return binary.Left;
+                        }
+                    }
+
+                    if (binary.Operator == Operator.NullishCoalescing)
+                    {
+                        var b = binary.Left.ConstValue();
+                        if (b != null)
+                        {
+                            return Transform(b is not AstNull and not AstUndefined ? binary.Left : binary.Right);
                         }
                     }
 
@@ -178,12 +187,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         var b = binary.Left.ConstValue();
                         if (b != null)
                         {
-                            if (!TypeConverter.ToBoolean(b))
-                            {
-                                return Transform(binary.Left);
-                            }
-
-                            return Transform(binary.Right);
+                            return Transform(!TypeConverter.ToBoolean(b) ? binary.Left : binary.Right);
                         }
                     }
 
@@ -389,6 +393,32 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         if (b != null)
                         {
                             if (TypeConverter.ToBoolean(b))
+                            {
+                                node = binary.Left;
+                                continue;
+                            }
+
+                            node = binary.Right;
+                            continue;
+                        }
+
+                        var right = Transform(binary.Right);
+                        if (right == Remove)
+                        {
+                            node = binary.Left;
+                            continue;
+                        }
+
+                        binary.Right = right;
+                        return node;
+                    }
+
+                    if (binary.Operator == Operator.NullishCoalescing)
+                    {
+                        var b = binary.Left.ConstValue();
+                        if (b != null)
+                        {
+                            if (b is not AstNull and not AstUndefined)
                             {
                                 node = binary.Left;
                                 continue;

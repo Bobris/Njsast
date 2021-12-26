@@ -49,6 +49,7 @@ public enum TokenType
     IncDec,
     Prefix,
     LogicalOr,
+    NullishCoalescing,
     LogicalAnd,
     BitwiseOr,
     BitwiseXor,

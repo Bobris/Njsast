@@ -31,7 +31,7 @@ class InstrumentTreeTransformer : TreeTransformer
             }
             case AstBinary astBinary:
             {
-                if (astBinary.Operator == Operator.LogicalAnd || astBinary.Operator == Operator.LogicalOr)
+                if (astBinary.Operator is Operator.LogicalAnd or Operator.LogicalOr or Operator.NullishCoalescing)
                 {
                     astBinary.Right = Transform(astBinary.Right);
                     astBinary.Left = InstrumentCondition(astBinary.Left);
