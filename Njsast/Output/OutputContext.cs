@@ -505,6 +505,12 @@ public class OutputContext
                 return ">>=";
             case Operator.RightShiftUnsignedAssignment:
                 return ">>>=";
+            case Operator.LogicalOrAssignment:
+                return "||=";
+            case Operator.LogicalAndAssignment:
+                return "&&=";
+            case Operator.NullishCoalescingAssignment:
+                return "??=";
             case Operator.BitwiseAndAssignment:
                 return "&=";
             case Operator.BitwiseOrAssignment:
@@ -811,6 +817,9 @@ public class OutputContext
             Operator.RightShiftAssignment => 0,
             Operator.BitwiseXOrAssignment => 0,
             Operator.RightShiftUnsignedAssignment => 0,
+            Operator.LogicalOrAssignment => 0,
+            Operator.NullishCoalescingAssignment => 0,
+            Operator.LogicalAndAssignment => 0,
             Operator.LogicalOr => 1,
             Operator.NullishCoalescing => 1,
             Operator.LogicalAnd => 2,

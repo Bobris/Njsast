@@ -40,6 +40,9 @@ public enum Operator
     BitwiseAndAssignment,
     BitwiseOrAssignment,
     BitwiseXOrAssignment,
+    LogicalAndAssignment,
+    NullishCoalescingAssignment,
+    LogicalOrAssignment,
 
     Increment,
     Decrement,

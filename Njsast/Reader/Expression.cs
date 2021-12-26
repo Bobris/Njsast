@@ -204,60 +204,58 @@ public sealed partial class Parser
 
     static Operator StringToOperator(string s)
     {
-        switch (s)
+        return s switch
         {
-            case "+": return Operator.Addition;
-            case "-": return Operator.Subtraction;
-            case "*": return Operator.Multiplication;
-            case "/": return Operator.Division;
-            case "%": return Operator.Modulus;
-            case "**": return Operator.Power;
-            case "<<": return Operator.LeftShift;
-            case ">>": return Operator.RightShift;
-            case ">>>": return Operator.RightShiftUnsigned;
-            case "&": return Operator.BitwiseAnd;
-            case "|": return Operator.BitwiseOr;
-            case "^": return Operator.BitwiseXOr;
-
-            case "==": return Operator.Equals;
-            case "===": return Operator.StrictEquals;
-            case "!=": return Operator.NotEquals;
-            case "!==": return Operator.StrictNotEquals;
-            case "<": return Operator.LessThan;
-            case "<=": return Operator.LessEquals;
-            case ">": return Operator.GreaterThan;
-            case ">=": return Operator.GreaterEquals;
-            case "&&": return Operator.LogicalAnd;
-            case "??": return Operator.NullishCoalescing;
-            case "||": return Operator.LogicalOr;
-
-            case "=": return Operator.Assignment;
-            case "+=": return Operator.AdditionAssignment;
-            case "-=": return Operator.SubtractionAssignment;
-            case "*=": return Operator.MultiplicationAssignment;
-            case "/=": return Operator.DivisionAssignment;
-            case "%=": return Operator.ModulusAssignment;
-            case "**=": return Operator.PowerAssignment;
-            case "<<=": return Operator.LeftShiftAssignment;
-            case ">>=": return Operator.RightShiftAssignment;
-            case ">>>=": return Operator.RightShiftUnsignedAssignment;
-            case "&=": return Operator.BitwiseAndAssignment;
-            case "|=": return Operator.BitwiseOrAssignment;
-            case "^=": return Operator.BitwiseXOrAssignment;
-
-            case "++": return Operator.Increment;
-            case "--": return Operator.Decrement;
-            case "~": return Operator.BitwiseNot;
-            case "!": return Operator.LogicalNot;
-            case "delete": return Operator.Delete;
-            case "in": return Operator.In;
-            case "instanceof": return Operator.InstanceOf;
-            case "void": return Operator.Void;
-            case "typeof": return Operator.TypeOf;
-
-            default:
-                throw new ArgumentException();
-        }
+            "+" => Operator.Addition,
+            "-" => Operator.Subtraction,
+            "*" => Operator.Multiplication,
+            "/" => Operator.Division,
+            "%" => Operator.Modulus,
+            "**" => Operator.Power,
+            "<<" => Operator.LeftShift,
+            ">>" => Operator.RightShift,
+            ">>>" => Operator.RightShiftUnsigned,
+            "&" => Operator.BitwiseAnd,
+            "|" => Operator.BitwiseOr,
+            "^" => Operator.BitwiseXOr,
+            "==" => Operator.Equals,
+            "===" => Operator.StrictEquals,
+            "!=" => Operator.NotEquals,
+            "!==" => Operator.StrictNotEquals,
+            "<" => Operator.LessThan,
+            "<=" => Operator.LessEquals,
+            ">" => Operator.GreaterThan,
+            ">=" => Operator.GreaterEquals,
+            "&&" => Operator.LogicalAnd,
+            "??" => Operator.NullishCoalescing,
+            "||" => Operator.LogicalOr,
+            "=" => Operator.Assignment,
+            "+=" => Operator.AdditionAssignment,
+            "-=" => Operator.SubtractionAssignment,
+            "*=" => Operator.MultiplicationAssignment,
+            "/=" => Operator.DivisionAssignment,
+            "%=" => Operator.ModulusAssignment,
+            "**=" => Operator.PowerAssignment,
+            "<<=" => Operator.LeftShiftAssignment,
+            ">>=" => Operator.RightShiftAssignment,
+            ">>>=" => Operator.RightShiftUnsignedAssignment,
+            "&=" => Operator.BitwiseAndAssignment,
+            "|=" => Operator.BitwiseOrAssignment,
+            "^=" => Operator.BitwiseXOrAssignment,
+            "||=" => Operator.LogicalOrAssignment,
+            "??=" => Operator.NullishCoalescingAssignment,
+            "&&=" => Operator.LogicalAndAssignment,
+            "++" => Operator.Increment,
+            "--" => Operator.Decrement,
+            "~" => Operator.BitwiseNot,
+            "!" => Operator.LogicalNot,
+            "delete" => Operator.Delete,
+            "in" => Operator.In,
+            "instanceof" => Operator.InstanceOf,
+            "void" => Operator.Void,
+            "typeof" => Operator.TypeOf,
+            _ => throw new NotSupportedException("unknown operator "+s)
+        };
     }
 
     // Parse a ternary conditional (`?:`) operator.

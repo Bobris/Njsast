@@ -160,7 +160,7 @@ public sealed partial class Parser : IEnumerable<Token>
 
                     break;
                 default:
-                    if (ch > CharCode.BackSpace && ch < CharCode.ShiftOut || ch >= CharCode.OghamSpaceMark &&
+                    if (ch is > CharCode.BackSpace and < CharCode.ShiftOut || ch >= CharCode.OghamSpaceMark &&
                         NonAsciIwhitespace.IsMatch(((char)ch).ToString()))
                     {
                         _pos = _pos.Increment(1);
@@ -256,9 +256,18 @@ public sealed partial class Parser : IEnumerable<Token>
     void readToken_pipe_amp(int code)
     {
         // '|&'
-        var next = _input[_pos.Index + 1];
-        if (next == code) FinishOp(code == '|' ? TokenType.LogicalOr : TokenType.LogicalAnd, 2);
-        else if (next == 61) FinishOp(TokenType.Assign, 2);
+        var next = _input.Get(_pos.Index + 1);
+        if (next == code)
+        {
+            var next2 = _input.Get(_pos.Index + 2);
+            if (next2 == '=')
+            {
+                FinishOp(TokenType.Assign, 3);
+                return;
+            }
+            FinishOp(code == '|' ? TokenType.LogicalOr : TokenType.LogicalAnd, 2);
+        }
+        else if (next == '=') FinishOp(TokenType.Assign, 2);
         else FinishOp(code == '|' ? TokenType.BitwiseOr : TokenType.BitwiseAnd, 1);
     }
 
@@ -489,9 +498,16 @@ public sealed partial class Parser : IEnumerable<Token>
 
     void ReadTokenQuestion()
     {
-        var next = _input[_pos.Index + 1];
+        var next = _input.Get(_pos.Index + 1);
         if (next == '?')
         {
+            var next2 = _input.Get(_pos.Index + 2);
+            if (next2 == '=')
+            {
+                FinishOp(TokenType.Assign, 3);
+                return;
+            }
+
             FinishOp(TokenType.NullishCoalescing, 2);
             return;
         }
