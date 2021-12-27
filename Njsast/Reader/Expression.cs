@@ -187,7 +187,7 @@ public sealed partial class Parser
         {
             CheckPatternErrors(refDestructuringErrors, true);
             if (!ownDestructuringErrors) refDestructuringErrors.Reset();
-            var @operator = StringToOperator((string) GetValue());
+            var @operator = StringToOperator((string)GetValue());
             var leftNode = Type == TokenType.Eq ? ToAssignable(left)! : left;
             refDestructuringErrors.ShorthandAssign = default; // reset because shorthand default was used correctly
             CheckLVal(leftNode, false, null);
@@ -254,7 +254,7 @@ public sealed partial class Parser
             "instanceof" => Operator.InstanceOf,
             "void" => Operator.Void,
             "typeof" => Operator.TypeOf,
-            _ => throw new NotSupportedException("unknown operator "+s)
+            _ => throw new NotSupportedException("unknown operator " + s)
         };
     }
 
@@ -298,7 +298,7 @@ public sealed partial class Parser
         {
             if (prec > minPrec)
             {
-                var op = StringToOperator((string) GetValue());
+                var op = StringToOperator((string)GetValue());
                 Next();
                 var startLoc = Start;
                 var right = ParseExpressionOperator(ParseMaybeUnary(Start, null, false), startLoc, prec, noIn);
@@ -327,7 +327,7 @@ public sealed partial class Parser
         else if (TokenInformation.Types[Type].Prefix)
         {
             var update = Type == TokenType.IncDec;
-            var @operator = StringToOperator((string) GetValue());
+            var @operator = StringToOperator((string)GetValue());
             Next();
             var argument = ParseMaybeUnary(Start, null, true);
             CheckExpressionErrors(refDestructuringErrors, true);
@@ -345,7 +345,7 @@ public sealed partial class Parser
                 return expr;
             while (TokenInformation.Types[Type].Postfix && !CanInsertSemicolon())
             {
-                var @operator = StringToOperator((string) GetValue());
+                var @operator = StringToOperator((string)GetValue());
                 CheckLVal(expr, false, null);
                 Next();
                 expr = new AstUnaryPostfix(SourceFile, startLocation, _lastTokEnd, ToPostfix(@operator), expr);
@@ -393,7 +393,8 @@ public sealed partial class Parser
 
     AstNode ParseSubscripts(AstNode @base, Position startLoc, bool noCalls = false)
     {
-        var maybeAsyncArrow = @base is AstSymbol { Name: "async" } && _lastTokEnd.Index == @base.End.Index && !CanInsertSemicolon();
+        var maybeAsyncArrow = @base is AstSymbol { Name: "async" } && _lastTokEnd.Index == @base.End.Index &&
+                              !CanInsertSemicolon();
         var expectImport = @base is AstSymbol { Name: "!import" };
         for (;;)
         {
@@ -409,7 +410,8 @@ public sealed partial class Parser
                     }
 
                     @base = new AstImportMeta(SourceFile, @base.Start, prop.End);
-                } else if (!noCalls && Eat(TokenType.ParenL))
+                }
+                else if (!noCalls && Eat(TokenType.ParenL))
                 {
                     var refDestructuringErrors = new DestructuringErrors();
                     var oldYieldPos = _yieldPos;
@@ -426,6 +428,7 @@ public sealed partial class Parser
                     {
                         Raise(startLoc, "dynamic import must have one parameter");
                     }
+
                     @base = new AstImportExpression(SourceFile, startLoc, _lastTokEnd, expressionList[0]);
                 }
                 else
@@ -433,18 +436,20 @@ public sealed partial class Parser
                     Raise(@base.Start, "Wrong import expression");
                 }
             }
+
             bool computed;
-            if ((computed = Eat(TokenType.BracketL)) || Eat(TokenType.Dot))
+            var optional = !noCalls && Eat(TokenType.QuestionDot);
+            if ((computed = Eat(TokenType.BracketL)) || optional && Type != TokenType.ParenL || Eat(TokenType.Dot))
             {
                 var property = computed ? ParseExpression(Start) : ParseIdent(true);
                 if (computed)
                 {
                     Expect(TokenType.BracketR);
-                    @base = new AstSub(SourceFile, startLoc, _lastTokEnd, @base, property);
+                    @base = new AstSub(SourceFile, startLoc, _lastTokEnd, @base, property, optional);
                 }
                 else
                 {
-                    @base = new AstDot(SourceFile, startLoc, _lastTokEnd, @base, ((AstSymbol) property).Name);
+                    @base = new AstDot(SourceFile, startLoc, _lastTokEnd, @base, ((AstSymbol)property).Name, optional);
                 }
             }
             else if (!noCalls && Eat(TokenType.ParenL))
@@ -469,7 +474,7 @@ public sealed partial class Parser
                 CheckExpressionErrors(refDestructuringErrors, true);
                 _yieldPos = oldYieldPos.Line != 0 ? oldYieldPos : _yieldPos;
                 _awaitPos = oldAwaitPos.Line != 0 ? oldAwaitPos : _awaitPos;
-                @base = new AstCall(SourceFile, startLoc, _lastTokEnd, @base, ref expressionList);
+                @base = new AstCall(SourceFile, startLoc, _lastTokEnd, @base, ref expressionList, optional);
             }
             else if (Type == TokenType.BackQuote)
             {
@@ -494,6 +499,7 @@ public sealed partial class Parser
             _wasImportKeyword = false;
             return new AstSymbolRef(SourceFile, startLocation, _lastTokEnd, "!import");
         }
+
         var canBeArrow = _potentialArrowAt.Index == Start.Index;
         switch (Type)
         {
@@ -547,17 +553,17 @@ public sealed partial class Parser
 
                 return id;
             case TokenType.Regexp:
-                var r = (RegExp) GetValue();
+                var r = (RegExp)GetValue();
                 Next();
                 return new AstRegExp(SourceFile, startLocation, _lastTokEnd, r);
             case TokenType.Num:
                 if (Value is long intValue)
                     return ParseLiteral((double)intValue);
-                return ParseLiteral((double) GetValue());
+                return ParseLiteral((double)GetValue());
             case TokenType.BigInt:
                 return ParseLiteral((BigInteger)GetValue());
             case TokenType.String:
-                var s = (string) GetValue();
+                var s = (string)GetValue();
                 Next();
                 return new AstString(SourceFile, startLocation, _lastTokEnd, s);
             case TokenType.Null:
@@ -751,13 +757,13 @@ public sealed partial class Parser
                 RaiseRecoverable(Start, "Bad escape sequence in untagged template literal");
             }
 
-            rawStr = (string) GetValue();
+            rawStr = (string)GetValue();
             valueStr = string.Empty;
         }
         else
         {
             rawStr = TemplateRawRegex.Replace(_input.Substring(Start.Index, End.Index - Start.Index), "\n");
-            valueStr = (string) GetValue();
+            valueStr = (string)GetValue();
         }
 
         Next();
@@ -822,7 +828,7 @@ public sealed partial class Parser
         objProps.Reserve(properties.Count);
         for (var i = 0; i < properties.Count; i++)
         {
-            objProps.Add((AstObjectProperty) properties[(uint) i]);
+            objProps.Add((AstObjectProperty)properties[(uint)i]);
         }
 
         return new AstObject(SourceFile, startLoc, _lastTokEnd, ref objProps);
@@ -875,7 +881,8 @@ public sealed partial class Parser
         if (kind == PropertyKind.Initialise)
         {
             if (method)
-                return new AstConciseMethod(SourceFile, nodeStart, _lastTokEnd, key, value, false, isGenerator, isAsync);
+                return new AstConciseMethod(SourceFile, nodeStart, _lastTokEnd, key, value, false, isGenerator,
+                    isAsync);
             return new AstObjectKeyVal(SourceFile, nodeStart, _lastTokEnd, key, value);
         }
 
@@ -908,7 +915,8 @@ public sealed partial class Parser
             return (value, PropertyKind.Initialise, true, false, computed, key);
         }
 
-        if (!isPattern && !computed && key is AstSymbol { Name: "get" or "set" } identifierNode && Type != TokenType.Comma && Type != TokenType.BraceR)
+        if (!isPattern && !computed && key is AstSymbol { Name: "get" or "set" } identifierNode &&
+            Type != TokenType.Comma && Type != TokenType.BraceR)
         {
             if (isGenerator || isAsync)
             {
@@ -969,7 +977,8 @@ public sealed partial class Parser
     {
         if (key is AstNumber astNumberKey)
         {
-            return new AstSymbolMethod(SourceFile, astNumberKey.Start, astNumberKey.End, astNumberKey.Literal ?? string.Empty);
+            return new AstSymbolMethod(SourceFile, astNumberKey.Start, astNumberKey.End,
+                astNumberKey.Literal ?? string.Empty);
         }
 
         if (key is AstString astStringKey)
@@ -998,7 +1007,9 @@ public sealed partial class Parser
         }
 
         return (false,
-            Type == TokenType.Num || Type == TokenType.String ? ParseExpressionAtom(Start) : new AstSymbolProperty(ParseIdent(true)));
+            Type == TokenType.Num || Type == TokenType.String
+                ? ParseExpressionAtom(Start)
+                : new AstSymbolProperty(ParseIdent(true)));
     }
 
     // Parse object or class method.
@@ -1051,7 +1062,7 @@ public sealed partial class Parser
     {
         for (var i = 0; i < parameters.Count; i++)
         {
-            parameters[(uint) i] = MakeSymbolFunArg(parameters[(uint) i]);
+            parameters[(uint)i] = MakeSymbolFunArg(parameters[(uint)i]);
         }
     }
 
@@ -1112,7 +1123,8 @@ public sealed partial class Parser
             var body = new StructList<AstNode>();
             var useStrict = false;
             var unused = ParseFunctionBody(parameters, startLoc, null, true, ref body, ref useStrict);
-            return new AstArrow(SourceFile, startLoc, _lastTokEnd, null, ref parameters, _inGenerator, isAsync, ref body)
+            return new AstArrow(SourceFile, startLoc, _lastTokEnd, null, ref parameters, _inGenerator, isAsync,
+                    ref body)
                 .SetUseStrict(useStrict);
         }
         finally
@@ -1295,7 +1307,7 @@ public sealed partial class Parser
         string? keyword;
         if (Type == TokenType.Name)
         {
-            name = (string) GetValue();
+            name = (string)GetValue();
         }
         else if ((keyword = TokenInformation.Types[Type].Keyword) != null)
         {

@@ -37,6 +37,7 @@ public enum TokenType
     Colon,
     Dot,
     Question,
+    QuestionDot,
     Arrow,
     Template,
     InvalidTemplate,
@@ -98,5 +99,5 @@ public enum TokenType
     Instanceof,
     Typeof,
     Void,
-    Delete
+    Delete,
 }

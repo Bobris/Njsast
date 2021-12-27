@@ -62,10 +62,9 @@ public sealed partial class Parser
                     var left = ToAssignable(assignmentExpression.Left, isBinding)!;
                     var right = assignmentExpression.Right;
                     node = new AstDefaultAssign(SourceFile, node.Start, node.End, left, right);
-                    goto AssignmentPatternNode;
+                    break;
 
                 case AstDefaultAssign _:
-                    AssignmentPatternNode:
                     break;
 
                 default:
@@ -83,7 +82,7 @@ public sealed partial class Parser
         if (property == null)
             return null;
 
-        if (!(property is AstObjectKeyVal))
+        if (property is not AstObjectKeyVal)
             Raise(property.Start, "Object pattern can't contain getter or setter");
 
         property.Value = ToAssignable(property.Value, isBinding);
@@ -96,17 +95,8 @@ public sealed partial class Parser
         for (var i = 0; i < expressionList.Count; i++)
         {
             var element = expressionList[(uint) i];
-            if (element != null) expressionList[(uint) i] = ToAssignable(element, isBinding)!;
-        }
-
-        if (expressionList.Count != 0)
-        {
-            var last = expressionList.Last;
-            if (Options.EcmaVersion == 6 && isBinding && last is AstExpansion restElementNode &&
-                !(restElementNode.Expression is AstSymbol))
-            {
-                Raise(restElementNode.Expression.Start, "Unexpected token");
-            }
+            // ReSharper disable once ConditionIsAlwaysTrueOrFalse
+            if (element != null) expressionList[(uint) i] = ToAssignable(element, isBinding);
         }
     }
 

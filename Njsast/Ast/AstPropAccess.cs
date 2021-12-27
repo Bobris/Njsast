@@ -16,11 +16,14 @@ public abstract class AstPropAccess : AstNode
     /// [AstNode|string] the property to access.  For AstDot this is always a plain string, while for AstSub it's an arbitrary AstNode
     public object Property;
 
-    public AstPropAccess(string? source, Position startLoc, Position endLoc, AstNode expression, object property) :
+    public bool Optional;
+
+    public AstPropAccess(string? source, Position startLoc, Position endLoc, AstNode expression, object property, bool optional) :
         base(source, startLoc, endLoc)
     {
         Expression = expression;
         Property = property;
+        Optional = optional;
     }
 
     protected AstPropAccess(AstNode expression, object property)
@@ -33,11 +36,12 @@ public abstract class AstPropAccess : AstNode
     {
         get
         {
-            if (Property is string str)
-                return str;
-            if (Property is AstString str2)
-                return str2.Value;
-            return null;
+            return Property switch
+            {
+                string str => str,
+                AstString str2 => str2.Value,
+                _ => null
+            };
         }
     }
 
@@ -60,8 +64,9 @@ public abstract class AstPropAccess : AstNode
     public override void DumpScalars(IAstDumpWriter writer)
     {
         base.DumpScalars(writer);
-        if (Property is string)
-            writer.PrintProp("Property", (string) Property);
+        if (Property is string property)
+            writer.PrintProp("Property", property);
+        writer.PrintProp("Optional", Optional);
     }
 
     class WalkForParens : TreeWalker

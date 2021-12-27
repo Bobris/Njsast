@@ -68,6 +68,7 @@ sealed class TokenInformation
         var semi = new TokenInformation(beforeExpr: true);
         var colon = new TokenInformation(beforeExpr: true);
         var dot = new TokenInformation();
+        var questionDot = new TokenInformation();
         var question = new TokenInformation(beforeExpr: true);
         var arrow = new TokenInformation(beforeExpr: true);
         var template = new TokenInformation();
@@ -154,6 +155,7 @@ sealed class TokenInformation
             {TokenType.Colon, colon},
             {TokenType.Dot, dot},
             {TokenType.Question, question},
+            {TokenType.QuestionDot, questionDot},
             {TokenType.Arrow, arrow},
             {TokenType.Template, template},
             {TokenType.InvalidTemplate, invalidTemplate},

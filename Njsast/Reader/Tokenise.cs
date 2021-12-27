@@ -512,6 +512,16 @@ public sealed partial class Parser : IEnumerable<Token>
             return;
         }
 
+        if (next == '.')
+        {
+            var next2 = _input.Get(_pos.Index + 2);
+            if (next2 is < '0' or > '9')
+            {
+               FinishOp(TokenType.QuestionDot, 2);
+               return;
+            }
+        }
+
         FinishOp(TokenType.Question, 1);
     }
 

@@ -6,8 +6,8 @@ namespace Njsast.Ast;
 /// A dotted property access expression
 public class AstDot : AstPropAccess
 {
-    public AstDot(string? source, Position startLoc, Position endLoc, AstNode expression, string property) : base(
-        source, startLoc, endLoc, expression, property)
+    public AstDot(string? source, Position startLoc, Position endLoc, AstNode expression, string property, bool optional = false) : base(
+        source, startLoc, endLoc, expression, property, optional)
     {
     }
 
@@ -17,19 +17,19 @@ public class AstDot : AstPropAccess
 
     public override AstNode ShallowClone()
     {
-        return new AstDot(Source, Start, End, Expression, (string)Property);
+        return new AstDot(Source, Start, End, Expression, (string)Property, Optional);
     }
 
     public override void CodeGen(OutputContext output)
     {
         Expression.Print(output, Expression is AstBinary && output.NeedNodeParens(Expression));
-        if (output.NeedDotAfterNumber())
+        if (!Optional && output.NeedDotAfterNumber())
         {
             output.Print(".");
         }
 
         output.AddMapping(Expression.Source, Expression.End, false);
-        output.Print(".");
+        output.Print(Optional ? "?." : ".");
         output.Print((string) Property);
     }
 }
