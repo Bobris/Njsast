@@ -591,7 +591,6 @@ public sealed partial class Parser : IEnumerable<Token>
                 continue;
             }
 
-            canBeUnderscore = true;
             var val = code switch
             {
                 >= 'a' => code - 'a' + 10,
@@ -600,9 +599,12 @@ public sealed partial class Parser : IEnumerable<Token>
                 _ => int.MaxValue
             };
             if (val >= radix) break;
+            canBeUnderscore = true;
             _pos = _pos.Increment(1);
             total = total * radix + val;
         }
+        if (_pos != start && !canBeUnderscore)
+            Raise(_pos, "A numeric separator is only allowed between two digits");
 
         if (_pos == start || len != null && _pos - start != len) return null;
         return total;
