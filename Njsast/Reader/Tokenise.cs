@@ -265,6 +265,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 FinishOp(TokenType.Assign, 3);
                 return;
             }
+
             FinishOp(code == '|' ? TokenType.LogicalOr : TokenType.LogicalAnd, 2);
         }
         else if (next == '=') FinishOp(TokenType.Assign, 2);
@@ -517,8 +518,8 @@ public sealed partial class Parser : IEnumerable<Token>
             var next2 = _input.Get(_pos.Index + 2);
             if (next2 is < '0' or > '9')
             {
-               FinishOp(TokenType.QuestionDot, 2);
-               return;
+                FinishOp(TokenType.QuestionDot, 2);
+                return;
             }
         }
 
@@ -577,14 +578,27 @@ public sealed partial class Parser : IEnumerable<Token>
     {
         var total = 0L;
         var start = _pos;
+        var canBeUnderscore = false;
         for (var i = 0; !len.HasValue || i < len; ++i)
         {
             var code = _input.Get(_pos.Index);
-            int val;
-            if (code >= 97) val = code - 97 + 10; // a
-            else if (code >= 65) val = code - 65 + 10; // A
-            else if (code >= 48 && code <= 57) val = code - 48; // 0-9
-            else val = int.MaxValue;
+            if (!len.HasValue && code == '_')
+            {
+                if (!canBeUnderscore)
+                    Raise(_pos, "A numeric separator is only allowed between two digits");
+                canBeUnderscore = false;
+                _pos = _pos.Increment(1);
+                continue;
+            }
+
+            canBeUnderscore = true;
+            var val = code switch
+            {
+                >= 'a' => code - 'a' + 10,
+                >= 'A' => code - 'A' + 10,
+                >= '0' and <= '9' => code - '0',
+                _ => int.MaxValue
+            };
             if (val >= radix) break;
             _pos = _pos.Increment(1);
             total = total * radix + val;
@@ -667,7 +681,9 @@ public sealed partial class Parser : IEnumerable<Token>
 
         if (next == 'n' && !octal && !startsWithDot && Options.EcmaVersion >= 11)
         {
-            if (!BigInteger.TryParse(_input.AsSpan(start.Index, _pos - start), out var bigInt))
+            Span<char> buf = stackalloc char[_pos - start];
+            var withoutUnderscores = WithoutUnderscores(buf, _input.AsSpan(start.Index, _pos - start));
+            if (!BigInteger.TryParse(withoutUnderscores, out var bigInt))
             {
                 Raise(_pos, "Cannot parse BigInteger");
             }
@@ -697,9 +713,33 @@ public sealed partial class Parser : IEnumerable<Token>
 
         if (IsIdentifierStart(FullCharCodeAtPos())) Raise(_pos, "Identifier directly after number");
 
-        var str = _input.Substring(start.Index, _pos - start);
-        var val = octal ? ParseInt(str, 8) : double.Parse(str, NumberStyles.Any, CultureInfo.InvariantCulture);
+        var str = _input.AsSpan(start.Index, _pos - start);
+        double val;
+        if (octal)
+            val = ParseInt(str, 8);
+        else
+        {
+            Span<char> buf = stackalloc char[str.Length];
+            var withoutUnderscores = WithoutUnderscores(buf, str);
+            val = double.Parse(withoutUnderscores, NumberStyles.Any, CultureInfo.InvariantCulture);
+        }
         FinishToken(TokenType.Num, val);
+    }
+
+    static ReadOnlySpan<char> WithoutUnderscores(Span<char> buf, ReadOnlySpan<char> input)
+    {
+        var pos = 0;
+        while (!input.IsEmpty)
+        {
+            if (input[0] != '_')
+            {
+                buf[pos++] = input[0];
+            }
+
+            input = input[1..];
+        }
+
+        return buf[..pos];
     }
 
     // Read a string value, interpreting backslash-escapes.
@@ -939,20 +979,19 @@ public sealed partial class Parser : IEnumerable<Token>
         }
     }
 
-    static int ParseInt(string str, int @base)
+    static int ParseInt(ReadOnlySpan<char> str, int @base)
     {
         if (@base > 10)
             throw new NotImplementedException();
 
-        const string numbers = "0123456789";
         var number = 0;
         foreach (var c in str)
         {
+            if (c == '_') continue;
             number *= @base;
-            var index = numbers.IndexOf(c, 0, @base);
-            if (index < 0)
+            if (c < '0' || c >= '0' + @base)
                 throw new NotImplementedException();
-            number += index;
+            number += c - '0';
         }
 
         return number;
