@@ -116,19 +116,13 @@ public sealed partial class Parser
         var startLoc = Start;
         Next();
         var argument = ParseMaybeAssign(Start, false, refDestructuringErrors);
-        return new AstExpansion(SourceFile, startLoc, _lastTokEnd, argument);
+        return new(SourceFile, startLoc, _lastTokEnd, argument);
     }
 
     AstNode ParseRestBinding()
     {
         var startLoc = Start;
         Next();
-
-        // RestElement inside of a function parameter must be an identifier
-        if (Options.EcmaVersion == 6 && Type != TokenType.Name)
-        {
-            Raise(Start, "Unexpected token");
-        }
 
         var argument = ParseBindingAtom();
         return new AstExpansion(SourceFile, startLoc, _lastTokEnd, argument);
@@ -192,14 +186,13 @@ public sealed partial class Parser
     AstNode ParseMaybeDefault(Position startLoc, AstNode? left = null)
     {
         left ??= ParseBindingAtom();
-        if (Options.EcmaVersion < 6 || !Eat(TokenType.Eq))
+        if (!Eat(TokenType.Eq))
             return left;
         var right = ParseMaybeAssign(Start);
         return new AstDefaultAssign(SourceFile, startLoc, _lastTokEnd, left, right);
     }
 
-    // Verify that a node is an lval — something that can be assigned
-    // to.
+    // Verify that a node is an lval — something that can be assigned to.
     // bindingType can be either:
     // var indicating that the lval creates a 'var' binding
     // let indicating that the lval creates a lexical ('let' or 'const') binding
