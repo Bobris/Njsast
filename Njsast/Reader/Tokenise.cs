@@ -674,7 +674,7 @@ public sealed partial class Parser : IEnumerable<Token>
     {
         var start = _pos;
         if (!startsWithDot && ReadInt(10) == null) Raise(start, "Invalid number");
-        var octal = _pos - start >= 2 && _input.Get(start.Index) == 48;
+        var octal = _pos - start >= 2 && _input.Get(start.Index) == '0';
         if (octal && _strict) Raise(start, "Invalid number");
         if (octal && Test89.IsMatch(_input.Substring(start.Index, _pos - start))) octal = false;
         var next = _input.Get(_pos.Index);
@@ -694,20 +694,18 @@ public sealed partial class Parser : IEnumerable<Token>
             return;
         }
 
-        if (next == 46 && !octal)
+        if (next == '.' && !octal)
         {
-            // '.'
             _pos = _pos.Increment(1);
             ReadInt(10);
             next = _input.Get(_pos.Index);
         }
 
-        if ((next == 69 || next == 101) && !octal)
+        if (next is 'e' or 'E' && !octal)
         {
-            // 'eE'
             _pos = _pos.Increment(1);
             next = _input.Get(_pos.Index);
-            if (next == 43 || next == 45) _pos = _pos.Increment(1); // '+-'
+            if (next is '+' or '-') _pos = _pos.Increment(1);
             if (ReadInt(10) == null) Raise(start, "Invalid number");
         }
 
