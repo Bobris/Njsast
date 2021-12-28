@@ -23,8 +23,18 @@ public sealed partial class Parser
                 case AstSymbolProperty property:
                     return new AstSymbolRef(property);
 
-                case AstPropAccess _:
-                    if (!isBinding) break;
+                case AstPropAccess propAccess:
+                    if (!isBinding)
+                    {
+                        var cur = propAccess;
+                        while (cur != null)
+                        {
+                            if (cur.Optional || cur.Expression is AstCall { Optional: true })
+                                Raise(cur.Start, "Invalid left-hand side in assignment expression");
+                            cur = cur.Expression as AstPropAccess;
+                        }
+                        break;
+                    }
                     goto default;
 
                 case AstDestructuring _:
