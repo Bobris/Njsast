@@ -15,7 +15,7 @@ public class AstExport : AstStatement
     /// Whether this is the default exported value of this module
     public bool IsDefault;
 
-    /// [AstNameMapping*?] List of exported names
+    /// List of exported names
     public StructList<AstNameMapping> ExportedNames;
 
     /// Name of the file to load exports from
@@ -40,7 +40,7 @@ public class AstExport : AstStatement
     public AstExport(string? source, Position startPos, Position endPos, AstNode declaration, bool isDefault) : base(
         source, startPos, endPos)
     {
-        if (declaration is AstDefun || declaration is AstDefinitions || declaration is AstDefClass)
+        if (declaration is AstDefun or AstDefinitions or AstDefClass)
         {
             ExportedDefinition = declaration;
         }

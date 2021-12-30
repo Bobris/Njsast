@@ -60,7 +60,12 @@ public class FindBackReferencesAndEvalTreeWalker : TreeWalker
         if (node is AstSymbol astSymbol)
         {
             var usage = SymbolUsage.Unknown;
-            if (node is AstLabel or AstSymbolProperty or AstSymbolMethod or AstSymbolCatch or AstSymbolFunarg or AstSymbolDefClass)
+            if (node is AstSymbolExport export)
+            {
+                if (export.Name != "*")
+                    usage |= SymbolUsage.Read;
+            }
+            else if (node is AstLabel or AstSymbolProperty or AstSymbolMethod or AstSymbolCatch or AstSymbolFunarg or AstSymbolDefClass or AstSymbolExportForeign or AstSymbolImportForeign or AstSymbolImport)
             {
             }
             else

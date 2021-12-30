@@ -9,7 +9,7 @@ public class AstNameMapping : AstNode
     /// [AstSymbolExportForeign|AstSymbolImportForeign] The name being exported/imported (as specified in the module)
     public AstSymbol ForeignName;
 
-    /// [AstSymbolExport|AstSymbolImport] The name as it is visible to this module.
+    /// [AstSymbolRef|AstSymbolImport] The name as it is visible to this module.
     public AstSymbol Name;
 
     public AstNameMapping(string? source, Position startLoc, Position endLoc, AstSymbol foreignName, AstSymbol name)

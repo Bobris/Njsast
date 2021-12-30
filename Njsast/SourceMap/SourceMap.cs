@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using Njsast.Ast;
-using Njsast.Reader;
 using Njsast.Utils;
 
 namespace Njsast.SourceMap;
@@ -16,7 +14,7 @@ public class SourceMap
 {
     public SourceMap()
     {
-        sources = new List<string>();
+        sources = new();
     }
     public SourceMap(List<string> sources)
     {
@@ -28,7 +26,7 @@ public class SourceMap
     public string? file { get; set; }
     public string sourceRoot { get; set; } = string.Empty;
     public List<string> sources { get; set; }
-    public List<string>? sourcesContent { get; set; }
+    public List<string?>? sourcesContent { get; set; }
     public List<string>? names { get; set; }
     public string mappings { get; set; } = string.Empty;
 
@@ -57,12 +55,12 @@ public class SourceMap
     public override string ToString()
     {
         return JsonConvert.SerializeObject(this,
-            new JsonSerializerSettings() {NullValueHandling = NullValueHandling.Ignore});
+            new JsonSerializerSettings {NullValueHandling = NullValueHandling.Ignore});
     }
 
     public static SourceMap Empty()
     {
-        return new SourceMap
+        return new()
         {
             mappings = ""
         };
@@ -78,8 +76,8 @@ public class SourceMap
             if (content[i] == '\n')
                 sb.Append(";AACA");
         if (endsWithNL)
-            sb.Append(";");
-        return new SourceMap(new List<string> {fileName})
+            sb.Append(';');
+        return new(new() {fileName})
         {
             mappings = sb.ToString()
         };
@@ -119,7 +117,7 @@ public class SourceMap
 
     public void BuildSearchCache()
     {
-        var inputMappings = this.mappings;
+        var inputMappings = mappings;
         var outputLineCount = 1;
         for (var i = 0; i < inputMappings.Length; i++)
         {
@@ -147,7 +145,7 @@ public class SourceMap
                 if (outputLine % CacheLineSkip == 0)
                 {
                     _searchCache[cachePos] =
-                        new SourceMapPositionTrinity(ip, inSourceIndex, inSourceLine, inSourceCol);
+                        new(ip, inSourceIndex, inSourceLine, inSourceCol);
                     cachePos++;
                 }
             }
@@ -216,8 +214,8 @@ public class SourceMap
                 end.Col = start.Col + node.End.Column - node.Start.Column;
             }
             node.Source = start.SourceName == "" ? null : start.SourceName;
-            node.Start = new Position(start.Line - 1, start.Col - 1, -1);
-            node.End = new Position(end.Line - 1, end.Col - 1, -1);
+            node.Start = new(start.Line - 1, start.Col - 1, -1);
+            node.End = new(end.Line - 1, end.Col - 1, -1);
         }
     }
 
@@ -494,7 +492,7 @@ public class SourceMapIterator
 
             var b = (int) SourceMapBuilder.Char2Int[ch];
             if (b == 255)
-                throw new Exception("Invalid sourceMap");
+                throw new("Invalid sourceMap");
             value += (b & 31) << shift;
             if ((b & 32) != 0)
             {

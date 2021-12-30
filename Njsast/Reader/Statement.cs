@@ -930,16 +930,24 @@ public sealed partial class Parser
         // export * from '...'
         if (Eat(TokenType.Star))
         {
+            var star = new AstSymbolExport(SourceFile, _lastTokStart, _lastTokEnd, "*");
             var specifiers = new StructList<AstNameMapping>();
-            specifiers.Add(new AstNameMapping(SourceFile, _lastTokStart, _lastTokEnd,
-                new AstSymbolExportForeign(SourceFile, _lastTokStart, _lastTokEnd, "*"),
-                new AstSymbolExport(SourceFile, _lastTokStart, _lastTokEnd, "*")));
+            if (EatContextual("as"))
+            {
+                specifiers.Add(new(SourceFile, _lastTokStart, _lastTokEnd,
+                    new AstSymbolExportForeign(ParseIdent(true)), star));
+            }
+            else
+            {
+                specifiers.Add(new(SourceFile, _lastTokStart, _lastTokEnd,
+                    new AstSymbolExportForeign(SourceFile, _lastTokStart, _lastTokEnd, "*"), star));
+            }
             ExpectContextual("from");
             if (Type != TokenType.String)
                 Raise(Start, "Unexpected token");
             var source = ParseExpressionAtom(Start) as AstString;
             Semicolon();
-            return new AstExport(SourceFile, nodeStart, _lastTokEnd, source, null, ref specifiers);
+            return new(SourceFile, nodeStart, _lastTokEnd, source, null, ref specifiers);
         }
 
         if (Eat(TokenType.Default))
@@ -965,7 +973,7 @@ public sealed partial class Parser
                 Semicolon();
             }
 
-            return new AstExport(SourceFile, nodeStart, _lastTokEnd, declaration, true);
+            return new(SourceFile, nodeStart, _lastTokEnd, declaration, true);
         }
         else
         {
@@ -1010,7 +1018,7 @@ public sealed partial class Parser
                 Semicolon();
             }
 
-            return new AstExport(SourceFile, nodeStart, _lastTokEnd, source, declaration, ref specifiers);
+            return new(SourceFile, nodeStart, _lastTokEnd, source, declaration, ref specifiers);
         }
     }
 
@@ -1083,8 +1091,8 @@ public sealed partial class Parser
             var local = ParseIdent(true);
             var exported = EatContextual("as") ? ParseIdent(true) : local;
             CheckExport(exports, exported.Name, exported.Start);
-            nodes.Add(new AstNameMapping(SourceFile, startLoc, _lastTokEnd, new AstSymbolExportForeign(local),
-                new AstSymbolExport(exported)));
+            nodes.Add(new(SourceFile, startLoc, _lastTokEnd, new AstSymbolExportForeign(exported),
+                new AstSymbolExport(local)));
         }
     }
 

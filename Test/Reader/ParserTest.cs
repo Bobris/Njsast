@@ -61,9 +61,11 @@ public class ParserTest
                 testData.Input);
             var toplevel = parser.Parse();
             commentListener.Walk(toplevel);
+            SourceMap? inputSourceMap = null;
             if (testData.InputSourceMap != null)
             {
-                SourceMap.Parse(testData.InputSourceMap, ".").ResolveInAst(toplevel);
+                inputSourceMap = SourceMap.Parse(testData.InputSourceMap, ".");
+                inputSourceMap.ResolveInAst(toplevel);
             }
 
             var strSink = new StringLineSink();
@@ -85,6 +87,7 @@ public class ParserTest
             toplevel.PrintToBuilder(outMinJsBuilder, outputOptions);
             outMinJsBuilder.AddText(
                 $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "minjs.map")}");
+            if (inputSourceMap!=null) outMinJsBuilder.AttachSourcesContent(inputSourceMap);
             outMinJs = outMinJsBuilder.Content();
             outMinJsMap = outMinJsBuilder.Build(".", ".").ToString();
             var outNiceJsBuilder = new SourceMapBuilder();
@@ -96,6 +99,7 @@ public class ParserTest
             toplevel.PrintToBuilder(outNiceJsBuilder, outputOptions);
             outNiceJsBuilder.AddText(
                 $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "nicejs.map")}");
+            if (inputSourceMap!=null) outNiceJsBuilder.AttachSourcesContent(inputSourceMap);
             outNiceJs = outNiceJsBuilder.Content();
             outNiceJsMap = outNiceJsBuilder.Build(".", ".").ToString();
 

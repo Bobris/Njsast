@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using Njsast.Utils;
 
 namespace Njsast.SourceMap;
 
 public class SourceMapBuilder
 {
-    StructList<char> _content = new StructList<char>();
+    StructList<char> _content;
     StructList<string> _sources;
+    StructList<string?> _sourcesContent;
     StructList<char> _mappings;
     int _lastSourceIndex;
     int _lastSourceLine;
@@ -29,6 +31,7 @@ public class SourceMapBuilder
         _content.Clear();
         _mappings.Clear();
         _sources.Clear();
+        _sourcesContent.Clear();
         _lastSourceIndex = 0;
         _lastSourceLine = 0;
         _lastSourceCol = 0;
@@ -43,11 +46,13 @@ public class SourceMapBuilder
     {
         var sources = new List<string>((int) _sources.Count);
         foreach (var s in _sources) sources.Add(PathUtils.Subtract(s, subtractDir));
+        var sourcesContent = _sourcesContent.All(s=>s==null)? null: _sourcesContent.ToList();
 
-        return new SourceMap(sources)
+        return new(sources)
         {
             sourceRoot = srcRoot,
-            mappings = new string(_mappings.AsSpan())
+            mappings = new(_mappings.AsSpan()),
+            sourcesContent = sourcesContent
         };
     }
 
@@ -124,17 +129,27 @@ public class SourceMapBuilder
         }
 
         var sourceRemap = new StructList<int>();
-        sourceMap.sources.ForEach(v =>
+        for (var i = 0; i < sourceMap.sources.Count; i++)
         {
+            var v = sourceMap.sources[i];
             var pos = _sources.IndexOf(v);
             if (pos < 0)
             {
-                pos = (int) _sources.Count;
+                pos = (int)_sources.Count;
                 _sources.Add(v);
+                if (sourceMap.sourcesContent != null && i < sourceMap.sourcesContent.Count)
+                {
+                    _sourcesContent.Add(sourceMap.sourcesContent[i]);
+                }
+                else
+                {
+                    _sourcesContent.Add(null);
+                }
             }
 
             sourceRemap.Add(pos);
-        });
+        }
+
         var lastOutputCol = 0;
         var inputMappings = sourceMap.mappings;
         var outputLine = 0;
@@ -313,16 +328,23 @@ public class SourceMapBuilder
         public SourceMapTextAdder(SourceMapBuilder owner, string content, SourceMap sourceMap)
         {
             _owner = owner;
-            _iterator = new SourceMapIterator(content, sourceMap);
-            _sourceRemap = new StructList<int>();
+            _iterator = new(content, sourceMap);
+            _sourceRemap = new();
             ref var ownerSources = ref owner._sources;
-            foreach (var v in sourceMap.sources)
+            ref var ownerSourcesContent = ref owner._sourcesContent;
+            var sourceMapSourcesContent = sourceMap.sourcesContent;
+            for (var i = 0; i < sourceMap.sources.Count; i++)
             {
+                var v = sourceMap.sources[i];
                 var pos = ownerSources.IndexOf(v);
                 if (pos < 0)
                 {
-                    pos = (int) ownerSources.Count;
+                    pos = (int)ownerSources.Count;
                     ownerSources.Add(v);
+                    if (sourceMapSourcesContent != null && i < sourceMapSourcesContent.Count)
+                        ownerSourcesContent.Add(sourceMapSourcesContent[i]);
+                    else
+                        ownerSourcesContent.Add(null);
                 }
 
                 _sourceRemap.Add(pos);
@@ -651,6 +673,7 @@ public class SourceMapBuilder
                 if (_sourceIndexCache == -1)
                 {
                     _sources.Add(sourceFile);
+                    _sourcesContent.Add(null);
                     _sourceIndexCache = (int) _sources.Count - 1;
                 }
             }
@@ -659,5 +682,19 @@ public class SourceMapBuilder
         }
 
         Commit(0, _sourceIndexCache, line, col, allowMerge);
+    }
+
+    public void AttachSourcesContent(SourceMap sourceMap)
+    {
+        var sc = sourceMap.sourcesContent;
+        if (sc == null) return;
+        for (var i = 0; i < _sources.Count; i++)
+        {
+            if (_sourcesContent[i] != null) continue;
+            var j = sourceMap.sources.IndexOf(_sources[i]);
+            if (j < 0) continue;
+            if (j < sc.Count)
+                _sourcesContent[i] = sc[j];
+        }
     }
 }

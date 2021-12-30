@@ -12,4 +12,9 @@ public class AstSymbolExport : AstSymbolRef
     public AstSymbolExport(string? source, Position startPos, Position endPos, string name) : base(source, startPos, endPos, name)
     {
     }
+
+    public override AstNode ShallowClone()
+    {
+        return new AstSymbolExport(Source, Start, End, Name);
+    }
 }
