@@ -16,4 +16,10 @@ public class AstClassExpression : AstClass
     {
         return output.FirstInStatement();
     }
+
+    public override AstNode ShallowClone()
+    {
+        var prop = new StructList<AstObjectProperty>(Properties);
+        return new AstClassExpression(Source, Start, End, Name, Extends, ref prop);
+    }
 }

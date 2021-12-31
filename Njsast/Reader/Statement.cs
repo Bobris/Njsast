@@ -139,7 +139,7 @@ public sealed partial class Parser
                 return ParseTryStatement(startLocation);
             case TokenType.Const:
             case TokenType.Var:
-                var realKind = kind ?? ToVariableKind((string) GetValue());
+                var realKind = kind ?? ToVariableKind((string)GetValue());
                 if (!declaration && realKind != VariableKind.Var)
                 {
                     Raise(startLocation, "Unexpected token");
@@ -173,7 +173,7 @@ public sealed partial class Parser
 
                 return starttype == TokenType.Import
                     ? ParseImport(startLocation)
-                    : (AstStatement) ParseExport(startLocation, exports);
+                    : (AstStatement)ParseExport(startLocation, exports);
         }
 
         if (!_wasImportKeyword && IsAsyncFunction() && declaration)
@@ -236,7 +236,7 @@ public sealed partial class Parser
             var i = 0;
             for (; i < _labels.Count; ++i)
             {
-                var lab = _labels[(uint) i];
+                var lab = _labels[(uint)i];
                 if (lab.Name == label.Name)
                 {
                     if (lab.IsLoop && (isBreak || lab.IsLoop))
@@ -273,7 +273,7 @@ public sealed partial class Parser
         var backupAllowContinue = _allowContinue;
         _allowBreak = true;
         _allowContinue = true;
-        var body = (AstStatement) ParseStatement(false);
+        var body = (AstStatement)ParseStatement(false);
         Expect(TokenType.While);
         _allowBreak = backupAllowBreak;
         _allowContinue = backupAllowContinue;
@@ -303,11 +303,12 @@ public sealed partial class Parser
         {
             return ParseFor(nodeStart, null, isAwait);
         }
+
         var isLet = IsLet();
         if (Type is TokenType.Var or TokenType.Const || isLet)
         {
             var startLoc = Start;
-            var kind = isLet ? VariableKind.Let : ToVariableKind((string) GetValue());
+            var kind = isLet ? VariableKind.Let : ToVariableKind((string)GetValue());
             Next();
             var declarations = new StructList<AstVarDef>();
             ParseVar(ref declarations, true, kind);
@@ -474,13 +475,14 @@ public sealed partial class Parser
                 param = ParseBindingAtom();
                 EnterLexicalScope();
                 CheckLVal(param, true, VariableKind.Let);
-                param = new AstSymbolCatch((AstSymbol) param);
+                param = new AstSymbolCatch((AstSymbol)param);
                 Expect(TokenType.ParenR);
             }
             else
             {
                 EnterLexicalScope();
             }
+
             var body = ParseBlock(false);
             ExitLexicalScope();
             handler = new(SourceFile, startLocation, _lastTokEnd, param, ref body.Body);
@@ -557,7 +559,8 @@ public sealed partial class Parser
         newlabel.IsLoop = TokenInformation.Types[Type].IsLoop;
         _labels.Add(newlabel);
         var body = ParseStatement(true);
-        if (body is AstClass or AstLet or AstConst || body is AstFunction functionDeclaration && (_strict || functionDeclaration.IsGenerator))
+        if (body is AstClass or AstLet or AstConst ||
+            body is AstFunction functionDeclaration && (_strict || functionDeclaration.IsGenerator))
             RaiseRecoverable(body.Start, "Invalid labelled declaration");
         _labels.Pop();
 
@@ -700,7 +703,7 @@ public sealed partial class Parser
                 };
             case AstDestructuring destructuring:
             {
-                for(var i = 0; i<destructuring.Names.Count;i++)
+                for (var i = 0; i < destructuring.Names.Count; i++)
                 {
                     destructuring.Names[i] = ToRightDeclarationSymbolKind(destructuring.Names[i], kind);
                 }
@@ -769,7 +772,7 @@ public sealed partial class Parser
         {
             if (id != null)
                 id = new AstSymbolDefun(id);
-            var astDefun = new AstDefun(SourceFile, startLoc, _lastTokEnd, id != null ? (AstSymbolDefun) id : null,
+            var astDefun = new AstDefun(SourceFile, startLoc, _lastTokEnd, id != null ? (AstSymbolDefun)id : null,
                 ref parameters, generator,
                 isAsync, ref body);
             astDefun.SetUseStrict(useStrict);
@@ -779,7 +782,7 @@ public sealed partial class Parser
         if (id != null)
             id = new AstSymbolLambda(id);
         var astFunction = new AstFunction(SourceFile, startLoc, _lastTokEnd,
-            id != null ? (AstSymbolLambda) id : null, ref parameters,
+            id != null ? (AstSymbolLambda)id : null, ref parameters,
             generator, isAsync, ref body);
         astFunction.SetUseStrict(useStrict);
         return astFunction;
@@ -942,6 +945,7 @@ public sealed partial class Parser
                 specifiers.Add(new(SourceFile, _lastTokStart, _lastTokEnd,
                     new AstSymbolExportForeign(SourceFile, _lastTokStart, _lastTokEnd, "*"), star));
             }
+
             ExpectContextual("from");
             if (Type != TokenType.String)
                 Raise(Start, "Unexpected token");
@@ -992,7 +996,7 @@ public sealed partial class Parser
                 {
                     var declarationNode = declaration is AstDefun defun ? defun.Name! :
                         declaration is AstDefClass defClass ? defClass.Name! :
-                        (AstSymbolDeclaration) declaration;
+                        (AstSymbolDeclaration)declaration;
                     CheckExport(exports, declarationNode.Name, declarationNode.Start);
                 }
             }
@@ -1048,6 +1052,9 @@ public sealed partial class Parser
                     CheckPatternExport(exports, prop);
                 }
 
+                break;
+            case AstObjectKeyVal keyVal:
+                CheckPatternExport(exports, keyVal.Value);
                 break;
             case AstDefaultAssign assignmentPattern:
                 CheckPatternExport(exports, assignmentPattern.Left);
@@ -1110,7 +1117,7 @@ public sealed partial class Parser
         AstString? source;
         if (Type == TokenType.String)
         {
-            source = (AstString) ParseExpressionAtom(Start);
+            source = (AstString)ParseExpressionAtom(Start);
         }
         else
         {
@@ -1118,7 +1125,7 @@ public sealed partial class Parser
             ExpectContextual("from");
             if (Type == TokenType.String)
             {
-                source = (AstString) ParseExpressionAtom(Start);
+                source = (AstString)ParseExpressionAtom(Start);
             }
             else
             {
@@ -1188,7 +1195,7 @@ public sealed partial class Parser
 
     bool IsUseStrictDirective(AstNode statement)
     {
-        var literal2 = (AstString) ((AstSimpleStatement) statement).Body;
+        var literal2 = (AstString)((AstSimpleStatement)statement).Body;
         return literal2.Value == "use strict";
     }
 
