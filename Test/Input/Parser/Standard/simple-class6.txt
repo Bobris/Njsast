@@ -1,5 +1,5 @@
 Toplevel 1:1 - 22:1
-  Class 1:1 - 21:2
+  DefClass 1:1 - 21:2
     SymbolDefClass 1:7 - 1:16
       Name: Rectangle
     ConciseMethod 2:5 - 5:6

@@ -897,9 +897,9 @@ public sealed partial class Parser
             }
         }
 
-        if (isStatement || isNullableId)
+        if ((isStatement || isNullableId) && id != null)
         {
-            return new(SourceFile, nodeStart, _lastTokEnd, id != null ? new AstSymbolDefClass(id) : null,
+            return new AstDefClass(SourceFile, nodeStart, _lastTokEnd, new AstSymbolDefClass(id),
                 superClass, ref body);
         }
 
@@ -990,8 +990,9 @@ public sealed partial class Parser
                 }
                 else
                 {
-                    var declarationNode =
-                        (AstSymbolDeclaration) declaration; // TODO possible System.InvalidCastException
+                    var declarationNode = declaration is AstDefun defun ? defun.Name! :
+                        declaration is AstDefClass defClass ? defClass.Name! :
+                        (AstSymbolDeclaration) declaration;
                     CheckExport(exports, declarationNode.Name, declarationNode.Start);
                 }
             }

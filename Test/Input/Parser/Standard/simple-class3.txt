@@ -1,5 +1,5 @@
 Toplevel 1:1 - 2:1
-  Class 1:1 - 1:63
+  DefClass 1:1 - 1:63
     SymbolDefClass 1:7 - 1:16
       Name: Rectangle
     Call 1:25 - 1:60

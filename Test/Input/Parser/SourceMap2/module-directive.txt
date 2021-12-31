@@ -61,7 +61,7 @@ Toplevel 1:1 - 8:1
                 Name: values
               SymbolRef 89:5 - 89:6 [Read]
                 Name: e
-  Class 89:9 - 140:27
+  DefClass 89:9 - 140:27
     SymbolDefClass 97:23 - 97:24
       Name: i
     ConciseMethod 115:3 - 118:7

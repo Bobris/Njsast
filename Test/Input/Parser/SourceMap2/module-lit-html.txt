@@ -1137,7 +1137,7 @@ Toplevel 1:1 - 8:1
                 Name: u
             SymbolRef 661:5 - 661:6 [Read]
               Name: l
-  Class 667:1 - 844:1
+  DefClass 667:1 - 844:1
     SymbolDefClass 667:7 - 667:8
       Name: P
     ConciseMethod 673:3 - 824:3
@@ -2126,7 +2126,7 @@ Toplevel 1:1 - 8:1
                 Name: e
         SymbolRef 887:10 - 887:11 [Read]
           Name: i
-  Class 894:1 - 1031:1
+  DefClass 894:1 - 1031:1
     SymbolDefClass 894:7 - 894:8
       Name: E
     ConciseMethod 905:3 - 911:7
@@ -2574,7 +2574,7 @@ Toplevel 1:1 - 8:1
                 Operator: IncrementPostfix
                 SymbolRef 981:7 - 981:8 [Read] [Write]
                   Name: i
-  Class 1031:1 - 1408:1
+  DefClass 1031:1 - 1408:1
     SymbolDefClass 1031:7 - 1031:8
       Name: N
     ConciseMethod 1075:3 - 1055:7
@@ -3671,7 +3671,7 @@ Toplevel 1:1 - 8:1
                     Name: this
                   SymbolRef 1374:40 - 1374:41 [Read]
                     Name: t
-  Class 1408:1 - 1562:1
+  DefClass 1408:1 - 1562:1
     SymbolDefClass 1408:7 - 1408:8
       Name: S
     ConciseMethod 1444:3 - 1435:7
@@ -4192,7 +4192,7 @@ Toplevel 1:1 - 8:1
                   Name: t
                 String 1555:19 - 1555:21
                   Value: 
-  Class 1562:1 - 1586:1
+  DefClass 1562:1 - 1586:1
     SymbolDefClass 1562:7 - 1562:8
       Name: M
     SymbolRef 1562:28 - 1562:29 [Read]
@@ -4263,7 +4263,7 @@ Toplevel 1:1 - 8:1
             Name: i
         String 1588:5 - 1588:7
           Value: 
-  Class 1591:1 - 1622:1
+  DefClass 1591:1 - 1622:1
     SymbolDefClass 1591:7 - 1591:8
       Name: H
     SymbolRef 1591:36 - 1591:37 [Read]
@@ -4331,7 +4331,7 @@ Toplevel 1:1 - 8:1
                 Property: name
                 This 1602:55 - 1602:59 [Read]
                   Name: this
-  Class 1622:1 - 1704:1
+  DefClass 1622:1 - 1704:1
     SymbolDefClass 1622:7 - 1622:8
       Name: I
     SymbolRef 1622:25 - 1622:26 [Read]
@@ -4665,7 +4665,7 @@ Toplevel 1:1 - 8:1
                     Name: this
               SymbolRef 1698:66 - 1698:67 [Read]
                 Name: t
-  Class 1704:1 - 1736:32
+  DefClass 1704:1 - 1736:32
     SymbolDefClass 1704:7 - 1704:8
       Name: L
     ConciseMethod 1721:3 - 1731:7
