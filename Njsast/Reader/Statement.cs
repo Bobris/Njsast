@@ -930,7 +930,7 @@ public sealed partial class Parser
         // export * from '...'
         if (Eat(TokenType.Star))
         {
-            var star = new AstSymbolExport(SourceFile, _lastTokStart, _lastTokEnd, "*");
+            var star = new AstSymbolImportForeign(SourceFile, _lastTokStart, _lastTokEnd, "*");
             var specifiers = new StructList<AstNameMapping>();
             if (EatContextual("as"))
             {
@@ -1005,6 +1005,10 @@ public sealed partial class Parser
                     if (Type != TokenType.String)
                         Raise(Start, "Unexpected token");
                     source = ParseExpressionAtom(Start) as AstString;
+                    foreach (var spec in specifiers)
+                    {
+                        spec.Name = new AstSymbolImportForeign(spec.Name);
+                    }
                 }
                 else
                 {
