@@ -1134,7 +1134,7 @@ public sealed partial class Parser
             // import defaultObj, { x, y as z } from '...'
             var local = ParseIdent();
             CheckLVal(local, true, VariableKind.Let);
-            importName = new AstSymbolImport(local);
+            importName = new(local);
             if (!Eat(TokenType.Comma))
                 return;
         }
@@ -1142,12 +1142,12 @@ public sealed partial class Parser
         if (Type == TokenType.Star)
         {
             var startLoc = Start;
-            var starSymbol = new AstSymbolImportForeign(SourceFile, Start, End, string.Empty);
+            var starSymbol = new AstSymbolImportForeign(SourceFile, Start, End, "*");
             Next();
             ExpectContextual("as");
             var local = ParseIdent();
             CheckLVal(local, true, VariableKind.Let);
-            importNames.Add(new AstNameMapping(SourceFile, startLoc, _lastTokEnd, starSymbol,
+            importNames.Add(new(SourceFile, startLoc, _lastTokEnd, starSymbol,
                 new AstSymbolImport(local)));
             return;
         }
@@ -1176,8 +1176,8 @@ public sealed partial class Parser
             }
 
             CheckLVal(local, true, VariableKind.Let);
-            importNames.Add(new AstNameMapping(SourceFile, startLoc, _lastTokEnd, new AstSymbolImportForeign(local),
-                new AstSymbolImport(imported)));
+            importNames.Add(new(SourceFile, startLoc, _lastTokEnd, new AstSymbolImportForeign(imported),
+                new AstSymbolImport(local)));
         }
     }
 
