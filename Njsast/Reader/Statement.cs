@@ -913,7 +913,7 @@ public sealed partial class Parser
             return ParseIdent();
         if (isStatement)
         {
-            Raise(Start, "Unexpected token");
+            Raise(Start, "A class name is required.");
         }
 
         return null;
