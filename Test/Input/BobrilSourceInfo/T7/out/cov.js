@@ -1,6 +1,6 @@
 var __c0v = new Uint32Array(0);
 
-window.__c0v = __c0v;
+globalThis.__c0v = __c0v;
 
 function __c0vS(i) {
     __c0v[i]++;

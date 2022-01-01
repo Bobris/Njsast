@@ -87,7 +87,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     if (lambda.Purpose == null)
                         lambda.Purpose = DetectPurpose(lambda);
 
-                    NeedValue = false;
+                    NeedValue = lambda.Body is { Count:1 } body && body[0].IsExpression();
                     TransformList(ref lambda.Body);
                     NeedValue = true;
                     return node;
@@ -195,8 +195,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                 }
                 case AstCall call:
                 {
-                    if (call.Expression is AstLambda { Purpose: { } purpose } && purpose is EnumDefinitionPurpose &&
-                        call.Args is
+                    if (call.Expression is AstLambda { Purpose: { } purpose and EnumDefinitionPurpose } && call.Args is
                         {
                             Count: 1
                         } && call.Args[0].IsSymbolDef() is { } symbolDef)
@@ -263,7 +262,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         return Remove;
                     }
 
-                    if (globalSymbol == "window")
+                    if (globalSymbol is "window" or "globalThis")
                     {
                         node = propAccess.Property as AstNode ?? Remove;
                         if (node == Remove)
@@ -335,7 +334,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                 case AstCall call:
                 {
                     var symbol = call.Expression.IsSymbolDef();
-                    if (symbol != null && symbol.IsSingleInit && symbol.Init is AstLambda { Pure: true } ||
+                    if (symbol is { IsSingleInit: true, Init: AstLambda { Pure: true } } ||
                         IsWellKnownPureFunction(call.Expression, call is AstNew))
                     {
                         var res = new AstSequence(node.Source, node.Start, node.End);
@@ -352,8 +351,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         };
                     }
 
-                    if (call.Expression is AstLambda { Purpose: { } purpose } && purpose is EnumDefinitionPurpose &&
-                        call.Args is
+                    if (call.Expression is AstLambda { Purpose: { } purpose and EnumDefinitionPurpose } && call.Args is
                         {
                             Count: 1
                         } && call.Args[0].IsSymbolDef() is { } symbolDef)
@@ -770,9 +768,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
             return true;
         }
 
-        if (isNew && callExpression.IsSymbolDef().IsGlobalSymbol() is { } globalConstructor &&
-            (globalConstructor == "Map" || globalConstructor == "HashSet" || globalConstructor == "Set" ||
-             globalConstructor == "HashSet"))
+        if (isNew && callExpression.IsSymbolDef().IsGlobalSymbol() is "Map" or "HashSet" or "Set" or "HashSet")
             return true;
 
         if (callExpression is AstPropAccess propAccess)

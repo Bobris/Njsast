@@ -35,7 +35,7 @@ public class CoverageInstrumentation
         return toplevel;
     }
 
-    public void AddCountingHelpers(AstToplevel toplevel, string globalThis = "window")
+    public void AddCountingHelpers(AstToplevel toplevel, string globalThis = "globalThis")
     {
         var tla = Parser.Parse(
             $"var {StorageName}=new Uint32Array({LastIndex});{globalThis}.{StorageName}={StorageName};function {FncNameStatement}(i){{{StorageName}[i]++;}}function {FncNameCond}(r,i){{{StorageName}[i+(r?1:0)]++;return r}}");
