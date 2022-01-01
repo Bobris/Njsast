@@ -9,10 +9,10 @@ namespace Njsast.Ast;
 public class AstObject : AstNode
 {
     /// [AstObjectProperty*] array of properties
-    public StructList<AstObjectProperty> Properties;
+    public StructList<AstObjectItem> Properties;
 
     public AstObject(string? source, Position startLoc, Position endLoc,
-        ref StructList<AstObjectProperty> properties) : base(source, startLoc, endLoc)
+        ref StructList<AstObjectItem> properties) : base(source, startLoc, endLoc)
     {
         Properties.TransferFrom(ref properties);
     }

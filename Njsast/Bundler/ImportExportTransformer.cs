@@ -95,11 +95,15 @@ public class ImportExportTransformer : TreeTransformer
                     astDot.Expression.IsSymbolDef().IsGlobalSymbol() == "Object" &&
                     astDot.PropertyAsString == "defineProperty"
                     && call.Args.Count == 3 && call.Args[0].IsSymbolDef().IsExportsSymbol() &&
-                    call.Args[1] is AstString exportName && call.Args[2] is AstObject astObject
-                    && astObject.Properties.Count == 2 && astObject.Properties.Last.Value is AstLambda astFunc && astFunc.Body.Last is AstReturn astRet
-                    && DetectImport(astRet.Value) is {} bindPath)
+                    call.Args[1] is AstString exportName && call.Args[2] is AstObject { Properties.Count: 2 } astObject && astObject.Properties.Last is AstObjectProperty
+                    {
+                        Value: AstLambda
+                        {
+                            Body.Last: AstReturn astRet
+                        }
+                    } && DetectImport(astRet.Value) is {} bindPath)
                 {
-                    _sourceFile.SelfExports.Add(new ReexportSelfExport(exportName.Value, bindPath.Item1, bindPath.Item2)); 
+                    _sourceFile.SelfExports.Add(new ReexportSelfExport(exportName.Value, bindPath.Item1, bindPath.Item2));
                     return Remove;
                 }
 

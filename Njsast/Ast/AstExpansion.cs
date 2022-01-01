@@ -4,7 +4,7 @@ using Njsast.Reader;
 namespace Njsast.Ast;
 
 /// An expandible argument, such as ...rest, a splat, such as [1,2,...all], or an expansion in a variable declaration, such as var [first, ...rest] = list
-public class AstExpansion : AstNode
+public class AstExpansion : AstObjectItem
 {
     /// [AstNode] the thing to be expanded
     public AstNode Expression;

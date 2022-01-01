@@ -4,8 +4,19 @@ using Njsast.Reader;
 
 namespace Njsast.Ast;
 
+public abstract class AstObjectItem : AstNode
+{
+    protected AstObjectItem(string? source, Position startPos, Position endPos) : base(source, startPos, endPos)
+    {
+    }
+
+    protected AstObjectItem()
+    {
+    }
+}
+
 /// Base class for literal object properties
-public abstract class AstObjectProperty : AstNode
+public abstract class AstObjectProperty : AstObjectItem
 {
     /// [AstNode] property name.
     public AstNode Key;

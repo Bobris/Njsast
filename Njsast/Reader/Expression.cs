@@ -71,12 +71,11 @@ public sealed partial class Parser
     // Object/class getters and setters are not allowed to clash —
     // either with each other or with an init property — and in
     // strict mode, init properties are also not allowed to be repeated.
-    void CheckPropertyClash(AstObjectProperty prop, IDictionary<string, Property> propHash)
+    void CheckPropertyClash(AstObjectItem prop, IDictionary<string, Property> propHash)
     {
-        if (Options.EcmaVersion >= 6 &&
-            (prop is AstObjectGetter || prop is AstObjectSetter || prop is AstObjectKeyVal))
+        if (prop is AstObjectGetter or AstObjectSetter or AstObjectKeyVal or AstExpansion)
             return;
-        var key = prop.Key;
+        var key = ((AstObjectProperty)prop).Key;
         string name;
         if (key is AstSymbol astSymbolKey)
             name = astSymbolKey.Name;
@@ -791,10 +790,7 @@ public sealed partial class Parser
 
     bool IsAsyncProp(bool computed, AstNode key)
     {
-        return !computed && key is AstSymbol identifierNode && identifierNode.Name == "async" &&
-               (Type == TokenType.Name || Type == TokenType.Num || Type == TokenType.String ||
-                Type == TokenType.BracketL || TokenInformation.Types[Type].Keyword != null) &&
-               !LineBreak.IsMatch(_input.Substring(_lastTokEnd.Index, Start.Index - _lastTokEnd.Index));
+        return !computed && key is AstSymbol { Name: "async" } && (Type is TokenType.Name or TokenType.Num or TokenType.String or TokenType.BracketL || TokenInformation.Types[Type].Keyword != null) && !LineBreak.IsMatch(_input.Substring(_lastTokEnd.Index, Start.Index - _lastTokEnd.Index));
     }
 
     // Parse an object literal or binding pattern.
@@ -824,35 +820,41 @@ public sealed partial class Parser
             return new AstDestructuring(SourceFile, startLoc, _lastTokEnd, ref properties, false);
         }
 
-        var objProps = new StructList<AstObjectProperty>();
+        var objProps = new StructList<AstObjectItem>();
         objProps.Reserve(properties.Count);
         for (var i = 0; i < properties.Count; i++)
         {
-            objProps.Add((AstObjectProperty)properties[(uint)i]);
+            objProps.Add((AstObjectItem)properties[(uint)i]);
         }
 
         return new AstObject(SourceFile, startLoc, _lastTokEnd, ref objProps);
     }
 
-    AstObjectProperty ParseProperty(bool isPattern, DestructuringErrors? refDestructuringErrors)
+    AstObjectItem ParseProperty(bool isPattern, DestructuringErrors? refDestructuringErrors)
     {
         var isGenerator = false;
         bool isAsync;
         Position startLoc = default;
         var nodeStart = Start;
-        if (Options.EcmaVersion >= 6)
+        if (isPattern || refDestructuringErrors != null)
         {
-            if (isPattern || refDestructuringErrors != null)
-            {
-                startLoc = Start;
-            }
-
-            if (!isPattern)
-                isGenerator = Eat(TokenType.Star);
+            startLoc = Start;
         }
 
+        if (Type == TokenType.Ellipsis)
+        {
+            var exp = ParseSpread(refDestructuringErrors);
+            if (refDestructuringErrors != null && Type == TokenType.Comma &&
+                refDestructuringErrors.TrailingComma.Line == 0)
+                refDestructuringErrors.TrailingComma = Start;
+            return exp;
+        }
+
+        if (!isPattern)
+            isGenerator = Eat(TokenType.Star);
+
         var (computed, key) = ParsePropertyName();
-        if (!isPattern && Options.EcmaVersion >= 8 && !isGenerator && IsAsyncProp(computed, key))
+        if (!isPattern && !isGenerator && IsAsyncProp(computed, key))
         {
             isAsync = true;
             (computed, key) = ParsePropertyName();
