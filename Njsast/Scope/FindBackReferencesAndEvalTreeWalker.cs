@@ -20,7 +20,7 @@ public class FindBackReferencesAndEvalTreeWalker : TreeWalker
 
     protected override void Visit(AstNode node)
     {
-        if (node is AstLoopControl loopControl && loopControl.Label != null)
+        if (node is AstLoopControl { Label: { } } loopControl)
         {
             loopControl.Label.Thedef!.References.Add(loopControl);
             StopDescending();

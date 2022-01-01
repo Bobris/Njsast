@@ -14,7 +14,7 @@ public class MangleTreeWalker : TreeWalker
     {
         _options = options;
         _outputOptions = outputOptions;
-        _toMangle = new StructList<SymbolDef>();
+        _toMangle = new();
     }
 
     public void Mangle(AstToplevel topLevel)
@@ -64,7 +64,7 @@ public class MangleTreeWalker : TreeWalker
 
                 break;
             }
-            case IMayBeBlockScope blockScope when blockScope.IsBlockScope:
+            case IMayBeBlockScope { IsBlockScope: true } blockScope:
             {
                 if (blockScope.BlockScope?.Variables == null)
                     break;

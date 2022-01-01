@@ -904,7 +904,7 @@ public sealed partial class Parser
             return (value, PropertyKind.Initialise, false, false, computed, key);
         }
 
-        if (Options.EcmaVersion >= 6 && Type == TokenType.ParenL)
+        if (Type == TokenType.ParenL)
         {
             if (isPattern)
             {
@@ -947,7 +947,7 @@ public sealed partial class Parser
             return (valueAcc, kind, false, false, computed, key);
         }
 
-        if (Options.EcmaVersion >= 6 && !computed && key is AstSymbol identifierNode2)
+        if (!computed && key is AstSymbol identifierNode2)
         {
             CheckUnreserved(key.Start, key.End, identifierNode2.Name);
             AstNode value;
@@ -963,7 +963,7 @@ public sealed partial class Parser
             }
             else
             {
-                value = key;
+                value = new AstSymbolRef(identifierNode2);
             }
 
             return (value, PropertyKind.Initialise, false, true, false, key);
