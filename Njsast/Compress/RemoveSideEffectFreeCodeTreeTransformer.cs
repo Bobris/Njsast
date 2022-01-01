@@ -312,6 +312,14 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
 
                     goto default;
                 }
+                case AstClass defClass:
+                {
+                    if (defClass.Name == null || defClass.Name.Thedef!.OnlyDeclared)
+                    {
+                        return Remove;
+                    }
+                    goto default;
+                }
                 case AstLambda lambda:
                 {
                     if (lambda.Name == null || lambda.Name.Thedef!.OnlyDeclared)
