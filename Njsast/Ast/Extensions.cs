@@ -8,8 +8,8 @@ public static class Extensions
 {
     public static bool IsExpression(this AstNode node)
     {
-        return node is AstUnary or AstBinary or AstConstant or AstConditional or AstObject or AstArray
-            or AstClassExpression or AstArrow or AstFunction or AstPropAccess or AstCall;
+        return node is AstUnary or AstBinary or AstConstant or AstConditional or AstSequence or AstObject or AstArray
+            or AstClassExpression or AstArrow or AstFunction or AstPropAccess or AstCall or AstTemplateString or AstPrefixedTemplateString or AstSymbolRef;
     }
 
     public static string? IsGlobalSymbol(this SymbolDef? symbol)

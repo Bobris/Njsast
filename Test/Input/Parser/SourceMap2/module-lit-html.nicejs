@@ -1,12 +1,8 @@
 var t;
 
 const i = globalThis.trustedTypes, s = i ? i.createPolicy("lit-html", {
-    createHTML: t => {
-        t
-    }
-}) : void 0, e = `lit$${(Math.random() + "").slice(9)}$`, o = "?" + e, n = `<${o}>`, l = document, h = (t = "") => {
-    l.createComment(t)
-}, r = t => null === t || "object" != typeof t && "function" != typeof t, d = Array.isArray, u = t => {
+    createHTML: t => t
+}) : void 0, e = `lit$${(Math.random() + "").slice(9)}$`, o = "?" + e, n = `<${o}>`, l = document, h = (t = "") => l.createComment(t), r = t => null === t || "object" != typeof t && "function" != typeof t, d = Array.isArray, u = t => {
     var i;
     return d(t) || "function" == typeof (null === (i = t) || void 0 === i ? void 0 : i[Symbol.iterator]);
 }, c = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, v = /-->/g, a = />/g, f = />|[ 	\n\r](?:([^\s"'>=/]+)([ 	\n\r]*=[ 	\n\r]*(?:[^ 	\n\r"'`<>=]|("|')|))|$)/g, _ = /'/g, m = /"/g, g = /^(?:script|style|textarea)$/i, $ = t => (i, ...s) => ({
