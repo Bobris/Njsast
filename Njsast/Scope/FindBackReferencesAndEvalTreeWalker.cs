@@ -206,7 +206,6 @@ public class FindBackReferencesAndEvalTreeWalker : TreeWalker
             case AstDo _:
             case AstCase _:
             case AstFor _:
-            case AstExpansion _:
             case AstPrefixedTemplateString _:
             case AstTemplateString _:
             case AstYield _:
@@ -215,7 +214,7 @@ public class FindBackReferencesAndEvalTreeWalker : TreeWalker
             case AstClass _: // extends
                 usage |= SymbolUsage.Read;
                 break;
-
+            case AstExpansion _:
             case AstDestructuring _:
                 DetectSymbolUsage(parent, deepness + 1, ref usage, astSymbol);
                 break;

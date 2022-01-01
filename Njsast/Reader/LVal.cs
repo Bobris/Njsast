@@ -87,15 +87,17 @@ public sealed partial class Parser
     }
 
     [return: NotNullIfNotNull("property")]
-    AstObjectProperty? ToAssignable(AstObjectProperty? property, bool isBinding = false)
+    AstObjectItem? ToAssignable(AstObjectItem? property, bool isBinding = false)
     {
         if (property == null)
             return null;
 
-        if (property is not AstObjectKeyVal)
+        if (property is not AstObjectKeyVal kv)
             Raise(property.Start, "Object pattern can't contain getter or setter");
-
-        property.Value = ToAssignable(property.Value, isBinding);
+        else
+        {
+            kv.Value = ToAssignable(kv.Value, isBinding);
+        }
         return property;
     }
 

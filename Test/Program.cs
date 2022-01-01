@@ -246,7 +246,7 @@ class Program
 
     static void Main()
     {
-        RunAllTests("case1");
+        RunAllTests();
         //Debug();
     }
 }
