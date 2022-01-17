@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## 1.0.0
+
 ### Added
 
 -   Upgrade to .Net 6.0
