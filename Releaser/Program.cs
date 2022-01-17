@@ -196,7 +196,7 @@ class Program
             File.Copy(fn, releaseSources + "/" + relfn);
         }
         System.IO.Compression.ZipFile.CreateFromDirectory(releaseSources, projDir + "/Njsast/bin/Release/Njsast.zip", System.IO.Compression.CompressionLevel.Optimal, false);
-        start = new ProcessStartInfo("dotnet", "nuget push Njsast." + newVersion + ".nupkg -s https://www.nuget.org -apikey " + nugetKey)
+        start = new ProcessStartInfo("dotnet", "nuget push Njsast." + newVersion + ".nupkg -s https://www.nuget.org -k " + nugetKey)
         {
             UseShellExecute = true,
             WorkingDirectory = projDir + "/Njsast/bin/Release"
