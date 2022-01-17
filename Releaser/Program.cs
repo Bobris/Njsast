@@ -93,9 +93,6 @@ class Program
             outputLogLines.Insert(topVersionLine + 1, "");
             if (Directory.Exists(projDir + "/Njsast/bin/Release"))
                 Directory.Delete(projDir + "/Njsast/bin/Release", true);
-            Build(projDir, newVersion);
-            var client = new GitHubClient(new ProductHeaderValue("Njsast-releaser"));
-            client.SetRequestTimeout(TimeSpan.FromMinutes(15));
             var fileNameOfToken = Environment.GetEnvironmentVariable("USERPROFILE") + "/.github/token.txt";
             string token;
             try
@@ -107,6 +104,20 @@ class Program
                 Console.WriteLine("Cannot read github token from " + fileNameOfToken);
                 return 1;
             }
+            fileNameOfToken = Environment.GetEnvironmentVariable("USERPROFILE") + "/.nuget/token.txt";
+            string tokenNuget;
+            try
+            {
+                tokenNuget = File.ReadAllLines(fileNameOfToken).First();
+            }
+            catch
+            {
+                Console.WriteLine("Cannot read nuget token from " + fileNameOfToken);
+                return 1;
+            }
+            Build(projDir, newVersion, tokenNuget);
+            var client = new GitHubClient(new ProductHeaderValue("Njsast-releaser"));
+            client.SetRequestTimeout(TimeSpan.FromMinutes(15));
             client.Credentials = new Octokit.Credentials(token);
             var NjsastRepo = (await client.Repository.GetAllForUser("bobris")).First(r => r.Name == "Njsast");
             Console.WriteLine("Njsast repo id: " + NjsastRepo.Id);
@@ -165,7 +176,7 @@ class Program
         throw new OperationCanceledException("Upload Asset " + fileName + " failed");
     }
 
-    static void Build(string projDir, string newVersion)
+    static void Build(string projDir, string newVersion, string nugetKey)
     {
         var start = new ProcessStartInfo("dotnet", "pack -c Release")
         {
@@ -185,7 +196,7 @@ class Program
             File.Copy(fn, releaseSources + "/" + relfn);
         }
         System.IO.Compression.ZipFile.CreateFromDirectory(releaseSources, projDir + "/Njsast/bin/Release/Njsast.zip", System.IO.Compression.CompressionLevel.Optimal, false);
-        start = new ProcessStartInfo("dotnet", "nuget push Njsast." + newVersion + ".nupkg -s https://www.nuget.org")
+        start = new ProcessStartInfo("dotnet", "nuget push Njsast." + newVersion + ".nupkg -s https://www.nuget.org -apikey " + nugetKey)
         {
             UseShellExecute = true,
             WorkingDirectory = projDir + "/Njsast/bin/Release"
