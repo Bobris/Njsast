@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Added
+
+Compression optimizations around template strings.
+
 ## 1.0.1
 
 ## 1.0.0
