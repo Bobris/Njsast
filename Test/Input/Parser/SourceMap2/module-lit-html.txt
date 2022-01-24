@@ -613,7 +613,7 @@ Toplevel 1:1 - 8:1
                     Property: length
                     SymbolRef 544:24 - 544:25 [Read]
                       Name: s
-                Sequence 546:7 - 548:12
+                Sequence 544:34 - 548:13
                   Assign 546:7 - 546:26
                     Operator: Assignment
                     Dot 546:7 - 546:22
@@ -706,7 +706,7 @@ Toplevel 1:1 - 8:1
                                 Literal: 2
                               SymbolRef 558:20 - 558:21 [Read]
                                 Name: u
-                          Sequence 559:15 - 564:20
+                          Sequence 190:21 - 564:21
                             Binary 559:15 - 562:71
                               Operator: LogicalAnd
                               Call 559:15 - 190:21
@@ -784,7 +784,7 @@ Toplevel 1:1 - 8:1
                               Literal: 0
                             SymbolRef 575:13 - 575:14 [Read]
                               Name: u
-                        Sequence 578:11 - 581:32
+                        Sequence 225:25 - 581:33
                           Assign 578:11 - 578:39
                             Operator: Assignment
                             SymbolRef 578:11 - 578:12 [Write]
@@ -831,7 +831,7 @@ Toplevel 1:1 - 8:1
                               Number 584:31 - 584:32
                                 Value: 2
                                 Literal: 2
-                          Sequence 586:11 - 593:18
+                          Sequence 584:33 - 593:19
                             Assign 586:11 - 586:79
                               Operator: Assignment
                               SymbolRef 586:11 - 586:12 [Write]
@@ -937,7 +937,7 @@ Toplevel 1:1 - 8:1
                               Name: d
                             SymbolRef 601:17 - 601:18 [Read]
                               Name: c
-                          Sequence 605:9 - 606:28
+                          Sequence 601:19 - 606:29
                             Assign 605:9 - 605:18
                               Operator: Assignment
                               SymbolRef 605:9 - 605:10 [Write]
@@ -1011,7 +1011,7 @@ Toplevel 1:1 - 8:1
                       Number 641:31 - 641:32
                         Value: 0
                         Literal: 0
-                    Sequence 642:12 - 647:12
+                    Sequence 641:33 - 647:13
                       Call 642:12 - 642:29
                         Dot 642:12 - 642:26
                           Property: push
@@ -1068,7 +1068,7 @@ Toplevel 1:1 - 8:1
                               Literal: 2
                           SymbolRef 650:12 - 650:13 [Read]
                             Name: $
-                        Sequence 650:39 - 650:67
+                        Sequence 650:14 - 650:68
                           Call 650:39 - 650:56
                             Dot 650:39 - 650:53
                               Property: push
@@ -1940,7 +1940,7 @@ Toplevel 1:1 - 8:1
                   Name: d
             SymbolRef 863:41 - 863:42 [Read]
               Name: u
-          Sequence 863:45 - 876:56
+          Sequence 863:44 - 876:57
             Binary 863:45 - 865:66
               Operator: LogicalOr
               Binary 863:45 - 865:77
@@ -2007,7 +2007,7 @@ Toplevel 1:1 - 8:1
                   Number 867:26 - 867:27
                     Value: 0
                     Literal: 0
-              Sequence 869:7 - 870:53
+              Sequence 867:28 - 870:54
                 Assign 869:7 - 869:57
                   Operator: Assignment
                   SymbolRef 869:7 - 869:8 [Write]
@@ -2469,7 +2469,7 @@ Toplevel 1:1 - 8:1
                       Property: index
                       SymbolRef 959:25 - 959:26 [Read]
                         Name: d
-                Sequence 960:9 - 961:12
+                Sequence 959:47 - 961:13
                   Assign 960:9 - 960:33
                     Operator: Assignment
                     SymbolRef 960:9 - 960:10 [Write]
@@ -2533,7 +2533,7 @@ Toplevel 1:1 - 8:1
                       Property: strings
                       SymbolRef 971:14 - 971:15 [Read]
                         Name: s
-                  Sequence 972:12 - 976:59
+                  Sequence 971:45 - 976:60
                     Call 972:12 - 972:79
                       Dot 972:12 - 972:39
                         Property: _$AI
@@ -2896,7 +2896,7 @@ Toplevel 1:1 - 8:1
                       Value: 
                     SymbolRef 1155:49 - 1155:50 [Read]
                       Name: t
-                Sequence 1156:13 - 1159:34
+                Sequence 1155:51 - 1159:35
                   Binary 1156:13 - 1157:22
                     Operator: LogicalAnd
                     Binary 1156:13 - 1156:40
@@ -3048,7 +3048,7 @@ Toplevel 1:1 - 8:1
                   Name: this
               SymbolRef 1181:35 - 1181:36 [Read]
                 Name: t
-            Sequence 1182:7 - 1210:46
+            Sequence 1181:38 - 1210:47
               Call 1182:7 - 1182:18
                 Dot 1182:7 - 1182:16
                   Property: _$AR
@@ -3169,7 +3169,7 @@ Toplevel 1:1 - 8:1
                     Name: this
                 SymbolRef 1261:30 - 1261:31 [Read]
                   Name: t
-              Sequence 1261:34 - 1264:12
+              Sequence 1261:33 - 1264:13
                 Binary 1261:34 - 1263:69
                   Operator: LogicalAnd
                   Binary 1261:34 - 1262:19
@@ -3367,7 +3367,7 @@ Toplevel 1:1 - 8:1
                 Property: _$AH
                 This 1298:18 - 1298:22 [Read]
                   Name: this
-            Sequence 1299:7 - 1300:18
+            Sequence 1298:30 - 1300:19
               Assign 1299:7 - 1299:33
                 Operator: Assignment
                 Dot 1299:7 - 1299:16
@@ -3481,7 +3481,7 @@ Toplevel 1:1 - 8:1
                 Property: length
                 SymbolRef 1331:21 - 1331:22 [Read]
                   Name: i
-            Sequence 1333:7 - 1338:27
+            Sequence 1331:39 - 1338:28
               Call 1333:7 - 1335:11
                 Dot 1333:7 - 1333:16
                   Property: _$AR
@@ -3629,7 +3629,7 @@ Toplevel 1:1 - 8:1
                 Property: _$AM
                 This 1372:9 - 1372:13 [Read]
                   Name: this
-            Sequence 1373:7 - 1374:42
+            Sequence 1372:20 - 1374:43
               Assign 1373:7 - 1373:29
                 Operator: Assignment
                 Dot 1373:7 - 1373:16
@@ -3784,7 +3784,7 @@ Toplevel 1:1 - 8:1
                       Literal: 1
                     SymbolRef 1455:52 - 1455:53 [Read]
                       Name: s
-              Sequence 1456:7 - 1457:23
+              Sequence 1455:63 - 1457:24
                 Assign 1456:7 - 1456:77
                   Operator: Assignment
                   Dot 1456:7 - 1456:16

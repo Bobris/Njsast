@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Fixed
+
+AstSequence includes parens it fixes BobrilSourceInfo styleDef case.
+
 ## 1.1.0
 
 ### Added
