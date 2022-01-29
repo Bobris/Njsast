@@ -30,40 +30,43 @@ public class BundlerTest
     {
         var output = new Dictionary<string, string>();
         var bundler = new BundlerImpl(new BundlerCtx(testData, output, "cbm-"));
-        InitCommonParts();
         bundler.Mangle = true;
         bundler.CompressOptions = CompressOptions.Default;
-        bundler.OutputOptions = new OutputOptions {Beautify = true};
+        bundler.OutputOptions = new() {Beautify = true};
+        InitCommonParts(testData);
         bundler.Run();
 
-        bundler = new BundlerImpl(new BundlerCtx(testData, output, "cm-"));
-        InitCommonParts();
+        bundler = new(new BundlerCtx(testData, output, "cm-"));
         bundler.Mangle = true;
         bundler.CompressOptions = CompressOptions.Default;
-        bundler.OutputOptions = new OutputOptions {Beautify = false};
+        bundler.OutputOptions = new() {Beautify = false};
+        InitCommonParts(testData);
         bundler.Run();
 
-        bundler = new BundlerImpl(new BundlerCtx(testData, output, "cb-"));
-        InitCommonParts();
+        bundler = new(new BundlerCtx(testData, output, "cb-"));
         bundler.Mangle = false;
         bundler.CompressOptions = CompressOptions.Default;
-        bundler.OutputOptions = new OutputOptions {Beautify = true};
+        bundler.OutputOptions = new() {Beautify = true};
+        InitCommonParts(testData);
         bundler.Run();
 
-        bundler = new BundlerImpl(new BundlerCtx(testData, output, "b-"));
-        InitCommonParts();
+        bundler = new(new BundlerCtx(testData, output, "b-"));
         bundler.Mangle = false;
         bundler.CompressOptions = null;
-        bundler.OutputOptions = new OutputOptions {Beautify = true};
+        bundler.OutputOptions = new() {Beautify = true};
+        InitCommonParts(testData);
         bundler.Run();
 
         return output;
 
-        void InitCommonParts()
+        void InitCommonParts(BundlerTestData testData)
         {
-            bundler!.PartToMainFilesMap =
+            var libraryMode = testData.Name.StartsWith("Library");
+            bundler.LibraryMode = libraryMode;
+            bundler.PartToMainFilesMap =
                 new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
             bundler.GlobalDefines = new Dictionary<string, object> {{"DEBUG", false}};
+            if (libraryMode) bundler.OutputOptions.Ecma = 10;
         }
     }
 

@@ -9,9 +9,9 @@ public class BundlerHelpersTest
     [Fact]
     public void MergerUniques()
     {
-        var main = new Parser(new Options(), "var a=1,b=2;").Parse();
+        var main = new Parser(new(), "var a=1,b=2;").Parse();
         main.FigureOutScope();
-        var second = new Parser(new Options(), "var a=3,c=a+1;").Parse();
+        var second = new Parser(new(), "var a=3,c=a+1;").Parse();
         second.FigureOutScope();
         BundlerHelpers.AppendToplevelWithRename(main,second,"s");
         Assert.Equal("var a=1,b=2;var a_s=3,c=a_s+1", main.PrintToString());

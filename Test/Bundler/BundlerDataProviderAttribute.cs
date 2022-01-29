@@ -26,7 +26,7 @@ public class BundlerDataProviderAttribute : DataAttribute
             var allInputFiles = Directory.EnumerateFiles(inputFile, "*.*", SearchOption.AllDirectories)
                 .Select(PathUtils.Normalize);
 
-            return new BundlerTestData(allInputFiles.ToDictionary(a => a.Substring(inputFile.Length+1), File.ReadAllText), inputFile,
+            return new BundlerTestData(allInputFiles.ToDictionary(a => a[(inputFile.Length+1)..], File.ReadAllText), inputFile,
                 PathUtils.Name(inputFile));
         });
     }

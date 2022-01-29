@@ -2,9 +2,15 @@
 
 ## [unreleased]
 
+### Added
+
+Bundler has new library mode where all exports from main file are preserved as ESM exports.
+
 ### Fixed
 
 AstSequence includes parens it fixes BobrilSourceInfo styleDef case.
+
+Bundling of exportStar TypeScript helper when included in source code.
 
 ## 1.1.0
 
