@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## 1.2.0
+
 ### Added
 
 Bundler has new library mode where all exports from main file are preserved as ESM exports.
