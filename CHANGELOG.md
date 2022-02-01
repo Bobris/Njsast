@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## 1.2.2
+
 ### Fixed
 
 Regression in bundling in special case.
