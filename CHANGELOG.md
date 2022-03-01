@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Fixed
+
+Object spread with rest expansion as arrow function parses without error.
+
 ## 1.2.2
 
 ### Fixed
