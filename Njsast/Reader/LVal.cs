@@ -77,6 +77,9 @@ public sealed partial class Parser
                 case AstDefaultAssign _:
                     break;
 
+                case AstHole _:
+                    break;
+
                 default:
                     Raise(node.Start, "Assigning to rvalue");
                     break;
