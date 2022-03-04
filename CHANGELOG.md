@@ -6,6 +6,8 @@
 
 Object spread with rest expansion as arrow function parses without error.
 
+Fixed regression in bundling in another special case.
+
 ## 1.2.2
 
 ### Fixed
