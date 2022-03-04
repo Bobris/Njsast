@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## 1.2.3
+
 ### Fixed
 
 Object spread with rest expansion as arrow function parses without error.
