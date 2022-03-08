@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Fixed
+
+Printing of `{ [key]: value }`
+
 ## 1.2.3
 
 ### Fixed
