@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Added
+
+Simple template string const eval.
+
 ### Fixed
 
 Printing of `{ [key]: value }`
