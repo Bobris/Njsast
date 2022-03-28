@@ -5,7 +5,7 @@
         return "Hello";
     }
     __export_$ = {
-        hello: hello
+        hello
     };
     __bbb.a = __export_$;
 }).call(this);

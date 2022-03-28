@@ -188,7 +188,7 @@
             while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
         } catch (error) {
             e = {
-                error: error
+                error
             };
         } finally {
             try {
@@ -312,7 +312,7 @@
         return a + b;
     }
     var __export_$ = {
-        fn: fn
+        fn
     };
     function fn_libb(a, b) {
         return a - b;

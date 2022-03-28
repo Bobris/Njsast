@@ -1,6 +1,6 @@
 (function(e) {
     "use strict";
-    var t, n, r, i, a, d, o, l, c, s, u, f, h, p, m, v, b, g, y, x, _, C, w, k, S, E, N, I, D, P, R, A, F, j, B, O, T, U, M, V, H, L, K, W = {}, X, Y, z, $, Q, q, G, Z, J, ee, te, ne, re, ie, ae, de, oe, le, ce, se, ue, fe, he, pe, me, ve, be, ge, ye, xe, _e, Ce, we, ke, Se, Ee, Ne, Ie, De, Pe, Re, Ae, Fe, je, Be, Oe, Te, Ue, Me, Ve, He, Le, Ke, We, Xe, Ye, ze, $e, Qe, qe, Ge, Ze, Je, et, tt, nt, rt, it, at, dt, ot, lt, ct, st, ut, ft, ht, pt, mt, vt, bt, gt, yt, xt, _t, Ct, wt, kt, St, Et, Nt, It, Dt, Pt = {}, Rt, At, Ft, jt, Bt, Ot, Tt, Ut;
+    var t, n, r, i, a, d, o, l, c, s, u, f, h, p, m, v, b, g, y, x, _, C, w, k, S, E, N, D, I, P, R, A, F, j, B, O, T, U, M, V, H, L, K, W = {}, X, Y, z, $, Q, q, G, Z, J, ee, te, ne, re, ie, ae, de, oe, le, ce, se, ue, fe, he, pe, me, ve, be, ge, ye, xe, _e, Ce, we, ke, Se, Ee, Ne, De, Ie, Pe, Re, Ae, Fe, je, Be, Oe, Te, Ue, Me, Ve, He, Le, Ke, We, Xe, Ye, ze, $e, Qe, qe, Ge, Ze, Je, et, tt, nt, rt, it, at, dt, ot, lt, ct, st, ut, ft, ht, pt, mt, vt, bt, gt, yt, xt, _t, Ct, wt, kt, St, Et, Nt, Dt, It, Pt = {}, Rt, At, Ft, jt, Bt, Ot, Tt, Ut;
     t = function(e) {
         var t = typeof Symbol === "function" && e[Symbol.iterator], n = 0;
         if (t) return t.call(e);
@@ -267,7 +267,7 @@
         if (Kt(n)) {
             r = n.length;
             if (r > 11 && n.substr(r - 11, 11) === " !important") {
-                e.setProperty(Di(t), n.substr(0, r - 11), "important");
+                e.setProperty(Ii(t), n.substr(0, r - 11), "important");
                 return;
             }
         }
@@ -1000,7 +1000,7 @@
         }
         return null;
     }
-    function In(t, n, r, i) {
+    function Dn(t, n, r, i) {
         var a, d;
         while (++n < r) {
             a = t[n];
@@ -1010,7 +1010,7 @@
         }
         return i;
     }
-    function Dn() {
+    function In() {
         var t, n, r;
         t = v.length;
         for (n = 0; n < t; n++) {
@@ -1023,7 +1023,7 @@
         v = [];
     }
     function Pn(e, t, n, r, i, a, d) {
-        t[n] = Sn(e, t[n], a, In(t, n, r, i), d);
+        t[n] = Sn(e, t[n], a, Dn(t, n, r, i), d);
     }
     function Rn(e, t, n) {
         var r, i, a;
@@ -1044,7 +1044,7 @@
     }
     function An(e, t, n, r, i) {
         var a, d, o;
-        a = In(e, t, n, r);
+        a = Dn(e, t, n, r);
         d = e[t];
         o = En(d);
         if (o != null && o !== a) {
@@ -1053,7 +1053,7 @@
     }
     function Fn(e, t, n, r, i, a, d) {
         var o, l, c;
-        o = In(t, n, r, i);
+        o = Dn(t, n, r, i);
         l = t[n];
         c = En(l);
         if (c != null && c !== o) {
@@ -1133,7 +1133,7 @@
                 return r;
             }
             while (s < o) {
-                r.splice(u, 0, pn(n[s], i, t, In(r, u - 1, l, a)));
+                r.splice(u, 0, pn(n[s], i, t, Dn(r, u - 1, l, a)));
                 u++;
                 c++;
                 l++;
@@ -1198,7 +1198,7 @@
             }
             C = f[g];
             if (C === e) {
-                r.splice(u, 0, pn(n[s], i, t, In(r, u - 1, l, a)));
+                r.splice(u, 0, pn(n[s], i, t, Dn(r, u - 1, l, a)));
                 x++;
                 s++;
                 u++;
@@ -1248,7 +1248,7 @@
         while (s < o) {
             g = n[s].key;
             if (g != null) {
-                r.splice(u, 0, pn(n[s], i, t, In(r, u - 1, l, a)));
+                r.splice(u, 0, pn(n[s], i, t, Dn(r, u - 1, l, a)));
                 c++;
                 l++;
                 x++;
@@ -1309,7 +1309,7 @@
                 s++;
                 u++;
             } else {
-                r.splice(s, 0, pn(n[s], i, t, In(r, s - 1, l, a)));
+                r.splice(s, 0, pn(n[s], i, t, Dn(r, s - 1, l, a)));
                 c++;
                 l++;
                 s++;
@@ -1323,11 +1323,11 @@
         }
         return r;
     }
-    I = !1;
-    D = window.requestAnimationFrame;
-    if (D) {
-        D(function(e) {
-            if (e === +e) I = !0;
+    D = !1;
+    I = window.requestAnimationFrame;
+    if (I) {
+        I(function(e) {
+            if (e === +e) D = !0;
         });
     }
     P = window.setTimeout;
@@ -1338,8 +1338,8 @@
     F = 0;
     function Un(e) {
         var t;
-        if (I) {
-            D(e);
+        if (D) {
+            I(e);
         } else {
             t = 50 / 3 + F - R();
             if (t < 0) t = 0;
@@ -1442,7 +1442,7 @@
             d = t[a];
             o = d.ctx;
             if (o != null && o[j] >= M) {
-                t[a] = Sn(d.orig, d, n, In(t, a, i, r), o[B], !0);
+                t[a] = Sn(d.orig, d, n, Dn(t, a, i, r), o[B], !0);
             } else if (l(d.children)) {
                 c = h;
                 s = p;
@@ -1452,7 +1452,7 @@
                 if (u != e) {
                     Kn(d.children, u, null);
                 } else {
-                    Kn(d.children, n, In(t, a, i, r));
+                    Kn(d.children, n, Dn(t, a, i, r));
                 }
                 un(d);
                 h = c;
@@ -1570,7 +1570,7 @@
                 a.c = d.children;
             }
             Ot = e;
-            Dn();
+            In();
             if (!q) break;
         }
         q = !1;
@@ -2403,7 +2403,7 @@
     _e = null;
     Ce = "onClick";
     we = "onDoubleClick";
-    function Ir(t, n) {
+    function Dr(t, n) {
         var r, i, a, d;
         if (_e == e) {
             return !1;
@@ -2419,7 +2419,7 @@
         Tt = a;
         return d;
     }
-    function Dr(t) {
+    function Ir(t) {
         var n, r;
         while (t) {
             n = t.style;
@@ -2446,7 +2446,7 @@
     }
     function Rr(e, t) {
         e.push({
-            t: t,
+            t,
             p: t.style.visibility
         });
         t.style.visibility = "hidden";
@@ -2463,7 +2463,7 @@
     function jr(e, t, n, r) {
         var i = [], a;
         a = n;
-        while (Dr(r)) {
+        while (Ir(r)) {
             Rr(i, a);
             a = document.elementFromPoint(e, t);
             r = Cn(a);
@@ -2476,7 +2476,7 @@
             var a, d, o, l, c;
             r = document.elementFromPoint(n.clientX, n.clientY);
             i = Cn(r);
-            if (Dr(i)) {
+            if (Ir(i)) {
                 a = jr(n.clientX, n.clientY, r, i);
                 r = a[0];
                 i = a[1];
@@ -2547,7 +2547,7 @@
             var a, d;
             r = document.elementFromPoint(n.clientX, n.clientY);
             i = Cn(r);
-            if (Dr(i)) {
+            if (Ir(i)) {
                 a = jr(n.clientX, n.clientY, r, i);
                 r = a[0];
                 i = a[1];
@@ -2601,13 +2601,13 @@
         (function(t) {
             var n = "on" + t;
             Mn("!" + t, 50, function(t, r, i) {
-                return Ir(n, t) || ar(i, n, t) != e;
+                return Dr(n, t) || ar(i, n, t) != e;
             });
         })(ke[Ee]);
     }
     Ne = Qt();
-    Ie = [];
-    De = -1;
+    De = [];
+    Ie = -1;
     Pe = 0;
     Re = 0;
     Ae = 0;
@@ -2621,7 +2621,7 @@
         n = document.elementFromPoint(t.x, t.y);
         r = _n(n);
         i = r.length == 0 ? e : r[r.length - 1];
-        if (Dr(i)) {
+        if (Ir(i)) {
             a = jr(t.x, t.y, n, i == e ? e : i);
             n = a[0];
             r = _n(n);
@@ -2667,8 +2667,8 @@
         return Object.keys(Ne).length === 0;
     }
     function Lr(e, t, n) {
-        if (De === -1 && Hr()) {
-            De = e.id;
+        if (Ie === -1 && Hr()) {
+            Ie = e.id;
             Pe = R();
             Re = e.x;
             Ae = e.y;
@@ -2676,7 +2676,7 @@
             Vr(e);
         }
         Ne[e.id] = e.type;
-        if (De !== e.id) {
+        if (Ie !== e.id) {
             Fe = !0;
         }
         return !1;
@@ -2687,7 +2687,7 @@
             Vn("!PointerUp", e, t, n);
             e.button = 0;
         }
-        if (De === e.id) {
+        if (Ie === e.id) {
             Vr(e);
             if (!Mr(Re, e.x, ve) || !Mr(Ae, e.y, ve)) Fe = !0;
         } else if (Hr()) {
@@ -2712,16 +2712,16 @@
     function Xr(e, t, n) {
         var r, i;
         delete Ne[e.id];
-        if (De == e.id) {
+        if (Ie == e.id) {
             Vr(e);
-            De = -1;
+            Ie = -1;
             if (e.type == 1 && !Fe) {
                 if (R() - Pe < be) {
                     Vn("!PointerCancel", e, t, n);
                     Wr(1);
-                    r = Ir(Ce, e) || ar(n, Ce, e) != null;
+                    r = Dr(Ce, e) || ar(n, Ce, e) != null;
                     i = en() ? ye : ge;
-                    Ie.push([ e.x, e.y, R() + i, r ? 1 : 0 ]);
+                    De.push([ e.x, e.y, R() + i, r ? 1 : 0 ]);
                     return r;
                 }
             } else if (Fe) {
@@ -2732,23 +2732,23 @@
     }
     function Yr(e, t, n) {
         delete Ne[e.id];
-        if (De == e.id) {
-            De = -1;
+        if (Ie == e.id) {
+            Ie = -1;
         }
         return !1;
     }
     function zr(e, t, n) {
         var r, i, a;
         r = R();
-        for (i = 0; i < Ie.length; i++) {
-            a = Ie[i];
+        for (i = 0; i < De.length; i++) {
+            a = De[i];
             if (a[2] < r) {
-                Ie.splice(i, 1);
+                De.splice(i, 1);
                 i--;
                 continue;
             }
             if (Mr(a[0], e.clientX, xe) && Mr(a[1], e.clientY, xe)) {
-                Ie.splice(i, 1);
+                De.splice(i, 1);
                 if (a[3]) sr(e);
                 return !0;
             }
@@ -2762,8 +2762,8 @@
     }
     function $r(e) {
         return function(t, n, r) {
-            if (De != t.id && !Hr()) return !1;
-            if (Ir(e, t) || ar(r, e, t)) {
+            if (Ie != t.id && !Hr()) return !1;
+            if (Dr(e, t) || ar(r, e, t)) {
                 return !0;
             }
             return !1;
@@ -2798,7 +2798,7 @@
                 count: n.detail || 1
             };
             if (e == we) d.count = 2;
-            if (Wr(d.count) || Ir(e, d) || ar(i, e, d)) {
+            if (Wr(d.count) || Dr(e, d) || ar(i, e, d)) {
                 sr(n);
                 return !0;
             }
@@ -2809,7 +2809,7 @@
         var n, r, i;
         n = document.elementFromPoint(e, t);
         r = Cn(n);
-        if (Dr(r)) {
+        if (Ir(r)) {
             i = jr(e, t, n, r);
             r = i[1];
         }
@@ -2840,7 +2840,7 @@
     Ve = ("onwheel" in document.createElement("div") ? "" : "mouse") + "wheel";
     function ei(e, t, n) {
         var r, i, a, d, o, l;
-        if (Dr(n)) {
+        if (Ir(n)) {
             r = jr(e.x, e.y, t, n);
             t = r[0];
             n = r[1];
@@ -2876,7 +2876,7 @@
             meta: e.metaKey || !1,
             count: e.detail
         };
-        if (Ir("onMouseWheel", l) || ar(n, "onMouseWheel", l)) {
+        if (Dr("onMouseWheel", l) || ar(n, "onMouseWheel", l)) {
             sr(e);
             return !0;
         }
@@ -2885,7 +2885,7 @@
     Ar(Ve, ei);
     He = function(e, t) {
         var n = en() ? ye : ge;
-        Ie.push([ e, t, R() + n, 1 ]);
+        De.push([ e, t, R() + n, 1 ]);
     };
     Le = e;
     Ke = e;
@@ -3478,7 +3478,7 @@
     pt = !1;
     mt = null;
     vt = 0;
-    bt = Wn(Ii);
+    bt = Wn(Di);
     gt = /\:|\ |\>/;
     function Si(e) {
         var t, n;
@@ -3545,17 +3545,17 @@
     _t = 1;
     Ct = !1;
     wt = !0;
-    function Ii() {
-        var r, i, a, d, o, l, c, s, u, f, h, p, m, v, b, g, y, x, _, C, w, k, S, E, N, I, D, P, R, A, F, j, B, O, T, U, M, V, H, L, K, W, X, Y, z, $;
+    function Di() {
+        var r, i, a, d, o, l, c, s, u, f, h, p, m, v, b, g, y, x, _, C, w, k, S, E, N, D, I, P, R, A, F, j, B, O, T, U, M, V, H, L, K, W, X, Y, z, $;
         if (Ct && yt != mr().dppx) {
             yt = mr().dppx;
-            r = It;
+            r = Dt;
             i = 1;
             if (yt > 1) {
-                for (a = 0; a < Dt.length; a++) {
-                    if (a == Dt.length - 1 || Dt[a][1] >= yt) {
-                        r = Dt[a][0];
-                        i = Dt[a][1];
+                for (a = 0; a < It.length; a++) {
+                    if (a == It.length - 1 || It[a][1] >= yt) {
+                        r = It[a][0];
+                        i = It[a][1];
                     } else break;
                 }
             }
@@ -3654,8 +3654,8 @@
             }
             for (z in dt) {
                 N = dt[z];
-                I = N.parent;
-                D = N.name;
+                D = N.parent;
+                I = N.name;
                 P = N.pseudo;
                 R = N.style;
                 if (Xt(R) && R.length === 0) {
@@ -3665,7 +3665,7 @@
                     N.realName = R;
                     continue;
                 }
-                N.realName = D;
+                N.realName = I;
                 F = Qt();
                 j = Qt();
                 Ni(e, j, e, P);
@@ -3678,11 +3678,11 @@
                 N.inlStyle = B;
                 tn(F);
                 O = Pi(F);
-                if (O.length > 0) w += (D == e ? I : Ei(I, D)) + " {" + O + "}\n";
+                if (O.length > 0) w += (I == e ? D : Ei(D, I)) + " {" + O + "}\n";
                 for ($ in j) {
                     S = j[$];
                     tn(S);
-                    w += (D == e ? I + ":" + $ : Ei(I, D + ":" + $)) + " {" + Pi(S) + "}\n";
+                    w += (I == e ? D + ":" + $ : Ei(D, I + ":" + $)) + " {" + Pi(S) + "}\n";
                 }
             }
             for (z in lt) {
@@ -3732,7 +3732,7 @@
     }
     kt = /([A-Z])/g;
     St = /^ms-/;
-    function Di(e) {
+    function Ii(e) {
         if (e === "cssFloat") return "float";
         return e.replace(kt, "-$1").toLowerCase().replace(St, "-ms-");
     }
@@ -3741,7 +3741,7 @@
         for (i in t) {
             r = t[i];
             if (r === e) continue;
-            n += Di(i) + ":" + (r === "" ? '""' : r) + ";";
+            n += Ii(i) + ":" + (r === "" ? '""' : r) + ";";
         }
         n = n.slice(0, -1);
         return n;
@@ -3824,8 +3824,8 @@
         });
         n.src = e;
     }
-    It = window["bobrilBPath"] || "bundle.png";
-    Dt = window["bobrilBPath2"] || [];
+    Dt = window["bobrilBPath"] || "bundle.png";
+    It = window["bobrilBPath2"] || [];
     Ri("html." + Ze + " *", {
         cursor: "inherit !important",
         userSelect: "none !important"

@@ -7,7 +7,7 @@
         return "World";
     }
     __export_$ = {
-        world: world
+        world
     };
     __bbb.c = __export_$;
 }).call(this);

@@ -6,7 +6,7 @@
             name: null,
             realName: null,
             parent: selector,
-            style: style,
+            style,
             pseudo: pseudoOrAttr
         };
     }

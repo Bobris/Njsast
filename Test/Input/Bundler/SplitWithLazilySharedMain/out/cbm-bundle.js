@@ -1,32 +1,32 @@
 var __bbb = {};
 
-(function(e) {
+(function(r) {
     "use strict";
-    var r, o;
-    r = function(r, o) {
+    var e, o;
+    e = function(e, o) {
         var t, n;
         t = __bbb;
         n = t[o];
-        if (n !== e) {
+        if (n !== r) {
             if (n instanceof Promise) return n;
             return Promise.resolve(n);
         }
-        n = new Promise(function(s, i) {
-            var u, b;
-            u = document.createElement("script");
-            b = setTimeout(p, 12e4);
+        n = new Promise(function(i, s) {
+            var b, u;
+            b = document.createElement("script");
+            u = setTimeout(p, 12e4);
             function p() {
-                u.onload = u.onerror = e;
-                clearTimeout(b);
+                b.onload = b.onerror = r;
+                clearTimeout(u);
                 if (t[o] === n) {
-                    t[o] = e;
-                    i(new Error("Fail to load " + r));
-                } else s(t[o]);
+                    t[o] = r;
+                    s(new Error("Fail to load " + e));
+                } else i(t[o]);
             }
-            u.charset = "utf-8";
-            u.onload = u.onerror = p;
-            u.src = r;
-            document.head.appendChild(u);
+            b.charset = "utf-8";
+            b.onload = b.onerror = p;
+            b.src = e;
+            document.head.appendChild(b);
         });
         return t[o] = n;
     };
@@ -41,8 +41,8 @@ var __bbb = {};
         unused: n
     };
     t();
-    r("cbm-lib.js", "a").then(function(e) {
-        console.log(e.hello());
+    e("cbm-lib.js", "a").then(function(r) {
+        console.log(r.hello());
     });
     __bbb.b = o;
 }).call(this);

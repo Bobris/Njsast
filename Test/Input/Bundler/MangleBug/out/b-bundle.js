@@ -188,7 +188,7 @@
             while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
         } catch (error) {
             e = {
-                error: error
+                error
             };
         } finally {
             try {
@@ -316,7 +316,7 @@
             name: null,
             realName: null,
             parent: selector,
-            style: style,
+            style,
             pseudo: pseudoOrAttr
         };
         rebuildStyles = true;

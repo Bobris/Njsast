@@ -3,11 +3,11 @@
     var e, r;
     e = __bbb.d;
     e();
-    function l() {
+    function t() {
         return "Hello";
     }
     r = {
-        hello: l
+        hello: t
     };
     __bbb.b = r;
 }).call(this);

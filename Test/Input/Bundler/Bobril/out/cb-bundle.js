@@ -24,7 +24,7 @@
             while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
         } catch (error) {
             e = {
-                error: error
+                error
             };
         } finally {
             try {
@@ -102,7 +102,7 @@
     function polyfill(prototype, method, value) {
         if (!prototype[method]) {
             Object.defineProperty(prototype, method, {
-                value: value,
+                value,
                 configurable: !0,
                 writable: !0
             });
@@ -1361,8 +1361,8 @@
         if (registryEvents == undefined) registryEvents = {};
         list = registryEvents[name] || [];
         list.push({
-            priority: priority,
-            callback: callback
+            priority,
+            callback
         });
         registryEvents[name] = list;
     }
@@ -1411,7 +1411,7 @@
         }
         if ("on" + eventName in window) el = window;
         el.addEventListener(eventName, enhanceEvent, isPassiveEventHandlerSupported ? {
-            capture: capture,
+            capture,
             passive: !1
         } : capture);
     }
@@ -2323,7 +2323,7 @@
         currentCtxWithEvents = prevCtx;
         bubble(node, "onInput", {
             target: node,
-            value: value
+            value
         });
     }
     function emitOnSelectionChange(node, start, end) {
@@ -2446,7 +2446,7 @@
     }
     function pushAndHide(hiddenEls, t) {
         hiddenEls.push({
-            t: t,
+            t,
             p: t.style.visibility
         });
         t.style.visibility = "hidden";
@@ -2495,10 +2495,10 @@
                 target: node,
                 id: ev.pointerId,
                 cancelable: normalizeCancelable(ev),
-                type: type,
+                type,
                 x: ev.clientX,
                 y: ev.clientY,
-                button: button,
+                button,
                 shift: ev.shiftKey,
                 ctrl: ev.ctrlKey,
                 alt: ev.altKey,
@@ -2789,7 +2789,7 @@
                 target: node,
                 x: ev.clientX,
                 y: ev.clientY,
-                button: button,
+                button,
                 cancelable: normalizeCancelable(ev),
                 shift: ev.shiftKey,
                 ctrl: ev.ctrlKey,
@@ -2864,12 +2864,12 @@
         }
         param = {
             target: node,
-            dx: dx,
-            dy: dy,
+            dx,
+            dy,
             x: ev.clientX,
             y: ev.clientY,
             cancelable: normalizeCancelable(ev),
-            button: button,
+            button,
             shift: ev.shiftKey,
             ctrl: ev.ctrlKey,
             alt: ev.altKey,
@@ -2952,7 +2952,7 @@
     function emitOnScroll(_ev, _target, node) {
         var info, i;
         info = {
-            node: node
+            node
         };
         for (i = 0; i < callbacks_bobril.length; i++) {
             callbacks_bobril[i](info);
@@ -3610,8 +3610,8 @@
                             percentHeight = 100 * iHeight / height;
                             stDef.style = {
                                 backgroundImage: "url(" + lastSpriteUrl + ")",
-                                width: width,
-                                height: height,
+                                width,
+                                height,
                                 backgroundPosition: 100 * sprite_1.left / (iWidth - width) + "% " + 100 * sprite_1.top / (iHeight - height) + "%",
                                 backgroundSize: percentWidth + "% " + percentHeight + "%"
                             };
@@ -3751,9 +3751,9 @@
             name: null,
             realName: null,
             parent: selector,
-            style: style,
+            style,
             inlStyle: undefined,
-            pseudo: pseudo
+            pseudo
         };
         invalidateStyles();
     }
@@ -3837,21 +3837,21 @@
                 data.children = children;
             }
             return {
-                data: data,
-                component: component
+                data,
+                component
             };
         };
     }
     if (!window.b) window.b = {
-        deref: deref,
-        getRoots: getRoots,
-        setInvalidate: setInvalidate,
-        invalidateStyles: invalidateStyles,
-        ignoreShouldChange: ignoreShouldChange,
-        setAfterFrame: setAfterFrame,
-        setBeforeFrame: setBeforeFrame,
+        deref,
+        getRoots,
+        setInvalidate,
+        invalidateStyles,
+        ignoreShouldChange,
+        setAfterFrame,
+        setBeforeFrame,
         getDnds: __export_getDnds,
-        setBeforeInit: setBeforeInit
+        setBeforeInit
     };
     (function(EventResult) {
         EventResult[EventResult["NotHandled"] = 0] = "NotHandled";

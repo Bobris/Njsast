@@ -188,7 +188,7 @@
             while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
         } catch (error) {
             e = {
-                error: error
+                error
             };
         } finally {
             try {
@@ -491,7 +491,7 @@
     function polyfill(prototype, method, value) {
         if (!prototype[method]) {
             Object.defineProperty(prototype, method, {
-                value: value,
+                value,
                 configurable: true,
                 writable: true
             });
@@ -1820,8 +1820,8 @@
         if (registryEvents == undefined) registryEvents = {};
         var list = registryEvents[name] || [];
         list.push({
-            priority: priority,
-            callback: callback
+            priority,
+            callback
         });
         registryEvents[name] = list;
     }
@@ -1867,7 +1867,7 @@
         }
         if ("on" + eventName in window) el = window;
         el.addEventListener(eventName, enhanceEvent, isPassiveEventHandlerSupported ? {
-            capture: capture,
+            capture,
             passive: false
         } : capture);
     }
@@ -2938,7 +2938,7 @@
         currentCtxWithEvents = prevCtx;
         bubble(node, "onInput", {
             target: node,
-            value: value
+            value
         });
     }
     function emitOnSelectionChange(node, start, end) {
@@ -3082,7 +3082,7 @@
     }
     function pushAndHide(hiddenEls, t) {
         hiddenEls.push({
-            t: t,
+            t,
             p: t.style.visibility
         });
         t.style.visibility = "hidden";
@@ -3131,10 +3131,10 @@
                 target: node,
                 id: ev.pointerId,
                 cancelable: normalizeCancelable(ev),
-                type: type,
+                type,
                 x: ev.clientX,
                 y: ev.clientY,
-                button: button,
+                button,
                 shift: ev.shiftKey,
                 ctrl: ev.ctrlKey,
                 alt: ev.altKey,
@@ -3433,7 +3433,7 @@
                 target: node,
                 x: ev.clientX,
                 y: ev.clientY,
-                button: button,
+                button,
                 cancelable: normalizeCancelable(ev),
                 shift: ev.shiftKey,
                 ctrl: ev.ctrlKey,
@@ -3505,12 +3505,12 @@
         }
         var param = {
             target: node,
-            dx: dx,
-            dy: dy,
+            dx,
+            dy,
             x: ev.clientX,
             y: ev.clientY,
             cancelable: normalizeCancelable(ev),
-            button: button,
+            button,
             shift: ev.shiftKey,
             ctrl: ev.ctrlKey,
             alt: ev.altKey,
@@ -3626,7 +3626,7 @@
     var callbacks_bobril = [];
     function emitOnScroll(_ev, _target, node) {
         var info = {
-            node: node
+            node
         };
         for (var i = 0; i < callbacks_bobril.length; i++) {
             callbacks_bobril[i](info);
@@ -4350,7 +4350,7 @@
             });
             compiledPatterns[pattern] = {
                 matcher: new RegExp("^" + source + "$", "i"),
-                paramNames: paramNames
+                paramNames
             };
         }
         return compiledPatterns[pattern];
@@ -4522,7 +4522,7 @@
                         res = {
                             key: undefined,
                             ref: undefined,
-                            data: data,
+                            data,
                             component: handler
                         };
                     }
@@ -4670,7 +4670,7 @@
         return {
             inApp: isInApp(name),
             type: RouteTransitionType_bobril.Push,
-            name: name,
+            name,
             params: params || {}
         };
     }
@@ -4678,7 +4678,7 @@
         return {
             inApp: isInApp(name),
             type: RouteTransitionType_bobril.Replace,
-            name: name,
+            name,
             params: params || {}
         };
     }
@@ -4689,7 +4689,7 @@
             type: RouteTransitionType_bobril.Pop,
             name: undefined,
             params: {},
-            distance: distance
+            distance
         };
     }
     var currentTransition = null;
@@ -4838,7 +4838,7 @@
     }
     function anchor(children, name, params) {
         return {
-            children: children,
+            children,
             component: {
                 id: "anchor",
                 postUpdateDom: function(ctx, me) {
@@ -5018,8 +5018,8 @@
                             var percentHeight = 100 * iHeight / height;
                             stDef.style = {
                                 backgroundImage: "url(" + lastSpriteUrl + ")",
-                                width: width,
-                                height: height,
+                                width,
+                                height,
                                 backgroundPosition: 100 * sprite_1.left / (iWidth - width) + "% " + 100 * sprite_1.top / (iHeight - height) + "%",
                                 backgroundSize: percentWidth + "% " + percentHeight + "%"
                             };
@@ -5231,7 +5231,7 @@
         nameHint = makeName(nameHint);
         allAnimations[nameHint] = {
             name: nameHint,
-            def: def
+            def
         };
         invalidateStyles();
         var res = function(params) {
@@ -5255,10 +5255,10 @@
         allStyles[nameHint] = {
             name: nameHint,
             realName: nameHint,
-            parent: parent,
-            style: style,
+            parent,
+            style,
             inlStyle: undefined,
-            pseudo: pseudo
+            pseudo
         };
         invalidateStyles();
         return nameHint;
@@ -5268,9 +5268,9 @@
             name: null,
             realName: null,
             parent: selector,
-            style: style,
+            style,
             inlStyle: undefined,
-            pseudo: pseudo
+            pseudo
         };
         invalidateStyles();
     }
@@ -5383,12 +5383,12 @@
         if (spDef) return spDef.styleId;
         var styleId = emptyStyleDef(url);
         spDef = {
-            styleId: styleId,
-            url: url,
-            width: width,
-            height: height,
-            left: left,
-            top: top
+            styleId,
+            url,
+            width,
+            height,
+            left,
+            top
         };
         if (isVarColor) {
             spDef.color = color;
@@ -5438,15 +5438,15 @@
         if (spDef) return spDef.styleId;
         hasBundledSprites = true;
         var styleId = styleDef({
-            width: width,
-            height: height
+            width,
+            height
         });
         spDef = {
-            styleId: styleId,
-            width: width,
-            height: height,
-            left: left,
-            top: top
+            styleId,
+            width,
+            height,
+            left,
+            top
         };
         bundledSprites[key] = spDef;
         wasSpriteUrlChanged = true;
@@ -5471,15 +5471,15 @@
         if (spDef) return spDef.styleId;
         hasBundledSprites = true;
         var styleId = styleDef({
-            width: width,
-            height: height
+            width,
+            height
         });
         spDef = {
-            styleId: styleId,
-            width: width,
-            height: height,
-            left: left,
-            top: top
+            styleId,
+            width,
+            height,
+            left,
+            top
         };
         spDef.color = color;
         spDef.lastColor = "";
@@ -5547,7 +5547,7 @@
             return content;
         }
         return {
-            key: key,
+            key,
             children: content
         };
     }
@@ -5572,7 +5572,7 @@
         }
         return style_bobril({
             tag: "div",
-            children: children
+            children
         }, styles);
     }
     function createVirtualComponent(component) {
@@ -5582,8 +5582,8 @@
                 data.children = children;
             }
             return {
-                data: data,
-                component: component
+                data,
+                component
             };
         };
     }
@@ -5709,15 +5709,15 @@
         }
     }
     if (!window.b) window.b = {
-        deref: deref,
-        getRoots: getRoots,
-        setInvalidate: setInvalidate,
-        invalidateStyles: invalidateStyles,
-        ignoreShouldChange: ignoreShouldChange,
-        setAfterFrame: setAfterFrame,
-        setBeforeFrame: setBeforeFrame,
+        deref,
+        getRoots,
+        setInvalidate,
+        invalidateStyles,
+        ignoreShouldChange,
+        setAfterFrame,
+        setBeforeFrame,
         getDnds: __export_getDnds,
-        setBeforeInit: setBeforeInit
+        setBeforeInit
     };
     function shallowEqual(a, b) {
         if (is(a, b)) {
@@ -5764,7 +5764,7 @@
                 tag: name
             } : {
                 tag: name,
-                children: children
+                children
             };
             if (props == undefined) {
                 return res;
@@ -5816,7 +5816,7 @@
             } else {
                 if (factory.length == 1) {
                     if (props == undefined) props = {
-                        children: children
+                        children
                     }; else props.children = children;
                     res_1 = factory(props);
                 } else {
@@ -5937,7 +5937,7 @@
         }
         return function(data) {
             return {
-                data: data,
+                data,
                 component: bobrilComponent
             };
         };
@@ -6004,7 +6004,7 @@
             id = "__b#" + allocateMethodId();
         }
         return {
-            id: id,
+            id,
             dv: defaultValue
         };
     }
@@ -6114,7 +6114,7 @@
                     var value = fn_1.bind(this);
                     definingProperty_1 = true;
                     Object.defineProperty(this, propertyKey, {
-                        value: value,
+                        value,
                         configurable: true,
                         writable: true
                     });

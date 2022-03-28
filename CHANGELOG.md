@@ -10,6 +10,8 @@ Simple template string const eval.
 
 Printing of `{ [key]: value }`
 
+Wrong optimization with destructuring to const.
+
 ## 1.2.3
 
 ### Fixed

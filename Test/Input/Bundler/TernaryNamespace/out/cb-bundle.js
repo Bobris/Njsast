@@ -5,7 +5,7 @@
         return a + b;
     }
     __export_$ = {
-        fn: fn
+        fn
     };
     function fn_libb(a, b) {
         return a - b;

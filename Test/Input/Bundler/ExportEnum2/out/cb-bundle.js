@@ -10,7 +10,7 @@
     }
     __export_$ = {
         Opts: __export_Opts,
-        ok: ok
+        ok
     };
     if (__export_$ != null) ok();
 }).call(this);

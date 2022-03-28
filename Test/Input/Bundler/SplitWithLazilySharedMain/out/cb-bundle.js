@@ -37,8 +37,8 @@ var __bbb = {};
         return "unused";
     }
     __export_$ = {
-        shared: shared,
-        unused: unused
+        shared,
+        unused
     };
     shared();
     __import("cb-lib.js", "a").then(function(lib) {

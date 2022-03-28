@@ -1,11 +1,11 @@
 (function(_) {
     "use strict";
     var e;
-    function l() {
+    function t() {
         return "Hello";
     }
     e = {
-        hello: l
+        hello: t
     };
     __bbb.a = e;
 }).call(this);

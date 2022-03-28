@@ -66,7 +66,8 @@ public class BundlerTest
             bundler.PartToMainFilesMap =
                 new Dictionary<string, IReadOnlyList<string>> {{"bundle", new[] {"index.js"}}};
             bundler.GlobalDefines = new Dictionary<string, object> {{"DEBUG", false}};
-            if (libraryMode) bundler.OutputOptions.Ecma = 10;
+            bundler.OutputOptions.Ecma = libraryMode ? 10 : 5;
+            bundler.OutputOptions.Shorthand = true;
         }
     }
 

@@ -188,7 +188,7 @@
             while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
         } catch (error) {
             e = {
-                error: error
+                error
             };
         } finally {
             try {
@@ -339,7 +339,7 @@
         return "Hello";
     }
     var __export_$ = {
-        hello: hello
+        hello
     };
     __bbb.b = __export_$;
 }.call(this);

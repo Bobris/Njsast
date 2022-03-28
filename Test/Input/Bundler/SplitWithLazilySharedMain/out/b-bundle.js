@@ -190,7 +190,7 @@ var __bbb = {};
             while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
         } catch (error) {
             e = {
-                error: error
+                error
             };
         } finally {
             try {
@@ -342,8 +342,8 @@ var __bbb = {};
         return "unused";
     }
     var __export_$ = {
-        shared: shared,
-        unused: unused
+        shared,
+        unused
     };
     shared();
     __import("b-lib.js", "a").then(function(lib) {
