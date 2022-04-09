@@ -8,6 +8,8 @@ Simple template string const eval.
 
 ### Fixed
 
+Arrow with await `async v => await v`.
+
 Printing of `{ [key]: value }`
 
 Wrong optimization with destructuring to const.
