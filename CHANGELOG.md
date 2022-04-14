@@ -14,6 +14,8 @@ Printing of `{ [key]: value }`
 
 Wrong optimization with destructuring to const.
 
+Bundling of `import * as x from "x"; x;`
+
 ## 1.2.3
 
 ### Fixed
