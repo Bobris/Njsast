@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Njsast.Bundler;
 using Njsast.Reader;
 using Xunit;
@@ -13,7 +14,7 @@ public class BundlerHelpersTest
         main.FigureOutScope();
         var second = new Parser(new(), "var a=3,c=a+1;").Parse();
         second.FigureOutScope();
-        BundlerHelpers.AppendToplevelWithRename(main,second,"s");
+        BundlerHelpers.AppendToplevelWithRename(main,second, "s", new());
         Assert.Equal("var a=1,b=2;var a_s=3,c=a_s+1", main.PrintToString());
     }
 }

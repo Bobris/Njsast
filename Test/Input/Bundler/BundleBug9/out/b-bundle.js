@@ -308,17 +308,12 @@
         return value;
     };
     var DEBUG = false;
-    function fun_m() {
-        console.log("fun");
+    function fn_m(a, b) {
+        return a + b;
     }
-    var __export_ns;
-    var ns_lib2;
-    (function(ns) {
-        function fun() {
-            fun_m();
-        }
-        ns.fun = fun;
-    })(ns_lib2 = __export_ns || (__export_ns = {}));
-    __export_ns.fun();
+    if (true) {
+        const fn = fn_m(1, 2);
+        console.log(fn);
+    }
 }.call(this);
 

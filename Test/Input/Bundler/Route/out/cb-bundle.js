@@ -4,12 +4,12 @@
     function route(param) {
         return param;
     }
-    function link_index(name) {
+    function link_m(name) {
         return name;
     }
     route("KO");
     function doit() {
-        var link = link_index("hello");
+        var link = link_m("hello");
         console.log(link);
     }
     doit();

@@ -16,6 +16,8 @@ Wrong optimization with destructuring to const.
 
 Bundling of `import * as x from "x"; x;`
 
+Symbol renaming in Bundler (again).
+
 ## 1.2.3
 
 ### Fixed
