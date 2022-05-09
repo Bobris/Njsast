@@ -1,21 +1,3 @@
-if (typeof module !== "undefined" && module.exports) {
-    var window = window || {};
-    var phoenix = phoenix || {};
-    phoenix.json = phoenix.json || {};
-    module.exports = phoenix.json;
-}
-
-(function(p, s) {
-    "use strict";
-    window.phoenix = window.phoenix || {};
-    phoenix.json = phoenix.json || {};
-    phoenix.json.X = false;
-    p = phoenix.json;
-    p.doIt = function() {
-        console.log("Ok");
-    };
-})();
-
 !function(undefined) {
     "use strict";
     var __extendStatics = Object.setPrototypeOf || {
@@ -326,9 +308,21 @@ if (typeof module !== "undefined" && module.exports) {
         return value;
     };
     var DEBUG = false;
-    function hello() {
-        phoenix.json.doIt();
+    var __export_kType = Symbol.for("Type");
+    var _a;
+    const kError = Symbol("kError");
+    const kNext = Symbol("kNext");
+    class A {
+        constructor() {
+            this[_a] = "B";
+        }
+        [(_a = __export_kType, kError)]() {
+            throw new Error();
+        }
+        [kNext]() {
+            console.log("next");
+        }
     }
-    hello();
+    new A();
 }.call(this);
 

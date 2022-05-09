@@ -1,3 +1,5 @@
+console.log("I am dependency");
+
 !function(undefined) {
     "use strict";
     var __extendStatics = Object.setPrototypeOf || {
@@ -308,7 +310,6 @@
         return value;
     };
     var DEBUG = false;
-    console.log("I am dependency");
     function hello() {
         return "Hello";
     }

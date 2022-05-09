@@ -1,7 +1,6 @@
-(function(e) {
+var converters = function() {
     "use strict";
-    var t;
-    t = window.converters = window.converters || {};
+    window.converters = window.converters || {};
     (function() {
         var e = window.converters;
         e.statics = e.statics || {};
@@ -17,13 +16,17 @@
             WithReferences: "WithReferences"
         };
     })();
-    t.doIt = function() {
+    converters.doIt = function() {
         console.log("Ok");
     };
-    window.converters = t;
-    function r() {
+    return converters;
+}();
+
+(function(e) {
+    "use strict";
+    function t() {
         converters.doIt();
     }
-    r();
+    t();
 }).call(this);
 

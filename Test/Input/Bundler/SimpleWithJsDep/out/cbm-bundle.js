@@ -1,6 +1,7 @@
+console.log("I am dependency");
+
 (function(l) {
     "use strict";
-    console.log("I am dependency");
     function e() {
         return "Hello";
     }

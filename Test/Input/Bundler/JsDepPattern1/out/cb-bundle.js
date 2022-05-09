@@ -1,7 +1,6 @@
-(function(undefined) {
+var converters = function() {
     "use strict";
-    var converters_dep;
-    converters_dep = window.converters = window.converters || {};
+    window.converters = window.converters || {};
     (function() {
         var converters = window.converters;
         converters.statics = converters.statics || {};
@@ -17,10 +16,14 @@
             WithReferences: "WithReferences"
         };
     })();
-    converters_dep.doIt = function() {
+    converters.doIt = function() {
         console.log("Ok");
     };
-    window.converters = converters_dep;
+    return converters;
+}();
+
+(function(undefined) {
+    "use strict";
     function hello() {
         converters.doIt();
     }
