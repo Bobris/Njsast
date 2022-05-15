@@ -1,1 +1,1 @@
-(function(n){"use strict";function i(){console.log("ok")}i()}).call(this)
+(()=>{function o(){console.log("ok")}o()})()

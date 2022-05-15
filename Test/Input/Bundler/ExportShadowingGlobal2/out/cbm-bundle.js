@@ -1,22 +1,21 @@
-(function(o) {
-    "use strict";
-    var l, t;
-    function e(o) {
+(() => {
+    var o, l;
+    function t(o) {
         console.log("function Url:" + o);
     }
-    e.hello = function() {
+    t.hello = function() {
         console.log("Hello");
     };
-    l = e;
-    t = {
+    o = t;
+    l = {
         test: function() {
-            console.log(new l(1));
+            console.log(new o(1));
         }
     };
-    t.test();
-    function n() {
+    l.test();
+    function e() {
         URL.createObjectURL("");
     }
-    n();
-}).call(this);
+    e();
+})();
 

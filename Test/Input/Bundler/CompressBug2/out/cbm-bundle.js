@@ -1,10 +1,9 @@
-(function(n) {
-    "use strict";
-    var t;
-    t = Date.now;
-    function _() {
-        t();
+(() => {
+    var _;
+    _ = Date.now;
+    function o() {
+        _();
     }
-    _();
-}).call(this);
+    o();
+})();
 

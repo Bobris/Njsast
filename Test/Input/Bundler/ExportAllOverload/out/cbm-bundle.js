@@ -1,8 +1,7 @@
-(function(n) {
-    "use strict";
-    function i() {
+(() => {
+    function n() {
         return "OK";
     }
-    console.log(i());
-}).call(this);
+    console.log(n());
+})();
 

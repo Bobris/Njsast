@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -314,5 +313,5 @@
     }
     setDdd(function() {});
     if (__export_ddd) __export_ddd();
-}.call(this);
+})();
 

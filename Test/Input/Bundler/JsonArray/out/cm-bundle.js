@@ -1,1 +1,1 @@
-(function(n){"use strict";var t=[1,2,3];console.log(t[0])}).call(this)
+(()=>{var o=[1,2,3];console.log(o[0])})()

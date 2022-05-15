@@ -1,1 +1,1 @@
-(function(t){"use strict";function i(t){const{isActive:i=!0}=t;if(!i){console.log("Should not be printed")}}i({})}).call(this)
+(()=>{function t(t){const{isActive:o=!0}=t;if(!o){console.log("Should not be printed")}}t({})})()

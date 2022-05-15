@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var allStyles = {}, globalCounter = 0;
     function selectorStyleDef(selector, style, pseudoOrAttr) {
         allStyles["b-" + globalCounter++] = {
@@ -13,5 +12,5 @@
     selectorStyleDef("*", {
         color: "blue"
     });
-}).call(this);
+})();
 

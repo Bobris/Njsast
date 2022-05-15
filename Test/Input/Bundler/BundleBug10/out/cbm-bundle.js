@@ -1,20 +1,19 @@
-(function(r) {
-    "use strict";
-    var o, t;
-    o = Symbol.for("Type");
+(() => {
+    var r, o;
+    r = Symbol.for("Type");
     const e = Symbol("kError");
-    const _ = Symbol("kNext");
+    const t = Symbol("kNext");
     class A {
         constructor() {
-            this[t] = "B";
+            this[o] = "B";
         }
-        [(t = o, e)]() {
+        [(o = r, e)]() {
             throw new Error();
         }
-        [_]() {
+        [t]() {
             console.log("next");
         }
     }
     new A();
-}).call(this);
+})();
 

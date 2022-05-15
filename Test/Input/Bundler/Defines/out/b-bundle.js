@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -312,5 +311,5 @@
         if (DEBUG && !shouldBeTrue) throw Error(messageIfFalse || "assertion failed");
     }
     assert(false, "bad");
-}.call(this);
+})();
 

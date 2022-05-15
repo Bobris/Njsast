@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(undefined => {
     var __values, __read, hasPostInitDom, hasPostUpdateDom, hasPostUpdateDomEverytime, hasEvents, hasCaptureEvents, __export_isArray, isArrayVdom, emptyComponent, hOP, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, portalMap, hasNativeRaf, nativeRaf, setTimeout, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, frameCounter, regEvents, isPassiveEventHandlerSupported, options_bobril, listeningEventDeepness, __export_RenderPhase = {}, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events_bobril, i_bobril, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name_bobril, j_bobril, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack_bobril, focusChangeRunning, callbacks_bobril, lastDndId, dnds, systemDnd, rootId_bobril, DndCtx, draggingStyle, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, allAnimations, allMediaQueries, bundledSprites, dynamicSprites, bundledDynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, globalCounter, chainedBeforeFrame, cssSubRuleDelimiter, lastDppx, lastSpriteUrl, lastSpriteDppx, hasBundledSprites, wasSpriteUrlChanged, uppercasePattern, msPattern, rgbaRegex, imagesWithCredentials, bundlePath, bundlePath2, __export_EventResult = {}, effectCallbacks, EventsHook_bobril, CaptureEventsHook_bobril, currentCtx, registryEvents, rootIds_bobril, currentCtxWithEvents, weirdPortrait;
     __values = function(o) {
         var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
@@ -3915,5 +3914,5 @@
     init(function() {
         return "hello";
     });
-}).call(this);
+})();
 

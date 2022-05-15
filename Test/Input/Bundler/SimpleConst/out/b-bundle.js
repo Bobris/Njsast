@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -310,5 +309,5 @@
     var DEBUG = false;
     var __export_a = 42;
     console.log(__export_a);
-}.call(this);
+})();
 

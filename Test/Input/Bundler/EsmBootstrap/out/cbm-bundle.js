@@ -1,12 +1,11 @@
-(function(e) {
-    "use strict";
-    var s;
-    s = function() {
+(() => {
+    var e;
+    e = function() {
         function e() {
             console.log("Ok");
         }
         return e;
     }();
-    new s();
-}).call(this);
+    new e();
+})();
 

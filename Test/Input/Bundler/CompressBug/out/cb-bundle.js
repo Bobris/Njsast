@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(undefined => {
     var uppercasePattern = /([A-Z])/g, msPattern = /^ms-/;
     function hyphenateStyle(s) {
         if (s === "cssFloat") return "float";
@@ -19,5 +18,5 @@
         a: 1,
         b: 2
     }));
-}).call(this);
+})();
 

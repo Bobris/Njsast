@@ -1,1 +1,1 @@
-(function(n){"use strict";var t;t=Date.now;function _(){t()}_()}).call(this)
+(()=>{var _;_=Date.now;function o(){_()}o()})()

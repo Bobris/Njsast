@@ -1,10 +1,9 @@
-(function(r) {
-    "use strict";
-    var n;
-    function _(r, n) {
-        return r + n;
+(() => {
+    var _;
+    function r(_, r) {
+        return _ + r;
     }
-    n = _;
-    console.log(n(1, 2));
-}).call(this);
+    _ = r;
+    console.log(_(1, 2));
+})();
 

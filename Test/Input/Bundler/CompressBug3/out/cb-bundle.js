@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     function test(info) {
         const {isActive = !0} = info;
         if (!isActive) {
@@ -7,5 +6,5 @@
         }
     }
     test({});
-}).call(this);
+})();
 

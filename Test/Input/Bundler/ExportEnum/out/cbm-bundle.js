@@ -1,12 +1,11 @@
-(function(o) {
-    "use strict";
-    var _ = {};
+(() => {
+    var o = {};
     (function(o) {
         o[o["A"] = 0] = "A";
         o[o["B"] = 1] = "B";
-    })(_);
+    })(o);
     console.log(0);
-    console.log(_[1]);
+    console.log(o[1]);
     console.log("No");
-}).call(this);
+})();
 

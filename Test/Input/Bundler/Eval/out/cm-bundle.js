@@ -1,1 +1,1 @@
-(function(n){"use strict";function e(){eval("return 1")}function t(n){return n+e()}console.log(t("a"))}).call(this)
+(()=>{function n(){eval("return 1")}function e(e){return e+n()}console.log(e("a"))})()

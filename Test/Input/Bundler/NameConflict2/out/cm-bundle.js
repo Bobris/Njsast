@@ -1,1 +1,1 @@
-(function(_){"use strict";var t=1,e=t+2;console.log(e)}).call(this)
+(()=>{var _=1,e=_+2;console.log(e)})()

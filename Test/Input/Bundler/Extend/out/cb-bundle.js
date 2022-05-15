@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var __extendStatics, __extends, Base_lib, Main_index;
     __extendStatics = Object.setPrototypeOf || {
         __proto__: []
@@ -34,5 +33,5 @@
         return Main;
     }(Base_lib);
     new Main_index().hello();
-}).call(this);
+})();
 

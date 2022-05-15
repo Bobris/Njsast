@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     function link_m(name) {
         return name;
     }
@@ -8,5 +7,5 @@
         console.log(link);
     }
     doit();
-}).call(this);
+})();
 

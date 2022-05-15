@@ -22,8 +22,7 @@ var converters = function() {
     return converters;
 }();
 
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -336,5 +335,5 @@ var converters = function() {
         converters.doIt();
     }
     hello();
-}.call(this);
+})();
 

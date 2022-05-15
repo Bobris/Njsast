@@ -1,1 +1,1 @@
-(function(n){"use strict";function i(n){return n}function l(){var n=i("hello");console.log(n)}l()}).call(this)
+(()=>{function n(n){return n}function o(){var o=n("hello");console.log(o)}o()})()

@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var global, exports, exports_wrapper, exports_lib;
     global = window;
     exports = {
@@ -25,5 +24,5 @@
         setTimeout(window.test, 1);
     }
     exports_lib.doIt("Ok");
-}).call(this);
+})();
 

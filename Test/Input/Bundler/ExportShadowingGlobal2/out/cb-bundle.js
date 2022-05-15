@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var exports_bobril, exports_lib2;
     function Url(a) {
         console.log("function Url:" + a);
@@ -18,5 +17,5 @@
         URL.createObjectURL("");
     }
     callURL();
-}).call(this);
+})();
 

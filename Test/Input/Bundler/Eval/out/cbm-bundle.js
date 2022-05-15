@@ -1,11 +1,10 @@
-(function(n) {
-    "use strict";
-    function e() {
+(() => {
+    function n() {
         eval("return 1");
     }
-    function t(n) {
-        return n + e();
+    function e(e) {
+        return e + n();
     }
-    console.log(t("a"));
-}).call(this);
+    console.log(e("a"));
+})();
 

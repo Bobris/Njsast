@@ -1,1 +1,1 @@
-(function(e){"use strict";var t,n,i;t=function(){function e(){}e.prototype.clear=function(){n=new e};return e}();n=new t;i=new t;i.clear();n.clear()}).call(this)
+(()=>{var e,t,n;e=function(){function e(){}e.prototype.clear=function(){t=new e};return e}();t=new e;n=new e;n.clear();t.clear()})()

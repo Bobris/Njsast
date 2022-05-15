@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var __export_isArray, isArray2;
     __export_isArray = Array.isArray;
     isArray2 = __export_isArray;
@@ -15,5 +14,5 @@
     });
     console.log(__export_isArray([]));
     test();
-}).call(this);
+})();
 

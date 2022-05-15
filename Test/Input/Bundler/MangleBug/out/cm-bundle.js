@@ -1,1 +1,1 @@
-(function(e){"use strict";var l={},t=0;function r(e,r,o){l["b-"+t++]={name:null,realName:null,parent:e,style:r,pseudo:o}}r("*",{color:"blue"})}).call(this)
+(()=>{var e={},l=0;function t(t,r,o){e["b-"+l++]={name:null,realName:null,parent:t,style:r,pseudo:o}}t("*",{color:"blue"})})()

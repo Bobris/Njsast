@@ -22,11 +22,10 @@ var converters = function() {
     return converters;
 }();
 
-(function(e) {
-    "use strict";
-    function t() {
+(() => {
+    function e() {
         converters.doIt();
     }
-    t();
-}).call(this);
+    e();
+})();
 

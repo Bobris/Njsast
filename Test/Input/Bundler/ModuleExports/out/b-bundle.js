@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -332,5 +331,5 @@
         setTimeout(window.test, 1);
     }
     exports_lib.doIt("Ok");
-}.call(this);
+})();
 

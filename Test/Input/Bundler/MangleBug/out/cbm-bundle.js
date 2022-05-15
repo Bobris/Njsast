@@ -1,17 +1,16 @@
-(function(e) {
-    "use strict";
-    var l = {}, t = 0;
-    function r(e, r, o) {
-        l["b-" + t++] = {
+(() => {
+    var e = {}, l = 0;
+    function t(t, r, o) {
+        e["b-" + l++] = {
             name: null,
             realName: null,
-            parent: e,
+            parent: t,
             style: r,
             pseudo: o
         };
     }
-    r("*", {
+    t("*", {
         color: "blue"
     });
-}).call(this);
+})();
 

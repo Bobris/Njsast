@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var Image_image;
     function loadImage() {
         return new Image();
@@ -13,5 +12,5 @@
     URL.createObjectURL("");
     new Image_image();
     loadImage();
-}).call(this);
+})();
 

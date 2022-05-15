@@ -1,19 +1,18 @@
-(function(r) {
-    "use strict";
-    var s, t;
-    s = Array.isArray;
-    t = s;
-    function a(r) {
-        t = r;
+(() => {
+    var r, a;
+    r = Array.isArray;
+    a = r;
+    function _(r) {
+        a = r;
     }
-    function o() {
-        console.log(s([]));
-        console.log(t([]));
+    function s() {
+        console.log(r([]));
+        console.log(a([]));
     }
-    a(function(r) {
-        return s(r);
+    _(function(a) {
+        return r(a);
     });
-    console.log(s([]));
-    o();
-}).call(this);
+    console.log(r([]));
+    s();
+})();
 

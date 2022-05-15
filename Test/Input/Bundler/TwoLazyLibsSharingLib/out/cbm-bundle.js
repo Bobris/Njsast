@@ -1,34 +1,33 @@
 var __bbb = {};
 
-(function(r) {
-    "use strict";
+(r => {
     var e;
-    e = function(e, t) {
-        var o, n;
-        o = __bbb;
-        n = o[t];
+    e = function(e, o) {
+        var t, n;
+        t = __bbb;
+        n = t[o];
         if (n !== r) {
             if (n instanceof Promise) return n;
             return Promise.resolve(n);
         }
-        n = new Promise(function(i, s) {
-            var b, c;
-            b = document.createElement("script");
+        n = new Promise(function(i, b) {
+            var s, c;
+            s = document.createElement("script");
             c = setTimeout(p, 12e4);
             function p() {
-                b.onload = b.onerror = r;
+                s.onload = s.onerror = r;
                 clearTimeout(c);
-                if (o[t] === n) {
-                    o[t] = r;
-                    s(new Error("Fail to load " + e));
-                } else i(o[t]);
+                if (t[o] === n) {
+                    t[o] = r;
+                    b(new Error("Fail to load " + e));
+                } else i(t[o]);
             }
-            b.charset = "utf-8";
-            b.onload = b.onerror = p;
-            b.src = e;
-            document.head.appendChild(b);
+            s.charset = "utf-8";
+            s.onload = s.onerror = p;
+            s.src = e;
+            document.head.appendChild(s);
         });
-        return o[t] = n;
+        return t[o] = n;
     };
     e("cbm-shared.js", "a").then(function() {
         return e("cbm-lib.js", "b");
@@ -40,5 +39,5 @@ var __bbb = {};
     }).then(function(r) {
         console.log(r.world());
     });
-}).call(this);
+})();
 

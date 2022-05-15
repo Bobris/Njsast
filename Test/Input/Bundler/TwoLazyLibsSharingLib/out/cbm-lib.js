@@ -1,14 +1,13 @@
-(function(_) {
-    "use strict";
-    var e, r;
-    e = __bbb.d;
-    e();
-    function t() {
+(() => {
+    var _, e;
+    _ = __bbb.d;
+    _();
+    function r() {
         return "Hello";
     }
-    r = {
-        hello: t
+    e = {
+        hello: r
     };
-    __bbb.b = r;
-}).call(this);
+    __bbb.b = e;
+})();
 

@@ -16,8 +16,7 @@ if (typeof module !== "undefined" && module.exports) {
     };
 })();
 
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -330,5 +329,5 @@ if (typeof module !== "undefined" && module.exports) {
         phoenix.json.doIt();
     }
     hello();
-}.call(this);
+})();
 

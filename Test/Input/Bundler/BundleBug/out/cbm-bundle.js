@@ -1,11 +1,10 @@
-(function(d) {
-    "use strict";
+(d => {
     var _;
     _ = d;
-    function t(d) {
+    function e(d) {
         _ = d;
     }
-    t(function() {});
+    e(function() {});
     if (_) _();
-}).call(this);
+})();
 

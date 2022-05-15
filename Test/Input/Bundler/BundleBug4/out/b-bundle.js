@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -320,5 +319,5 @@
         ns.fun = fun;
     })(ns_lib2 = __export_ns || (__export_ns = {}));
     __export_ns.fun();
-}.call(this);
+})();
 

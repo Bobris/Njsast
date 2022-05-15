@@ -1,7 +1,6 @@
 var __bbb = {};
 
-(function(undefined) {
-    "use strict";
+(undefined => {
     var __import;
     __import = function(url, prop) {
         var bbb, res;
@@ -33,5 +32,5 @@ var __bbb = {};
     __import("cb-lib.js", "a").then(function(lib) {
         console.log(lib.hello());
     });
-}).call(this);
+})();
 

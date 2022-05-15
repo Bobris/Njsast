@@ -1,12 +1,11 @@
-(function(n) {
-    "use strict";
-    var i;
-    function u(n) {
-        i = n;
+(() => {
+    var e;
+    function t(t) {
+        e = t;
     }
-    function e() {
+    function u() {
         var a, b, c, d, e, f, g, h, t, n, u;
-        a = i;
+        a = e;
         b = a;
         c = b;
         d = c;
@@ -19,7 +18,7 @@
         u = n;
         return eval("return " + u);
     }
-    u("1");
-    console.log(e());
-}).call(this);
+    t("1");
+    console.log(u());
+})();
 

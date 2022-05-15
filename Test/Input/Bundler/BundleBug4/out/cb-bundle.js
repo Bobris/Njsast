@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var __export_ns = {};
     function fun_m() {
         console.log("fun");
@@ -11,5 +10,5 @@
         ns.fun = fun;
     })(__export_ns);
     __export_ns.fun();
-}).call(this);
+})();
 

@@ -1,7 +1,6 @@
-(function(_) {
-    "use strict";
-    var o, n, e, f, r, t, x, p;
-    function l() {
+(() => {
+    var _, o, n, f, e, r, t, x;
+    function p() {
         return {
             f1: function() {
                 return "a";
@@ -14,13 +13,13 @@
             }
         };
     }
-    o = (x = l(), x.f1), n = x.f2, e = x.f3;
-    f = (p = l(), p.f1), r = p.f2, t = p.f3;
+    _ = (t = p(), t.f1), o = t.f2, n = t.f3;
+    f = (x = p(), x.f1), e = x.f2, r = x.f3;
+    console.log(_());
     console.log(o());
     console.log(n());
-    console.log(e());
     console.log(f());
+    console.log(e());
     console.log(r());
-    console.log(t());
-}).call(this);
+})();
 

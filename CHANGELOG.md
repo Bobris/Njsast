@@ -2,9 +2,15 @@
 
 ## [unreleased]
 
+### Changed
+
+Default OutputOptions.Ecma is 6.
+
 ### Added
 
 Simple template string const eval.
+
+Bundler in es6+ mode uses shorter Arrow IIFE pattern when wrapping whole body.
 
 ### Fixed
 

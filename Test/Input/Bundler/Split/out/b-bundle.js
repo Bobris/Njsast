@@ -1,7 +1,6 @@
 var __bbb = {};
 
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -338,5 +337,5 @@ var __bbb = {};
     __import("b-lib.js", "a").then(function(lib) {
         console.log(lib.hello());
     });
-}.call(this);
+})();
 

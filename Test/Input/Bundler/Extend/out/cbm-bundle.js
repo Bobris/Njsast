@@ -1,7 +1,6 @@
-(function(n) {
-    "use strict";
-    var t, e, o, i;
-    t = Object.setPrototypeOf || {
+(() => {
+    var n, t, e, o;
+    n = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(n, t) {
         n.__proto__ = t;
@@ -9,30 +8,30 @@
         var e;
         for (e in t) if (t.hasOwnProperty(e)) n[e] = t[e];
     };
-    e = function(n, e) {
-        t(n, e);
+    t = function(t, e) {
+        n(t, e);
         function o() {
-            this.constructor = n;
+            this.constructor = t;
         }
-        n.prototype = e === null ? Object.create(e) : (o.prototype = e.prototype, new o());
+        t.prototype = e === null ? Object.create(e) : (o.prototype = e.prototype, new o());
     };
-    o = function() {
+    e = function() {
         function n() {}
         n.prototype.hello = function() {
             console.log("Base");
         };
         return n;
     }();
-    i = function(n) {
-        e(t, n);
-        function t() {
+    o = function(n) {
+        t(e, n);
+        function e() {
             return n !== null && n.apply(this, arguments) || this;
         }
-        t.prototype.hello = function() {
+        e.prototype.hello = function() {
             console.log("Main");
         };
-        return t;
-    }(o);
-    new i().hello();
-}).call(this);
+        return e;
+    }(e);
+    new o().hello();
+})();
 

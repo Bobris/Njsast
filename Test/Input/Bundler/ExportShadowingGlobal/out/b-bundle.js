@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -321,5 +320,5 @@
     URL.createObjectURL("");
     new Image_image();
     loadImage();
-}.call(this);
+})();
 

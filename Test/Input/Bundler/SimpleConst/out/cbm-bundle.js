@@ -1,6 +1,5 @@
-(function(_) {
-    "use strict";
-    var t = 42;
-    console.log(t);
-}).call(this);
+(() => {
+    var _ = 42;
+    console.log(_);
+})();
 

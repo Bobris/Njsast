@@ -1,7 +1,6 @@
 console.log("I am dependency");
 
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -314,5 +313,5 @@ console.log("I am dependency");
         return "Hello";
     }
     console.log(hello());
-}.call(this);
+})();
 

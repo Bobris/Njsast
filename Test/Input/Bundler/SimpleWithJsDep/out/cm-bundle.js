@@ -1,1 +1,1 @@
-console.log("I am dependency");(function(l){"use strict";function e(){return"Hello"}console.log(e())}).call(this)
+console.log("I am dependency");(()=>{function o(){return"Hello"}console.log(o())})()

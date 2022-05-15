@@ -1,8 +1,7 @@
-(function(t) {
-    "use strict";
-    var n = {
+(() => {
+    var t = {
         test: "ok"
     };
-    console.log(n.test);
-}).call(this);
+    console.log(t.test);
+})();
 

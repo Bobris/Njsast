@@ -1,17 +1,16 @@
-(function(t) {
-    "use strict";
-    var _ = {}, p;
+(() => {
+    var t = {}, _;
     (function(t) {
         t[t["Start"] = 0] = "Start";
         t[t["Stop"] = 1] = "Stop";
-    })(_);
-    function o() {
+    })(t);
+    function p() {
         console.log(1);
     }
-    p = {
-        Opts: _,
-        ok: o
+    _ = {
+        Opts: t,
+        ok: p
     };
-    if (p != null) o();
-}).call(this);
+    if (_ != null) p();
+})();
 

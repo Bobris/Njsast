@@ -18,11 +18,10 @@ if (typeof module !== "undefined" && module.exports) {
     };
 })();
 
-(function(undefined) {
-    "use strict";
+(() => {
     function hello() {
         phoenix.json.doIt();
     }
     hello();
-}).call(this);
+})();
 

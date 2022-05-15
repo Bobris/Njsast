@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var __export_Opts = {}, __export_$;
     (function(Opts) {
         Opts[Opts["Start"] = 0] = "Start";
@@ -13,5 +12,5 @@
         ok
     };
     if (__export_$ != null) ok();
-}).call(this);
+})();
 

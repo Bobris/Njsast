@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(undefined => {
     var __export_ddd;
     __export_ddd = undefined;
     function setDdd(addd) {
@@ -7,5 +6,5 @@
     }
     setDdd(function() {});
     if (__export_ddd) __export_ddd();
-}).call(this);
+})();
 

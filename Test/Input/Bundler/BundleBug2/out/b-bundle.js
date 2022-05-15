@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -320,5 +319,5 @@
     var c_index = new ClientsPageStore_lib();
     c_index.clear();
     __export_clientsPageStore.clear();
-}.call(this);
+})();
 

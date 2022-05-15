@@ -1,34 +1,33 @@
 var __bbb = {};
 
-(function(r) {
-    "use strict";
+(r => {
     var e;
     e = function(e, o) {
-        var t, i;
+        var t, n;
         t = __bbb;
-        i = t[o];
-        if (i !== r) {
-            if (i instanceof Promise) return i;
-            return Promise.resolve(i);
+        n = t[o];
+        if (n !== r) {
+            if (n instanceof Promise) return n;
+            return Promise.resolve(n);
         }
-        i = new Promise(function(n, s) {
-            var b, c;
+        n = new Promise(function(i, s) {
+            var b, p;
             b = document.createElement("script");
-            c = setTimeout(p, 12e4);
-            function p() {
+            p = setTimeout(c, 12e4);
+            function c() {
                 b.onload = b.onerror = r;
-                clearTimeout(c);
-                if (t[o] === i) {
+                clearTimeout(p);
+                if (t[o] === n) {
                     t[o] = r;
                     s(new Error("Fail to load " + e));
-                } else n(t[o]);
+                } else i(t[o]);
             }
             b.charset = "utf-8";
-            b.onload = b.onerror = p;
+            b.onload = b.onerror = c;
             b.src = e;
             document.head.appendChild(b);
         });
-        return t[o] = i;
+        return t[o] = n;
     };
     function o() {
         console.log("shared");
@@ -38,5 +37,5 @@ var __bbb = {};
         console.log(r.hello());
     });
     __bbb.b = o;
-}).call(this);
+})();
 

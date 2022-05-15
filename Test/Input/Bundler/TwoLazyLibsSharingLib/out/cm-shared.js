@@ -1,1 +1,1 @@
-(function(s){"use strict";function n(){console.log("shared")}__bbb.d=n}).call(this)
+(()=>{function s(){console.log("shared")}__bbb.d=s})()

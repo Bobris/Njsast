@@ -1,1 +1,1 @@
-(function(r){"use strict";var s,t;s=Array.isArray;t=s;function a(r){t=r}function o(){console.log(s([]));console.log(t([]))}a(function(r){return s(r)});console.log(s([]));o()}).call(this)
+(()=>{var r,a;r=Array.isArray;a=r;function _(r){a=r}function s(){console.log(r([]));console.log(a([]))}_(function(a){return r(a)});console.log(r([]));s()})()

@@ -80,10 +80,7 @@ public class ParserTest
 
             outAst = strSink.ToString();
             var outMinJsBuilder = new SourceMapBuilder();
-            var outputOptions = new OutputOptions
-            {
-                Shorthand = testData.EcmaScriptVersion >= 6
-            };
+            var outputOptions = new OutputOptions();
             toplevel.PrintToBuilder(outMinJsBuilder, outputOptions);
             outMinJsBuilder.AddText(
                 $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "minjs.map")}");
@@ -93,8 +90,7 @@ public class ParserTest
             var outNiceJsBuilder = new SourceMapBuilder();
             outputOptions = new()
             {
-                Beautify = true,
-                Shorthand = testData.EcmaScriptVersion >= 6
+                Beautify = true
             };
             toplevel.PrintToBuilder(outNiceJsBuilder, outputOptions);
             outNiceJsBuilder.AddText(

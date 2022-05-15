@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(undefined => {
     var updateSessionInterval = 60 * 1e3, start, stop, __export_sessionTimer;
     function setSessionTimer(newTimer) {
         __export_sessionTimer = newTimer;
@@ -18,5 +17,5 @@
     start();
     console.log("working");
     stop();
-}).call(this);
+})();
 

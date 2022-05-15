@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -317,5 +316,5 @@
     }
     var a_index = 2;
     console.log(fn(fn_index(a_index, 1), a_index));
-}.call(this);
+})();
 

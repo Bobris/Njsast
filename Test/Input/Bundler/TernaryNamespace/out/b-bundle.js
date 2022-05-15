@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -322,5 +321,5 @@
     };
     var lib = Math.random() > .5 ? __export_$ : __export_$_libb;
     console.log(lib.fn(1, 2));
-}.call(this);
+})();
 

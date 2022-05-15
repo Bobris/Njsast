@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var input;
     function setInput(i) {
         input = i;
@@ -21,5 +20,5 @@
     }
     setInput("1");
     console.log(compile());
-}).call(this);
+})();
 

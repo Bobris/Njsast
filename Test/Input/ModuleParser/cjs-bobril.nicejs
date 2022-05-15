@@ -221,7 +221,7 @@ var __export_assign = Object.assign;
 function polyfill(prototype, method, value) {
     if (!prototype[method]) {
         Object.defineProperty(prototype, method, {
-            value: value,
+            value,
             configurable: true,
             writable: true
         });
@@ -1645,8 +1645,8 @@ function addEvent(name, priority, callback) {
     if (registryEvents == undefined) registryEvents = {};
     var list = registryEvents[name] || [];
     list.push({
-        priority: priority,
-        callback: callback
+        priority,
+        callback
     });
     registryEvents[name] = list;
 }
@@ -1697,7 +1697,7 @@ function addListener(el, name) {
     }
     if ("on" + eventName in window) el = window;
     el.addEventListener(eventName, enhanceEvent, isPassiveEventHandlerSupported ? {
-        capture: capture,
+        capture,
         passive: false
     } : capture);
 }
@@ -2856,7 +2856,7 @@ function emitOnInput(node, value) {
     currentCtxWithEvents = prevCtx;
     bubble(node, "onInput", {
         target: node,
-        value: value
+        value
     });
 }
 
@@ -3033,7 +3033,7 @@ function revertVisibilityChanges(hiddenEls) {
 
 function pushAndHide(hiddenEls, t) {
     hiddenEls.push({
-        t: t,
+        t,
         p: t.style.visibility
     });
     t.style.visibility = "hidden";
@@ -3088,10 +3088,10 @@ function buildHandlerPointer(name) {
             target: node,
             id: ev.pointerId,
             cancelable: normalizeCancelable(ev),
-            type: type,
+            type,
             x: ev.clientX,
             y: ev.clientY,
-            button: button,
+            button,
             shift: ev.shiftKey,
             ctrl: ev.ctrlKey,
             alt: ev.altKey,
@@ -3426,7 +3426,7 @@ function createHandler(handlerName, allButtons) {
             target: node,
             x: ev.clientX,
             y: ev.clientY,
-            button: button,
+            button,
             cancelable: normalizeCancelable(ev),
             shift: ev.shiftKey,
             ctrl: ev.ctrlKey,
@@ -3506,12 +3506,12 @@ function handleMouseWheel(ev, target, node) {
     }
     var param = {
         target: node,
-        dx: dx,
-        dy: dy,
+        dx,
+        dy,
         x: ev.clientX,
         y: ev.clientY,
         cancelable: normalizeCancelable(ev),
-        button: button,
+        button,
         shift: ev.shiftKey,
         ctrl: ev.ctrlKey,
         alt: ev.altKey,
@@ -3643,7 +3643,7 @@ var callbacks = [];
 
 function emitOnScroll(_ev, _target, node) {
     var info = {
-        node: node
+        node
     };
     for (var i = 0; i < callbacks.length; i++) {
         callbacks[i](info);
@@ -4453,7 +4453,7 @@ function compilePattern(pattern) {
         });
         compiledPatterns[pattern] = {
             matcher: new RegExp("^" + source + "$", "i"),
-            paramNames: paramNames
+            paramNames
         };
     }
     return compiledPatterns[pattern];
@@ -4640,7 +4640,7 @@ function rootNodeFactory() {
                     res = {
                         key: undefined,
                         ref: undefined,
-                        data: data,
+                        data,
                         component: handler
                     };
                 }
@@ -4799,7 +4799,7 @@ function createRedirectPush(name, params) {
     return {
         inApp: isInApp(name),
         type: RouteTransitionType.Push,
-        name: name,
+        name,
         params: params || {}
     };
 }
@@ -4808,7 +4808,7 @@ function createRedirectReplace(name, params) {
     return {
         inApp: isInApp(name),
         type: RouteTransitionType.Replace,
-        name: name,
+        name,
         params: params || {}
     };
 }
@@ -4820,7 +4820,7 @@ function createBackTransition(distance) {
         type: RouteTransitionType.Pop,
         name: undefined,
         params: {},
-        distance: distance
+        distance
     };
 }
 
@@ -4977,7 +4977,7 @@ function runTransition(transition) {
 
 function anchor(children, name, params) {
     return {
-        children: children,
+        children,
         component: {
             id: "anchor",
             postUpdateDom: function(ctx, me) {
@@ -5185,8 +5185,8 @@ function beforeFrame() {
                         var percentHeight = 100 * iHeight / height;
                         stDef.style = {
                             backgroundImage: "url(" + lastSpriteUrl + ")",
-                            width: width,
-                            height: height,
+                            width,
+                            height,
                             backgroundPosition: 100 * sprite_1.left / (iWidth - width) + "% " + 100 * sprite_1.top / (iHeight - height) + "%",
                             backgroundSize: percentWidth + "% " + percentHeight + "%"
                         };
@@ -5406,7 +5406,7 @@ function keyframesDef(def, nameHint) {
     nameHint = makeName(nameHint);
     allAnimations[nameHint] = {
         name: nameHint,
-        def: def
+        def
     };
     invalidateStyles();
     var res = function(params) {
@@ -5432,10 +5432,10 @@ function styleDefEx(parent, style, pseudo, nameHint) {
     allStyles[nameHint] = {
         name: nameHint,
         realName: nameHint,
-        parent: parent,
-        style: style,
+        parent,
+        style,
         inlStyle: undefined,
-        pseudo: pseudo
+        pseudo
     };
     invalidateStyles();
     return nameHint;
@@ -5446,9 +5446,9 @@ function selectorStyleDef(selector, style, pseudo) {
         name: null,
         realName: null,
         parent: selector,
-        style: style,
+        style,
         inlStyle: undefined,
-        pseudo: pseudo
+        pseudo
     };
     invalidateStyles();
 }
@@ -5572,12 +5572,12 @@ function sprite(url, color, width, height, left, top) {
     if (spDef) return spDef.styleId;
     var styleId = emptyStyleDef(url);
     spDef = {
-        styleId: styleId,
-        url: url,
-        width: width,
-        height: height,
-        left: left,
-        top: top
+        styleId,
+        url,
+        width,
+        height,
+        left,
+        top
     };
     if (isVarColor) {
         spDef.color = color;
@@ -5633,15 +5633,15 @@ function spriteb(width, height, left, top) {
     if (spDef) return spDef.styleId;
     hasBundledSprites = true;
     var styleId = styleDef({
-        width: width,
-        height: height
+        width,
+        height
     });
     spDef = {
-        styleId: styleId,
-        width: width,
-        height: height,
-        left: left,
-        top: top
+        styleId,
+        width,
+        height,
+        left,
+        top
     };
     bundledSprites[key] = spDef;
     wasSpriteUrlChanged = true;
@@ -5667,15 +5667,15 @@ function spritebc(color, width, height, left, top) {
     if (spDef) return spDef.styleId;
     hasBundledSprites = true;
     var styleId = styleDef({
-        width: width,
-        height: height
+        width,
+        height
     });
     spDef = {
-        styleId: styleId,
-        width: width,
-        height: height,
-        left: left,
-        top: top
+        styleId,
+        width,
+        height,
+        left,
+        top
     };
     spDef.color = color;
     spDef.lastColor = "";
@@ -5752,7 +5752,7 @@ function withKey(content, key) {
         return content;
     }
     return {
-        key: key,
+        key,
         children: content
     };
 }
@@ -5780,7 +5780,7 @@ function styledDiv(children) {
     }
     return style({
         tag: "div",
-        children: children
+        children
     }, styles);
 }
 
@@ -5791,8 +5791,8 @@ function createVirtualComponent(component) {
             data.children = children;
         }
         return {
-            data: data,
-            component: component
+            data,
+            component
         };
     };
 }
@@ -5929,15 +5929,15 @@ function emitChange(data, value) {
 }
 
 if (!window.b) window.b = {
-    deref: deref,
-    getRoots: getRoots,
-    setInvalidate: setInvalidate,
-    invalidateStyles: invalidateStyles,
-    ignoreShouldChange: ignoreShouldChange,
-    setAfterFrame: setAfterFrame,
-    setBeforeFrame: setBeforeFrame,
+    deref,
+    getRoots,
+    setInvalidate,
+    invalidateStyles,
+    ignoreShouldChange,
+    setAfterFrame,
+    setBeforeFrame,
     getDnds: __export_getDnds,
-    setBeforeInit: setBeforeInit
+    setBeforeInit
 };
 
 function shallowEqual(a, b) {
@@ -5988,7 +5988,7 @@ function createElement(name, props) {
             tag: name
         } : {
             tag: name,
-            children: children
+            children
         };
         if (props == undefined) {
             return res;
@@ -6040,7 +6040,7 @@ function createElement(name, props) {
         } else {
             if (factory.length == 1) {
                 if (props == undefined) props = {
-                    children: children
+                    children
                 }; else props.children = children;
                 res_1 = factory(props);
             } else {
@@ -6175,7 +6175,7 @@ function component(component, name) {
     }
     return function(data) {
         return {
-            data: data,
+            data,
             component: bobrilComponent
         };
     };
@@ -6249,7 +6249,7 @@ function createContext(defaultValue, id) {
         id = "__b#" + allocateMethodId();
     }
     return {
-        id: id,
+        id,
         dv: defaultValue
     };
 }
@@ -6368,7 +6368,7 @@ function bind(target, propertyKey, descriptor) {
                 var value = fn_1.bind(this);
                 definingProperty_1 = true;
                 Object.defineProperty(this, propertyKey, {
-                    value: value,
+                    value,
                     configurable: true,
                     writable: true
                 });

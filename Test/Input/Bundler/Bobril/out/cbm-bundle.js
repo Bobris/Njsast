@@ -1,5 +1,4 @@
-(function(e) {
-    "use strict";
+(e => {
     var t, n, r, i, a, d, o, l, c, s, u, f, h, p, m, v, b, g, y, x, _, C, w, k, S, E, N, D, I, P, R, A, F, j, B, O, T, U, M, V, H, L, K, W = {}, X, Y, z, $, Q, q, G, Z, J, ee, te, ne, re, ie, ae, de, oe, le, ce, se, ue, fe, he, pe, me, ve, be, ge, ye, xe, _e, Ce, we, ke, Se, Ee, Ne, De, Ie, Pe, Re, Ae, Fe, je, Be, Oe, Te, Ue, Me, Ve, He, Le, Ke, We, Xe, Ye, ze, $e, Qe, qe, Ge, Ze, Je, et, tt, nt, rt, it, at, dt, ot, lt, ct, st, ut, ft, ht, pt, mt, vt, bt, gt, yt, xt, _t, Ct, wt, kt, St, Et, Nt, Dt, It, Pt = {}, Rt, At, Ft, jt, Bt, Ot, Tt, Ut;
     t = function(e) {
         var t = typeof Symbol === "function" && e[Symbol.iterator], n = 0;
@@ -3915,5 +3914,5 @@
     rr(function() {
         return "hello";
     });
-}).call(this);
+})();
 

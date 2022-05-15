@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(undefined => {
     var __import, __export_$;
     __import = function(url, prop) {
         var bbb, res;
@@ -38,5 +37,5 @@
         hello
     };
     __bbb.a = __export_$;
-}).call(this);
+})();
 

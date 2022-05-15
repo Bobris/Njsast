@@ -1,17 +1,16 @@
-(function(e) {
-    "use strict";
-    var n;
+(() => {
+    var e;
     function a() {
         return new Image();
     }
-    n = function() {
+    e = function() {
         function e() {
             console.log("constructed");
         }
         return e;
     }();
     URL.createObjectURL("");
-    new n();
+    new e();
     a();
-}).call(this);
+})();
 

@@ -142,7 +142,7 @@ public class BundlerImpl
                     knownDeclaredGlobals, BeforeAdd);
             }
 
-            IfNeededPolyfillGlobal(topLevelAst, (OutputOptions?.Ecma ?? 5) >= 10);
+            IfNeededPolyfillGlobal(topLevelAst, (OutputOptions?.Ecma ?? 6) >= 10);
 
             if (LibraryMode)
             {
@@ -151,7 +151,7 @@ public class BundlerImpl
             else
             {
                 AddExportsFromLazyBundle(splitInfo, topLevelAst);
-                BundlerHelpers.WrapByIIFE(topLevelAst, (OutputOptions?.Ecma ?? 5) >= 6);
+                BundlerHelpers.WrapByIIFE(topLevelAst, (OutputOptions?.Ecma ?? 6) >= 6);
             }
 
             var backupBody = topLevelAst.Body;
@@ -166,7 +166,7 @@ public class BundlerImpl
                 topLevelAst.Body.AddRange(jsAst.Body);
             }
             topLevelAst.Body.AddRange(backupBody);
-            
+
             if (lazySplitCounter > 0 && PartToMainFilesMap.ContainsKey(splitName))
             {
                 var astVar = new AstVar(topLevelAst);

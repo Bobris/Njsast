@@ -1,6 +1,5 @@
-(function(s) {
-    "use strict";
-    var o = "session";
-    console.log(o);
-}).call(this);
+(() => {
+    var s = "session";
+    console.log(s);
+})();
 

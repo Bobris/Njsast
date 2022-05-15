@@ -1,1 +1,1 @@
-(function(r){"use strict";var o,t;o=Symbol.for("Type");const e=Symbol("kError");const _=Symbol("kNext");class A{constructor(){this[t]="B"}[(t=o,e)](){throw new Error}[_](){console.log("next")}}new A}).call(this)
+(()=>{var r,o;r=Symbol.for("Type");const e=Symbol("kError");const t=Symbol("kNext");class A{constructor(){this[o]="B"}[(o=r,e)](){throw new Error}[t](){console.log("next")}}new A})()

@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var __shared_shared, __export_$;
     __shared_shared = __bbb.d;
     __shared_shared();
@@ -10,5 +9,5 @@
         hello
     };
     __bbb.b = __export_$;
-}).call(this);
+})();
 

@@ -1,5 +1,4 @@
-(function(undefined) {
-    "use strict";
+(() => {
     var __export_kType, _a;
     __export_kType = Symbol.for("Type");
     const kError = Symbol("kError");
@@ -16,5 +15,5 @@
         }
     }
     new A();
-}).call(this);
+})();
 

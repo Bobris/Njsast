@@ -1,9 +1,8 @@
-(function(n) {
-    "use strict";
-    function t(n, t) {
-        return n + t;
+(() => {
+    function n(n, o) {
+        return n + o;
     }
-    const f = t(1, 2);
-    console.log(f);
-}).call(this);
+    const o = n(1, 2);
+    console.log(o);
+})();
 

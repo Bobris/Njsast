@@ -1,1 +1,1 @@
-(function(n){}).call(this)
+(()=>{})()

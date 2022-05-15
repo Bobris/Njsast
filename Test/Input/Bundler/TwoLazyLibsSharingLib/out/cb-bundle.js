@@ -1,7 +1,6 @@
 var __bbb = {};
 
-(function(undefined) {
-    "use strict";
+(undefined => {
     var __import;
     __import = function(url, prop) {
         var bbb, res;
@@ -40,5 +39,5 @@ var __bbb = {};
     }).then(function(lib) {
         console.log(lib.world());
     });
-}).call(this);
+})();
 

@@ -1,1 +1,1 @@
-(function(_){"use strict";var r,e;r=__bbb.d;r();function d(){return"World"}e={world:d};__bbb.c=e}).call(this)
+(()=>{var _,r;_=__bbb.d;_();function e(){return"World"}r={world:e};__bbb.c=r})()

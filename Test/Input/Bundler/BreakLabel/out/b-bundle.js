@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -313,5 +312,5 @@
             if (Math.random() > .5) break out;
         }
     }
-}.call(this);
+})();
 

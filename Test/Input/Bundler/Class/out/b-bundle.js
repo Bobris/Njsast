@@ -1,5 +1,4 @@
-!function(undefined) {
-    "use strict";
+(undefined => {
     var __extendStatics = Object.setPrototypeOf || {
         __proto__: []
     } instanceof Array && function(d, b) {
@@ -327,5 +326,5 @@
         Deriv.Id = "B";
         return Deriv;
     }(Base_index);
-}.call(this);
+})();
 

@@ -1,22 +1,21 @@
-(function(e) {
-    "use strict";
-    var s = 60 * 1e3, t, n, i;
+(e => {
+    var s = 60 * 1e3, n, i, t;
     function o(e) {
-        i = e;
+        t = e;
     }
-    t = function() {
-        if (!i) {
+    n = function() {
+        if (!t) {
             o(setInterval(function() {}, s));
         }
     };
-    n = function() {
-        if (i) {
-            clearInterval(i);
+    i = function() {
+        if (t) {
+            clearInterval(t);
             o(e);
         }
     };
-    t();
-    console.log("working");
     n();
-}).call(this);
+    console.log("working");
+    i();
+})();
 

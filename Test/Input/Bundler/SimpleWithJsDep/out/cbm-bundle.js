@@ -1,10 +1,9 @@
 console.log("I am dependency");
 
-(function(l) {
-    "use strict";
-    function e() {
+(() => {
+    function o() {
         return "Hello";
     }
-    console.log(e());
-}).call(this);
+    console.log(o());
+})();
 

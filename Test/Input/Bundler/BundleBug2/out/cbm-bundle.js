@@ -1,16 +1,15 @@
-(function(e) {
-    "use strict";
-    var t, n, i;
-    t = function() {
+(() => {
+    var e, t, n;
+    e = function() {
         function e() {}
         e.prototype.clear = function() {
-            n = new e();
+            t = new e();
         };
         return e;
     }();
-    n = new t();
-    i = new t();
-    i.clear();
+    t = new e();
+    n = new e();
     n.clear();
-}).call(this);
+    t.clear();
+})();
 

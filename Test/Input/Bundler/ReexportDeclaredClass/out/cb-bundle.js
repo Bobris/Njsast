@@ -1,2 +1,2 @@
-(function(undefined) {}).call(this);
+(() => {})();
 
