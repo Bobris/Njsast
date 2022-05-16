@@ -102,8 +102,9 @@ public class BundlerTest
 
         public string ResolveRequire(string name, string @from)
         {
+            if (name.Contains("External")) return IBundlerCtx.LeaveAsExternal;
             var res = PathUtils.Join(PathUtils.Parent("./" + from), name);
-            if (res.StartsWith("./", StringComparison.Ordinal)) res = res.Substring(2);
+            if (res.StartsWith("./", StringComparison.Ordinal)) res = res[2..];
             if (res.EndsWith(".json", StringComparison.Ordinal)) return res;
             return res + ".js";
         }

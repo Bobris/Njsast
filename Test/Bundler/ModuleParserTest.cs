@@ -27,7 +27,7 @@ public class ModuleParserTest
             var sf = Njsast.Bundler.BundlerHelpers.BuildSourceFile(testData.InputFileName, testData.InputContent,
                 null, Resolver);
 
-            outNiceJs = sf.Ast.PrintToString(new OutputOptions {Beautify = true});
+            outNiceJs = sf.Ast!.PrintToString(new OutputOptions {Beautify = true});
 
             if (sf.Requires.Count > 0)
             {
