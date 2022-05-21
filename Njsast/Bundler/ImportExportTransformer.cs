@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Njsast.Ast;
 using Njsast.Reader;
 
@@ -28,6 +29,7 @@ public class ImportExportTransformer : TreeTransformer
                     _sourceFile.ExternalImports.AddUnique(reqName);
                     return (reqName, Array.Empty<string>());
                 }
+
                 _sourceFile.Requires.AddUnique(resolvedName);
                 return (resolvedName, Array.Empty<string>());
             }
@@ -70,7 +72,7 @@ public class ImportExportTransformer : TreeTransformer
             return node;
         }
 
-        if (node is AstVarDef varDef && varDef.Name.IsSymbolDef() is { IsSingleInit:true } reqSymbolDef)
+        if (node is AstVarDef varDef && varDef.Name.IsSymbolDef() is { IsSingleInit: true } reqSymbolDef)
         {
             var val = varDef.Value;
             if (val is AstCall { Expression: AstSymbolRef maybeImportStar, Args.Count: 1 } call &&
@@ -120,17 +122,23 @@ public class ImportExportTransformer : TreeTransformer
                     astDot.PropertyAsString == "defineProperty"
                     && call.Args.Count == 3 && call.Args[0].IsSymbolDef().IsExportsSymbol() &&
                     call.Args[1] is AstString exportName &&
-                    call.Args[2] is AstObject { Properties.Count: 2 } astObject &&
-                    astObject.Properties.Last is AstObjectProperty
+                    call.Args[2] is AstObject
                     {
-                        Value: AstLambda
+                        Properties:
                         {
-                            Body.Last: AstReturn astRet
+                            Count: 2, Last: AstObjectProperty
+                            {
+                                Value: AstLambda
+                                {
+                                    Body.Last: AstReturn astRet
+                                }
+                            }
                         }
                     } && DetectImport(astRet.Value) is { } bindPath)
                 {
                     _sourceFile.SelfExports.Add(
-                        new ReexportSelfExport(exportName.Value, bindPath.Item1, bindPath.Item2));
+                        new ReexportSelfExport(exportName.Value, bindPath.Item1, bindPath.Item2,
+                            _sourceFile.ExternalImports.Contains(bindPath.Item1)));
                     return Remove;
                 }
 
@@ -141,14 +149,16 @@ public class ImportExportTransformer : TreeTransformer
                     if (call.Args.Count == 3)
                     {
                         _sourceFile.SelfExports.Add(new ReexportSelfExport(bindingName.Value, bindModule.Item1,
-                            Concat(bindModule.Item2, bindingName.Value)));
+                            Concat(bindModule.Item2, bindingName.Value),
+                            _sourceFile.ExternalImports.Contains(bindModule.Item1)));
                         return Remove;
                     }
 
                     if (call.Args.Count == 4 && call.Args[3] is AstString asName)
                     {
                         _sourceFile.SelfExports.Add(new ReexportSelfExport(asName.Value, bindModule.Item1,
-                            Concat(bindModule.Item2, bindingName.Value)));
+                            Concat(bindModule.Item2, bindingName.Value),
+                            _sourceFile.ExternalImports.Contains(bindModule.Item1)));
                         return Remove;
                     }
                 }
@@ -170,6 +180,7 @@ public class ImportExportTransformer : TreeTransformer
                             _sourceFile.Requires.AddUnique(resolvedReq);
                             _sourceFile.SelfExports.Add(new ExportStarSelfExport(resolvedReq));
                         }
+
                         return Remove;
                     }
                 }
@@ -252,6 +263,7 @@ public class ImportExportTransformer : TreeTransformer
                         _sourceFile.Requires.AddUnique(resolvedName);
                         _sourceFile.SelfExports.Add(new ExportAsNamespaceSelfExport(resolvedName, pea.Value.name));
                     }
+
                     return Remove;
                 }
 

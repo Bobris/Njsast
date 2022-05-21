@@ -134,16 +134,18 @@ class ReexportSelfExport : SelfExport
     internal readonly string SourceName;
     internal readonly string AsName;
     internal readonly string[] Path;
+    internal readonly bool ExternalSource;
 
-    internal ReexportSelfExport(string asName, string sourceName, string[] path)
+    internal ReexportSelfExport(string asName, string sourceName, string[] path, bool externalSource)
     {
         AsName = asName;
         SourceName = sourceName;
         Path = path;
+        ExternalSource = externalSource;
     }
 
     public override string ToString()
     {
-        return $"{string.Join('.', Path)} as {AsName} from {SourceName}";
+        return $"{string.Join('.', Path)} as {AsName} from {SourceName}{(ExternalSource?" (External)":"")}";
     }
 }
