@@ -365,17 +365,31 @@ public class BundlerImpl
         foreach (var importModuleName in split.ImportFromExternals.RootKeys())
         {
             var mappings = new StructList<AstNameMapping>();
+            var importName = default(AstSymbolImport);
             foreach (var keyValuePair in split.ImportFromExternals.IteratePrefix(new[] { importModuleName }))
             {
-                if (keyValuePair.Key.Count == 2)
+                var key = keyValuePair.Key.AsReadOnlySpan()[1..];
+                if (key.Length >= 1 && key[0] == "default")
                 {
-                    mappings.Add(new AstNameMapping(null, new(), new(),
-                        new AstSymbolImportForeign(new AstSymbolRef(keyValuePair.Key[1])),
-                        new AstSymbolImport(keyValuePair.Value)));
+                    key = key[1..];
+                }
+
+                switch (key.Length)
+                {
+                    case 0:
+                        importName = new(keyValuePair.Value);
+                        break;
+                    case 1:
+                        mappings.Add(new(null, new(), new(),
+                            new AstSymbolImportForeign(new AstSymbolRef(key[0])),
+                            new AstSymbolImport(keyValuePair.Value)));
+                        break;
+                    default:
+                        throw new NotImplementedException();
                 }
             }
 
-            toplevel.Body.Insert(0) = new AstImport(null, new(), new(), new(importModuleName), null,
+            toplevel.Body.Insert(0) = new AstImport(null, new(), new(), new(importModuleName), importName,
                 ref mappings);
         }
     }

@@ -31,7 +31,7 @@ Toplevel 1:1 - 8:1
               Arrow 62:20 - 62:27
                 SymbolFunarg 62:20 - 62:21
                   Name: t
-                SymbolRef 62:26 - 62:27 [Write]
+                SymbolRef 62:26 - 62:27 [Read]
                   Name: t
         UnaryPrefix 62:30 - 64:6
           Operator: Void

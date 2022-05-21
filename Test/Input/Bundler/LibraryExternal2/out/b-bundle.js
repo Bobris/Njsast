@@ -1,3 +1,5 @@
+import External from "External";
+
 var __extendStatics = Object.setPrototypeOf || {
     __proto__: []
 } instanceof Array && function(d, b) {
@@ -333,23 +335,11 @@ var __classPrivateFieldSet = function(receiver, privateMap, value) {
 
 var DEBUG = false;
 
-const getGlobals = () => globals;
-
-const setGlobals = a => {
-    globals = {
-        isSortingDisabled: a
-    };
-};
-
-let globals = {
-    isSortingDisabled: false
-};
-
 function getDescriptor() {
     return {
-        asd: "df"
+        asd: External
     };
 }
 
-export { getGlobals, setGlobals, getDescriptor };
+export { getDescriptor };
 
