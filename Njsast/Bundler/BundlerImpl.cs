@@ -337,11 +337,16 @@ public class BundlerImpl
         foreach (var file in splitInfo.MainFiles)
         {
             if (file.Exports != null)
+            {
+                foreach (var (key, _) in file.Exports)
+                {
+                    if (key.Count <= 1) continue;
+                    file.CreateWholeExport(new [] { key[0] }, topLevelAst);
+                }
+
                 foreach (var (key, value) in file.Exports)
                 {
-                    if (key.Count == 0) continue;
-                    if (key.Count != 1)
-                        throw new NotImplementedException("Deep library export " + string.Join('.', key));
+                    if (key.Count != 1) continue;
                     if (value is AstSymbolRef symbolRef)
                     {
                         exportMappings.Add(new(null, new(), new(),
@@ -352,6 +357,7 @@ public class BundlerImpl
                         throw new NotImplementedException("Library export of " + value.GetType().Name);
                     }
                 }
+            }
         }
 
         if (exportMappings.Count > 0)

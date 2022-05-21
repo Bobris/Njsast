@@ -36,9 +36,10 @@ public class SourceFile
         ExternalImport = true;
     }
 
-    public void CreateWholeExport(string[] needPath)
+    public void CreateWholeExport(string[] needPath, AstToplevel? ast = null)
     {
-        if (Ast == null) throw new InvalidOperationException("ExternalImport cannot be used to create WholeExport");
+        ast ??= Ast;
+        if (ast == null) throw new InvalidOperationException("ExternalImport cannot be used to create WholeExport");
         if (needPath.Length >= 1 && needPath[0] == "default" &&
             !Exports!.TryFindLongestPrefix(new[] {"default"}, out _, out _))
         {
@@ -47,7 +48,7 @@ public class SourceFile
 
         Exports!.EnsureKeyExists(needPath, tuples =>
         {
-            var init = new AstObject(Ast!);
+            var init = new AstObject(ast);
             foreach (var (propName, value) in tuples)
             {
                 var valueRef = value;
@@ -59,18 +60,18 @@ public class SourceFile
                 init.Properties.Add(new AstObjectKeyVal(new AstString(propName), valueRef));
             }
 
-            var wholeExportName = BundlerHelpers.MakeUniqueName("__export_$", Ast.Variables!,
-                Ast.CalcNonRootSymbolNames(),
+            var wholeExportName = BundlerHelpers.MakeUniqueName("__export_$", ast.Variables!,
+                ast.CalcNonRootSymbolNames(),
                 "_" + BundlerHelpers.FileNameToIdent(Name));
-            var wholeExport = new AstSymbolVar(Ast, wholeExportName);
-            var symbolDef = new SymbolDef(Ast, wholeExport, init);
+            var wholeExport = new AstSymbolVar(ast, wholeExportName);
+            var symbolDef = new SymbolDef(ast, wholeExport, init);
             wholeExport.Thedef = symbolDef;
             var varDef = new AstVarDef(wholeExport, init);
-            var astVar = new AstVar(Ast);
+            var astVar = new AstVar(ast);
             astVar.Definitions.Add(varDef);
-            Ast.Body.Add(astVar);
-            Ast.Variables!.Add(wholeExportName, symbolDef);
-            return new AstSymbolRef(Ast, symbolDef, SymbolUsage.Unknown);
+            ast.Body.Add(astVar);
+            ast.Variables!.Add(wholeExportName, symbolDef);
+            return new AstSymbolRef(ast, symbolDef, SymbolUsage.Unknown);
         });
     }
 }
