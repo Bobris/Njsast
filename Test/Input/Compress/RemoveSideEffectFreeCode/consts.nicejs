@@ -1,9 +1,6 @@
-const a = 1, b = 2;
+const a = 1, b = 2, c = 3, b2 = 4;
 
-{
-    const c = 3;
-    console.log(c);
-}
+console.log(c, b2);
 
 console.log(a, b);
 

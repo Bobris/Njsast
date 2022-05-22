@@ -1,4 +1,5 @@
 using Njsast.Ast;
+using Njsast.Bundler;
 using Njsast.Reader;
 using Njsast.Runtime;
 
@@ -753,8 +754,22 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
             }
             else if (si is AstBlockStatement statement)
             {
+                var parentScope = statement.BlockScope!.ParentScope!;
                 if (statement.BlockScope!.IsSafelyInlinenable())
                 {
+                    foreach (var (name, symbolDef) in statement.BlockScope!.Variables!)
+                    {
+                        if (parentScope.Variables!.ContainsKey(name))
+                        {
+                            var newName = BundlerHelpers.MakeUniqueName(name, parentScope.Variables!, ((AstToplevel)Stack[0]).CalcNonRootSymbolNames(), null);
+                            Helpers.RenameSymbol(symbolDef, newName);
+                            parentScope.Variables!.Add(newName, symbolDef);
+                        }
+                        else
+                        {
+                            parentScope.Variables!.Add(name, symbolDef);
+                        }
+                    }
                     block.Body.ReplaceItemAt(i, statement.Body.AsReadOnlySpan());
                     Modified = true;
                     i--;

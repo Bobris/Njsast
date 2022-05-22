@@ -1,1 +1,1 @@
-const a=1,b=2;{const c=3;console.log(c)}console.log(a,b)
+const a=1,b=2,c=3,b2=4;console.log(c,b2);console.log(a,b)
