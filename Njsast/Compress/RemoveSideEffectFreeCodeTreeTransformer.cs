@@ -87,6 +87,11 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     if (lambda.Body.Count == 0) lambda.Pure = true;
                     if (lambda.Purpose == null)
                         lambda.Purpose = DetectPurpose(lambda);
+                    if (lambda is AstArrow && lambda.Body is { Count: 1 } body2 &&
+                        body2[0] is AstReturn { Value: { } } astReturn)
+                    {
+                        lambda.Body[0] = astReturn.Value;
+                    }
 
                     NeedValue = lambda.Body is { Count: 1 } body && body[0].IsExpression();
                     TransformList(ref lambda.Body);
@@ -732,7 +737,8 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     {
                         if (parentScope.Variables!.ContainsKey(name))
                         {
-                            var newName = BundlerHelpers.MakeUniqueName(name, parentScope.Variables!, ((AstToplevel)Stack[0]).CalcNonRootSymbolNames(), null);
+                            var newName = BundlerHelpers.MakeUniqueName(name, parentScope.Variables!,
+                                ((AstToplevel)Stack[0]).CalcNonRootSymbolNames(), null);
                             Helpers.RenameSymbol(symbolDef, newName);
                             parentScope.Variables!.Add(newName, symbolDef);
                         }
@@ -741,12 +747,14 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                             parentScope.Variables!.Add(name, symbolDef);
                         }
                     }
+
                     block.Body.ReplaceItemAt(i, statement.Body.AsReadOnlySpan());
                     Modified = true;
                     i--;
                 }
             }
         }
+
         for (var i = 0; i < block.Body.Count; i++)
         {
             var si = block.Body[i];
