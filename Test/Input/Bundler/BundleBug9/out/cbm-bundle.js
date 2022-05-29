@@ -1,8 +1,8 @@
 (() => {
-    function n(n, o) {
-        return n + o;
+    function n(n, f) {
+        return n + f;
     }
-    const o = n(1, 2);
-    console.log(o);
+    let f = n(1, 2);
+    console.log(f);
 })();
 

@@ -1,10 +1,8 @@
-const s = () => t, l = s => {
+let l = () => t, s = l => {
     t = {
-        isSortingDisabled: s
+        isSortingDisabled: l
     };
-};
-
-let t = {
+}, t = {
     isSortingDisabled: !1
 };
 
@@ -14,5 +12,5 @@ function o() {
     };
 }
 
-export { s as getGlobals, l as setGlobals, o as getDescriptor };
+export { l as getGlobals, s as setGlobals, o as getDescriptor };
 

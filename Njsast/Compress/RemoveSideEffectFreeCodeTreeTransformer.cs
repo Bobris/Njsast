@@ -719,38 +719,9 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
         for (var i = 0; i < block.Body.Count; i++)
         {
             var si = block.Body[i];
-            if (si is AstVar astVar && i < block.Body.Count - 1)
+            if (si is AstConst astConst)
             {
-                var si2 = block.Body[i + 1];
-                if (si2 is AstVar astVar2)
-                {
-                    astVar.Definitions.AddRange(astVar2.Definitions);
-                    block.Body.RemoveAt(i + 1);
-                    Modified = true;
-                    i--;
-                }
-            }
-            else if (si is AstLet astLet && i < block.Body.Count - 1)
-            {
-                var si2 = block.Body[i + 1];
-                if (si2 is AstLet astLet2)
-                {
-                    astLet.Definitions.AddRange(astLet2.Definitions);
-                    block.Body.RemoveAt(i + 1);
-                    Modified = true;
-                    i--;
-                }
-            }
-            else if (si is AstConst astConst && i < block.Body.Count - 1)
-            {
-                var si2 = block.Body[i + 1];
-                if (si2 is AstConst astConst2)
-                {
-                    astConst.Definitions.AddRange(astConst2.Definitions);
-                    block.Body.RemoveAt(i + 1);
-                    Modified = true;
-                    i--;
-                }
+                block.Body[i] = new AstLet(si.Source, si.Start, si.End, ref astConst.Definitions);
             }
             else if (si is AstBlockStatement statement)
             {
@@ -771,6 +742,32 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         }
                     }
                     block.Body.ReplaceItemAt(i, statement.Body.AsReadOnlySpan());
+                    Modified = true;
+                    i--;
+                }
+            }
+        }
+        for (var i = 0; i < block.Body.Count; i++)
+        {
+            var si = block.Body[i];
+            if (si is AstVar astVar && i < block.Body.Count - 1)
+            {
+                var si2 = block.Body[i + 1];
+                if (si2 is AstVar astVar2)
+                {
+                    astVar.Definitions.AddRange(astVar2.Definitions);
+                    block.Body.RemoveAt(i + 1);
+                    Modified = true;
+                    i--;
+                }
+            }
+            else if (si is AstLet astLet && i < block.Body.Count - 1)
+            {
+                var si2 = block.Body[i + 1];
+                if (si2 is AstLet astLet2)
+                {
+                    astLet.Definitions.AddRange(astLet2.Definitions);
+                    block.Body.RemoveAt(i + 1);
                     Modified = true;
                     i--;
                 }

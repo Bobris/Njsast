@@ -1,10 +1,8 @@
-const getGlobals = () => globals, setGlobals = a => {
+let getGlobals = () => globals, setGlobals = a => {
     globals = {
         isSortingDisabled: a
     };
-};
-
-let globals = {
+}, globals = {
     isSortingDisabled: !1
 };
 
