@@ -20,9 +20,7 @@
         return param;
     };
     exports_lib = exports_wrapper(exports);
-    if ("test" in window) {
-        setTimeout(window.test, 1);
-    }
+    "test" in window && setTimeout(window.test, 1);
     exports_lib.doIt("Ok");
 })();
 

@@ -5,6 +5,6 @@
         __export_ddd = addd;
     }
     setDdd(function() {});
-    if (__export_ddd) __export_ddd();
+    __export_ddd && __export_ddd();
 })();
 

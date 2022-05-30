@@ -1,21 +1,19 @@
 (e => {
-    var s = 60 * 1e3, n, i, t;
+    var s = 60 * 1e3, n, t, i;
     function o(e) {
-        t = e;
+        i = e;
     }
     n = function() {
-        if (!t) {
-            o(setInterval(function() {}, s));
-        }
+        i || o(setInterval(function() {}, s));
     };
-    i = function() {
-        if (t) {
-            clearInterval(t);
+    t = function() {
+        if (i) {
+            clearInterval(i);
             o(e);
         }
     };
     n();
     console.log("working");
-    i();
+    t();
 })();
 

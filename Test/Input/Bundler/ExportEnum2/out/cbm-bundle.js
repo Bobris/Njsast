@@ -11,6 +11,6 @@
         Opts: t,
         ok: p
     };
-    if (_ != null) p();
+    _ != null && p();
 })();
 

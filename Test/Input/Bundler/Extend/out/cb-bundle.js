@@ -6,7 +6,7 @@
         d.__proto__ = b;
     } || function(d, b) {
         var p;
-        for (p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+        for (p in b) b.hasOwnProperty(p) && (d[p] = b[p]);
     };
     __extends = function(d, b) {
         __extendStatics(d, b);

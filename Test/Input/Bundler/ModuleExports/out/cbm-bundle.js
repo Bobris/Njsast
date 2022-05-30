@@ -20,9 +20,7 @@
         return o;
     };
     e = t(r);
-    if ("test" in window) {
-        setTimeout(window.test, 1);
-    }
+    "test" in window && setTimeout(window.test, 1);
     e.doIt("Ok");
 })();
 

@@ -7,9 +7,7 @@ function fn() {
     a["b"] = true;
 }
 
-if (a.b) {
-    console.log("Ok");
-}
+a.b && console.log("Ok");
 
 fn();
 

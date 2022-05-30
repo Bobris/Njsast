@@ -4,9 +4,7 @@
         __export_sessionTimer = newTimer;
     }
     start = function() {
-        if (!__export_sessionTimer) {
-            setSessionTimer(setInterval(function() {}, updateSessionInterval));
-        }
+        __export_sessionTimer || setSessionTimer(setInterval(function() {}, updateSessionInterval));
     };
     stop = function() {
         if (__export_sessionTimer) {

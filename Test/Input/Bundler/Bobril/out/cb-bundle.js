@@ -5,7 +5,7 @@
         if (m) return m.call(o);
         return {
             next: function() {
-                if (o && i >= o.length) o = void 0;
+                o && i >= o.length && (o = void 0);
                 return {
                     value: o && o[i++],
                     done: !o
@@ -66,46 +66,40 @@
     function isObject(val) {
         return typeof val === "object";
     }
-    if (Object.assign == undefined) {
-        Object.assign = function assign(target) {
-            var _sources = [], _i, totalArgs, i_1, source, keys, totalKeys, j_1, key;
-            for (_i = 1; _i < arguments.length; _i++) {
-                _sources[_i - 1] = arguments[_i];
+    Object.assign == undefined && (Object.assign = function assign(target) {
+        var _sources = [], _i, totalArgs, i_1, source, keys, totalKeys, j_1, key;
+        for (_i = 1; _i < arguments.length; _i++) {
+            _sources[_i - 1] = arguments[_i];
+        }
+        if (target == undefined) throw new TypeError("Target in assign cannot be undefined or null");
+        totalArgs = arguments.length;
+        for (i_1 = 1; i_1 < totalArgs; i_1++) {
+            source = arguments[i_1];
+            if (source == undefined) continue;
+            keys = Object.keys(source);
+            totalKeys = keys.length;
+            for (j_1 = 0; j_1 < totalKeys; j_1++) {
+                key = keys[j_1];
+                target[key] = source[key];
             }
-            if (target == undefined) throw new TypeError("Target in assign cannot be undefined or null");
-            totalArgs = arguments.length;
-            for (i_1 = 1; i_1 < totalArgs; i_1++) {
-                source = arguments[i_1];
-                if (source == undefined) continue;
-                keys = Object.keys(source);
-                totalKeys = keys.length;
-                for (j_1 = 0; j_1 < totalKeys; j_1++) {
-                    key = keys[j_1];
-                    target[key] = source[key];
-                }
-            }
-            return target;
-        };
-    }
-    if (!Object.is) {
-        Object.is = function(x, y) {
-            if (x === y) {
-                return x !== 0 || 1 / x === 1 / y;
-            } else {
-                return x !== x && y !== y;
-            }
-        };
-    }
+        }
+        return target;
+    });
+    Object.is || (Object.is = function(x, y) {
+        if (x === y) {
+            return x !== 0 || 1 / x === 1 / y;
+        } else {
+            return x !== x && y !== y;
+        }
+    });
     hOP = Object.prototype.hasOwnProperty;
     __export_assign = Object.assign;
     function polyfill(prototype, method, value) {
-        if (!prototype[method]) {
-            Object.defineProperty(prototype, method, {
-                value,
-                configurable: !0,
-                writable: !0
-            });
-        }
+        prototype[method] || Object.defineProperty(prototype, method, {
+            value,
+            configurable: !0,
+            writable: !0
+        });
     }
     polyfill(Array.prototype, "find", function(pred) {
         var o, len, thisArg, k, kValue;
@@ -145,7 +139,7 @@
         return !1;
     });
     polyfill(String.prototype, "includes", function(search, start) {
-        if (!isNumber(start)) start = 0;
+        isNumber(start) || (start = 0);
         if (start + search.length > this.length) {
             return !1;
         } else {
@@ -158,9 +152,7 @@
     polyfill(String.prototype, "endsWith", function(search, pos) {
         var s, lastIndex;
         s = this.toString();
-        if (!isNumber(pos) || !isFinite(pos) || Math.floor(pos) !== pos || pos > s.length) {
-            pos = s.length;
-        }
+        (!isNumber(pos) || !isFinite(pos) || Math.floor(pos) !== pos || pos > s.length) && (pos = s.length);
         pos -= search.length;
         lastIndex = s.indexOf(search, pos);
         return lastIndex !== -1 && lastIndex === pos;
@@ -170,7 +162,7 @@
     updateCall = [];
     updateInstance = [];
     setValueCallback = function(el, _node, newValue, oldValue) {
-        if (newValue !== oldValue) el[tValue] = newValue;
+        newValue !== oldValue && (el[tValue] = newValue);
     };
     function setSetValue(callback) {
         var prev = setValueCallback;
@@ -223,7 +215,7 @@
         };
     }
     function pxAdder(style, value, name) {
-        if (isNumber(value)) style[name] = value + "px";
+        isNumber(value) && (style[name] = value + "px");
     }
     function ieVersion() {
         return document.documentMode;
@@ -249,9 +241,7 @@
                             break;
                         }
                     }
-                    if (mi === undefined) {
-                        mi = isUnitlessNumber[ki] === !0 ? noop : pxAdder;
-                    }
+                    mi === undefined && (mi = isUnitlessNumber[ki] === !0 ? noop : pxAdder);
                 }
                 mapping.set(ki, mi);
             }
@@ -280,21 +270,19 @@
             if (isObject(oldStyle)) {
                 for (rule in oldStyle) {
                     if (oldStyle[rule] === undefined) continue;
-                    if (newStyle[rule] === undefined) removeProperty(s, rule);
+                    newStyle[rule] === undefined && removeProperty(s, rule);
                 }
                 for (rule in newStyle) {
                     v = newStyle[rule];
                     if (v !== undefined) {
-                        if (oldStyle[rule] !== v) setStyleProperty(s, rule, v);
-                    } else if (oldStyle[rule] !== undefined) {
-                        removeProperty(s, rule);
-                    }
+                        oldStyle[rule] !== v && setStyleProperty(s, rule, v);
+                    } else oldStyle[rule] !== undefined && removeProperty(s, rule);
                 }
             } else {
-                if (oldStyle) s.cssText = "";
+                oldStyle && (s.cssText = "");
                 for (rule in newStyle) {
                     v = newStyle[rule];
-                    if (v !== undefined) setStyleProperty(s, rule, v);
+                    v !== undefined && setStyleProperty(s, rule, v);
                 }
             }
         } else if (newStyle) {
@@ -304,9 +292,7 @@
                 for (rule in oldStyle) {
                     removeProperty(s, rule);
                 }
-            } else if (oldStyle) {
-                s.cssText = "";
-            }
+            } else oldStyle && (s.cssText = "");
         }
     }
     function setClassName(el, className) {
@@ -370,9 +356,7 @@
                 }
             }
         }
-        if (valueNewAttr !== undefined) {
-            setValueCallback(el, n, valueNewAttr, valueOldAttr);
-        }
+        valueNewAttr !== undefined && setValueCallback(el, n, valueNewAttr, valueOldAttr);
         return oldAttrs;
     }
     function pushInitCallback(c) {
@@ -487,8 +471,8 @@
         if (component) {
             if (component.ctxClass) {
                 ctx = new component.ctxClass(c.data || {}, c);
-                if (ctx.data === undefined) ctx.data = c.data || {};
-                if (ctx.me === undefined) ctx.me = c;
+                ctx.data === undefined && (ctx.data = c.data || {});
+                ctx.me === undefined && (ctx.me = c);
             } else {
                 ctx = {
                     data: c.data || {},
@@ -499,13 +483,9 @@
             ctx.cfg = n.cfg === undefined ? findCfg(parentNode) : n.cfg;
             c.ctx = ctx;
             currentCtx = ctx;
-            if (component.init) {
-                component.init(ctx, c);
-            }
-            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, __export_RenderPhase.Create);
-            if (component.render) {
-                component.render(ctx, c);
-            }
+            component.init && component.init(ctx, c);
+            beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(n, __export_RenderPhase.Create);
+            component.render && component.render(ctx, c);
             currentCtx = undefined;
         } else {}
         tag = c.tag;
@@ -534,9 +514,7 @@
                 createChildren(c, createInto, createBefore);
             }
             if (component) {
-                if (component.postRender) {
-                    component.postRender(c.ctx, c);
-                }
+                component.postRender && component.postRender(c.ctx, c);
                 pushInitCallback(c);
             }
             return c;
@@ -577,14 +555,10 @@
                     elPrev = elPrev.nextSibling;
                 }
                 c.element = newElements;
-                if (removeEl) {
-                    parent.removeChild(el);
-                }
+                removeEl && parent.removeChild(el);
             }
             if (component) {
-                if (component.postRender) {
-                    component.postRender(c.ctx, c);
-                }
+                component.postRender && component.postRender(c.ctx, c);
                 pushInitCallback(c);
             }
             return c;
@@ -599,17 +573,13 @@
         createInto.insertBefore(el, createBefore);
         c.element = el;
         createChildren(c, el, null);
-        if (component) {
-            if (component.postRender) {
-                component.postRender(c.ctx, c);
-            }
-        }
-        if (inNotFocusable && focusRootTop === c) inNotFocusable = !1;
-        if (inSvgForeignObject) inSvg = !0;
-        if (c.attrs || inNotFocusable) c.attrs = updateElement(c, el, c.attrs, {}, inNotFocusable);
-        if (c.style) updateStyle(el, c.style, undefined);
+        component && (component.postRender && component.postRender(c.ctx, c));
+        inNotFocusable && focusRootTop === c && (inNotFocusable = !1);
+        inSvgForeignObject && (inSvg = !0);
+        (c.attrs || inNotFocusable) && (c.attrs = updateElement(c, el, c.attrs, {}, inNotFocusable));
+        c.style && updateStyle(el, c.style, undefined);
         className = c.className;
-        if (className) setClassName(el, className);
+        className && setClassName(el, className);
         inSvg = backupInSvg;
         inNotFocusable = backupInNotFocusable;
         pushInitCallback(c);
@@ -656,8 +626,8 @@
         if (component) {
             ctx = c.ctx;
             currentCtx = ctx;
-            if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(c, __export_RenderPhase.Destroy);
-            if (component.destroy) component.destroy(ctx, c, c.element);
+            beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(c, __export_RenderPhase.Destroy);
+            component.destroy && component.destroy(ctx, c, c.element);
             disposables = ctx.disposables;
             if (__export_isArray(disposables)) {
                 for (i_5 = disposables.length; i_5-- > 0; ) {
@@ -684,7 +654,7 @@
             }
         } else if (el != null) {
             p = el.parentNode;
-            if (p) p.removeChild(el);
+            p && p.removeChild(el);
         } else {
             ch = c.children;
             if (__export_isArray(ch)) {
@@ -825,8 +795,8 @@
             backupInNotFocusable = inNotFocusable;
             if (c.tag === "svg") {
                 inSvg = !0;
-            } else if (inSvg && c.tag === "foreignObject") inSvg = !1;
-            if (inNotFocusable && focusRootTop === c) inNotFocusable = !1;
+            } else inSvg && c.tag === "foreignObject" && (inSvg = !1);
+            inNotFocusable && focusRootTop === c && (inNotFocusable = !1);
             selectedUpdate(c.children, c.element || createInto, c.element != null ? null : createBefore);
             inSvg = backupInSvg;
             inNotFocusable = backupInNotFocusable;
@@ -854,12 +824,12 @@
                 }
                 ctx.data = n.data || {};
                 c.component = component;
-                if (beforeRenderCallback !== emptyBeforeRenderCallback) beforeRenderCallback(n, inSelectedUpdate ? __export_RenderPhase.LocalUpdate : __export_RenderPhase.Update);
+                beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(n, inSelectedUpdate ? __export_RenderPhase.LocalUpdate : __export_RenderPhase.Update);
                 if (component.render) {
                     c.orig = n;
                     n = __export_assign({}, n);
                     c.cfg = undefined;
-                    if (n.cfg !== undefined) n.cfg = undefined;
+                    n.cfg !== undefined && (n.cfg = undefined);
                     component.render(ctx, n, c);
                     if (n.cfg !== undefined) {
                         if (c.cfg === undefined) c.cfg = n.cfg; else __export_assign(c.cfg, n.cfg);
@@ -883,9 +853,7 @@
         }
         backupInSvg = inSvg;
         backupInNotFocusable = inNotFocusable;
-        if (isNumber(newChildren)) {
-            newChildren = "" + newChildren;
-        }
+        isNumber(newChildren) && (newChildren = "" + newChildren);
         if (bigChange || component != undefined && ctx == undefined || component == undefined && ctx != undefined && ctx.me.component !== emptyComponent) {} else if (tag === "/") {
             if (c.tag === "/" && cachedChildren === newChildren) {
                 finishUpdateNode(n, c, component);
@@ -900,7 +868,7 @@
                 }
                 createInto = n.data;
                 createBefore = getLastDomNode(c);
-                if (createBefore != null) createBefore = createBefore.nextSibling;
+                createBefore != null && (createBefore = createBefore.nextSibling);
                 tag = undefined;
             }
             if (tag === undefined) {
@@ -911,9 +879,9 @@
                         c.children = newChildren;
                     }
                 } else {
-                    if (inNotFocusable && focusRootTop === c) inNotFocusable = !1;
+                    inNotFocusable && focusRootTop === c && (inNotFocusable = !1);
                     if (deepness <= 0) {
-                        if (__export_isArray(cachedChildren)) selectedUpdate(c.children, createInto, createBefore);
+                        __export_isArray(cachedChildren) && selectedUpdate(c.children, createInto, createBefore);
                     } else {
                         c.children = updateChildren(createInto, newChildren, cachedChildren, c, createBefore, deepness - 1);
                     }
@@ -930,7 +898,7 @@
                     inSvgForeignObject = !0;
                     inSvg = !1;
                 }
-                if (inNotFocusable && focusRootTop === c) inNotFocusable = !1;
+                inNotFocusable && focusRootTop === c && (inNotFocusable = !1);
                 el = c.element;
                 if (isString(newChildren) && !__export_isArray(cachedChildren)) {
                     if (newChildren !== cachedChildren) {
@@ -939,15 +907,15 @@
                     }
                 } else {
                     if (deepness <= 0) {
-                        if (__export_isArray(cachedChildren)) selectedUpdate(c.children, el, null);
+                        __export_isArray(cachedChildren) && selectedUpdate(c.children, el, null);
                     } else {
                         cachedChildren = updateChildren(el, newChildren, cachedChildren, c, null, deepness - 1);
                     }
                 }
                 c.children = cachedChildren;
-                if (inSvgForeignObject) inSvg = !0;
+                inSvgForeignObject && (inSvg = !0);
                 finishUpdateNode(n, c, component);
-                if (c.attrs || n.attrs || inNotFocusable) c.attrs = updateElement(c, el, n.attrs, c.attrs || {}, inNotFocusable);
+                (c.attrs || n.attrs || inNotFocusable) && (c.attrs = updateElement(c, el, n.attrs, c.attrs || {}, inNotFocusable));
                 updateStyle(el, n.style, c.style);
                 c.style = n.style;
                 className = n.className;
@@ -961,7 +929,7 @@
             }
         }
         parEl = c.element;
-        if (__export_isArray(parEl)) parEl = parEl[0];
+        __export_isArray(parEl) && (parEl = parEl[0]);
         if (parEl == undefined) parEl = createInto; else parEl = parEl.parentNode;
         r = createNode(n, c.parent, parEl, getDomNode(c));
         removeNode(c);
@@ -1046,18 +1014,14 @@
         before = findNextNode(cachedChildren, cachedIndex, cachedLength, createBefore);
         cur = cachedChildren[cachedIndex];
         what = getDomNode(cur);
-        if (what != null && what !== before) {
-            reorderInUpdateChildrenRec(cur, element, before);
-        }
+        what != null && what !== before && reorderInUpdateChildrenRec(cur, element, before);
     }
     function reorderAndUpdateNodeInUpdateChildren(newNode, cachedChildren, cachedIndex, cachedLength, createBefore, element, deepness) {
         var before, cur, what;
         before = findNextNode(cachedChildren, cachedIndex, cachedLength, createBefore);
         cur = cachedChildren[cachedIndex];
         what = getDomNode(cur);
-        if (what != null && what !== before) {
-            reorderInUpdateChildrenRec(cur, element, before);
-        }
+        what != null && what !== before && reorderInUpdateChildrenRec(cur, element, before);
         cachedChildren[cachedIndex] = updateNode(newNode, cur, element, before, deepness);
     }
     function recursiveFlattenVdomChildren(res, children) {
@@ -1069,7 +1033,7 @@
             }
         } else {
             item = normalizeNode(children);
-            if (item !== undefined) res.push(item);
+            item !== undefined && res.push(item);
         }
     }
     function flattenVdomChildren(res, children) {
@@ -1077,9 +1041,9 @@
     }
     function updateChildren(element, newChildren, cachedChildren, parentNode, createBefore, deepness) {
         var newCh;
-        if (cachedChildren == undefined) cachedChildren = [];
+        cachedChildren == undefined && (cachedChildren = []);
         if (!__export_isArray(cachedChildren)) {
-            if (element.firstChild) element.removeChild(element.firstChild);
+            element.firstChild && element.removeChild(element.firstChild);
             cachedChildren = [];
         }
         newCh = [];
@@ -1324,11 +1288,9 @@
     }
     hasNativeRaf = !1;
     nativeRaf = window.requestAnimationFrame;
-    if (nativeRaf) {
-        nativeRaf(function(param) {
-            if (param === +param) hasNativeRaf = !0;
-        });
-    }
+    nativeRaf && nativeRaf(function(param) {
+        param === +param && (hasNativeRaf = !0);
+    });
     setTimeout = window.setTimeout;
     __export_now = Date.now || function() {
         return new Date().getTime();
@@ -1341,7 +1303,7 @@
             nativeRaf(callback);
         } else {
             delay = 50 / 3 + lastTickTime - __export_now();
-            if (delay < 0) delay = 0;
+            delay < 0 && (delay = 0);
             setTimeout(function() {
                 lastTickTime = __export_now();
                 callback(lastTickTime - startTime);
@@ -1357,7 +1319,7 @@
     regEvents = {};
     function addEvent(name, priority, callback) {
         var list;
-        if (registryEvents == undefined) registryEvents = {};
+        registryEvents == undefined && (registryEvents = {});
         list = registryEvents[name] || [];
         list.push({
             priority,
@@ -1395,9 +1357,7 @@
             eventName = name.slice(1);
             el = document;
         }
-        if (capture) {
-            eventName = name.slice(1);
-        }
+        capture && (eventName = name.slice(1));
         function enhanceEvent(ev) {
             var t, n;
             ev = ev || window.event;
@@ -1406,9 +1366,9 @@
             listeningEventDeepness++;
             emitEvent(name, ev, t, n);
             listeningEventDeepness--;
-            if (listeningEventDeepness == 0 && deferSyncUpdateRequested) syncUpdate();
+            listeningEventDeepness == 0 && deferSyncUpdateRequested && syncUpdate();
         }
-        if ("on" + eventName in window) el = window;
+        "on" + eventName in window && (el = window);
         el.addEventListener(eventName, enhanceEvent, isPassiveEventHandlerSupported ? {
             capture,
             passive: !1
@@ -1445,8 +1405,8 @@
             } else if (__export_isArray(node.children)) {
                 backupInSvg = inSvg;
                 backupInNotFocusable = inNotFocusable;
-                if (inNotFocusable && focusRootTop === node) inNotFocusable = !1;
-                if (node.tag === "svg") inSvg = !0; else if (inSvg && node.tag === "foreignObject") inSvg = !1;
+                inNotFocusable && focusRootTop === node && (inNotFocusable = !1);
+                if (node.tag === "svg") inSvg = !0; else inSvg && node.tag === "foreignObject" && (inSvg = !1);
                 thisElement = node.element;
                 if (thisElement != undefined) {
                     selectedUpdate(node.children, thisElement, null);
@@ -1552,14 +1512,14 @@
                     insertBefore = getDomNode(rafter.n);
                     if (insertBefore != null) break;
                 }
-                if (focusRootTop) inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds_bobril);
-                if (r.e === undefined) r.e = document.body;
+                focusRootTop && (inNotFocusable = !isLogicalParent(focusRootTop, r.p, rootIds_bobril));
+                r.e === undefined && (r.e = document.body);
                 if (rc) {
                     if (fullRefresh || rc.ctx[ctxInvalidated] >= frameCounter) {
                         node = RootComponent(r);
                         updateNode(node, rc, r.e, insertBefore, fullRefresh ? 1e6 : rc.ctx[ctxDeepness]);
                     } else {
-                        if (__export_isArray(r.c)) selectedUpdate(r.c, r.e, insertBefore);
+                        __export_isArray(r.c) && selectedUpdate(r.c, r.e, insertBefore);
                     }
                 } else {
                     node = RootComponent(r);
@@ -1591,12 +1551,12 @@
     }
     __export_invalidate = function(ctx, deepness) {
         if (ctx != null) {
-            if (deepness == undefined) deepness = 1e6;
+            deepness == undefined && (deepness = 1e6);
             if (ctx[ctxInvalidated] !== frameCounter + 1) {
                 ctx[ctxInvalidated] = frameCounter + 1;
                 ctx[ctxDeepness] = deepness;
             } else {
-                if (deepness > ctx[ctxDeepness]) ctx[ctxDeepness] = deepness;
+                deepness > ctx[ctxDeepness] && (ctx[ctxDeepness] = deepness);
             }
         } else {
             fullRecreateRequested = !0;
@@ -1627,7 +1587,7 @@
     function removeRoot(id) {
         var root = roots[id];
         if (!root) return;
-        if (root.n) removeNode(root.n);
+        root.n && removeNode(root.n);
         delete roots[id];
     }
     function getRoots() {
@@ -1666,9 +1626,7 @@
             param = {
                 target: node
             };
-        } else if (isObject(param) && param.target == undefined) {
-            param.target = node;
-        }
+        } else isObject(param) && param.target == undefined && (param.target = node);
         res = captureBroadcast(name, param);
         if (res != undefined) return res;
         prevCtx = currentCtxWithEvents;
@@ -1693,9 +1651,7 @@
                                     currentCtxWithEvents = prevCtx;
                                     return undefined;
                                 }
-                                if (eventResult == __export_EventResult.NotHandledPreventDefault) {
-                                    res = ctx;
-                                }
+                                eventResult == __export_EventResult.NotHandledPreventDefault && (res = ctx);
                             }
                         }
                     }
@@ -1711,9 +1667,7 @@
                         currentCtxWithEvents = prevCtx;
                         return undefined;
                     }
-                    if (eventResult == __export_EventResult.NotHandledPreventDefault) {
-                        res = ctx;
-                    }
+                    eventResult == __export_EventResult.NotHandledPreventDefault && (res = ctx);
                 }
                 m = c.shouldStopBubble;
                 if (m) {
@@ -1749,9 +1703,7 @@
                                 currentCtxWithEvents = prevCtx;
                                 return undefined;
                             }
-                            if (eventResult == __export_EventResult.NotHandledPreventDefault) {
-                                res = ctx;
-                            }
+                            eventResult == __export_EventResult.NotHandledPreventDefault && (res = ctx);
                         }
                     }
                 }
@@ -1767,9 +1719,7 @@
                     currentCtxWithEvents = prevCtx;
                     return undefined;
                 }
-                if (eventResult == __export_EventResult.NotHandledPreventDefault) {
-                    res = ctx;
-                }
+                eventResult == __export_EventResult.NotHandledPreventDefault && (res = ctx);
             }
             m = c.shouldStopBroadcast;
             if (m) {
@@ -1813,9 +1763,7 @@
                                 currentCtxWithEvents = prevCtx;
                                 return undefined;
                             }
-                            if (eventResult == __export_EventResult.NotHandledPreventDefault) {
-                                res = ctx;
-                            }
+                            eventResult == __export_EventResult.NotHandledPreventDefault && (res = ctx);
                         }
                     }
                 }
@@ -1868,28 +1816,20 @@
             n = a[i];
             if (__export_isArray(n)) {
                 a[i] = cloneNodeArray(n);
-            } else if (isObject(n)) {
-                a[i] = cloneNode(n);
-            }
+            } else isObject(n) && (a[i] = cloneNode(n));
         }
         return a;
     }
     function cloneNode(node) {
         var r, ch;
         r = __export_assign({}, node);
-        if (r.attrs) {
-            r.attrs = __export_assign({}, r.attrs);
-        }
-        if (isObject(r.style)) {
-            r.style = __export_assign({}, r.style);
-        }
+        r.attrs && (r.attrs = __export_assign({}, r.attrs));
+        isObject(r.style) && (r.style = __export_assign({}, r.style));
         ch = r.children;
         if (ch) {
             if (__export_isArray(ch)) {
                 r.children = cloneNodeArray(ch);
-            } else if (isObject(ch)) {
-                r.children = cloneNode(ch);
-            }
+            } else isObject(ch) && (r.children = cloneNode(ch));
         }
         return r;
     }
@@ -1953,174 +1893,166 @@
                 attributes: !0
             });
             return function(callback) {
-                if (!callbacks.length) {
-                    hiddenDiv.setAttribute("yes", "no");
-                }
+                callbacks.length || hiddenDiv.setAttribute("yes", "no");
                 callbacks.push(callback);
             };
         } else {
             timeoutFn = window.setImmediate || setTimeout;
             return function(callback) {
                 callbacks.push(callback);
-                if (!timeout) {
-                    timeout = timeoutFn(function() {
-                        timeout = undefined;
-                        executeCallbacks();
-                    }, 0);
-                }
+                timeout || (timeout = timeoutFn(function() {
+                    timeout = undefined;
+                    executeCallbacks();
+                }, 0));
             };
         }
     }();
-    if (!window.Promise) {
-        (function() {
-            function bind(fn, thisArg) {
-                return function() {
-                    fn.apply(thisArg, arguments);
-                };
+    window.Promise || function() {
+        function bind(fn, thisArg) {
+            return function() {
+                fn.apply(thisArg, arguments);
+            };
+        }
+        function handle(deferred) {
+            var _this = this;
+            if (this.s === null) {
+                this.d.push(deferred);
+                return;
             }
-            function handle(deferred) {
-                var _this = this;
-                if (this.s === null) {
-                    this.d.push(deferred);
+            __export_asap(function() {
+                var cb, ret;
+                cb = _this.s ? deferred[0] : deferred[1];
+                if (cb == undefined) {
+                    (_this.s ? deferred[2] : deferred[3])(_this.v);
                     return;
                 }
-                __export_asap(function() {
-                    var cb, ret;
-                    cb = _this.s ? deferred[0] : deferred[1];
-                    if (cb == undefined) {
-                        (_this.s ? deferred[2] : deferred[3])(_this.v);
-                        return;
-                    }
-                    try {
-                        ret = cb(_this.v);
-                    } catch (e) {
-                        deferred[3](e);
-                        return;
-                    }
-                    deferred[2](ret);
-                });
-            }
-            function finale() {
-                var i, len;
-                for (i = 0, len = this.d.length; i < len; i++) {
-                    handle.call(this, this.d[i]);
-                }
-                this.d = null;
-            }
-            function reject(newValue) {
-                this.s = !1;
-                this.v = newValue;
-                finale.call(this);
-            }
-            function doResolve(fn, onFulfilled, onRejected) {
-                var done = !1;
                 try {
-                    fn(function(value) {
-                        if (done) return;
-                        done = !0;
-                        onFulfilled(value);
-                    }, function(reason) {
-                        if (done) return;
-                        done = !0;
-                        onRejected(reason);
-                    });
-                } catch (ex) {
+                    ret = cb(_this.v);
+                } catch (e) {
+                    deferred[3](e);
+                    return;
+                }
+                deferred[2](ret);
+            });
+        }
+        function finale() {
+            var i, len;
+            for (i = 0, len = this.d.length; i < len; i++) {
+                handle.call(this, this.d[i]);
+            }
+            this.d = null;
+        }
+        function reject(newValue) {
+            this.s = !1;
+            this.v = newValue;
+            finale.call(this);
+        }
+        function doResolve(fn, onFulfilled, onRejected) {
+            var done = !1;
+            try {
+                fn(function(value) {
                     if (done) return;
                     done = !0;
-                    onRejected(ex);
-                }
-            }
-            function resolve(newValue) {
-                var then;
-                try {
-                    if (newValue === this) throw new TypeError("Promise self resolve");
-                    if (Object(newValue) === newValue) {
-                        then = newValue.then;
-                        if (typeof then === "function") {
-                            doResolve(bind(then, newValue), bind(resolve, this), bind(reject, this));
-                            return;
-                        }
-                    }
-                    this.s = !0;
-                    this.v = newValue;
-                    finale.call(this);
-                } catch (e) {
-                    reject.call(this, e);
-                }
-            }
-            function Promise(fn) {
-                this.s = null;
-                this.v = null;
-                this.d = [];
-                doResolve(fn, bind(resolve, this), bind(reject, this));
-            }
-            Promise.prototype.then = function(onFulfilled, onRejected) {
-                var me = this;
-                return new Promise(function(resolve, reject) {
-                    handle.call(me, [ onFulfilled, onRejected, resolve, reject ]);
+                    onFulfilled(value);
+                }, function(reason) {
+                    if (done) return;
+                    done = !0;
+                    onRejected(reason);
                 });
-            };
-            Promise.prototype["catch"] = function(onRejected) {
-                return this.then(undefined, onRejected);
-            };
-            Promise.all = function() {
-                var args = [].slice.call(arguments.length === 1 && __export_isArray(arguments[0]) ? arguments[0] : arguments);
-                return new Promise(function(resolve, reject) {
-                    var remaining, i;
-                    if (args.length === 0) {
-                        resolve(args);
+            } catch (ex) {
+                if (done) return;
+                done = !0;
+                onRejected(ex);
+            }
+        }
+        function resolve(newValue) {
+            var then;
+            try {
+                if (newValue === this) throw new TypeError("Promise self resolve");
+                if (Object(newValue) === newValue) {
+                    then = newValue.then;
+                    if (typeof then === "function") {
+                        doResolve(bind(then, newValue), bind(resolve, this), bind(reject, this));
                         return;
                     }
-                    remaining = args.length;
-                    function res(i, val) {
-                        var then;
-                        try {
-                            if (val && (typeof val === "object" || typeof val === "function")) {
-                                then = val.then;
-                                if (typeof then === "function") {
-                                    then.call(val, function(val) {
-                                        res(i, val);
-                                    }, reject);
-                                    return;
-                                }
-                            }
-                            args[i] = val;
-                            if (--remaining === 0) {
-                                resolve(args);
-                            }
-                        } catch (ex) {
-                            reject(ex);
-                        }
-                    }
-                    for (i = 0; i < args.length; i++) {
-                        res(i, args[i]);
-                    }
-                });
-            };
-            Promise.resolve = function(value) {
-                if (value && typeof value === "object" && value.constructor === Promise) {
-                    return value;
                 }
-                return new Promise(function(resolve) {
-                    resolve(value);
-                });
-            };
-            Promise.reject = function(value) {
-                return new Promise(function(_resolve, reject) {
-                    reject(value);
-                });
-            };
-            Promise.race = function(values) {
-                return new Promise(function(resolve, reject) {
-                    var i, len;
-                    for (i = 0, len = values.length; i < len; i++) {
-                        values[i].then(resolve, reject);
+                this.s = !0;
+                this.v = newValue;
+                finale.call(this);
+            } catch (e) {
+                reject.call(this, e);
+            }
+        }
+        function Promise(fn) {
+            this.s = null;
+            this.v = null;
+            this.d = [];
+            doResolve(fn, bind(resolve, this), bind(reject, this));
+        }
+        Promise.prototype.then = function(onFulfilled, onRejected) {
+            var me = this;
+            return new Promise(function(resolve, reject) {
+                handle.call(me, [ onFulfilled, onRejected, resolve, reject ]);
+            });
+        };
+        Promise.prototype["catch"] = function(onRejected) {
+            return this.then(undefined, onRejected);
+        };
+        Promise.all = function() {
+            var args = [].slice.call(arguments.length === 1 && __export_isArray(arguments[0]) ? arguments[0] : arguments);
+            return new Promise(function(resolve, reject) {
+                var remaining, i;
+                if (args.length === 0) {
+                    resolve(args);
+                    return;
+                }
+                remaining = args.length;
+                function res(i, val) {
+                    var then;
+                    try {
+                        if (val && (typeof val === "object" || typeof val === "function")) {
+                            then = val.then;
+                            if (typeof then === "function") {
+                                then.call(val, function(val) {
+                                    res(i, val);
+                                }, reject);
+                                return;
+                            }
+                        }
+                        args[i] = val;
+                        --remaining === 0 && resolve(args);
+                    } catch (ex) {
+                        reject(ex);
                     }
-                });
-            };
-            window["Promise"] = Promise;
-        })();
-    }
+                }
+                for (i = 0; i < args.length; i++) {
+                    res(i, args[i]);
+                }
+            });
+        };
+        Promise.resolve = function(value) {
+            if (value && typeof value === "object" && value.constructor === Promise) {
+                return value;
+            }
+            return new Promise(function(resolve) {
+                resolve(value);
+            });
+        };
+        Promise.reject = function(value) {
+            return new Promise(function(_resolve, reject) {
+                reject(value);
+            });
+        };
+        Promise.race = function(values) {
+            return new Promise(function(resolve, reject) {
+                var i, len;
+                for (i = 0, len = values.length; i < len; i++) {
+                    values[i].then(resolve, reject);
+                }
+            });
+        };
+        window["Promise"] = Promise;
+    }();
     bValue = "b$value";
     bSelectionStart = "b$selStart";
     bSelectionEnd = "b$selEnd";
@@ -2148,7 +2080,7 @@
     function selectedArray(options) {
         var res = [], j;
         for (j = 0; j < options.length; j++) {
-            if (options[j].selected) res.push(options[j].value);
+            options[j].selected && res.push(options[j].value);
         }
         return res;
     }
@@ -2168,9 +2100,7 @@
             };
             node.component = emptyComponent;
         }
-        if (oldValue === undefined) {
-            node.ctx[bValue] = newValue;
-        }
+        oldValue === undefined && (node.ctx[bValue] = newValue);
         isMultiSelect = isSelect && el.multiple;
         emitDiff = !1;
         if (isMultiSelect) {
@@ -2182,9 +2112,7 @@
                         options[j].selected = stringArrayContains(newValue, options[j].value);
                     }
                     currentMulti = selectedArray(options);
-                    if (stringArrayEqual(currentMulti, newValue)) {
-                        emitDiff = !0;
-                    }
+                    stringArrayEqual(currentMulti, newValue) && (emitDiff = !0);
                 } else {
                     emitDiff = !0;
                 }
@@ -2212,9 +2140,7 @@
                             }
                             if (newValue !== "" || isCombobox) {
                                 currentValue = el[tValue];
-                                if (newValue !== currentValue) {
-                                    emitDiff = !0;
-                                }
+                                newValue !== currentValue && (emitDiff = !0);
                             }
                         } else {
                             el[tValue] = newValue;
@@ -2296,10 +2222,8 @@
             swap = !1;
             oStart = ctx[bSelectionStart];
             if (sDir == undefined) {
-                if (sEnd === oStart) swap = !0;
-            } else if (sDir === "backward") {
-                swap = !0;
-            }
+                sEnd === oStart && (swap = !0);
+            } else sDir === "backward" && (swap = !0);
             if (swap) {
                 s = sStart;
                 sStart = sEnd;
@@ -2316,9 +2240,9 @@
         component = node.component;
         currentCtxWithEvents = ctx;
         hasProp = node.attrs && node.attrs[bValue];
-        if (isFunction(hasProp)) hasProp(value);
+        isFunction(hasProp) && hasProp(value);
         hasOnChange = component && component.onChange;
-        if (isFunction(hasOnChange)) hasOnChange(ctx, value);
+        isFunction(hasOnChange) && hasOnChange(ctx, value);
         currentCtxWithEvents = prevCtx;
         bubble(node, "onInput", {
             target: node,
@@ -2341,7 +2265,7 @@
     }
     function emitOnMouseChange(ev, _target, _node) {
         var f = focused();
-        if (f) emitOnChange(ev, f.element, f);
+        f && emitOnChange(ev, f.element, f);
         return !1;
     }
     events_bobril = [ "input", "cut", "paste", "keydown", "keypress", "keyup", "click", "change" ];
@@ -2532,7 +2456,7 @@
                     meta: ev.metaKey || !1,
                     count: ev.detail
                 };
-                if (emitEvent("!" + name, param, target, node)) preventDef = !0;
+                emitEvent("!" + name, param, target, node) && (preventDef = !0);
             }
             if (preventDef) {
                 preventDefault(ev);
@@ -2633,7 +2557,7 @@
             n = prevMousePath[i - 1];
             if (n) {
                 c = n.component;
-                if (c && c.onMouseOut) c.onMouseOut(n.ctx, ev);
+                c && c.onMouseOut && c.onMouseOut(n.ctx, ev);
             }
         }
         while (i > common) {
@@ -2641,14 +2565,14 @@
             n = prevMousePath[i];
             if (n) {
                 c = n.component;
-                if (c && c.onMouseLeave) c.onMouseLeave(n.ctx, ev);
+                c && c.onMouseLeave && c.onMouseLeave(n.ctx, ev);
             }
         }
         while (i < toPath.length) {
             n = toPath[i];
             if (n) {
                 c = n.component;
-                if (c && c.onMouseEnter) c.onMouseEnter(n.ctx, ev);
+                c && c.onMouseEnter && c.onMouseEnter(n.ctx, ev);
             }
             i++;
         }
@@ -2657,7 +2581,7 @@
             n = prevMousePath[i - 1];
             if (n) {
                 c = n.component;
-                if (c && c.onMouseIn) c.onMouseIn(n.ctx, ev);
+                c && c.onMouseIn && c.onMouseIn(n.ctx, ev);
             }
         }
         return !1;
@@ -2675,9 +2599,7 @@
             mouseEnterAndLeave(ev);
         }
         pointersDown[ev.id] = ev.type;
-        if (firstPointerDown !== ev.id) {
-            tapCanceled = !0;
-        }
+        firstPointerDown !== ev.id && (tapCanceled = !0);
         return !1;
     }
     function bustingPointerMove(ev, target, node) {
@@ -2688,10 +2610,8 @@
         }
         if (firstPointerDown === ev.id) {
             mouseEnterAndLeave(ev);
-            if (!diffLess(firstPointerDownX, ev.x, MoveOverIsNotTap) || !diffLess(firstPointerDownY, ev.y, MoveOverIsNotTap)) tapCanceled = !0;
-        } else if (noPointersDown()) {
-            mouseEnterAndLeave(ev);
-        }
+            (!diffLess(firstPointerDownX, ev.x, MoveOverIsNotTap) || !diffLess(firstPointerDownY, ev.y, MoveOverIsNotTap)) && (tapCanceled = !0);
+        } else noPointersDown() && mouseEnterAndLeave(ev);
         return !1;
     }
     clickingSpreeStart = 0;
@@ -2723,17 +2643,13 @@
                     toBust.push([ ev.x, ev.y, __export_now() + delay, handled ? 1 : 0 ]);
                     return handled;
                 }
-            } else if (tapCanceled) {
-                __export_ignoreClick(ev.x, ev.y);
-            }
+            } else tapCanceled && __export_ignoreClick(ev.x, ev.y);
         }
         return !1;
     }
     function bustingPointerCancel(ev, _target, _node) {
         delete pointersDown[ev.id];
-        if (firstPointerDown == ev.id) {
-            firstPointerDown = -1;
-        }
+        firstPointerDown == ev.id && (firstPointerDown = -1);
         return !1;
     }
     function bustingClick(ev, _target, _node) {
@@ -2748,7 +2664,7 @@
             }
             if (diffLess(j[0], ev.clientX, BustDistance) && diffLess(j[1], ev.clientY, BustDistance)) {
                 toBust.splice(i, 1);
-                if (j[3]) preventDefault(ev);
+                j[3] && preventDefault(ev);
                 return !0;
             }
         }
@@ -2796,7 +2712,7 @@
                 meta: ev.metaKey || !1,
                 count: ev.detail || 1
             };
-            if (handlerName == onDoubleClickText) param.count = 2;
+            handlerName == onDoubleClickText && (param.count = 2);
             if (shouldPreventClickingSpree(param.count) || invokeMouseOwner(handlerName, param) || bubble(node, handlerName, param)) {
                 preventDefault(ev);
                 return !0;
@@ -2911,7 +2827,7 @@
                 n = nodeStack_bobril[i];
                 if (n) {
                     c = n.component;
-                    if (c && c.onFocusOut) c.onFocusOut(n.ctx);
+                    c && c.onFocusOut && c.onFocusOut(n.ctx);
                 }
                 i--;
             }
@@ -2920,7 +2836,7 @@
                 n = newStack[i];
                 if (n) {
                     c = n.component;
-                    if (c && c.onFocusIn) c.onFocusIn(n.ctx);
+                    c && c.onFocusIn && c.onFocusIn(n.ctx);
                 }
                 i++;
             }
@@ -2994,7 +2910,7 @@
         this.alt = !1;
         this.meta = !1;
         this.data = newHashObj();
-        if (pointerId >= 0) pointer2Dnd[pointerId] = this;
+        pointerId >= 0 && (pointer2Dnd[pointerId] = this);
         dnds.push(this);
     };
     draggingStyle = "b-dragging";
@@ -3046,13 +2962,11 @@
             for (i = 0; i < dnds.length; i++) {
                 dnd = dnds[i];
                 if (dnd.beforeDrag) continue;
-                if (dnd.dragView != null && (dnd.x != 0 || dnd.y != 0)) {
-                    res.push({
-                        key: "" + dnd.id,
-                        data: dnd,
-                        component: DndComp
-                    });
-                }
+                dnd.dragView != null && (dnd.x != 0 || dnd.y != 0) && res.push({
+                    key: "" + dnd.id,
+                    data: dnd,
+                    component: DndComp
+                });
             }
             me.tag = "div";
             me.style = {
@@ -3068,7 +2982,7 @@
             dds = document.documentElement.style;
             cur = currentCursor();
             if (cur) {
-                if (dds.cursor !== cur) dds.setProperty("cursor", cur, "important");
+                dds.cursor !== cur && dds.setProperty("cursor", cur, "important");
             } else {
                 dds.setProperty("cursor", "");
             }
@@ -3114,7 +3028,7 @@
     dndProto.destroy = function() {
         var i, dd;
         this.ended = !0;
-        if (this.started) broadcast("onDragEnd", this);
+        this.started && broadcast("onDragEnd", this);
         delete pointer2Dnd[this.pointerid];
         for (i = 0; i < dnds.length; i++) {
             if (dnds[i] === this) {
@@ -3122,9 +3036,7 @@
                 break;
             }
         }
-        if (systemDnd === this) {
-            systemDnd = null;
-        }
+        systemDnd === this && (systemDnd = null);
         if (dnds.length === 0 && rootId_bobril != null) {
             removeRoot(rootId_bobril);
             rootId_bobril = null;
@@ -3137,9 +3049,7 @@
     function handlePointerDown_bobril(ev, _target, node) {
         var dnd, sourceCtx, htmlNode, boundFn, rect;
         dnd = pointer2Dnd[ev.id];
-        if (dnd) {
-            dnd.cancelDnd();
-        }
+        dnd && dnd.cancelDnd();
         if (ev.button <= 1) {
             dnd = new DndCtx(ev.id);
             dnd.startX = ev.x;
@@ -3176,9 +3086,7 @@
     function dndMoved(node, dnd) {
         dnd.overNode = node;
         dnd.targetCtx = bubble(node, "onDragOver", dnd);
-        if (dnd.targetCtx == undefined) {
-            dnd.operation = 0;
-        }
+        dnd.targetCtx == undefined && (dnd.operation = 0);
         broadcast("onDrag", dnd);
     }
     function updateDndFromPointerEvent(dnd, ev) {
@@ -3257,9 +3165,7 @@
     function handleDragStart(ev, _target, node) {
         var dnd, activePointerIds, startX, startY, sourceCtx, htmlNode, boundFn, rect, eff, dt, div, style, opacityBackup, widthBackup, heightBackup, paddingBackup, data, dataKeys, i, k, d;
         dnd = systemDnd;
-        if (dnd != null) {
-            dnd.destroy();
-        }
+        dnd != null && dnd.destroy();
         activePointerIds = Object.keys(pointer2Dnd);
         if (activePointerIds.length > 0) {
             dnd = pointer2Dnd[activePointerIds[0]];
@@ -3328,7 +3234,7 @@
             try {
                 k = dataKeys[i];
                 d = data[k];
-                if (!isString(d)) d = JSON.stringify(d);
+                isString(d) || (d = JSON.stringify(d));
                 ev.dataTransfer.setData(k, d);
             } catch (e) {}
         }
@@ -3364,11 +3270,11 @@
             if (dtTypes) {
                 for (i = 0; i < dtTypes.length; i++) {
                     tt = dtTypes[i];
-                    if (tt === "text/plain") tt = "Text"; else if (tt === "text/uri-list") tt = "Url";
+                    if (tt === "text/plain") tt = "Text"; else tt === "text/uri-list" && (tt = "Url");
                     dnd.data[tt] = null;
                 }
             } else {
-                if (dt.getData("Text") !== undefined) dnd.data["Text"] = null;
+                dt.getData("Text") !== undefined && (dnd.data["Text"] = null);
             }
         }
         updateFromNative(dnd, ev);
@@ -3393,9 +3299,7 @@
         return !0;
     }
     function handleDragEnd(_ev, _target, _node) {
-        if (systemDnd != null) {
-            systemDnd.destroy();
-        }
+        systemDnd != null && systemDnd.destroy();
         return !1;
     }
     function handleDrop(ev, _target, _node) {
@@ -3454,7 +3358,7 @@
     };
     waitingForPopHashChange = -1;
     function emitOnHashChange() {
-        if (waitingForPopHashChange >= 0) clearTimeout(waitingForPopHashChange);
+        waitingForPopHashChange >= 0 && clearTimeout(waitingForPopHashChange);
         waitingForPopHashChange = -1;
         __export_invalidate();
         return !1;
@@ -3491,9 +3395,7 @@
         if (parent) {
             if (__export_isArray(parent)) {
                 for (i_12 = 0; i_12 < parent.length; i_12++) {
-                    if (i_12 > 0) {
-                        result += ",";
-                    }
+                    i_12 > 0 && (result += ",");
                     result += "." + buildCssSubRule(parent[i_12]) + "." + name;
                 }
             } else {
@@ -3522,9 +3424,7 @@
             for (key in style) {
                 if (!hOP.call(style, key)) continue;
                 val = style[key];
-                if (isFunction(val)) {
-                    val = val(cur, key);
-                }
+                isFunction(val) && (val = val(cur, key));
                 cur[key] = val;
             }
         }
@@ -3580,7 +3480,7 @@
                     for (i_15 = 0; i_15 < bundledDynamicSprites.length; i_15++) {
                         dynSprite = bundledDynamicSprites[i_15];
                         colorStr = dynSprite.color;
-                        if (!isString(colorStr)) colorStr = colorStr();
+                        isString(colorStr) || (colorStr = colorStr());
                         if (wasSpriteUrlChanged || colorStr !== dynSprite.lastColor) {
                             dynSprite.lastColor = colorStr;
                             mulWidth = dynSprite.width * lastSpriteDppx | 0;
@@ -3626,8 +3526,8 @@
                 colorStr = dynSprite.color();
                 if (colorStr !== dynSprite.lastColor) {
                     dynSprite.lastColor = colorStr;
-                    if (dynSprite.width == undefined) dynSprite.width = image.width;
-                    if (dynSprite.height == undefined) dynSprite.height = image.height;
+                    dynSprite.width == undefined && (dynSprite.width = image.width);
+                    dynSprite.height == undefined && (dynSprite.height = image.height);
                     lastUrl = recolorAndClip(image, colorStr, dynSprite.width, dynSprite.height, dynSprite.left, dynSprite.top);
                     stDef = allStyles[dynSprite.styleId];
                     stDef.style = {
@@ -3657,9 +3557,7 @@
                 name_1 = ss.name;
                 ssPseudo = ss.pseudo;
                 ssStyle = ss.style;
-                if (isFunction(ssStyle) && ssStyle.length === 0) {
-                    _a = __read(ssStyle(), 2), ssStyle = _a[0], ssPseudo = _a[1];
-                }
+                isFunction(ssStyle) && ssStyle.length === 0 && (_a = __read(ssStyle(), 2), ssStyle = _a[0], ssPseudo = _a[1]);
                 if (isString(ssStyle) && ssPseudo == undefined) {
                     ss.realName = ssStyle;
                     continue;
@@ -3677,7 +3575,7 @@
                 ss.inlStyle = extractedInlStyle;
                 shimStyle(style_2);
                 cssStyle = inlineStyleToCssDeclaration(style_2);
-                if (cssStyle.length > 0) styleStr += (name_1 == undefined ? parent_1 : buildCssRule(parent_1, name_1)) + " {" + cssStyle + "}\n";
+                cssStyle.length > 0 && (styleStr += (name_1 == undefined ? parent_1 : buildCssRule(parent_1, name_1)) + " {" + cssStyle + "}\n");
                 for (key2 in flattenPseudo) {
                     item = flattenPseudo[key2];
                     shimStyle(item);
@@ -3832,7 +3730,7 @@
     function createVirtualComponent(component) {
         return function(data, children) {
             if (children !== undefined) {
-                if (data == undefined) data = {};
+                data == undefined && (data = {});
                 data.children = children;
             }
             return {
@@ -3841,7 +3739,7 @@
             };
         };
     }
-    if (!window.b) window.b = {
+    window.b || (window.b = {
         deref,
         getRoots,
         setInvalidate,
@@ -3851,7 +3749,7 @@
         setBeforeFrame,
         getDnds: __export_getDnds,
         setBeforeInit
-    };
+    });
     (function(EventResult) {
         EventResult[EventResult["NotHandled"] = 0] = "NotHandled";
         EventResult[EventResult["HandledPreventDefault"] = 1] = "HandledPreventDefault";
@@ -3865,9 +3763,7 @@
         for (i_19 = 0; i_19 < len; i_19++) {
             hook = hooks[i_19];
             fn = hook.postInitDom;
-            if (fn !== undefined) {
-                fn.call(hook, ctx);
-            }
+            fn !== undefined && fn.call(hook, ctx);
         }
     }
     function hookPostUpdateDom(ctx) {
@@ -3877,9 +3773,7 @@
         for (i_20 = 0; i_20 < len; i_20++) {
             hook = hooks[i_20];
             fn = hook.postUpdateDom;
-            if (fn !== undefined) {
-                fn.call(hook, ctx);
-            }
+            fn !== undefined && fn.call(hook, ctx);
         }
     }
     function hookPostUpdateDomEverytime(ctx) {
@@ -3889,9 +3783,7 @@
         for (i_21 = 0; i_21 < len; i_21++) {
             hook = hooks[i_21];
             fn = hook.postUpdateDomEverytime;
-            if (fn !== undefined) {
-                fn.call(hook, ctx);
-            }
+            fn !== undefined && fn.call(hook, ctx);
         }
     }
     effectCallbacks = [];

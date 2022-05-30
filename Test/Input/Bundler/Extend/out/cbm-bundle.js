@@ -6,7 +6,7 @@
         n.__proto__ = t;
     } || function(n, t) {
         var e;
-        for (e in t) if (t.hasOwnProperty(e)) n[e] = t[e];
+        for (e in t) t.hasOwnProperty(e) && (n[e] = t[e]);
     };
     t = function(t, e) {
         n(t, e);

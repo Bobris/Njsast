@@ -24,20 +24,20 @@ Toplevel 1:1 - 12:1
           SymbolRef 4:3 - 4:4 [Read]
             Name: a
         True 4:12 - 4:16
-  If 7:1 - 9:2
-    Dot 7:5 - 7:8
-      Property: b
-      SymbolRef 7:5 - 7:6 [Read]
-        Name: a
-    BlockStatement 7:10 - 9:2
-      SimpleStatement 8:3 - 8:21
-        Call 8:3 - 8:20
-          Dot 8:3 - 8:14
-            Property: log
-            SymbolRef 8:3 - 8:10 [Read]
-              Name: console
-          String 8:15 - 8:19
-            Value: Ok
+  SimpleStatement 7:1 - 9:2
+    Binary 7:1 - 9:2
+      Operator: LogicalAnd
+      Dot 7:5 - 7:8
+        Property: b
+        SymbolRef 7:5 - 7:6 [Read]
+          Name: a
+      Call 8:3 - 8:20
+        Dot 8:3 - 8:14
+          Property: log
+          SymbolRef 8:3 - 8:10 [Read]
+            Name: console
+        String 8:15 - 8:19
+          Value: Ok
   SimpleStatement 11:1 - 11:6
     Call 11:1 - 11:5
       SymbolRef 11:1 - 11:3 [Read]

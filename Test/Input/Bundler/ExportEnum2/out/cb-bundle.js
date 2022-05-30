@@ -11,6 +11,6 @@
         Opts: __export_Opts,
         ok
     };
-    if (__export_$ != null) ok();
+    __export_$ != null && ok();
 })();
 

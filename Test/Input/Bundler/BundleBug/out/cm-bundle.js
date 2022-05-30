@@ -1,1 +1,1 @@
-(d=>{var _;_=d;function e(d){_=d}e(function(){});if(_)_()})()
+(d=>{var _;_=d;function e(d){_=d}e(function(){});_&&_()})()

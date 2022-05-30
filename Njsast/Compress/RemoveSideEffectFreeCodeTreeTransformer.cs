@@ -589,6 +589,25 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         astIf.Alternative = alternative == Remove ? null : (AstStatement)alternative;
                     }
 
+                    if (astIf.Alternative == null && astIf.Body is AstBlock { Body.Count: 0 })
+                    {
+                        node = Transform(astIf.Condition);
+                        continue;
+                    }
+
+                    if (astIf.Alternative == null && astIf.Body.TryToExpression() is { } bodyExpression)
+                    {
+                        var cond = astIf.Condition;
+                        var op = Operator.LogicalAnd;
+                        if (cond is AstUnary { Operator: Operator.LogicalNot } condNeg)
+                        {
+                            op = Operator.LogicalOr;
+                            cond = condNeg.Expression;
+                        }
+                        node = new AstSimpleStatement(node.Source, node.Start, node.End,
+                            new AstBinary(node.Source, node.Start, node.End, cond, bodyExpression,
+                                op));
+                    }
                     return node;
                 }
                 case AstBlock block:
