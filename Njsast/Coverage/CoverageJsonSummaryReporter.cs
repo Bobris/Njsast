@@ -1,3 +1,5 @@
+using System;
+using System.IO;
 using System.Text.Json;
 
 namespace Njsast.Coverage;
@@ -6,16 +8,20 @@ public class CoverageJsonSummaryReporter: CoverageReporterBase
 {
     Utf8JsonWriter? _jsonWriter;
 
-    public CoverageJsonSummaryReporter(CoverageInstrumentation covInstr): base(covInstr)
+    public CoverageJsonSummaryReporter(
+        CoverageInstrumentation covInstr,
+        Action<string, byte[]> saveReport): base(covInstr, saveReport)
     {
     }
 
     public override void Run()
     {
-        using var stream = System.IO.File.Create("coverage-summary.json");
-        using var jsonWriter = new Utf8JsonWriter(stream, new JsonWriterOptions { Indented = true });
+        const string path = "coverage-summary.json";
+        using var memoryStream = new MemoryStream();
+        using var jsonWriter = new Utf8JsonWriter(memoryStream, new JsonWriterOptions { Indented = true });
         _jsonWriter = jsonWriter;
         base.Run();
+        _saveReport(path, memoryStream.ToArray());
     }
 
     public override void OnStartRoot(CoverageStats stats)

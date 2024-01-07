@@ -1,9 +1,47 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using Njsast.Ast;
 
 namespace Njsast.Bundler;
+
+public struct FileAndPath : IEquatable<FileAndPath>
+{
+    public string File;
+    public string[] Path;
+
+    public bool Equals(FileAndPath other)
+    {
+        return File == other.File && Path.AsSpan().SequenceEqual(other.Path.AsSpan());
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is FileAndPath other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        var hc = new HashCode();
+        hc.Add(File);
+        foreach (var s in Path)
+        {
+            hc.Add(s);
+        }
+        return hc.ToHashCode();
+    }
+
+    public static bool operator ==(FileAndPath left, FileAndPath right)
+    {
+        return left.Equals(right);
+    }
+
+    public static bool operator !=(FileAndPath left, FileAndPath right)
+    {
+        return !left.Equals(right);
+    }
+}
 
 public class SourceFile
 {
@@ -19,8 +57,10 @@ public class SourceFile
     public bool OnlyWholeExport;
     public bool ExternalImport;
 
-    /// list of file name and export name path (think namespaces). Empty array means need whole module imports as object.
-    public StructList<(string, string[])> NeedsImports = new StructList<(string, string[])>();
+    /// set of file name and export name path (think namespaces). Empty array in Path means need whole module imports as object.
+    public HashSet<FileAndPath> NeedsImports = new();
+
+    public HashSet<FileAndPath>? ModifiedImports;
 
     internal SourceFile(string name, AstToplevel ast)
     {
@@ -41,7 +81,7 @@ public class SourceFile
         ast ??= Ast;
         if (ast == null) throw new InvalidOperationException("ExternalImport cannot be used to create WholeExport");
         if (needPath.Length >= 1 && needPath[0] == "default" &&
-            !Exports!.TryFindLongestPrefix(new[] {"default"}, out _, out _))
+            !Exports!.TryFindLongestPrefix(new[] { "default" }, out _, out _))
         {
             needPath = needPath.Skip(1).ToArray();
         }
@@ -146,6 +186,6 @@ class ReexportSelfExport : SelfExport
 
     public override string ToString()
     {
-        return $"{string.Join('.', Path)} as {AsName} from {SourceName}{(ExternalSource?" (External)":"")}";
+        return $"{string.Join('.', Path)} as {AsName} from {SourceName}{(ExternalSource ? " (External)" : "")}";
     }
 }

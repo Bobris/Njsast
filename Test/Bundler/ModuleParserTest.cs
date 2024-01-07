@@ -63,7 +63,7 @@ public class ModuleParserTest
 
             foreach (var import in sf.NeedsImports)
             {
-                outNiceJs += "Uses " + import.Item1 + " " + string.Join('.', import.Item2) + "\n";
+                outNiceJs += "Uses " + import.File + " " + string.Join('.', import.Path) + "\n";
             }
         }
         catch (SyntaxError e)

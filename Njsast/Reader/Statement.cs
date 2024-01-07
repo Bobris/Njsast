@@ -475,7 +475,7 @@ public sealed partial class Parser
                 param = ParseBindingAtom();
                 EnterLexicalScope();
                 CheckLVal(param, true, VariableKind.Let);
-                param = new AstSymbolCatch((AstSymbol)param);
+                param = ToRightDeclarationSymbolKind(param, VariableKind.Catch);
                 Expect(TokenType.ParenR);
             }
             else
@@ -699,6 +699,7 @@ public sealed partial class Parser
                     VariableKind.Let => new AstSymbolLet(symbol),
                     VariableKind.Const => new AstSymbolConst(symbol),
                     VariableKind.Var => new AstSymbolVar(symbol),
+                    VariableKind.Catch => new AstSymbolCatch(symbol),
                     _ => throw new ArgumentOutOfRangeException(nameof(kind))
                 };
             case AstDestructuring destructuring:
@@ -732,9 +733,7 @@ public sealed partial class Parser
         bool allowExpressionBody = false,
         bool isAsync = false)
     {
-        var generator = false;
-        if (!isAsync)
-            generator = Eat(TokenType.Star);
+        var generator = Eat(TokenType.Star);
 
         AstSymbol? id = null;
         if (isStatement || isNullableId)
@@ -836,6 +835,7 @@ public sealed partial class Parser
                 key is AstSymbol { Name: "async" } && Type != TokenType.ParenL && !CanInsertSemicolon())
             {
                 isAsync = true;
+                isGenerator = Eat(TokenType.Star);
                 (computed, key) = ParsePropertyName();
             }
 

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Text;
 using System.Text.Json;
 
@@ -10,7 +11,11 @@ public class CoverageJsonDetailsReporter: CoverageReporterBase
     readonly bool _script;
     Utf8JsonWriter? _jsonWriter;
 
-    public CoverageJsonDetailsReporter(CoverageInstrumentation covInstr, string? jsonName = null, bool script = false): base(covInstr)
+    public CoverageJsonDetailsReporter(
+        CoverageInstrumentation covInstr,
+        Action<string, byte[]> saveReport,
+        string? jsonName = null,
+        bool script = false): base(covInstr, saveReport)
     {
         _jsonName = jsonName ?? "coverage-details.json";
         _script = script;
@@ -18,12 +23,13 @@ public class CoverageJsonDetailsReporter: CoverageReporterBase
 
     public override void Run()
     {
-        using var stream = System.IO.File.Create(_jsonName);
+        using var memoryStream = new MemoryStream();
         if (_script)
-            stream.Write(Encoding.UTF8.GetBytes("var bbcoverage="));
-        using var jsonWriter = new Utf8JsonWriter(stream);
+            memoryStream.Write(Encoding.UTF8.GetBytes("var bbcoverage="));
+        using var jsonWriter = new Utf8JsonWriter(memoryStream);
         _jsonWriter = jsonWriter;
         base.Run();
+        _saveReport(_jsonName, memoryStream.ToArray());
     }
 
     public override void OnStartRoot(CoverageStats stats)

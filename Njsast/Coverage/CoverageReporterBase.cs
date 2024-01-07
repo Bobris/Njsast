@@ -1,12 +1,16 @@
+using System;
+
 namespace Njsast.Coverage;
 
 public class CoverageReporterBase
 {
     protected readonly CoverageInstrumentation _covInstr;
+    protected readonly Action<string, byte[]> _saveReport;
 
-    public CoverageReporterBase(CoverageInstrumentation covInstr)
+    public CoverageReporterBase(CoverageInstrumentation covInstr, Action<string, byte[]> saveReport)
     {
         _covInstr = covInstr;
+        _saveReport = saveReport;
     }
 
     public virtual void Run()

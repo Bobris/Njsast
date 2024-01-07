@@ -39,18 +39,18 @@ class BundlerTreeTransformer : TreeTransformer
         switch (node)
         {
             case AstCall _ when node.IsRequireCall() is { } reqName:
-            {
-                var resolvedName = _ctx.ResolveRequire(reqName, _currentSourceFile!.Name);
-                if (resolvedName == IBundlerCtx.LeaveAsExternal)
                 {
-                    return (new SourceFile(reqName), Array.Empty<string>());
-                }
+                    var resolvedName = _ctx.ResolveRequire(reqName, _currentSourceFile!.Name);
+                    if (resolvedName == IBundlerCtx.LeaveAsExternal)
+                    {
+                        return (new SourceFile(reqName), Array.Empty<string>());
+                    }
 
-                if (!_cache.TryGetValue(resolvedName, out var reqSource))
-                    throw new ApplicationException("Cannot find " + resolvedName + " imported from " +
-                                                   _currentSourceFile!.Name);
-                return (reqSource, Array.Empty<string>());
-            }
+                    if (!_cache.TryGetValue(resolvedName, out var reqSource))
+                        throw new ApplicationException("Cannot find " + resolvedName + " imported from " +
+                                                       _currentSourceFile!.Name);
+                    return (reqSource, Array.Empty<string>());
+                }
             case AstSymbolRef symbolRef when _reqSymbolDefMap.TryGetValue(symbolRef.Thedef!, out var res):
                 return res;
             case AstPropAccess propAccess when propAccess.PropertyAsString is { } propName &&
@@ -89,10 +89,13 @@ class BundlerTreeTransformer : TreeTransformer
         {
             if (DetectImport(varDef.Value) is { } import)
             {
-                _reqSymbolDefMap[reqSymbolDef] = import;
-                if (import.Item2.Length == 0) return Remove;
-                if (!import.Item1.Exports!.TryFindLongestPrefix(import.Item2, out _, out _))
-                    return Remove;
+                if (!(_currentSourceFile.ModifiedImports?.Contains(new() { File = import.Item1.Name, Path = import.Item2 }) ?? false))
+                {
+                    _reqSymbolDefMap[reqSymbolDef] = import;
+                    if (import.Item2.Length == 0) return Remove;
+                    if (!import.Item1.Exports!.TryFindLongestPrefix(import.Item2, out _, out _))
+                        return Remove;
+                }
             }
         }
 
