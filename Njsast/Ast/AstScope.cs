@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Njsast.AstDump;
-using Njsast.Output;
 using Njsast.Reader;
 using Njsast.Scope;
 
@@ -101,9 +100,8 @@ public class AstScope : AstBlock
     public SymbolDef DefFunction(AstSymbol symbol, AstNode? init)
     {
         var def = DefVariable(symbol, init);
-        if (def.Init == null || def.Init is AstDefun) def.Init = init;
-        if (!Functions!.ContainsKey(symbol.Name))
-            Functions!.Add(symbol.Name, def);
+        if (def.Init is null or AstDefun) def.Init = init;
+        Functions!.TryAdd(symbol.Name, def);
         return def;
     }
 

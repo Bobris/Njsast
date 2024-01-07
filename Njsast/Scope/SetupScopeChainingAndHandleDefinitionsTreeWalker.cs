@@ -121,8 +121,9 @@ public class SetupScopeChainingAndHandleDefinitionsTreeWalker : TreeWalker
         else if (node is AstSymbolDefClass astSymbolDefClassNode)
         {
             // This deals with the name of the class being available
-            // inside the class.
-            var symbol =
+            // inside the class. For class expressions strictly only inside class.
+            var symbol = _defun is AstClassExpression ?
+                (astSymbolDefClassNode.Scope = _defun)?.DefFunction(astSymbolDefClassNode, _defun) :
                 (astSymbolDefClassNode.Scope = _defun?.ParentScope)?.DefFunction(astSymbolDefClassNode, _defun);
             if (symbol != null)
                 MarkExport(symbol, 1);
