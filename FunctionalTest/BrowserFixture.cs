@@ -6,18 +6,18 @@ namespace FunctionalTest;
 
 public class BrowserFixture : IDisposable
 {
-    readonly Browser _browser;
+    readonly IBrowser _browser;
 
-    public Browser Browser => _browser;
+    public IBrowser Browser => _browser;
 
     public BrowserFixture()
     {
         _browser = GetBrowser().GetAwaiter().GetResult();
     }
-        
-    async Task<Browser> GetBrowser() 
+
+    async Task<IBrowser> GetBrowser()
     {
-        await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultRevision);
+        await new BrowserFetcher().DownloadAsync();
         return await Puppeteer.LaunchAsync(new LaunchOptions
         {
             Headless = true

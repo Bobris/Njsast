@@ -15,8 +15,8 @@ public abstract class TwoPagesBrowserTestBase : IDisposable
     readonly List<string> _stderrB = new List<string>();
     readonly TaskCompletionSource<bool> _taskCompletionSourceA = new TaskCompletionSource<bool>();
     readonly TaskCompletionSource<bool> _taskCompletionSourceB = new TaskCompletionSource<bool>();
-    protected readonly Page PageA;
-    protected readonly Page PageB;
+    protected readonly IPage PageA;
+    protected readonly IPage PageB;
     protected IReadOnlyList<string> StdoutA => _stdoutA;
     protected IReadOnlyList<string> StdoutB => _stdoutB;
     protected IReadOnlyList<string> StderrA => _stderrA;
@@ -45,7 +45,7 @@ public abstract class TwoPagesBrowserTestBase : IDisposable
         SetPageEvents(PageA, _stdoutA, _stderrA, _taskCompletionSourceA);
         SetPageEvents(PageB, _stdoutB, _stderrB, _taskCompletionSourceB);
 
-        void SetPageEvents(Page page, List<string> stdout, List<string> stderr, TaskCompletionSource<bool> taskCompletionSource)
+        void SetPageEvents(IPage page, List<string> stdout, List<string> stderr, TaskCompletionSource<bool> taskCompletionSource)
         {
             var isAsyncTest = false;
             var isDone = false;
@@ -88,7 +88,7 @@ public abstract class TwoPagesBrowserTestBase : IDisposable
         }
     }
 
-    protected static Task PerformCommand(string command, Page page)
+    protected static Task PerformCommand(string command, IPage page)
     {
         if (command == string.Empty)
         {
