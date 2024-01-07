@@ -93,7 +93,7 @@ class Program
             outputLogLines.Insert(topVersionLine + 1, "");
             if (Directory.Exists(projDir + "/Njsast/bin/Release"))
                 Directory.Delete(projDir + "/Njsast/bin/Release", true);
-            var fileNameOfToken = Environment.GetEnvironmentVariable("USERPROFILE") + "/.github/token.txt";
+            var fileNameOfToken = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.github/token.txt";
             string token;
             try
             {
@@ -104,7 +104,7 @@ class Program
                 Console.WriteLine("Cannot read github token from " + fileNameOfToken);
                 return 1;
             }
-            fileNameOfToken = Environment.GetEnvironmentVariable("USERPROFILE") + "/.nuget/token.txt";
+            fileNameOfToken = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + "/.nuget/token.txt";
             string tokenNuget;
             try
             {
