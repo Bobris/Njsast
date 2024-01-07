@@ -387,7 +387,7 @@ public class BundlerImpl
                     }
                     else
                     {
-                        throw new NotImplementedException("Library export of " + value.GetType().Name);
+                        throw new NotSupportedException("Library export of " + value.GetType().Name);
                     }
                 }
             }
@@ -424,7 +424,7 @@ public class BundlerImpl
                             new AstSymbolImport(keyValuePair.Value)));
                         break;
                     default:
-                        throw new NotImplementedException();
+                        throw new NotSupportedException("Add external imports "+string.Join('.', key.ToArray())+" "+keyValuePair.Value.Name);
                 }
             }
 
