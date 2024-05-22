@@ -1,5 +1,5 @@
 (undefined => {
-    var __values, __read, hasPostInitDom, hasPostUpdateDom, hasPostUpdateDomEverytime, hasEvents, hasCaptureEvents, __export_isArray, isArrayVdom, emptyComponent, hOP, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, portalMap, hasNativeRaf, nativeRaf, setTimeout, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, frameCounter, regEvents, isPassiveEventHandlerSupported, options_bobril, listeningEventDeepness, __export_RenderPhase = {}, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events_bobril, i_bobril, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name_bobril, j_bobril, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack_bobril, focusChangeRunning, callbacks_bobril, lastDndId, dnds, systemDnd, rootId_bobril, DndCtx, draggingStyle, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, allAnimations, allMediaQueries, bundledSprites, dynamicSprites, bundledDynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, globalCounter, chainedBeforeFrame, cssSubRuleDelimiter, lastDppx, lastSpriteUrl, lastSpriteDppx, hasBundledSprites, wasSpriteUrlChanged, uppercasePattern, msPattern, rgbaRegex, imagesWithCredentials, bundlePath, bundlePath2, __export_EventResult = {}, effectCallbacks, EventsHook_bobril, CaptureEventsHook_bobril, currentCtx, registryEvents, rootIds_bobril, currentCtxWithEvents, weirdPortrait;
+    var __values, __read, hasPostInitDom, hasPostUpdateDom, hasPostUpdateDomEverytime, hasEvents, hasCaptureEvents, __export_isArray, isArrayVdom, emptyComponent, hOP, __export_assign, inSvg, inNotFocusable, updateCall, updateInstance, setValueCallback, vendors, testingDivStyle, mapping, isUnitlessNumber, focusableTag, tabindexStr, focusRootStack, focusRootTop, roots, portalMap, hasNativeRaf, nativeRaf, setTimeout, __export_now, startTime, lastTickTime, ctxInvalidated, ctxDeepness, fullRecreateRequested, scheduled, initializing, frameCounter, regEvents, isPassiveEventHandlerSupported, options_bobril, listeningEventDeepness, emptyBeforeRenderCallback, beforeRenderCallback, beforeFrameCallback, reallyBeforeFrameCallback, afterFrameCallback, deferSyncUpdateRequested, RootComponent, nextIgnoreShouldChange, ignoringShouldChange, __export_invalidate, lastRootId, beforeInit, media, breaks, events_bobril, i_bobril, viewport, isAndroid, __export_asap, bValue, bSelectionStart, bSelectionEnd, tValue, prevSetValueCallback, mouseEvents, MoveOverIsNotTap, TapShouldBeShorterThanMs, MaxBustDelay, MaxBustDelayForIE, BustDistance, ownerCtx, onClickText, onDoubleClickText, pointersEventNames, name_bobril, j_bobril, pointersDown, toBust, firstPointerDown, firstPointerDownTime, firstPointerDownX, firstPointerDownY, tapCanceled, prevMousePath, clickingSpreeStart, clickingSpreeCount, bustingEventNames, bustingEventHandlers, mouseHandlerNames, wheelSupport, __export_ignoreClick, currentActiveElement, currentFocusedNode, nodeStack_bobril, focusChangeRunning, callbacks_bobril, lastDndId, dnds, systemDnd, rootId_bobril, DndCtx, draggingStyle, DndComp, DndRootComp, dndProto, pointer2Dnd, effectAllowedTable, __export_getDnds, waitingForPopHashChange, allStyles, allAnimations, allMediaQueries, bundledSprites, dynamicSprites, bundledDynamicSprites, imageCache, injectedCss, rebuildStyles, htmlStyle, globalCounter, chainedBeforeFrame, cssSubRuleDelimiter, lastDppx, lastSpriteUrl, lastSpriteDppx, hasBundledSprites, wasSpriteUrlChanged, uppercasePattern, msPattern, rgbaRegex, imagesWithCredentials, bundlePath, bundlePath2, __export_EventResult = {}, effectCallbacks, EventsHook_bobril, CaptureEventsHook_bobril, currentCtx, registryEvents, rootIds_bobril, currentCtxWithEvents, weirdPortrait;
     __values = function(o) {
         var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
         if (m) return m.call(o);
@@ -484,7 +484,7 @@
             c.ctx = ctx;
             currentCtx = ctx;
             component.init && component.init(ctx, c);
-            beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(n, __export_RenderPhase.Create);
+            beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(n, 0);
             component.render && component.render(ctx, c);
             currentCtx = undefined;
         } else {}
@@ -626,7 +626,7 @@
         if (component) {
             ctx = c.ctx;
             currentCtx = ctx;
-            beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(c, __export_RenderPhase.Destroy);
+            beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(c, 3);
             component.destroy && component.destroy(ctx, c, c.element);
             disposables = ctx.disposables;
             if (__export_isArray(disposables)) {
@@ -824,7 +824,7 @@
                 }
                 ctx.data = n.data || {};
                 c.component = component;
-                beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(n, inSelectedUpdate ? __export_RenderPhase.LocalUpdate : __export_RenderPhase.Update);
+                beforeRenderCallback !== emptyBeforeRenderCallback && beforeRenderCallback(n, inSelectedUpdate ? 2 : 1);
                 if (component.render) {
                     c.orig = n;
                     n = __export_assign({}, n);
@@ -1419,12 +1419,6 @@
             }
         }
     }
-    (function(RenderPhase) {
-        RenderPhase[RenderPhase["Create"] = 0] = "Create";
-        RenderPhase[RenderPhase["Update"] = 1] = "Update";
-        RenderPhase[RenderPhase["LocalUpdate"] = 2] = "LocalUpdate";
-        RenderPhase[RenderPhase["Destroy"] = 3] = "Destroy";
-    })(__export_RenderPhase);
     emptyBeforeRenderCallback = function() {};
     beforeRenderCallback = emptyBeforeRenderCallback;
     beforeFrameCallback = function() {};
@@ -1643,11 +1637,11 @@
                             m = h.events[name];
                             if (m !== undefined) {
                                 eventResult = +m.call(ctx, param);
-                                if (eventResult == __export_EventResult.HandledPreventDefault) {
+                                if (eventResult == 1) {
                                     currentCtxWithEvents = prevCtx;
                                     return ctx;
                                 }
-                                if (eventResult == __export_EventResult.HandledButRunDefault) {
+                                if (eventResult == 2) {
                                     currentCtxWithEvents = prevCtx;
                                     return undefined;
                                 }
@@ -1659,11 +1653,11 @@
                 m = c[name];
                 if (m) {
                     eventResult = +m.call(c, ctx, param);
-                    if (eventResult == __export_EventResult.HandledPreventDefault) {
+                    if (eventResult == 1) {
                         currentCtxWithEvents = prevCtx;
                         return ctx;
                     }
-                    if (eventResult == __export_EventResult.HandledButRunDefault) {
+                    if (eventResult == 2) {
                         currentCtxWithEvents = prevCtx;
                         return undefined;
                     }
@@ -1695,11 +1689,11 @@
                         m = h.events[name];
                         if (m !== undefined) {
                             eventResult = +m.call(ctx, param);
-                            if (eventResult == __export_EventResult.HandledPreventDefault) {
+                            if (eventResult == 1) {
                                 currentCtxWithEvents = prevCtx;
                                 return ctx;
                             }
-                            if (eventResult == __export_EventResult.HandledButRunDefault) {
+                            if (eventResult == 2) {
                                 currentCtxWithEvents = prevCtx;
                                 return undefined;
                             }
@@ -1711,11 +1705,11 @@
             m = c[name];
             if (m) {
                 eventResult = +m.call(c, ctx, param);
-                if (eventResult == __export_EventResult.HandledPreventDefault) {
+                if (eventResult == 1) {
                     currentCtxWithEvents = prevCtx;
                     return ctx;
                 }
-                if (eventResult == __export_EventResult.HandledButRunDefault) {
+                if (eventResult == 2) {
                     currentCtxWithEvents = prevCtx;
                     return undefined;
                 }
@@ -1755,11 +1749,11 @@
                         m = h.events[name];
                         if (m !== undefined) {
                             eventResult = +m.call(ctx, param);
-                            if (eventResult == __export_EventResult.HandledPreventDefault) {
+                            if (eventResult == 1) {
                                 currentCtxWithEvents = prevCtx;
                                 return ctx;
                             }
-                            if (eventResult == __export_EventResult.HandledButRunDefault) {
+                            if (eventResult == 2) {
                                 currentCtxWithEvents = prevCtx;
                                 return undefined;
                             }

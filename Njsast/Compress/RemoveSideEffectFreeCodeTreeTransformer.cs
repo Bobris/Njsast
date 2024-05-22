@@ -11,7 +11,7 @@ public class GatherVarDeclarations : TreeWalker
 
     public static AstNode Calc(AstNode? node)
     {
-        if (node == null || node == TreeTransformer.Remove) return TreeTransformer.Remove;
+        if (node == null || TreeTransformer.IsRemove(node)) return TreeTransformer.Remove;
         var w = new GatherVarDeclarations();
         w.Walk(node);
         return w._result;
@@ -23,7 +23,7 @@ public class GatherVarDeclarations : TreeWalker
         {
             case AstVar astVar:
             {
-                if (_result == TreeTransformer.Remove)
+                if (TreeTransformer.IsRemove(_result))
                 {
                     _result = astVar;
                 }
@@ -84,9 +84,6 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                 }
                 case AstLambda lambda:
                 {
-                    if (lambda.Body.Count == 0) lambda.Pure = true;
-                    if (lambda.Purpose == null)
-                        lambda.Purpose = DetectPurpose(lambda);
                     if (lambda is AstArrow && lambda.Body is { Count: 1 } body2 &&
                         body2[0] is AstReturn { Value: { } } astReturn)
                     {
@@ -119,7 +116,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         }
 
                         var rightSymbol = assign.Right.IsSymbolDef();
-                        if (rightSymbol is { } && leftSymbol is
+                        if (rightSymbol is not null && leftSymbol is
                             {
                                 Global: false, Orig.Count: 1
                             } && leftSymbol.Orig[0] is AstSymbolDeclaration
@@ -199,21 +196,8 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
 
                     return null;
                 }
-                case AstCall call:
+                case AstCall:
                 {
-                    if (call.Expression is AstLambda { Purpose: { } purpose and EnumDefinitionPurpose } && call.Args is
-                        {
-                            Count: 1
-                        } && call.Args[0].IsSymbolDef() is { } symbolDef)
-                    {
-                        if (symbolDef.References.Count == 1)
-                        {
-                            return Remove;
-                        }
-
-                        symbolDef.Purpose ??= purpose;
-                    }
-
                     return null;
                 }
                 case AstPropAccess propAccess:
@@ -307,7 +291,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     if (globalSymbol is "window" or "globalThis")
                     {
                         node = propAccess.Property as AstNode ?? Remove;
-                        if (node == Remove)
+                        if (IsRemove(node))
                             return Remove;
                         continue;
                     }
@@ -375,10 +359,6 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         return Remove;
                     }
 
-                    if (lambda.Body.Count == 0) lambda.Pure = true;
-                    if (lambda.Purpose == null)
-                        lambda.Purpose = DetectPurpose(lambda);
-
                     TransformList(ref lambda.Body);
                     return node;
                 }
@@ -400,19 +380,6 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                             1 => res.Expressions[0],
                             _ => res
                         };
-                    }
-
-                    if (call.Expression is AstLambda { Purpose: { } purpose and EnumDefinitionPurpose } && call.Args is
-                        {
-                            Count: 1
-                        } && call.Args[0].IsSymbolDef() is { } symbolDef)
-                    {
-                        if (symbolDef.References.Count == 1)
-                        {
-                            return Remove;
-                        }
-
-                        symbolDef.Purpose ??= purpose;
                     }
 
                     // IIFE with unused parameter
@@ -459,7 +426,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         }
 
                         var right = Transform(binary.Right);
-                        if (right == Remove)
+                        if (IsRemove(right))
                         {
                             node = binary.Left;
                             continue;
@@ -485,7 +452,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         }
 
                         var right = Transform(binary.Right);
-                        if (right == Remove)
+                        if (IsRemove(right))
                         {
                             node = binary.Left;
                             continue;
@@ -511,7 +478,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         }
 
                         var right = Transform(binary.Right);
-                        if (right == Remove)
+                        if (IsRemove(right))
                         {
                             node = binary.Left;
                             continue;
@@ -562,7 +529,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                 case AstSimpleStatement simple:
                 {
                     node.Transform(this);
-                    return simple.Body == Remove
+                    return IsRemove(simple.Body)
                         ? inList ? Remove : new AstEmptyStatement(node.Source, node.Start, node.End)
                         : simple;
                 }
@@ -586,13 +553,13 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     if (astIf.Alternative != null)
                     {
                         var alternative = Transform(astIf.Alternative);
-                        astIf.Alternative = alternative == Remove ? null : (AstStatement)alternative;
+                        astIf.Alternative = IsRemove(alternative) ? null : (AstStatement)alternative;
                     }
 
                     if (astIf.Alternative == null && astIf.Body is AstBlock { Body.Count: 0 })
                     {
                         node = Transform(astIf.Condition);
-                        if (node == Remove) return Remove;
+                        if (IsRemove(node)) return Remove;
                         continue;
                     }
 
@@ -638,7 +605,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     if (astFor.Init != null)
                     {
                         var init = Transform(astFor.Init);
-                        if (init == Remove) init = null;
+                        if (IsRemove(init)) init = null;
                         astFor.Init = init;
                     }
 
@@ -646,7 +613,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     {
                         NeedValue = true;
                         var cond = Transform(astFor.Condition);
-                        if (cond == Remove) cond = null;
+                        if (IsRemove(cond)) cond = null;
                         astFor.Condition = cond;
                         NeedValue = false;
                     }
@@ -654,7 +621,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     if (astFor.Step != null)
                     {
                         var step = Transform(astFor.Step);
-                        if (step == Remove) step = null;
+                        if (IsRemove(step)) step = null;
                         astFor.Step = step;
                     }
 
@@ -670,7 +637,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         foreach (var defi in def.Definitions)
                         {
                             var defo = Transform(defi);
-                            if (defo == Remove)
+                            if (IsRemove(defo))
                             {
                                 wasChange |= 1;
                                 continue;
@@ -721,7 +688,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                     {
                         var defi = def.Definitions[0];
                         var defo = Transform(defi);
-                        if (defo == Remove) return Remove;
+                        if (IsRemove(defo)) return Remove;
                         if (defi != defo)
                         {
                             Modified = true;
@@ -803,16 +770,6 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
         }
     }
 
-    static IPurpose DetectPurpose(AstLambda lambda)
-    {
-        if (Helpers.DetectEnumTypeScriptFunction(lambda) is { } enumValues)
-        {
-            return new EnumDefinitionPurpose(enumValues);
-        }
-
-        return NoPurpose.Instance;
-    }
-
     class CountReferencesWalker : TreeWalker
     {
         readonly SymbolDef _def;
@@ -842,7 +799,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
         var s = new StructList<AstNode>();
         foreach (var node in statements)
         {
-            if (node != Remove) s.Add(node);
+            if (!IsRemove(node)) s.Add(node);
         }
 
         if (s.Count == 0)

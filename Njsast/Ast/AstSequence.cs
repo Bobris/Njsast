@@ -85,7 +85,7 @@ public class AstSequence : AstNode
 
     public void AddIntelligently(AstNode node)
     {
-        if (node == TreeTransformer.Remove)
+        if (TreeTransformer.IsRemove(node))
             return;
         if (node is AstSequence seq)
         {
