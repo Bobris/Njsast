@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Njsast.Ast;
 using Njsast.Bundler;
 using Njsast.Reader;
@@ -59,6 +60,8 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
     // var a = 42; var b = a;
     // b could be replaced by a and that what this map contains _clonedSymbolMap[Symbol"b"] = Symbol"a";
     readonly RefDictionary<SymbolDef, SymbolDef> _clonedSymbolMap = new();
+
+    readonly RefDictionary<SymbolDef, List<SymbolDef>?> _pureFunctionCallMap = new();
 
     protected override AstNode? Before(AstNode node, bool inList)
     {
@@ -521,6 +524,27 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                             rightSymbolDef.IsSingleInitAndDeeplyConst)
                         {
                             _clonedSymbolMap.GetOrAddValueRef(def) = rightSymbolDef;
+                        }
+
+                        if (varDef.Value is AstCall { Expression: AstSymbolRef { Thedef: { } funcDef }, Args.Count: >0 } call &&
+                            def.IsSingleInitAndDeeplyConst && def.VarInit == call && call.Args.All(n=>n.ConstValue()!=null) && funcDef is { IsSingleInitAndDeeplyConst: true, Init: AstLambda { Pure: true } })
+                        {
+                            ref var list = ref _pureFunctionCallMap.GetOrAddValueRef(funcDef);
+                            list ??= [];
+                            var found = false;
+                            foreach (var pureRes in list)
+                            {
+                                if (pureRes.VarInit!.IsStructurallyEquivalentTo(call))
+                                {
+                                    _clonedSymbolMap.GetOrAddValueRef(def) = pureRes;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                            if (!found)
+                            {
+                                list.Add(def);
+                            }
                         }
                     }
 

@@ -62,4 +62,20 @@ public class AstArray : AstNode
         if (len > 0) output.Space();
         output.Print("]");
     }
+
+    public override bool IsStructurallyEquivalentTo(AstNode? with)
+    {
+        if (with is AstArray astArray)
+        {
+            if (Elements.Count != astArray.Elements.Count) return false;
+            for (var i = 0; i < Elements.Count; i++)
+            {
+                if (!Elements[i].IsStructurallyEquivalentTo(astArray.Elements[i])) return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

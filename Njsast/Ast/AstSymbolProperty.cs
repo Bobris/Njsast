@@ -23,4 +23,14 @@ public class AstSymbolProperty : AstSymbol
     {
         return Name;
     }
+
+    public override bool IsStructurallyEquivalentTo(AstNode? with)
+    {
+        if (with is AstSymbolProperty astSymbolProperty)
+        {
+            return Name == astSymbolProperty.Name;
+        }
+
+        return false;
+    }
 }

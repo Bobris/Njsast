@@ -60,4 +60,14 @@ public class AstSymbolRef : AstSymbol
 
         return null;
     }
+
+    public override bool IsStructurallyEquivalentTo(AstNode? with)
+    {
+        if (with is AstSymbolRef astSymbolRef && Thedef!=null)
+        {
+            return Thedef == astSymbolRef.Thedef;
+        }
+
+        return false;
+    }
 }

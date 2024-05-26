@@ -103,4 +103,20 @@ public class AstObject : AstNode
 
         return res;
     }
+
+    public override bool IsStructurallyEquivalentTo(AstNode? with)
+    {
+        if (with is AstObject astObject)
+        {
+            if (Properties.Count != astObject.Properties.Count) return false;
+            for (var i = 0u; i < Properties.Count; i++)
+            {
+                if (!Properties[i].IsStructurallyEquivalentTo(astObject.Properties[i])) return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
 }

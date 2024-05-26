@@ -1,4 +1,5 @@
 using Njsast.AstDump;
+using Njsast.Bobril;
 using Njsast.Compress;
 using Njsast.Output;
 using Njsast.Reader;
@@ -158,8 +159,16 @@ public class CompressTest
         var outMinJs = string.Empty;
         try
         {
-            var parser = new Parser(new Options(), testData.InputContent);
+            var commentListener = new CommentListener();
+            var parser = new Parser(new ()
+            {
+                OnComment = (block, content, location) =>
+                {
+                    commentListener.OnComment(block, content, location);
+                }
+            }, testData.InputContent);
             var toplevel = parser.Parse();
+            commentListener.Walk(toplevel);
             toplevel.FigureOutScope();
             toplevel = toplevel.Compress(options);
             var strSink = new StringLineSink();
