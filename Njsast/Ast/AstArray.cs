@@ -78,4 +78,14 @@ public class AstArray : AstNode
 
         return false;
     }
+
+    public override bool IsConstantLike()
+    {
+        foreach (var element in Elements)
+        {
+            if (!element.IsConstantLike()) return false;
+        }
+
+        return true;
+    }
 }

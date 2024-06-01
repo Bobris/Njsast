@@ -119,4 +119,14 @@ public class AstObject : AstNode
 
         return false;
     }
+
+    public override bool IsConstantLike()
+    {
+        for (var i = 0u; i < Properties.Count; i++)
+        {
+            if (!Properties[i].IsConstantLike()) return false;
+        }
+
+        return true;
+    }
 }

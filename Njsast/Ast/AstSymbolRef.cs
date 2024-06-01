@@ -70,4 +70,9 @@ public class AstSymbolRef : AstSymbol
 
         return false;
     }
+
+    public override bool IsConstantLike()
+    {
+        return Thedef is { IsSingleInitAndDeeplyConst: true };
+    }
 }

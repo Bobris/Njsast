@@ -88,4 +88,9 @@ public class AstObjectKeyVal : AstObjectProperty
 
         return false;
     }
+
+    public override bool IsConstantLike()
+    {
+        return Key.IsConstantLike() && Value.IsConstantLike();
+    }
 }

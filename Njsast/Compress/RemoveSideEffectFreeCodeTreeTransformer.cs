@@ -527,7 +527,7 @@ public class RemoveSideEffectFreeCodeTreeTransformer : TreeTransformer
                         }
 
                         if (varDef.Value is AstCall { Expression: AstSymbolRef { Thedef: { } funcDef }, Args.Count: >0 } call &&
-                            def.IsSingleInitAndDeeplyConst && def.VarInit == call && call.Args.All(n=>n.ConstValue()!=null) && funcDef is { IsSingleInitAndDeeplyConst: true, Init: AstLambda { Pure: true } })
+                            def.IsSingleInitAndDeeplyConst && def.VarInit == call && call.Args.All(n=>n.IsConstantLike()) && funcDef is { IsSingleInitAndDeeplyConst: true, Init: AstLambda { Pure: true } })
                         {
                             ref var list = ref _pureFunctionCallMap.GetOrAddValueRef(funcDef);
                             list ??= [];

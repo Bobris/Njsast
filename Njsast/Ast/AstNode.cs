@@ -112,4 +112,9 @@ public abstract class AstNode
     {
         return false;
     }
+
+    public virtual bool IsConstantLike()
+    {
+        return false;
+    }
 }

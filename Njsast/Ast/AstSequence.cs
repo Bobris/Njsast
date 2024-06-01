@@ -95,4 +95,14 @@ public class AstSequence : AstNode
 
         Expressions.Add(node);
     }
+
+    public override bool IsConstantLike()
+    {
+        for (var i = 0u; i < Expressions.Count; i++)
+        {
+            if (!Expressions[i].IsConstantLike()) return false;
+        }
+
+        return true;
+    }
 }
