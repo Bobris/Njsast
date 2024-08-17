@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fn = void 0;
+exports.fn2 = void 0;
 __exportStar(require("./lib2"), exports);
-function fn() {
-    return "OK1";
+function fn2() {
+    return "OK3";
 }
-exports.fn = fn;
+exports.fn2 = fn2;

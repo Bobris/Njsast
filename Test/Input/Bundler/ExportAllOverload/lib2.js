@@ -1,10 +1,10 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./lib"));
+exports.fn = void 0;
+var lib_1 = require("./lib");
+__exportStar(require("./lib"), exports);
 function fn() {
-    return "OK";
+    console.log((0, lib_1.fn)());
+    return "OK2";
 }
 exports.fn = fn;

@@ -1,3 +1,4 @@
+export * from './lib2';
 export function fn() {
-    return "BAD";
+    return "OK1";
 }

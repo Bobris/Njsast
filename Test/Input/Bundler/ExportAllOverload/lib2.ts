@@ -1,5 +1,7 @@
+import {fn as fn1 } from './lib';
 export * from './lib';
 
 export function fn() {
-    return "OK";
+    console.log(fn1());
+    return "OK2";
 }
