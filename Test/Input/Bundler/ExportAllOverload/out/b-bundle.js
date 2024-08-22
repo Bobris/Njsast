@@ -369,17 +369,12 @@
     };
     var DEBUG = false;
     function fn() {
-        console.log(fn_lib());
-        return "OK2";
-    }
-    function fn_lib() {
         return "OK1";
     }
-    function fn2() {
-        return "OK3";
+    function fn_lib2() {
+        fn();
+        return "OK2";
     }
-    console.log(fn_lib());
-    console.log(fn());
-    console.log(fn2());
+    console.log(fn_lib2());
 })();
 
