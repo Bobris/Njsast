@@ -1,7 +1,8 @@
 (() => {
-    function s() {
+    function e() {
         console.log("shared");
     }
-    __bbb.d = s;
+    __bbb.d = e;
+    __bbb.a = undefined;
 })();
 
