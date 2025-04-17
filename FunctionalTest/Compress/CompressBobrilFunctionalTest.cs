@@ -1,4 +1,5 @@
 using System.IO;
+using System.Threading.Tasks;
 using Njsast.Compress;
 using Njsast.Output;
 using Njsast.Reader;
@@ -22,7 +23,7 @@ public class CompressBobrilFunctionalTest : TwoPagesBrowserTestBase
 //            EnableUnusedFunctionElimination = true,
 //            MaxPasses = 10
 //        };
-        
+
     readonly NavigationOptions _navigationOptions = new NavigationOptions
     {
         Timeout = 10000,
@@ -39,7 +40,7 @@ public class CompressBobrilFunctionalTest : TwoPagesBrowserTestBase
 
     [Theory]
     [CompressBobrilFunctionalTestDataProvider(BobrilTestPath)]
-    public async void OriginalCodeShouldHaveSameOutputAsCompressed(CompressFunctionalTestData testData)
+    public async Task OriginalCodeShouldHaveSameOutputAsCompressed(CompressFunctionalTestData testData)
     {
         var htmlA = InjectScriptToRuntimeTemplate(testData.Name, testData.Input);
         await PageA.SetContentAsync(htmlA, _navigationOptions);
