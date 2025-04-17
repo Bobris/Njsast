@@ -70,5 +70,5 @@ Toplevel 1:1 - 7:1
           Property: log
           SymbolRef 6:29 - 6:36 [Read]
             Name: console
-        SymbolRef 6:41 - 6:50 [Read]
+        SymbolRef 6:41 - 6:50 [Read] [PropWrite]
           Name: codepoint

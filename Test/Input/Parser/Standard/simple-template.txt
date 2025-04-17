@@ -41,21 +41,21 @@ Toplevel 1:1 - 6:1
           Raw: Hello 
         Dot 3:24 - 3:37
           Property: name
-          SymbolRef 3:24 - 3:32 [Read]
+          SymbolRef 3:24 - 3:32 [Read] [PropWrite]
             Name: customer
         TemplateSegment 3:38 - 4:13
           Value: ,\nwant to buy 
           Raw: ,\nwant to buy 
         Dot 4:15 - 4:26
           Property: amount
-          SymbolRef 4:15 - 4:19 [Read]
+          SymbolRef 4:15 - 4:19 [Read] [PropWrite]
             Name: card
         TemplateSegment 4:27 - 4:28
           Value:  
           Raw:  
         Dot 4:30 - 4:42
           Property: product
-          SymbolRef 4:30 - 4:34 [Read]
+          SymbolRef 4:30 - 4:34 [Read] [PropWrite]
             Name: card
         TemplateSegment 4:43 - 5:12
           Value:  for\na total of 

@@ -18,5 +18,5 @@ Toplevel 1:1 - 1:65
       Call 1:54 - 1:64
         SymbolRef 1:54 - 1:61 [Read]
           Name: process
-        SymbolRef 1:62 - 1:63 [Read]
+        SymbolRef 1:62 - 1:63 [Read] [PropWrite]
           Name: x

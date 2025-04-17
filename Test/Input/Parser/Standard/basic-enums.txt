@@ -20,7 +20,7 @@ Toplevel 1:1 - 16:1 [HasUseStrictDirective]
             Sub 4:3 - 4:13
               String 4:9 - 4:12
                 Value: A
-              SymbolRef 4:3 - 4:8 [Read]
+              SymbolRef 4:3 - 4:8 [Read] [PropWrite]
                 Name: First
             String 4:16 - 4:19
               Value: a
@@ -30,7 +30,7 @@ Toplevel 1:1 - 16:1 [HasUseStrictDirective]
             Sub 5:3 - 5:13
               String 5:9 - 5:12
                 Value: B
-              SymbolRef 5:3 - 5:8 [Read]
+              SymbolRef 5:3 - 5:8 [Read] [PropWrite]
                 Name: First
             String 5:16 - 5:19
               Value: b
@@ -54,7 +54,7 @@ Toplevel 1:1 - 16:1 [HasUseStrictDirective]
             Sub 8:3 - 8:15
               String 8:10 - 8:14
                 Value: AA
-              SymbolRef 8:3 - 8:9 [Read]
+              SymbolRef 8:3 - 8:9 [Read] [PropWrite]
                 Name: Second
             String 8:18 - 8:22
               Value: aa
@@ -64,7 +64,7 @@ Toplevel 1:1 - 16:1 [HasUseStrictDirective]
             Sub 9:3 - 9:15
               String 9:10 - 9:14
                 Value: BB
-              SymbolRef 9:3 - 9:9 [Read]
+              SymbolRef 9:3 - 9:9 [Read] [PropWrite]
                 Name: Second
             String 9:18 - 9:22
               Value: bb
@@ -88,7 +88,7 @@ Toplevel 1:1 - 16:1 [HasUseStrictDirective]
             Sub 12:3 - 12:15
               String 12:9 - 12:14
                 Value: AAA
-              SymbolRef 12:3 - 12:8 [Read]
+              SymbolRef 12:3 - 12:8 [Read] [PropWrite]
                 Name: Third
             String 12:18 - 12:23
               Value: aaa
@@ -98,7 +98,7 @@ Toplevel 1:1 - 16:1 [HasUseStrictDirective]
             Sub 13:3 - 13:15
               String 13:9 - 13:14
                 Value: BBB
-              SymbolRef 13:3 - 13:8 [Read]
+              SymbolRef 13:3 - 13:8 [Read] [PropWrite]
                 Name: Third
             String 13:18 - 13:23
               Value: bbb
@@ -119,13 +119,13 @@ Toplevel 1:1 - 16:1 [HasUseStrictDirective]
           Name: console
       Dot 15:13 - 15:20
         Property: A
-        SymbolRef 15:13 - 15:18 [Read]
+        SymbolRef 15:13 - 15:18 [Read] [PropWrite]
           Name: First
       Dot 15:22 - 15:31
         Property: AA
-        SymbolRef 15:22 - 15:28 [Read]
+        SymbolRef 15:22 - 15:28 [Read] [PropWrite]
           Name: Second
       Dot 15:33 - 15:42
         Property: AAA
-        SymbolRef 15:33 - 15:38 [Read]
+        SymbolRef 15:33 - 15:38 [Read] [PropWrite]
           Name: Third

@@ -17,7 +17,7 @@ Toplevel 1:1 - 13:1
               Property: error
               SymbolRef 6:9 - 6:16 [Read]
                 Name: console
-            SymbolRef 6:23 - 6:24 [Read]
+            SymbolRef 6:23 - 6:24 [Read] [PropWrite]
               Name: e
         Return 7:9 - 7:16
       Finally 8:14 - 11:6

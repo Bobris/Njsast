@@ -50,5 +50,5 @@ Toplevel 1:1 - 9:1
               Property: log
               SymbolRef 6:9 - 6:16 [Read]
                 Name: console
-            SymbolRef 6:21 - 6:25 [Read]
+            SymbolRef 6:21 - 6:25 [Read] [PropWrite]
               Name: item

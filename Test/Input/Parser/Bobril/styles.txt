@@ -37,7 +37,7 @@ Toplevel 1:1 - 17:1
               Operator: IncrementPostfix
               SymbolRef 6:22 - 6:35 [Read] [Write]
                 Name: globalCounter
-          SymbolRef 6:5 - 6:14 [Read]
+          SymbolRef 6:5 - 6:14 [Read] [PropWrite]
             Name: allStyles
         Object 6:41 - 12:6
           ObjectKeyVal 7:9 - 7:19

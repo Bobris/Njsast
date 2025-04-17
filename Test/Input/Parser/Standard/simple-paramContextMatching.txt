@@ -13,9 +13,9 @@ Toplevel 1:1 - 13:1
           Property: log
           SymbolRef 2:5 - 2:12 [Read]
             Name: console
-        SymbolRef 2:17 - 2:21 [Read]
+        SymbolRef 2:17 - 2:21 [Read] [PropWrite]
           Name: name
-        SymbolRef 2:23 - 2:26 [Read]
+        SymbolRef 2:23 - 2:26 [Read] [PropWrite]
           Name: val
   Defun 4:1 - 6:2
     SymbolDefun 4:10 - 4:11 [Write]
@@ -37,9 +37,9 @@ Toplevel 1:1 - 13:1
           Property: log
           SymbolRef 5:5 - 5:12 [Read]
             Name: console
-        SymbolRef 5:17 - 5:18 [Read]
+        SymbolRef 5:17 - 5:18 [Read] [PropWrite]
           Name: n
-        SymbolRef 5:20 - 5:21 [Read]
+        SymbolRef 5:20 - 5:21 [Read] [PropWrite]
           Name: v
   Defun 7:1 - 9:2
     SymbolDefun 7:10 - 7:11 [Write]
@@ -61,9 +61,9 @@ Toplevel 1:1 - 13:1
           Property: log
           SymbolRef 8:5 - 8:12 [Read]
             Name: console
-        SymbolRef 8:17 - 8:21 [Read]
+        SymbolRef 8:17 - 8:21 [Read] [PropWrite]
           Name: name
-        SymbolRef 8:23 - 8:26 [Read]
+        SymbolRef 8:23 - 8:26 [Read] [PropWrite]
           Name: val
   SimpleStatement 10:1 - 10:18
     Call 10:1 - 10:17

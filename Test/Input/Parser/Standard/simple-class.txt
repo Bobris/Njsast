@@ -17,7 +17,7 @@ Toplevel 1:1 - 11:1
             Operator: Assignment
             Dot 3:9 - 3:16
               Property: id
-              This 3:9 - 3:13 [Read]
+              This 3:9 - 3:13 [Read] [PropWrite]
                 Name: this
             SymbolRef 3:19 - 3:21 [Read]
               Name: id
@@ -27,9 +27,9 @@ Toplevel 1:1 - 11:1
               Property: move
               This 4:9 - 4:13 [Read]
                 Name: this
-            SymbolRef 4:19 - 4:20 [Read]
+            SymbolRef 4:19 - 4:20 [Read] [PropWrite]
               Name: x
-            SymbolRef 4:22 - 4:23 [Read]
+            SymbolRef 4:22 - 4:23 [Read] [PropWrite]
               Name: y
     ConciseMethod 6:5 - 9:6
       SymbolProperty 6:5 - 6:9
@@ -44,7 +44,7 @@ Toplevel 1:1 - 11:1
             Operator: Assignment
             Dot 7:9 - 7:15
               Property: x
-              This 7:9 - 7:13 [Read]
+              This 7:9 - 7:13 [Read] [PropWrite]
                 Name: this
             SymbolRef 7:18 - 7:19 [Read]
               Name: x
@@ -53,7 +53,7 @@ Toplevel 1:1 - 11:1
             Operator: Assignment
             Dot 8:9 - 8:15
               Property: y
-              This 8:9 - 8:13 [Read]
+              This 8:9 - 8:13 [Read] [PropWrite]
                 Name: this
             SymbolRef 8:18 - 8:19 [Read]
               Name: y

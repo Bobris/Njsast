@@ -29,7 +29,7 @@ Toplevel 1:1 - 12:1
         Property: log
         SymbolRef 6:3 - 6:10 [Read]
           Name: console
-      SymbolRef 6:15 - 6:16 [Read]
+      SymbolRef 6:15 - 6:16 [Read] [PropWrite]
         Name: c
   SimpleStatement 9:1 - 9:5
     UnaryPostfix 9:1 - 9:4
@@ -47,7 +47,7 @@ Toplevel 1:1 - 12:1
         Property: log
         SymbolRef 11:1 - 11:8 [Read]
           Name: console
-      SymbolRef 11:13 - 11:14 [Read]
+      SymbolRef 11:13 - 11:14 [Read] [PropWrite]
         Name: a
-      SymbolRef 11:16 - 11:17 [Read]
+      SymbolRef 11:16 - 11:17 [Read] [PropWrite]
         Name: b

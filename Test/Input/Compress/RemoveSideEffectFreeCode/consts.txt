@@ -30,9 +30,9 @@ Toplevel 1:1 - 10:1
         Property: log
         SymbolRef 6:5 - 6:12 [Read]
           Name: console
-      SymbolRef 6:17 - 6:18 [Read]
+      SymbolRef 6:17 - 6:18 [Read] [PropWrite]
         Name: c
-      SymbolRef 6:20 - 6:21 [Read]
+      SymbolRef 6:20 - 6:21 [Read] [PropWrite]
         Name: b2
   SimpleStatement 9:1 - 9:19
     Call 9:1 - 9:18
@@ -40,7 +40,7 @@ Toplevel 1:1 - 10:1
         Property: log
         SymbolRef 9:1 - 9:8 [Read]
           Name: console
-      SymbolRef 9:13 - 9:14 [Read]
+      SymbolRef 9:13 - 9:14 [Read] [PropWrite]
         Name: a
-      SymbolRef 9:16 - 9:17 [Read]
+      SymbolRef 9:16 - 9:17 [Read] [PropWrite]
         Name: b

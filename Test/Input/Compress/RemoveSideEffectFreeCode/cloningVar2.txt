@@ -23,7 +23,7 @@ Toplevel 1:1 - 10:1
         Property: log
         SymbolRef 4:1 - 4:8 [Read]
           Name: console
-      SymbolRef 4:13 - 4:14 [Read]
+      SymbolRef 4:13 - 4:14 [Read] [PropWrite]
         Name: b
   Var 6:1 - 6:13
     VarDef 6:5 - 6:12
@@ -48,5 +48,5 @@ Toplevel 1:1 - 10:1
         Property: log
         SymbolRef 9:1 - 9:8 [Read]
           Name: console
-      SymbolRef 9:13 - 9:15 [Read]
+      SymbolRef 9:13 - 9:15 [Read] [PropWrite]
         Name: bb

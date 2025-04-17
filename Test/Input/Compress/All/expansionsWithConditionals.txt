@@ -52,13 +52,13 @@ Toplevel 1:1 - 16:1
       Call 8:8 - 8:16
         SymbolRef 8:8 - 8:13 [Read]
           Name: print
-        SymbolRef 8:14 - 8:15 [Read]
+        SymbolRef 8:14 - 8:15 [Read] [PropWrite]
           Name: a
     SimpleStatement 9:6 - 9:15
       Call 9:6 - 9:14
         SymbolRef 9:6 - 9:11 [Read]
           Name: print
-        SymbolRef 9:12 - 9:13 [Read]
+        SymbolRef 9:12 - 9:13 [Read] [PropWrite]
           Name: b
   If 11:1 - 12:15
     SymbolRef 11:5 - 11:6 [Read]
@@ -74,7 +74,7 @@ Toplevel 1:1 - 16:1
       Call 12:6 - 12:14
         SymbolRef 12:6 - 12:11 [Read]
           Name: print
-        SymbolRef 12:12 - 12:13 [Read]
+        SymbolRef 12:12 - 12:13 [Read] [PropWrite]
           Name: b
   If 14:1 - 15:18
     Dot 14:5 - 14:23
@@ -85,7 +85,7 @@ Toplevel 1:1 - 16:1
       Call 14:25 - 14:33
         SymbolRef 14:25 - 14:30 [Read]
           Name: print
-        SymbolRef 14:31 - 14:32 [Read]
+        SymbolRef 14:31 - 14:32 [Read] [PropWrite]
           Name: a
     SimpleStatement 15:6 - 15:18
       Call 15:6 - 15:17

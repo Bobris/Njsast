@@ -4,7 +4,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
       Operator: Assignment
       Dot 2:1 - 2:19
         Property: __esModule
-        SymbolRef 2:1 - 2:8 [Read]
+        SymbolRef 2:1 - 2:8 [Read] [PropWrite]
           Name: exports
       True 2:22 - 2:26
   Var 3:1 - 3:27
@@ -63,7 +63,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
             Number 7:67 - 7:69
               Value: 10
               Literal: 10
-        SymbolRef 7:73 - 7:82 [Read]
+        SymbolRef 7:73 - 7:82 [Read] [PropWrite]
           Name: undefined
         String 7:84 - 7:92
           Value: header
@@ -91,7 +91,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
             Name: b
         String 9:31 - 9:42
           Value: light.png
-        SymbolRef 9:44 - 9:53 [Read]
+        SymbolRef 9:44 - 9:53 [Read] [PropWrite]
           Name: undefined
   Defun 10:1 - 12:2
     SymbolDefun 10:10 - 10:20 [Write]
@@ -105,9 +105,9 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
           SymbolRef 11:5 - 11:6 [Read]
             Name: b
         Object 11:16 - 11:18
-        SymbolRef 11:20 - 11:29 [Read]
+        SymbolRef 11:20 - 11:29 [Read] [PropWrite]
           Name: undefined
-        SymbolRef 11:31 - 11:33 [Read]
+        SymbolRef 11:31 - 11:33 [Read] [PropWrite]
           Name: cn
   SimpleStatement 13:1 - 13:19
     Call 13:1 - 13:18
@@ -141,7 +141,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                   Operator: Assignment
                   Dot 17:9 - 17:20
                     Property: counter
-                    SymbolRef 17:9 - 17:12 [Read]
+                    SymbolRef 17:9 - 17:12 [Read] [PropWrite]
                       Name: ctx
                   Number 17:23 - 17:24
                     Value: 0
@@ -156,7 +156,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                         Operator: IncrementPostfix
                         Dot 19:13 - 19:24
                           Property: counter
-                          SymbolRef 19:13 - 19:16 [Read]
+                          SymbolRef 19:13 - 19:16 [Read] [PropWrite]
                             Name: ctx
                     SimpleStatement 20:13 - 20:28
                       Call 20:13 - 20:27
@@ -197,7 +197,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                   Operator: Assignment
                   Dot 26:9 - 26:20
                     Property: children
-                    SymbolRef 26:9 - 26:11 [Read]
+                    SymbolRef 26:9 - 26:11 [Read] [PropWrite]
                       Name: me
                   Array 26:23 - 93:10
                     Call 27:13 - 30:28
@@ -227,9 +227,9 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                                   Name: c
                                 Dot 29:64 - 29:75
                                   Property: counter
-                                  SymbolRef 29:64 - 29:67 [Read]
+                                  SymbolRef 29:64 - 29:67 [Read] [PropWrite]
                                     Name: ctx
-                      SymbolRef 30:16 - 30:27 [Read]
+                      SymbolRef 30:16 - 30:27 [Read] [PropWrite]
                         Name: headerStyle
                     Object 31:13 - 41:14
                       ObjectKeyVal 32:17 - 32:25
@@ -355,7 +355,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                             Name: display
                           String 55:66 - 55:80
                             Value: inline-block
-                      SymbolRef 55:84 - 55:104 [Read]
+                      SymbolRef 55:84 - 55:104 [Read] [PropWrite]
                         Name: semitransparentLight
                     Call 56:13 - 56:106
                       Dot 56:13 - 56:24
@@ -375,7 +375,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                             Name: display
                           String 56:67 - 56:81
                             Value: inline-block
-                      SymbolRef 56:85 - 56:105 [Read]
+                      SymbolRef 56:85 - 56:105 [Read] [PropWrite]
                         Name: semitransparentLight
                     Call 57:13 - 57:74
                       Dot 57:13 - 57:24
@@ -390,7 +390,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                             Name: display
                           String 57:41 - 57:55
                             Value: inline-block
-                      SymbolRef 57:59 - 57:73 [Read]
+                      SymbolRef 57:59 - 57:73 [Read] [PropWrite]
                         Name: undefinedLight
                     Call 58:13 - 63:15
                       Sub 58:13 - 58:37

@@ -19,7 +19,7 @@ Toplevel 1:1 - 4:1
               Property: log
               SymbolRef 2:5 - 2:12 [Read]
                 Name: console
-            SymbolRef 2:17 - 2:18 [Read]
+            SymbolRef 2:17 - 2:18 [Read] [PropWrite]
               Name: a
-            SymbolRef 2:20 - 2:24 [Read]
+            SymbolRef 2:20 - 2:24 [Read] [PropWrite]
               Name: rest

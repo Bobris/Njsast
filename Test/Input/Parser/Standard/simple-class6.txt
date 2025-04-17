@@ -15,7 +15,7 @@ Toplevel 1:1 - 22:1
             Operator: Assignment
             Dot 3:9 - 3:20
               Property: _width
-              This 3:9 - 3:13 [Read]
+              This 3:9 - 3:13 [Read] [PropWrite]
                 Name: this
             SymbolRef 3:23 - 3:28 [Read]
               Name: width
@@ -24,7 +24,7 @@ Toplevel 1:1 - 22:1
             Operator: Assignment
             Dot 4:9 - 4:21
               Property: _height
-              This 4:9 - 4:13 [Read]
+              This 4:9 - 4:13 [Read] [PropWrite]
                 Name: this
             SymbolRef 4:24 - 4:30 [Read]
               Name: height
@@ -39,7 +39,7 @@ Toplevel 1:1 - 22:1
             Operator: Assignment
             Dot 7:9 - 7:20
               Property: _width
-              This 7:9 - 7:13 [Read]
+              This 7:9 - 7:13 [Read] [PropWrite]
                 Name: this
             SymbolRef 7:23 - 7:28 [Read]
               Name: width
@@ -50,7 +50,7 @@ Toplevel 1:1 - 22:1
         Return 10:9 - 10:28
           Dot 10:16 - 10:27
             Property: _width
-            This 10:16 - 10:20 [Read]
+            This 10:16 - 10:20 [Read] [PropWrite]
               Name: this
     ObjectSetter 12:5 - 14:6
       SymbolProperty 12:9 - 12:15
@@ -63,7 +63,7 @@ Toplevel 1:1 - 22:1
             Operator: Assignment
             Dot 13:9 - 13:21
               Property: _height
-              This 13:9 - 13:13 [Read]
+              This 13:9 - 13:13 [Read] [PropWrite]
                 Name: this
             SymbolRef 13:24 - 13:30 [Read]
               Name: height
@@ -74,7 +74,7 @@ Toplevel 1:1 - 22:1
         Return 16:9 - 16:29
           Dot 16:16 - 16:28
             Property: _height
-            This 16:16 - 16:20 [Read]
+            This 16:16 - 16:20 [Read] [PropWrite]
               Name: this
     ObjectGetter 18:5 - 20:6
       SymbolProperty 18:9 - 18:13

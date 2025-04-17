@@ -11,12 +11,12 @@ Toplevel 1:1 - 1:66
         Call 1:31 - 1:37
           SymbolRef 1:31 - 1:34 [Read]
             Name: say
-          SymbolRef 1:35 - 1:36 [Read]
+          SymbolRef 1:35 - 1:36 [Read] [PropWrite]
             Name: e
     Finally 1:47 - 1:66
       SimpleStatement 1:50 - 1:64
         Call 1:50 - 1:64
           SymbolRef 1:50 - 1:57 [Read]
             Name: cleanup
-          SymbolRef 1:58 - 1:63 [Read]
+          SymbolRef 1:58 - 1:63 [Read] [PropWrite]
             Name: stuff

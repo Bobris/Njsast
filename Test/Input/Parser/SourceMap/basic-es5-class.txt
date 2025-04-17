@@ -15,7 +15,7 @@ Toplevel 1:1 - 12:44 [HasUseStrictDirective]
                 Property: world
                 Dot 2:3 - 2:18
                   Property: prototype
-                  SymbolRef 2:3 - 2:8 [Read]
+                  SymbolRef 2:3 - 2:8 [Read] [PropWrite]
                     Name: Hello
               Function 2:3 - 4:4
                 SimpleStatement 3:5 - 3:32

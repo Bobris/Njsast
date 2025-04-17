@@ -11,7 +11,7 @@ Toplevel 1:1 - 7:2
         Call 4:5 - 4:11
           SymbolRef 4:5 - 4:8 [Read]
             Name: log
-          SymbolRef 4:9 - 4:10 [Read]
+          SymbolRef 4:9 - 4:10 [Read] [PropWrite]
             Name: e
     Finally 5:10 - 7:2
       SimpleStatement 6:5 - 6:11

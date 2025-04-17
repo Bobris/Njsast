@@ -31,7 +31,7 @@ Toplevel 1:1 - 22:1
         Sub 8:5 - 8:13
           SymbolRef 8:9 - 8:12 [Read]
             Name: res
-          SymbolRef 8:5 - 8:8 [Read]
+          SymbolRef 8:5 - 8:8 [Read] [PropWrite]
             Name: map
         SymbolRef 8:16 - 8:17 [Read]
           Name: s
@@ -97,29 +97,29 @@ Toplevel 1:1 - 22:1
     Call 17:1 - 17:8
       SymbolRef 17:1 - 17:4 [Read]
         Name: log
-      SymbolRef 17:5 - 17:7 [Read]
+      SymbolRef 17:5 - 17:7 [Read] [PropWrite]
         Name: s1
   SimpleStatement 18:1 - 18:9
     Call 18:1 - 18:8
       SymbolRef 18:1 - 18:4 [Read]
         Name: log
-      SymbolRef 18:5 - 18:7 [Read]
+      SymbolRef 18:5 - 18:7 [Read] [PropWrite]
         Name: s2
   SimpleStatement 19:1 - 19:9
     Call 19:1 - 19:8
       SymbolRef 19:1 - 19:4 [Read]
         Name: log
-      SymbolRef 19:5 - 19:7 [Read]
+      SymbolRef 19:5 - 19:7 [Read] [PropWrite]
         Name: s1
   SimpleStatement 20:1 - 20:9
     Call 20:1 - 20:8
       SymbolRef 20:1 - 20:4 [Read]
         Name: log
-      SymbolRef 20:5 - 20:7 [Read]
+      SymbolRef 20:5 - 20:7 [Read] [PropWrite]
         Name: s4
   SimpleStatement 21:1 - 21:9
     Call 21:1 - 21:8
       SymbolRef 21:1 - 21:4 [Read]
         Name: log
-      SymbolRef 21:5 - 21:7 [Read]
+      SymbolRef 21:5 - 21:7 [Read] [PropWrite]
         Name: s5

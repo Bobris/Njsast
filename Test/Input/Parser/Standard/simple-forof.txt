@@ -7,7 +7,7 @@ Toplevel 1:1 - 18:1
         ConciseMethod 2:5 - 11:6
           Dot 2:6 - 2:21
             Property: iterator
-            SymbolRef 2:6 - 2:12 [Read]
+            SymbolRef 2:6 - 2:12 [Read] [PropWrite]
               Name: Symbol
           Function 2:22 - 11:6
             Let 3:9 - 4:21
@@ -80,5 +80,5 @@ Toplevel 1:1 - 18:1
             Property: log
             SymbolRef 16:5 - 16:12 [Read]
               Name: console
-          SymbolRef 16:17 - 16:18 [Read]
+          SymbolRef 16:17 - 16:18 [Read] [PropWrite]
             Name: n
