@@ -2,6 +2,8 @@
 
 ## [unreleased]
 
+## 2.1.0
+
 ### Changed
 
 Now using .Net 9.0.
