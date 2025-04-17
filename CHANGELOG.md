@@ -2,6 +2,14 @@
 
 ## [unreleased]
 
+### Changed
+
+Now using .Net 9.0.
+
+### Fixed
+
+Many bugs in bundler and minification.
+
 ## 2.0.0
 
 ### Changed
