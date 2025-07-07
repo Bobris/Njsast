@@ -1,5 +1,5 @@
 (() => {
-    function x() {
+    function x_index() {
         if (this.prop) {
             try {
                 something();
@@ -10,6 +10,6 @@
             }
         }
     }
-    x();
+    x_index();
 })();
 
