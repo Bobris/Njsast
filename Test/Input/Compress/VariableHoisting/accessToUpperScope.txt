@@ -43,7 +43,7 @@ Toplevel 1:1 - 6:2
         Sub 5:5 - 5:31
           SymbolRef 5:20 - 5:30 [Read]
             Name: name_index
-          SymbolRef 5:5 - 5:19 [Read] [PropWrite]
+          SymbolRef 5:5 - 5:19 [Read] [PropWrite!]
             Name: registryEvents
         SymbolRef 5:34 - 5:38 [Read]
           Name: list

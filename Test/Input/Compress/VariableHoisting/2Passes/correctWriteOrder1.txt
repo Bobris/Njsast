@@ -23,7 +23,7 @@ Toplevel 1:1 - 8:1
             Name: component
           Dot 2:16 - 2:27
             Property: component
-            SymbolRef 2:16 - 2:17 [Read] [PropWrite]
+            SymbolRef 2:16 - 2:17 [Read] [PropWrite!]
               Name: n
   SimpleStatement 4:5 - 4:24
     Assign 4:5 - 4:24

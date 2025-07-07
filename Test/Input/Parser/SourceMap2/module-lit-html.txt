@@ -9,7 +9,7 @@ Toplevel 1:1 - 8:1
         Name: i
       Dot 50:23 - 50:77
         Property: trustedTypes
-        SymbolRef 50:23 - 50:33 [Read] [PropWrite]
+        SymbolRef 50:23 - 50:33 [Read] [PropWrite!]
           Name: globalThis
     VarDef 60:7 - 64:6
       SymbolConst 60:7 - 60:8 [Write]
@@ -142,7 +142,7 @@ Toplevel 1:1 - 8:1
         Name: d
       Dot 164:17 - 164:30
         Property: isArray
-        SymbolRef 164:17 - 164:22 [Read] [PropWrite]
+        SymbolRef 164:17 - 164:22 [Read] [PropWrite!]
           Name: Array
     VarDef 165:7 - 168:45
       SymbolConst 165:7 - 165:8 [Write]
@@ -380,7 +380,7 @@ Toplevel 1:1 - 8:1
               Name: l
             Dot 428:26 - 428:70
               Property: _$litPart$
-              SymbolRef 428:26 - 428:27 [Read] [PropWrite]
+              SymbolRef 428:26 - 428:27 [Read] [PropWrite!]
                 Name: n
         If 429:3 - 455:3
           Binary 429:6 - 429:8
@@ -439,7 +439,7 @@ Toplevel 1:1 - 8:1
                 Operator: Assignment
                 Dot 447:6 - 447:50
                   Property: _$litPart$
-                  SymbolRef 447:6 - 447:7 [Read] [PropWrite]
+                  SymbolRef 447:6 - 447:7 [Read] [PropWrite!]
                     Name: n
                 Assign 447:44 - 451:21
                   Operator: Assignment
@@ -579,7 +579,7 @@ Toplevel 1:1 - 8:1
                 Sub 531:15 - 531:25
                   SymbolRef 531:23 - 531:24 [Read]
                     Name: i
-                  SymbolRef 531:15 - 531:16 [Read] [PropWrite]
+                  SymbolRef 531:15 - 531:16 [Read] [PropWrite!]
                     Name: t
             Let 537:5 - 544:5
               VarDef 538:9 - 538:10
@@ -618,7 +618,7 @@ Toplevel 1:1 - 8:1
                     Operator: Assignment
                     Dot 546:7 - 546:22
                       Property: lastIndex
-                      SymbolRef 546:7 - 546:8 [Read] [PropWrite]
+                      SymbolRef 546:7 - 546:8 [Read] [PropWrite!]
                         Name: d
                     SymbolRef 546:25 - 546:26 [Read]
                       Name: p
@@ -718,7 +718,7 @@ Toplevel 1:1 - 8:1
                                   Number 190:18 - 190:19
                                     Value: 2
                                     Literal: 2
-                                  SymbolRef 559:35 - 559:36 [Read] [PropWrite]
+                                  SymbolRef 559:35 - 559:36 [Read] [PropWrite!]
                                     Name: u
                               Assign 562:13 - 562:70
                                 Operator: Assignment
@@ -1166,7 +1166,7 @@ Toplevel 1:1 - 8:1
             Operator: Assignment
             Dot 671:3 - 671:13
               Property: parts
-              This 671:3 - 671:7 [Read] [PropWrite]
+              This 671:3 - 671:7 [Read] [PropWrite!]
                 Name: this
             Array 671:32 - 671:34
         Let 679:5 - 681:5
@@ -1200,7 +1200,7 @@ Toplevel 1:1 - 8:1
               Name: c
             Dot 682:19 - 682:29
               Property: parts
-              This 682:19 - 682:23 [Read] [PropWrite]
+              This 682:19 - 682:23 [Read] [PropWrite!]
                 Name: this
           VarDef 682:30 - 685:58
             Destructuring 682:30 - 685:20 [IsArray]
@@ -1221,7 +1221,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 686:5 - 686:12
                 Property: el
-                This 686:5 - 686:9 [Read] [PropWrite]
+                This 686:5 - 686:9 [Read] [PropWrite!]
                   Name: this
               Call 686:15 - 686:46
                 Dot 686:15 - 686:37
@@ -1236,7 +1236,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 687:5 - 687:23
                 Property: currentNode
-                SymbolRef 687:5 - 687:6 [Read] [PropWrite]
+                SymbolRef 687:5 - 687:6 [Read] [PropWrite!]
                   Name: A
               Dot 687:26 - 687:41
                 Property: content
@@ -1260,14 +1260,14 @@ Toplevel 1:1 - 8:1
                   Property: content
                   Dot 691:23 - 691:30
                     Property: el
-                    This 691:23 - 691:27 [Read] [PropWrite]
+                    This 691:23 - 691:27 [Read] [PropWrite!]
                       Name: this
               VarDef 692:13 - 692:44
                 SymbolConst 692:13 - 692:14 [Write]
                   Name: i
                 Dot 692:26 - 692:44
                   Property: firstChild
-                  SymbolRef 692:26 - 692:27 [Read] [PropWrite]
+                  SymbolRef 692:26 - 692:27 [Read] [PropWrite!]
                     Name: t
             SimpleStatement 693:7 - 694:47
               Sequence 693:7 - 694:47
@@ -1284,7 +1284,7 @@ Toplevel 1:1 - 8:1
                   Expansion 694:22 - 694:46
                     Dot 694:25 - 694:46
                       Property: childNodes
-                      SymbolRef 694:25 - 694:26 [Read] [PropWrite]
+                      SymbolRef 694:25 - 694:26 [Read] [PropWrite!]
                         Name: i
         For 698:5 - 818:11
           Binary 698:43 - 698:67
@@ -1370,7 +1370,7 @@ Toplevel 1:1 - 8:1
                                   Operator: IncrementPostfix
                                   SymbolRef 739:42 - 739:43 [Read] [Write]
                                     Name: d
-                                SymbolRef 739:32 - 739:33 [Read] [PropWrite]
+                                SymbolRef 739:32 - 739:33 [Read] [PropWrite!]
                                   Name: a
                           If 741:15 - 765:29
                             Sequence 740:15 - 741:20
@@ -1450,7 +1450,7 @@ Toplevel 1:1 - 8:1
                                         Number 751:27 - 751:28
                                           Value: 2
                                           Literal: 2
-                                        SymbolRef 751:25 - 751:26 [Read] [PropWrite]
+                                        SymbolRef 751:25 - 751:26 [Read] [PropWrite!]
                                           Name: i
                                     ObjectKeyVal 752:19 - 752:29
                                       SymbolProperty 752:19 - 752:26
@@ -1542,7 +1542,7 @@ Toplevel 1:1 - 8:1
                         Name: g
                     Dot 776:34 - 776:58
                       Property: tagName
-                      SymbolRef 776:34 - 776:35 [Read] [PropWrite]
+                      SymbolRef 776:34 - 776:35 [Read] [PropWrite!]
                         Name: l
                   BlockStatement 776:61 - 800:64
                     Const 780:11 - 782:11
@@ -1584,7 +1584,7 @@ Toplevel 1:1 - 8:1
                             Operator: Assignment
                             Dot 783:14 - 783:42
                               Property: textContent
-                              SymbolRef 783:14 - 783:15 [Read] [PropWrite]
+                              SymbolRef 783:14 - 783:15 [Read] [PropWrite!]
                                 Name: l
                             Conditional 783:45 - 785:19
                               SymbolRef 783:45 - 783:46 [Read]
@@ -1623,7 +1623,7 @@ Toplevel 1:1 - 8:1
                                 Sub 792:40 - 792:50
                                   SymbolRef 792:48 - 792:49 [Read]
                                     Name: i
-                                  SymbolRef 792:40 - 792:41 [Read] [PropWrite]
+                                  SymbolRef 792:40 - 792:41 [Read] [PropWrite!]
                                     Name: t
                                 Call 792:52 - 792:55
                                   SymbolRef 792:52 - 792:53 [Read]
@@ -1661,7 +1661,7 @@ Toplevel 1:1 - 8:1
                             Sub 800:38 - 800:48
                               SymbolRef 800:46 - 800:47 [Read]
                                 Name: s
-                              SymbolRef 800:38 - 800:39 [Read] [PropWrite]
+                              SymbolRef 800:38 - 800:39 [Read] [PropWrite!]
                                 Name: t
                             Call 800:58 - 800:61
                               SymbolRef 800:58 - 800:59 [Read]
@@ -1803,7 +1803,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 826:5 - 826:17
                 Property: innerHTML
-                SymbolRef 826:5 - 826:6 [Read] [PropWrite]
+                SymbolRef 826:5 - 826:6 [Read] [PropWrite!]
                   Name: s
               SymbolRef 826:20 - 826:21 [Read]
                 Name: t
@@ -2076,7 +2076,7 @@ Toplevel 1:1 - 8:1
                       Operator: Assignment
                       Dot 873:54 - 873:38
                         Property: _$Cl
-                        SymbolRef 873:54 - 873:55 [Read] [PropWrite]
+                        SymbolRef 873:54 - 873:55 [Read] [PropWrite!]
                           Name: h
                       Array 873:51 - 873:53
                 SymbolRef 874:9 - 874:10 [Read]
@@ -2085,7 +2085,7 @@ Toplevel 1:1 - 8:1
                 Operator: Assignment
                 Dot 876:8 - 876:45
                   Property: _$Cu
-                  SymbolRef 876:8 - 876:9 [Read] [PropWrite]
+                  SymbolRef 876:8 - 876:9 [Read] [PropWrite!]
                     Name: s
                 SymbolRef 876:55 - 876:56 [Read]
                   Name: d
@@ -2118,7 +2118,7 @@ Toplevel 1:1 - 8:1
                   Name: t
                 Dot 882:41 - 882:73
                   Property: values
-                  SymbolRef 882:41 - 882:42 [Read] [PropWrite]
+                  SymbolRef 882:41 - 882:42 [Read] [PropWrite!]
                     Name: i
               SymbolRef 883:7 - 883:8 [Read] [PropWrite]
                 Name: d
@@ -2143,14 +2143,14 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 898:3 - 898:9
                 Property: v
-                This 898:3 - 898:7 [Read] [PropWrite]
+                This 898:3 - 898:7 [Read] [PropWrite!]
                   Name: this
               Array 898:37 - 898:39
             Assign 903:3 - 903:53
               Operator: Assignment
               Dot 903:3 - 903:12
                 Property: _$AN
-                This 903:3 - 903:7 [Read] [PropWrite]
+                This 903:3 - 903:7 [Read] [PropWrite!]
                   Name: this
               UnaryPrefix 903:13 - 903:53
                 Operator: Void
@@ -2161,7 +2161,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 906:5 - 906:14
                 Property: _$AD
-                This 906:5 - 906:9 [Read] [PropWrite]
+                This 906:5 - 906:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 906:23 - 906:24 [Read]
                 Name: t
@@ -2169,7 +2169,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 907:5 - 907:14
                 Property: _$AM
-                This 907:5 - 907:9 [Read] [PropWrite]
+                This 907:5 - 907:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 907:21 - 907:22 [Read]
                 Name: i
@@ -2182,7 +2182,7 @@ Toplevel 1:1 - 8:1
             Property: parentNode
             Dot 912:12 - 912:21
               Property: _$AM
-              This 912:12 - 912:16 [Read] [PropWrite]
+              This 912:12 - 912:16 [Read] [PropWrite!]
                 Name: this
     ObjectGetter 916:7 - 922:3
       SymbolProperty 916:11 - 916:15
@@ -2193,7 +2193,7 @@ Toplevel 1:1 - 8:1
             Property: _$AU
             Dot 917:12 - 917:21
               Property: _$AM
-              This 917:12 - 917:16 [Read] [PropWrite]
+              This 917:12 - 917:16 [Read] [PropWrite!]
                 Name: this
     ConciseMethod 922:3 - 967:3
       SymbolProperty 922:3 - 922:4
@@ -2224,7 +2224,7 @@ Toplevel 1:1 - 8:1
                   Name: e
             Dot 926:9 - 926:18
               Property: _$AD
-              This 926:9 - 926:13 [Read] [PropWrite]
+              This 926:9 - 926:13 [Read] [PropWrite!]
                 Name: this
           VarDef 927:11 - 927:74
             SymbolConst 927:11 - 927:12 [Write]
@@ -2282,7 +2282,7 @@ Toplevel 1:1 - 8:1
             Operator: Assignment
             Dot 928:5 - 928:23
               Property: currentNode
-              SymbolRef 928:5 - 928:6 [Read] [PropWrite]
+              SymbolRef 928:5 - 928:6 [Read] [PropWrite!]
                 Name: A
             SymbolRef 928:26 - 928:27 [Read]
               Name: o
@@ -2314,7 +2314,7 @@ Toplevel 1:1 - 8:1
               Number 933:30 - 933:31
                 Value: 0
                 Literal: 0
-              SymbolRef 933:24 - 933:25 [Read] [PropWrite]
+              SymbolRef 933:24 - 933:25 [Read] [PropWrite!]
                 Name: e
         For 935:5 - 964:5
           Binary 935:10 - 935:13
@@ -2364,7 +2364,7 @@ Toplevel 1:1 - 8:1
                             Name: n
                           Dot 941:13 - 941:29
                             Property: nextSibling
-                            SymbolRef 941:13 - 941:14 [Read] [PropWrite]
+                            SymbolRef 941:13 - 941:14 [Read] [PropWrite!]
                               Name: n
                           This 942:13 - 942:17 [Read] [PropWrite]
                             Name: this
@@ -2393,11 +2393,11 @@ Toplevel 1:1 - 8:1
                               Name: n
                             Dot 948:13 - 948:30
                               Property: name
-                              SymbolRef 948:13 - 948:14 [Read] [PropWrite]
+                              SymbolRef 948:13 - 948:14 [Read] [PropWrite!]
                                 Name: d
                             Dot 949:13 - 949:33
                               Property: strings
-                              SymbolRef 949:13 - 949:14 [Read] [PropWrite]
+                              SymbolRef 949:13 - 949:14 [Read] [PropWrite!]
                                 Name: d
                             This 950:13 - 950:17 [Read] [PropWrite]
                               Name: this
@@ -2568,7 +2568,7 @@ Toplevel 1:1 - 8:1
                     Sub 978:27 - 978:36
                       SymbolRef 978:34 - 978:35 [Read]
                         Name: i
-                      SymbolRef 978:27 - 978:28 [Read] [PropWrite]
+                      SymbolRef 978:27 - 978:28 [Read] [PropWrite!]
                         Name: t
               UnaryPostfix 981:7 - 981:10
                 Operator: IncrementPostfix
@@ -2599,7 +2599,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1032:12 - 1032:21
                 Property: type
-                This 1032:12 - 1032:16 [Read] [PropWrite]
+                This 1032:12 - 1032:16 [Read] [PropWrite!]
                   Name: this
               Number 249:20 - 249:21
                 Value: 2
@@ -2608,7 +2608,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1034:3 - 1034:12
                 Property: _$AH
-                This 1034:3 - 1034:7 [Read] [PropWrite]
+                This 1034:3 - 1034:7 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1034:31 - 1034:32 [Read]
                 Name: T
@@ -2616,7 +2616,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1065:3 - 1065:12
                 Property: _$AN
-                This 1065:3 - 1065:7 [Read] [PropWrite]
+                This 1065:3 - 1065:7 [Read] [PropWrite!]
                   Name: this
               UnaryPrefix 1065:13 - 1065:53
                 Operator: Void
@@ -2627,7 +2627,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1081:5 - 1081:14
                 Property: _$AA
-                This 1081:5 - 1081:9 [Read] [PropWrite]
+                This 1081:5 - 1081:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1081:24 - 1081:25 [Read]
                 Name: t
@@ -2635,7 +2635,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1082:5 - 1082:14
                 Property: _$AB
-                This 1082:5 - 1082:9 [Read] [PropWrite]
+                This 1082:5 - 1082:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1082:22 - 1082:23 [Read]
                 Name: i
@@ -2643,7 +2643,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1083:5 - 1083:14
                 Property: _$AM
-                This 1083:5 - 1083:9 [Read] [PropWrite]
+                This 1083:5 - 1083:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1083:21 - 1083:22 [Read]
                 Name: s
@@ -2651,7 +2651,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1084:5 - 1084:17
                 Property: options
-                This 1084:5 - 1084:9 [Read] [PropWrite]
+                This 1084:5 - 1084:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1084:20 - 1084:21 [Read]
                 Name: e
@@ -2659,7 +2659,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1088:5 - 1088:14
                 Property: _$Cg
-                This 1088:5 - 1088:9 [Read] [PropWrite]
+                This 1088:5 - 1088:9 [Read] [PropWrite!]
                   Name: this
               Binary 1088:15 - 1088:62
                 Operator: LogicalOr
@@ -2779,7 +2779,7 @@ Toplevel 1:1 - 8:1
               Property: parentNode
               Dot 1114:33 - 1114:42
                 Property: _$AA
-                This 1114:33 - 1114:37 [Read] [PropWrite]
+                This 1114:33 - 1114:37 [Read] [PropWrite!]
                   Name: this
         Const 1115:5 - 1125:5
           VarDef 1115:11 - 1115:29
@@ -2787,7 +2787,7 @@ Toplevel 1:1 - 8:1
               Name: i
             Dot 1115:20 - 1115:29
               Property: _$AM
-              This 1115:20 - 1115:24 [Read] [PropWrite]
+              This 1115:20 - 1115:24 [Read] [PropWrite!]
                 Name: this
         Return 1125:5 - 1125:13
           Sequence 1125:12 - 1125:13
@@ -2830,7 +2830,7 @@ Toplevel 1:1 - 8:1
         Return 1133:5 - 1133:21
           Dot 1133:12 - 1133:21
             Property: _$AA
-            This 1133:12 - 1133:16 [Read] [PropWrite]
+            This 1133:12 - 1133:16 [Read] [PropWrite!]
               Name: this
     ObjectGetter 1140:7 - 1144:3
       SymbolProperty 1140:11 - 1140:18
@@ -2839,7 +2839,7 @@ Toplevel 1:1 - 8:1
         Return 1141:5 - 1141:21
           Dot 1141:12 - 1141:21
             Property: _$AB
-            This 1141:12 - 1141:16 [Read] [PropWrite]
+            This 1141:12 - 1141:16 [Read] [PropWrite!]
               Name: this
     ConciseMethod 1144:3 - 1176:11
       SymbolProperty 1144:3 - 1144:7
@@ -2916,7 +2916,7 @@ Toplevel 1:1 - 8:1
                     Operator: Assignment
                     Dot 1159:9 - 1159:18
                       Property: _$AH
-                      This 1159:9 - 1159:13 [Read] [PropWrite]
+                      This 1159:9 - 1159:13 [Read] [PropWrite!]
                         Name: this
                     SymbolRef 1159:33 - 1159:34 [Read]
                       Name: T
@@ -3058,7 +3058,7 @@ Toplevel 1:1 - 8:1
                 Operator: Assignment
                 Dot 1210:7 - 1210:16
                   Property: _$AH
-                  This 1210:7 - 1210:11 [Read] [PropWrite]
+                  This 1210:7 - 1210:11 [Read] [PropWrite!]
                     Name: this
                 Call 1210:31 - 1210:46
                   Dot 1210:31 - 1210:37
@@ -3091,7 +3091,7 @@ Toplevel 1:1 - 8:1
                     Name: r
                   Dot 1220:19 - 1220:28
                     Property: _$AH
-                    This 1220:19 - 1220:23 [Read] [PropWrite]
+                    This 1220:19 - 1220:23 [Read] [PropWrite!]
                       Name: this
               Assign 1222:25 - 1229:30
                 Operator: Assignment
@@ -3101,7 +3101,7 @@ Toplevel 1:1 - 8:1
                     Property: nextSibling
                     Dot 1222:25 - 1222:34
                       Property: _$AA
-                      This 1222:25 - 1222:29 [Read] [PropWrite]
+                      This 1222:25 - 1222:29 [Read] [PropWrite!]
                         Name: this
                 SymbolRef 1229:29 - 1229:30 [Read]
                   Name: t
@@ -3121,7 +3121,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1247:5 - 1247:14
                 Property: _$AH
-                This 1247:5 - 1247:9 [Read] [PropWrite]
+                This 1247:5 - 1247:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1247:29 - 1247:30 [Read]
                 Name: t
@@ -3187,7 +3187,7 @@ Toplevel 1:1 - 8:1
                     Operator: Assignment
                     Dot 1263:14 - 1263:21
                       Property: el
-                      SymbolRef 1263:14 - 1263:15 [Read] [PropWrite]
+                      SymbolRef 1263:14 - 1263:15 [Read] [PropWrite!]
                         Name: e
                     Call 1263:24 - 1263:68
                       Dot 1263:24 - 1263:46
@@ -3196,11 +3196,11 @@ Toplevel 1:1 - 8:1
                           Name: P
                       Dot 1263:47 - 1263:53
                         Property: h
-                        SymbolRef 1263:47 - 1263:48 [Read] [PropWrite]
+                        SymbolRef 1263:47 - 1263:48 [Read] [PropWrite!]
                           Name: e
                       Dot 1263:55 - 1263:67
                         Property: options
-                        This 1263:55 - 1263:59 [Read] [PropWrite]
+                        This 1263:55 - 1263:59 [Read] [PropWrite!]
                           Name: this
                 SymbolRef 1264:11 - 1264:12 [Read]
                   Name: e
@@ -3273,7 +3273,7 @@ Toplevel 1:1 - 8:1
                       Name: t
                   Dot 1270:40 - 1270:52
                     Property: options
-                    This 1270:40 - 1270:44 [Read] [PropWrite]
+                    This 1270:40 - 1270:44 [Read] [PropWrite!]
                       Name: this
             SimpleStatement 1271:7 - 1273:32
               Sequence 1271:7 - 1273:32
@@ -3295,7 +3295,7 @@ Toplevel 1:1 - 8:1
                   Operator: Assignment
                   Dot 1273:7 - 1273:16
                     Property: _$AH
-                    This 1273:7 - 1273:11 [Read] [PropWrite]
+                    This 1273:7 - 1273:11 [Read] [PropWrite!]
                       Name: this
                   SymbolRef 1273:31 - 1273:32 [Read]
                     Name: t
@@ -3316,7 +3316,7 @@ Toplevel 1:1 - 8:1
                   Name: x
               Dot 1280:38 - 1280:52
                 Property: strings
-                SymbolRef 1280:38 - 1280:39 [Read] [PropWrite]
+                SymbolRef 1280:38 - 1280:39 [Read] [PropWrite!]
                   Name: t
         Return 1284:5 - 1284:13
           Sequence 1284:12 - 1284:13
@@ -3338,7 +3338,7 @@ Toplevel 1:1 - 8:1
                     Name: x
                 Dot 1282:25 - 1282:39
                   Property: strings
-                  SymbolRef 1282:25 - 1282:26 [Read] [PropWrite]
+                  SymbolRef 1282:25 - 1282:26 [Read] [PropWrite!]
                     Name: t
                 Assign 1282:42 - 1282:68
                   Operator: Assignment
@@ -3365,14 +3365,14 @@ Toplevel 1:1 - 8:1
                 Name: d
               Dot 1298:18 - 1298:27
                 Property: _$AH
-                This 1298:18 - 1298:22 [Read] [PropWrite]
+                This 1298:18 - 1298:22 [Read] [PropWrite!]
                   Name: this
             Sequence 1298:30 - 1300:19
               Assign 1299:7 - 1299:33
                 Operator: Assignment
                 Dot 1299:7 - 1299:16
                   Property: _$AH
-                  This 1299:7 - 1299:11 [Read] [PropWrite]
+                  This 1299:7 - 1299:11 [Read] [PropWrite!]
                     Name: this
                 Array 1299:31 - 1299:33
               Call 1300:7 - 1300:18
@@ -3386,7 +3386,7 @@ Toplevel 1:1 - 8:1
               Name: i
             Dot 1305:23 - 1305:32
               Property: _$AH
-              This 1305:23 - 1305:27 [Read] [PropWrite]
+              This 1305:23 - 1305:27 [Read] [PropWrite!]
                 Name: this
         Let 1306:5 - 1309:5
           VarDef 1307:9 - 1307:10
@@ -3448,7 +3448,7 @@ Toplevel 1:1 - 8:1
                         Name: this
                       Dot 1320:13 - 1320:25
                         Property: options
-                        This 1320:13 - 1320:17 [Read] [PropWrite]
+                        This 1320:13 - 1320:17 [Read] [PropWrite!]
                           Name: this
                 Assign 1325:9 - 1325:32
                   Operator: Assignment
@@ -3503,7 +3503,7 @@ Toplevel 1:1 - 8:1
                 Operator: Assignment
                 Dot 1338:7 - 1338:23
                   Property: length
-                  SymbolRef 1338:7 - 1338:8 [Read] [PropWrite]
+                  SymbolRef 1338:7 - 1338:8 [Read] [PropWrite!]
                     Name: i
                 SymbolRef 1338:26 - 1338:27 [Read]
                   Name: e
@@ -3590,7 +3590,7 @@ Toplevel 1:1 - 8:1
                   Name: i
                 Dot 1359:22 - 1359:41
                   Property: nextSibling
-                  SymbolRef 1359:22 - 1359:23 [Read] [PropWrite]
+                  SymbolRef 1359:22 - 1359:23 [Read] [PropWrite!]
                     Name: t
             SimpleStatement 1360:13 - 1361:16
               Sequence 1360:13 - 1361:16
@@ -3634,7 +3634,7 @@ Toplevel 1:1 - 8:1
                 Operator: Assignment
                 Dot 1373:7 - 1373:16
                   Property: _$Cg
-                  This 1373:7 - 1373:11 [Read] [PropWrite]
+                  This 1373:7 - 1373:11 [Read] [PropWrite!]
                     Name: this
                 SymbolRef 1373:28 - 1373:29 [Read]
                   Name: t
@@ -3694,7 +3694,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1409:12 - 1409:21
                 Property: type
-                This 1409:12 - 1409:16 [Read] [PropWrite]
+                This 1409:12 - 1409:16 [Read] [PropWrite!]
                   Name: this
               Number 248:24 - 248:25
                 Value: 1
@@ -3703,7 +3703,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1425:3 - 1425:12
                 Property: _$AH
-                This 1425:3 - 1425:7 [Read] [PropWrite]
+                This 1425:3 - 1425:7 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1425:48 - 1425:49 [Read]
                 Name: T
@@ -3711,7 +3711,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1431:3 - 1431:12
                 Property: _$AN
-                This 1431:3 - 1431:7 [Read] [PropWrite]
+                This 1431:3 - 1431:7 [Read] [PropWrite!]
                   Name: this
               UnaryPrefix 1431:13 - 1431:53
                 Operator: Void
@@ -3722,7 +3722,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1451:5 - 1451:17
                 Property: element
-                This 1451:5 - 1451:9 [Read] [PropWrite]
+                This 1451:5 - 1451:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1451:20 - 1451:21 [Read]
                 Name: t
@@ -3730,7 +3730,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1452:5 - 1452:14
                 Property: name
-                This 1452:5 - 1452:9 [Read] [PropWrite]
+                This 1452:5 - 1452:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1452:17 - 1452:18 [Read]
                 Name: i
@@ -3738,7 +3738,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1453:5 - 1453:14
                 Property: _$AM
-                This 1453:5 - 1453:9 [Read] [PropWrite]
+                This 1453:5 - 1453:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1453:21 - 1453:22 [Read]
                 Name: e
@@ -3746,7 +3746,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1454:5 - 1454:17
                 Property: options
-                This 1454:5 - 1454:9 [Read] [PropWrite]
+                This 1454:5 - 1454:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1454:20 - 1454:21 [Read]
                 Name: o
@@ -3789,7 +3789,7 @@ Toplevel 1:1 - 8:1
                   Operator: Assignment
                   Dot 1456:7 - 1456:16
                     Property: _$AH
-                    This 1456:7 - 1456:11 [Read] [PropWrite]
+                    This 1456:7 - 1456:11 [Read] [PropWrite!]
                       Name: this
                   Call 1456:35 - 1456:77
                     Dot 1456:35 - 1456:65
@@ -3813,7 +3813,7 @@ Toplevel 1:1 - 8:1
                   Operator: Assignment
                   Dot 1457:7 - 1457:19
                     Property: strings
-                    This 1457:7 - 1457:11 [Read] [PropWrite]
+                    This 1457:7 - 1457:11 [Read] [PropWrite!]
                       Name: this
                   SymbolRef 1457:22 - 1457:23 [Read]
                     Name: s
@@ -3821,7 +3821,7 @@ Toplevel 1:1 - 8:1
                 Operator: Assignment
                 Dot 1459:7 - 1459:16
                   Property: _$AH
-                  This 1459:7 - 1459:11 [Read] [PropWrite]
+                  This 1459:7 - 1459:11 [Read] [PropWrite!]
                     Name: this
                 SymbolRef 1459:31 - 1459:32 [Read]
                   Name: T
@@ -3834,7 +3834,7 @@ Toplevel 1:1 - 8:1
             Property: tagName
             Dot 1436:12 - 1436:24
               Property: element
-              This 1436:12 - 1436:16 [Read] [PropWrite]
+              This 1436:12 - 1436:16 [Read] [PropWrite!]
                 Name: this
     ObjectGetter 1440:7 - 1488:3
       SymbolProperty 1440:11 - 1440:15
@@ -3845,7 +3845,7 @@ Toplevel 1:1 - 8:1
             Property: _$AU
             Dot 1441:12 - 1441:21
               Property: _$AM
-              This 1441:12 - 1441:16 [Read] [PropWrite]
+              This 1441:12 - 1441:16 [Read] [PropWrite!]
                 Name: this
     ConciseMethod 1488:3 - 1539:3
       SymbolProperty 1488:3 - 1488:7
@@ -3869,7 +3869,7 @@ Toplevel 1:1 - 8:1
               Name: o
             Dot 1494:21 - 1494:33
               Property: strings
-              This 1494:21 - 1494:25 [Read] [PropWrite]
+              This 1494:21 - 1494:25 [Read] [PropWrite!]
                 Name: this
         Let 1497:5 - 1499:5
           VarDef 1497:9 - 1497:19
@@ -3945,7 +3945,7 @@ Toplevel 1:1 - 8:1
                   Operator: Assignment
                   Dot 1506:9 - 1506:18
                     Property: _$AH
-                    This 1506:9 - 1506:13 [Read] [PropWrite]
+                    This 1506:9 - 1506:13 [Read] [PropWrite!]
                       Name: this
                   SymbolRef 1506:33 - 1506:34 [Read]
                     Name: t
@@ -4017,7 +4017,7 @@ Toplevel 1:1 - 8:1
                             Name: s
                           SymbolRef 1515:57 - 1515:58 [Read]
                             Name: l
-                        SymbolRef 1515:36 - 1515:37 [Read] [PropWrite]
+                        SymbolRef 1515:36 - 1515:37 [Read] [PropWrite!]
                           Name: e
                       SymbolRef 1515:61 - 1515:62 [Read] [PropWrite]
                         Name: i
@@ -4124,7 +4124,7 @@ Toplevel 1:1 - 8:1
                         Name: l
                       Dot 1530:10 - 1530:19
                         Property: _$AH
-                        This 1530:10 - 1530:14 [Read] [PropWrite]
+                        This 1530:10 - 1530:14 [Read] [PropWrite!]
                           Name: this
                     SymbolRef 1530:56 - 1530:57 [Read]
                       Name: h
@@ -4169,7 +4169,7 @@ Toplevel 1:1 - 8:1
                     Name: this
               Dot 1541:55 - 1541:64
                 Property: name
-                This 1541:55 - 1541:59 [Read] [PropWrite]
+                This 1541:55 - 1541:59 [Read] [PropWrite!]
                   Name: this
             Call 1553:13 - 1555:22
               Dot 1553:13 - 1553:51
@@ -4180,7 +4180,7 @@ Toplevel 1:1 - 8:1
                     Name: this
               Dot 1554:9 - 1554:18
                 Property: name
-                This 1554:9 - 1554:13 [Read] [PropWrite]
+                This 1554:9 - 1554:13 [Read] [PropWrite!]
                   Name: this
               Conditional 1555:10 - 1555:21
                 Binary 1555:10 - 1555:11
@@ -4213,7 +4213,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1563:21 - 1563:30
                 Property: type
-                This 1563:21 - 1563:25 [Read] [PropWrite]
+                This 1563:21 - 1563:25 [Read] [PropWrite!]
                   Name: this
               Number 250:23 - 250:24
                 Value: 3
@@ -4234,7 +4234,7 @@ Toplevel 1:1 - 8:1
                   Name: this
               Dot 1578:6 - 1578:18
                 Property: element
-                This 1578:6 - 1578:10 [Read] [PropWrite]
+                This 1578:6 - 1578:10 [Read] [PropWrite!]
                   Name: this
             Conditional 1578:40 - 1578:73
               Binary 1578:40 - 1578:51
@@ -4284,7 +4284,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1592:21 - 1592:30
                 Property: type
-                This 1592:21 - 1592:25 [Read] [PropWrite]
+                This 1592:21 - 1592:25 [Read] [PropWrite!]
                   Name: this
               Number 251:32 - 251:33
                 Value: 4
@@ -4316,7 +4316,7 @@ Toplevel 1:1 - 8:1
                     Name: this
               Dot 1598:9 - 1598:18
                 Property: name
-                This 1598:9 - 1598:13 [Read] [PropWrite]
+                This 1598:9 - 1598:13 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1599:9 - 1599:10 [Read] [PropWrite]
                 Name: k
@@ -4329,7 +4329,7 @@ Toplevel 1:1 - 8:1
                     Name: this
               Dot 1602:55 - 1602:64
                 Property: name
-                This 1602:55 - 1602:59 [Read] [PropWrite]
+                This 1602:55 - 1602:59 [Read] [PropWrite!]
                   Name: this
   DefClass 1622:1 - 1704:1
     SymbolDefClass 1622:7 - 1622:8
@@ -4369,7 +4369,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1623:21 - 1623:30
                 Property: type
-                This 1623:21 - 1623:25 [Read] [PropWrite]
+                This 1623:21 - 1623:25 [Read] [PropWrite!]
                   Name: this
               Number 252:20 - 252:21
                 Value: 5
@@ -4441,7 +4441,7 @@ Toplevel 1:1 - 8:1
               Name: e
             Dot 1655:25 - 1655:34
               Property: _$AH
-              This 1655:25 - 1655:29 [Read] [PropWrite]
+              This 1655:25 - 1655:29 [Read] [PropWrite!]
                 Name: this
           VarDef 1659:11 - 1666:58
             SymbolConst 1659:11 - 1659:12 [Write]
@@ -4532,7 +4532,7 @@ Toplevel 1:1 - 8:1
                       Name: this
                 Dot 1676:9 - 1676:18
                   Property: name
-                  This 1676:9 - 1676:13 [Read] [PropWrite]
+                  This 1676:9 - 1676:13 [Read] [PropWrite!]
                     Name: this
                 This 1677:9 - 1677:13 [Read] [PropWrite]
                   Name: this
@@ -4551,7 +4551,7 @@ Toplevel 1:1 - 8:1
                       Name: this
                 Dot 1686:9 - 1686:18
                   Property: name
-                  This 1686:9 - 1686:13 [Read] [PropWrite]
+                  This 1686:9 - 1686:13 [Read] [PropWrite!]
                     Name: this
                 This 1687:9 - 1687:13 [Read] [PropWrite]
                   Name: this
@@ -4561,7 +4561,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1691:5 - 1691:14
                 Property: _$AH
-                This 1691:5 - 1691:9 [Read] [PropWrite]
+                This 1691:5 - 1691:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1691:29 - 1691:30 [Read]
                 Name: t
@@ -4684,7 +4684,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1722:12 - 1722:24
                 Property: element
-                This 1722:12 - 1722:16 [Read] [PropWrite]
+                This 1722:12 - 1722:16 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1722:12 - 1722:13 [Read]
                 Name: t
@@ -4692,7 +4692,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1705:12 - 1705:21
                 Property: type
-                This 1705:12 - 1705:16 [Read] [PropWrite]
+                This 1705:12 - 1705:16 [Read] [PropWrite!]
                   Name: this
               Number 253:22 - 253:23
                 Value: 6
@@ -4701,7 +4701,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1717:3 - 1717:12
                 Property: _$AN
-                This 1717:3 - 1717:7 [Read] [PropWrite]
+                This 1717:3 - 1717:7 [Read] [PropWrite!]
                   Name: this
               UnaryPrefix 1717:13 - 1717:53
                 Operator: Void
@@ -4712,7 +4712,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1726:5 - 1726:14
                 Property: _$AM
-                This 1726:5 - 1726:9 [Read] [PropWrite]
+                This 1726:5 - 1726:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1726:21 - 1726:22 [Read]
                 Name: i
@@ -4720,7 +4720,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1727:5 - 1727:17
                 Property: options
-                This 1727:5 - 1727:9 [Read] [PropWrite]
+                This 1727:5 - 1727:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 1727:20 - 1727:21 [Read]
                 Name: s
@@ -4733,7 +4733,7 @@ Toplevel 1:1 - 8:1
             Property: _$AU
             Dot 1732:12 - 1732:21
               Property: _$AM
-              This 1732:12 - 1732:16 [Read] [PropWrite]
+              This 1732:12 - 1732:16 [Read] [PropWrite!]
                 Name: this
     ConciseMethod 1735:3 - 1736:31
       SymbolProperty 1735:3 - 1735:7
@@ -4830,7 +4830,7 @@ Toplevel 1:1 - 8:1
         Name: z
       Dot 1781:5 - 1781:34
         Property: litHtmlPolyfillSupport
-        SymbolRef 1781:5 - 1781:11 [Read] [PropWrite]
+        SymbolRef 1781:5 - 1781:11 [Read] [PropWrite!]
           Name: window
   SimpleStatement 1782:1 - 1786:42
     Sequence 1782:1 - 1786:42
@@ -4880,7 +4880,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 1786:2 - 1786:28
                 Property: litHtmlVersions
-                SymbolRef 1786:2 - 1786:12 [Read] [PropWrite]
+                SymbolRef 1786:2 - 1786:12 [Read] [PropWrite!]
                   Name: globalThis
               Array 1786:33 - 1786:35
         String 1786:42 - 1786:42

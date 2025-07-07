@@ -29,7 +29,7 @@ Toplevel 1:1 - 7:2
           Property: component
           Dot 5:13 - 5:24
             Property: me
-            SymbolRef 5:13 - 5:21 [Read] [PropWrite]
+            SymbolRef 5:13 - 5:21 [Read] [PropWrite!]
               Name: ownerCtx
     SimpleStatement 6:9 - 6:33
       Assign 6:9 - 6:33
@@ -39,5 +39,5 @@ Toplevel 1:1 - 7:2
         Sub 6:19 - 6:33
           SymbolRef 6:21 - 6:32 [Read]
             Name: handlerName
-          SymbolRef 6:19 - 6:20 [Read] [PropWrite]
+          SymbolRef 6:19 - 6:20 [Read] [PropWrite!]
             Name: c

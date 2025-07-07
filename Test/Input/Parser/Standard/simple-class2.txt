@@ -31,7 +31,7 @@ Toplevel 1:1 - 7:1
             Operator: Assignment
             Dot 4:9 - 4:20
               Property: radius
-              This 4:9 - 4:13 [Read] [PropWrite]
+              This 4:9 - 4:13 [Read] [PropWrite!]
                 Name: this
             SymbolRef 4:23 - 4:29 [Read]
               Name: radius

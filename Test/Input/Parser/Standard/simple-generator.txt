@@ -7,7 +7,7 @@ Toplevel 1:1 - 16:1
         ConciseMethod 2:5 - 9:6 [IsGenerator]
           Dot 2:7 - 2:22
             Property: iterator
-            SymbolRef 2:7 - 2:13 [Read] [PropWrite]
+            SymbolRef 2:7 - 2:13 [Read] [PropWrite!]
               Name: Symbol
           Function 2:23 - 9:6 [IsGenerator]
             Let 3:9 - 4:21

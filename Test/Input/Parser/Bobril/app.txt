@@ -4,7 +4,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
       Operator: Assignment
       Dot 2:1 - 2:19
         Property: __esModule
-        SymbolRef 2:1 - 2:8 [Read] [PropWrite]
+        SymbolRef 2:1 - 2:8 [Read] [PropWrite!]
           Name: exports
       True 2:22 - 2:26
   Var 3:1 - 3:27
@@ -141,7 +141,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                   Operator: Assignment
                   Dot 17:9 - 17:20
                     Property: counter
-                    SymbolRef 17:9 - 17:12 [Read] [PropWrite]
+                    SymbolRef 17:9 - 17:12 [Read] [PropWrite!]
                       Name: ctx
                   Number 17:23 - 17:24
                     Value: 0
@@ -156,7 +156,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                         Operator: IncrementPostfix
                         Dot 19:13 - 19:24
                           Property: counter
-                          SymbolRef 19:13 - 19:16 [Read] [PropWrite]
+                          SymbolRef 19:13 - 19:16 [Read] [PropWrite!]
                             Name: ctx
                     SimpleStatement 20:13 - 20:28
                       Call 20:13 - 20:27
@@ -197,7 +197,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                   Operator: Assignment
                   Dot 26:9 - 26:20
                     Property: children
-                    SymbolRef 26:9 - 26:11 [Read] [PropWrite]
+                    SymbolRef 26:9 - 26:11 [Read] [PropWrite!]
                       Name: me
                   Array 26:23 - 93:10
                     Call 27:13 - 30:28
@@ -227,7 +227,7 @@ Toplevel 1:1 - 97:1 [HasUseStrictDirective]
                                   Name: c
                                 Dot 29:64 - 29:75
                                   Property: counter
-                                  SymbolRef 29:64 - 29:67 [Read] [PropWrite]
+                                  SymbolRef 29:64 - 29:67 [Read] [PropWrite!]
                                     Name: ctx
                       SymbolRef 30:16 - 30:27 [Read] [PropWrite]
                         Name: headerStyle

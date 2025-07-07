@@ -60,7 +60,7 @@ Toplevel 1:1 - 302:1
               Operator: Assignment
               Dot 299:5 - 299:12
                 Property: a
-                SymbolRef 299:5 - 299:10 [Read] [PropWrite]
+                SymbolRef 299:5 - 299:10 [Read] [PropWrite!]
                   Name: __bbb
               SymbolRef 299:15 - 299:25 [Read]
                 Name: __export_$

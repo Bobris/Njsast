@@ -2,6 +2,10 @@
 
 ## [unreleased]
 
+### Fixed
+
+Bug in wrong deduplication of pure functions when a property is written.
+
 ## 2.1.0
 
 ### Changed

@@ -42,7 +42,7 @@ Toplevel 1:1 - 9:1
         Operator: Assignment
         Dot 7:5 - 7:10
           Property: b
-          SymbolRef 7:5 - 7:8 [Read] [PropWrite]
+          SymbolRef 7:5 - 7:8 [Read] [PropWrite!]
             Name: obj
         UnaryPrefix 1:1 - 1:1
           Operator: LogicalNot

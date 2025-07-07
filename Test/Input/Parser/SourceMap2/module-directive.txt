@@ -79,7 +79,7 @@ Toplevel 1:1 - 8:1
             Property: _$AU
             Dot 119:12 - 119:21
               Property: _$AM
-              This 119:12 - 119:16 [Read] [PropWrite]
+              This 119:12 - 119:16 [Read] [PropWrite!]
                 Name: this
     ConciseMethod 123:3 - 133:3
       SymbolProperty 123:3 - 123:7
@@ -97,7 +97,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 128:5 - 128:14
                 Property: _$Ct
-                This 128:5 - 128:9 [Read] [PropWrite]
+                This 128:5 - 128:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 128:19 - 128:20 [Read]
                 Name: t
@@ -105,7 +105,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 129:5 - 129:14
                 Property: _$AM
-                This 129:5 - 129:9 [Read] [PropWrite]
+                This 129:5 - 129:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 129:21 - 129:22 [Read]
                 Name: e
@@ -113,7 +113,7 @@ Toplevel 1:1 - 8:1
               Operator: Assignment
               Dot 130:5 - 130:14
                 Property: _$Ci
-                This 130:5 - 130:9 [Read] [PropWrite]
+                This 130:5 - 130:9 [Read] [PropWrite!]
                   Name: this
               SymbolRef 130:29 - 130:30 [Read]
                 Name: i
