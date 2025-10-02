@@ -16,13 +16,16 @@ var __extends = function(d, b) {
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
 
-var __assign = Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+var __bbcjs = function(e) {
+    if (!("default" in e)) return e;
+    var r = e.default;
+    if (typeof r === "object" || typeof r === "function") {
+        for (var k in e) if (Object.prototype.hasOwnProperty.call(e, k) && k !== "default") r[k] = e[k];
     }
-    return t;
+    return r;
 };
+
+var __assign = Object.assign;
 
 var __rest = function(s, e) {
     var t = {};
