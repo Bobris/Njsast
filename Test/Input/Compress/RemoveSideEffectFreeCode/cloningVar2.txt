@@ -1,52 +1,56 @@
-Toplevel 1:1 - 10:1
-  Var 1:1 - 1:12
-    VarDef 1:5 - 1:11
-      SymbolVar 1:5 - 1:6 [Write]
-        Name: a
-      Number 1:9 - 1:11
-        Value: 42
-        Literal: 42
-  SimpleStatement 2:1 - 2:5
-    UnaryPostfix 2:1 - 2:4
-      Operator: IncrementPostfix
-      SymbolRef 2:1 - 2:2 [Read] [Write]
-        Name: a
-  Var 3:1 - 3:11
-    VarDef 3:5 - 3:10
-      SymbolVar 3:5 - 3:6 [Write]
-        Name: b
-      SymbolRef 3:9 - 3:10 [Read]
-        Name: a
-  SimpleStatement 4:1 - 4:16
-    Call 4:1 - 4:15
-      Dot 4:1 - 4:12
-        Property: log
-        SymbolRef 4:1 - 4:8 [Read]
-          Name: console
-      SymbolRef 4:13 - 4:14 [Read] [PropWrite]
-        Name: b
-  Var 6:1 - 6:13
-    VarDef 6:5 - 6:12
-      SymbolVar 6:5 - 6:7 [Write]
-        Name: aa
-      Number 6:10 - 6:12
-        Value: 42
-        Literal: 42
-    VarDef 7:5 - 7:12
-      SymbolVar 7:5 - 7:7 [Write]
-        Name: bb
-      SymbolRef 7:10 - 7:12 [Read]
-        Name: aa
-  SimpleStatement 8:1 - 8:6
-    UnaryPostfix 8:1 - 8:5
-      Operator: IncrementPostfix
-      SymbolRef 8:1 - 8:3 [Read] [Write]
-        Name: bb
-  SimpleStatement 9:1 - 9:17
-    Call 9:1 - 9:16
-      Dot 9:1 - 9:12
-        Property: log
-        SymbolRef 9:1 - 9:8 [Read]
-          Name: console
-      SymbolRef 9:13 - 9:15 [Read] [PropWrite]
-        Name: bb
+Toplevel 1:1 - 12:1
+  SimpleStatement 1:1 - 11:6
+    Call 1:1 - 11:5
+      Arrow 1:2 - 11:2
+        Var 2:5 - 2:16
+          VarDef 2:9 - 2:15
+            SymbolVar 2:9 - 2:10 [Write]
+              Name: a
+            Number 2:13 - 2:15
+              Value: 42
+              Literal: 42
+        SimpleStatement 3:5 - 3:9
+          UnaryPostfix 3:5 - 3:8
+            Operator: IncrementPostfix
+            SymbolRef 3:5 - 3:6 [Read] [Write]
+              Name: a
+        Var 4:5 - 4:15
+          VarDef 4:9 - 4:14
+            SymbolVar 4:9 - 4:10 [Write]
+              Name: b
+            SymbolRef 4:13 - 4:14 [Read]
+              Name: a
+        SimpleStatement 5:5 - 5:20
+          Call 5:5 - 5:19
+            Dot 5:5 - 5:16
+              Property: log
+              SymbolRef 5:5 - 5:12 [Read]
+                Name: console
+            SymbolRef 5:17 - 5:18 [Read] [PropWrite]
+              Name: b
+        Var 7:5 - 7:17
+          VarDef 7:9 - 7:16
+            SymbolVar 7:9 - 7:11 [Write]
+              Name: aa
+            Number 7:14 - 7:16
+              Value: 42
+              Literal: 42
+        Var 8:5 - 8:17
+          VarDef 8:9 - 8:16
+            SymbolVar 8:9 - 8:11 [Write]
+              Name: bb
+            SymbolRef 8:14 - 8:16 [Read]
+              Name: aa
+        SimpleStatement 9:5 - 9:10
+          UnaryPostfix 9:5 - 9:9
+            Operator: IncrementPostfix
+            SymbolRef 9:5 - 9:7 [Read] [Write]
+              Name: bb
+        SimpleStatement 10:5 - 10:21
+          Call 10:5 - 10:20
+            Dot 10:5 - 10:16
+              Property: log
+              SymbolRef 10:5 - 10:12 [Read]
+                Name: console
+            SymbolRef 10:17 - 10:19 [Read] [PropWrite]
+              Name: bb

@@ -4365,22 +4365,22 @@ Toplevel 1:1 - 10717:1
                                         Value: 0
                                         Literal: 
                               Finally 929:34 - 933:26
-                                If 930:29 - 932:30
-                                  Binary 930:34 - 930:49
-                                    Operator: StrictEquals
-                                    SymbolRef 930:34 - 930:37 [Read]
-                                      Name: nid
-                                    SymbolRef 930:42 - 930:49 [Read]
-                                      Name: expando
-                                  BlockStatement 930:52 - 932:30
-                                    SimpleStatement 931:33 - 931:65
-                                      Call 931:33 - 931:64
-                                        Dot 931:33 - 931:56
-                                          Property: removeAttribute
-                                          SymbolRef 931:33 - 931:40 [Read]
-                                            Name: context
-                                        String 931:58 - 931:62
-                                          Value: id
+                                SimpleStatement 930:29 - 932:30
+                                  Binary 930:29 - 932:30
+                                    Operator: LogicalAnd
+                                    Binary 930:34 - 930:49
+                                      Operator: StrictEquals
+                                      SymbolRef 930:34 - 930:37 [Read]
+                                        Name: nid
+                                      SymbolRef 930:42 - 930:49 [Read]
+                                        Name: expando
+                                    Call 931:33 - 931:64
+                                      Dot 931:33 - 931:56
+                                        Property: removeAttribute
+                                        SymbolRef 931:33 - 931:40 [Read]
+                                          Name: context
+                                      String 931:58 - 931:62
+                                        Value: id
                 Return 939:13 - 939:89
                   Call 939:20 - 939:88
                     SymbolRef 939:20 - 939:26 [Read]
@@ -4520,22 +4520,22 @@ Toplevel 1:1 - 10717:1
                           Value: 1
                           Literal: 
                   Finally 985:22 - 994:14
-                    If 988:17 - 990:18
-                      Dot 988:22 - 988:35
-                        Property: parentNode
-                        SymbolRef 988:22 - 988:24 [Read]
-                          Name: el
-                      BlockStatement 988:38 - 990:18
-                        SimpleStatement 989:21 - 989:53
-                          Call 989:21 - 989:52
-                            Dot 989:21 - 989:46
-                              Property: removeChild
-                              Dot 989:21 - 989:34
-                                Property: parentNode
-                                SymbolRef 989:21 - 989:23 [Read]
-                                  Name: el
-                            SymbolRef 989:48 - 989:50 [Read] [PropWrite]
-                              Name: el
+                    SimpleStatement 988:17 - 990:18
+                      Binary 988:17 - 990:18
+                        Operator: LogicalAnd
+                        Dot 988:22 - 988:35
+                          Property: parentNode
+                          SymbolRef 988:22 - 988:24 [Read]
+                            Name: el
+                        Call 989:21 - 989:52
+                          Dot 989:21 - 989:46
+                            Property: removeChild
+                            Dot 989:21 - 989:34
+                              Property: parentNode
+                              SymbolRef 989:21 - 989:23 [Read]
+                                Name: el
+                          SymbolRef 989:48 - 989:50 [Read] [PropWrite]
+                            Name: el
                     SimpleStatement 993:17 - 993:27
                       Assign 993:17 - 993:26
                         Operator: Assignment
@@ -16467,28 +16467,28 @@ Toplevel 1:1 - 10717:1
                                             Catch 3558:47 - 3579:46
                                               SymbolCatch 3558:55 - 3558:56
                                                 Name: e
-                                              If 3560:49 - 3563:50
-                                                Dot 3560:54 - 3560:83
-                                                  Property: exceptionHook
-                                                  Dot 3560:54 - 3560:69
-                                                    Property: Deferred
-                                                    SymbolRef 3560:54 - 3560:60 [Read]
-                                                      Name: jQuery
-                                                BlockStatement 3560:86 - 3563:50
-                                                  SimpleStatement 3561:53 - 3562:73
-                                                    Call 3561:53 - 3562:72
-                                                      Dot 3561:53 - 3561:82
-                                                        Property: exceptionHook
-                                                        Dot 3561:53 - 3561:68
-                                                          Property: Deferred
-                                                          SymbolRef 3561:53 - 3561:59 [Read]
-                                                            Name: jQuery
-                                                      SymbolRef 3561:84 - 3561:85 [Read] [PropWrite]
-                                                        Name: e
-                                                      Dot 3562:57 - 3562:70
-                                                        Property: error
-                                                        SymbolRef 3562:57 - 3562:64 [Read] [PropWrite!]
-                                                          Name: process
+                                              SimpleStatement 3560:49 - 3563:50
+                                                Binary 3560:49 - 3563:50
+                                                  Operator: LogicalAnd
+                                                  Dot 3560:54 - 3560:83
+                                                    Property: exceptionHook
+                                                    Dot 3560:54 - 3560:69
+                                                      Property: Deferred
+                                                      SymbolRef 3560:54 - 3560:60 [Read]
+                                                        Name: jQuery
+                                                  Call 3561:53 - 3562:72
+                                                    Dot 3561:53 - 3561:82
+                                                      Property: exceptionHook
+                                                      Dot 3561:53 - 3561:68
+                                                        Property: Deferred
+                                                        SymbolRef 3561:53 - 3561:59 [Read]
+                                                          Name: jQuery
+                                                    SymbolRef 3561:84 - 3561:85 [Read] [PropWrite]
+                                                      Name: e
+                                                    Dot 3562:57 - 3562:70
+                                                      Property: error
+                                                      SymbolRef 3562:57 - 3562:64 [Read] [PropWrite!]
+                                                        Name: process
                                               If 3568:49 - 3578:50
                                                 Binary 3568:54 - 3568:75
                                                   Operator: GreaterEquals

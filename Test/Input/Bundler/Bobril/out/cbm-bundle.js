@@ -27,7 +27,7 @@
             };
         } finally {
             try {
-                if (o && !o.done && (n = r["return"])) n.call(r);
+                o && !o.done && (n = r["return"]) && n.call(r);
             } finally {
                 if (a) throw a.error;
             }
@@ -3596,7 +3596,7 @@
                     };
                 } finally {
                     try {
-                        if (V && !V.done && (K = M.return)) K.call(M);
+                        V && !V.done && (K = M.return) && K.call(M);
                     } finally {
                         if (L) throw L.error;
                     }

@@ -27,7 +27,7 @@
             };
         } finally {
             try {
-                if (r && !r.done && (m = i["return"])) m.call(i);
+                r && !r.done && (m = i["return"]) && m.call(i);
             } finally {
                 if (e) throw e.error;
             }
@@ -3596,7 +3596,7 @@
                     };
                 } finally {
                     try {
-                        if (mediaQuery_1_1 && !mediaQuery_1_1.done && (_b = mediaQuery_1.return)) _b.call(mediaQuery_1);
+                        mediaQuery_1_1 && !mediaQuery_1_1.done && (_b = mediaQuery_1.return) && _b.call(mediaQuery_1);
                     } finally {
                         if (e_1) throw e_1.error;
                     }
