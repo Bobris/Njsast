@@ -29,6 +29,6 @@ public class HelpersTests
     {
         var (toplevel, symbol) = Helpers.EmitCommonJsWrapper(new Parser(new Options(), "exports.a=42").Parse());
         Assert.Equal("exports", symbol.Name);
-        Assert.Equal("var exports=function(){var exports={};var module={exports:exports};var global=this;exports.a=42;return module.exports}.call(window)", toplevel.PrintToString());
+        Assert.Equal("var exports=function(){var exports={};var module={exports};var global=this;exports.a=42;return __bbcjs(module.exports)}.call(window)", toplevel.PrintToString());
     }
 }

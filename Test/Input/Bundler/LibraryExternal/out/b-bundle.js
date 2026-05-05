@@ -363,15 +363,11 @@ var __setModuleDefault = function(o, v) {
 };
 
 var __importStar = function(mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
+    return mod;
 };
 
 var __importDefault = function(mod) {
-    return mod && mod.__esModule ? mod : {
+    return mod && mod.default ? mod : {
         default: mod
     };
 };
