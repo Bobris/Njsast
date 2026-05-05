@@ -440,7 +440,9 @@ public sealed partial class Parser
             var optional = !noCalls && Eat(TokenType.QuestionDot);
             if ((computed = Eat(TokenType.BracketL)) || optional && Type != TokenType.ParenL || Eat(TokenType.Dot))
             {
-                var property = computed ? ParseExpression(Start) : ParseIdent(true);
+                var property = computed ? ParseExpression(Start)
+                    : Type == TokenType.PrivateName ? ParseExpressionAtom(Start)
+                    : ParseIdent(true);
                 if (computed)
                 {
                     Expect(TokenType.BracketR);
@@ -448,7 +450,10 @@ public sealed partial class Parser
                 }
                 else
                 {
-                    @base = new AstDot(SourceFile, startLoc, _lastTokEnd, @base, ((AstSymbol)property).Name, optional);
+                    var propName = property is AstSymbolPrivate privateSym
+                        ? "#" + privateSym.Name
+                        : ((AstSymbol)property).Name;
+                    @base = new AstDot(SourceFile, startLoc, _lastTokEnd, @base, propName, optional);
                 }
             }
             else if (!noCalls && Eat(TokenType.ParenL))
@@ -551,6 +556,10 @@ public sealed partial class Parser
                 }
 
                 return id;
+            case TokenType.PrivateName:
+                var privateName = (string)GetValue();
+                Next();
+                return new AstSymbolPrivate(SourceFile, startLocation, _lastTokEnd, privateName);
             case TokenType.Regexp:
                 var r = (RegExp)GetValue();
                 Next();
@@ -1008,9 +1017,12 @@ public sealed partial class Parser
         }
 
         return (false,
-            Type == TokenType.Num || Type == TokenType.String
-                ? ParseExpressionAtom(Start)
-                : new AstSymbolProperty(ParseIdent(true)));
+            Type switch
+            {
+                TokenType.Num or TokenType.String => ParseExpressionAtom(Start),
+                TokenType.PrivateName => ParseExpressionAtom(Start),
+                _ => new AstSymbolProperty(ParseIdent(true))
+            });
     }
 
     // Parse object or class method.

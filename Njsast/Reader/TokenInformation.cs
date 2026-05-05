@@ -54,6 +54,7 @@ sealed class TokenInformation
         var regexp = new TokenInformation(startsExpr: true);
         var @string = new TokenInformation(startsExpr: true);
         var name = new TokenInformation(startsExpr: true);
+        var privateName = new TokenInformation(startsExpr: true);
         var eof = new TokenInformation();
 
         // Punctuation token types.
@@ -141,6 +142,7 @@ sealed class TokenInformation
             {TokenType.Regexp, regexp},
             {TokenType.String, @string},
             {TokenType.Name, name},
+            {TokenType.PrivateName, privateName},
             {TokenType.Eof, eof},
 
             // Punctuation token types.

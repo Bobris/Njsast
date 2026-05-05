@@ -485,6 +485,9 @@ public sealed partial class Parser : IEnumerable<Token>
             case 126: // '~'
                 FinishOp(TokenType.Prefix, 1);
                 return;
+            case 35: // '#'
+                readToken_privateName();
+                return;
         }
 
         Raise(_pos, "Unexpected character '" + CodePointToString(code) + "'");
@@ -1066,6 +1069,21 @@ public sealed partial class Parser : IEnumerable<Token>
         }
 
         return word + _input.Substring(chunkStart.Index, _pos - chunkStart);
+    }
+
+    // Read a private name token starting with #
+    void readToken_privateName()
+    {
+        var start = _pos;
+        _pos = _pos.Increment(1); // skip #
+        var code = FullCharCodeAtPos();
+        if (!IsIdentifierStart(code, Options.EcmaVersion >= 6))
+        {
+            Raise(start, "Invalid private name: '#' must be followed by an identifier");
+        }
+
+        var name = ReadWord1();
+        FinishToken(TokenType.PrivateName, name);
     }
 
     // Read an identifier or keyword token. Will check for reserved

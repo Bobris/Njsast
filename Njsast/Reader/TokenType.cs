@@ -24,6 +24,7 @@ public enum TokenType
     Regexp,
     String,
     Name,
+    PrivateName,
 
     BracketL,
 
