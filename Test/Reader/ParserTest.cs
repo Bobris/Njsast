@@ -179,4 +179,24 @@ public class ParserTest
 
         Assert.Equal(expectedAst, outAst);
     }
+
+    [Fact]
+    public void ParserShouldAcceptInvalidTemplateEscapeInTaggedTemplate()
+    {
+        var parser = new Parser(new Options(), @"tag`\unicode`;");
+
+        var exception = Record.Exception(() => parser.Parse());
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void ParserShouldRejectInvalidTemplateEscapeInUntaggedTemplate()
+    {
+        var parser = new Parser(new Options(), @"`\unicode`;");
+
+        var exception = Assert.Throws<SyntaxError>(() => parser.Parse());
+
+        Assert.Equal("Bad escape sequence in untagged template literal (1:2)", exception.Message);
+    }
 }
