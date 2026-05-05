@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var a = 1, b = 2;
+
+exports.a = a;
+
+exports.b = b;
+

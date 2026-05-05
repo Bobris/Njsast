@@ -11,6 +11,7 @@ using Njsast.Utils;
 using Test.Bundler;
 using Test.Compress;
 using Test.ConstEval;
+using Test.EsmToCjs;
 using Test.Reader;
 using Test.SourceInfo;
 
@@ -53,6 +54,17 @@ class Program
             var outNiceJs = ModuleParserTest.ModuleParserTestCore(testData);
             tests++;
             CheckError(testData.ExpectedNiceJs, outNiceJs, ref errors, "module parser", file, "nicejs");
+        }
+
+        foreach (var testData in new EsmToCjsDataProviderAttribute("Input/EsmToCjs").GetTypedData())
+        {
+            var file = testData.Name;
+            if (match != null && !file.Contains(match)) continue;
+            var (outCjs, outCjsMap) = EsmToCjsTest.EsmToCjsTestCore(testData);
+            tests++;
+            CheckError(testData.ExpectedCjs, outCjs, ref errors, "esm2cjs", file, "cjs");
+            tests++;
+            CheckError(testData.ExpectedCjsMap, outCjsMap, ref errors, "esm2cjs map", file, "cjs.map");
         }
 
         foreach (var compressTestData in new CompressDataProviderAttribute(

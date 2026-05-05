@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FunctionalTest", "Functiona
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Releaser", "Releaser\Releaser.csproj", "{8220769C-A038-40B9-B7E6-5E4ED9747258}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EsmToCjsVerify", "EsmToCjsVerify\EsmToCjsVerify.csproj", "{CF3E5B22-A38D-4C12-B71E-9D2AF864510B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{8220769C-A038-40B9-B7E6-5E4ED9747258}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8220769C-A038-40B9-B7E6-5E4ED9747258}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8220769C-A038-40B9-B7E6-5E4ED9747258}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF3E5B22-A38D-4C12-B71E-9D2AF864510B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF3E5B22-A38D-4C12-B71E-9D2AF864510B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF3E5B22-A38D-4C12-B71E-9D2AF864510B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF3E5B22-A38D-4C12-B71E-9D2AF864510B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
