@@ -250,6 +250,13 @@ public class FindBackReferencesAndEvalTreeWalker : TreeWalker
                 }
 
                 break;
+            case AstClassField classField:
+                if (classField.Key == astSymbol)
+                {
+                    usage |= SymbolUsage.Write;
+                }
+
+                break;
             case { }:
                 throw new NotImplementedException("Symbol Usage Detection parent " + parent.GetType().Name);
         }

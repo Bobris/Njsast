@@ -819,7 +819,7 @@ public sealed partial class Parser
             var isAsync = false;
             var isMaybeStatic = Type == TokenType.Name && "static".Equals(Value);
             var (computed, key) = ParsePropertyName();
-            var @static = isMaybeStatic && Type != TokenType.ParenL;
+            var @static = isMaybeStatic && Type != TokenType.ParenL && Type != TokenType.Eq;
             if (@static)
             {
                 if (isGenerator)
@@ -832,7 +832,7 @@ public sealed partial class Parser
             }
 
             if (!isGenerator && !computed &&
-                key is AstSymbol { Name: "async" } && Type != TokenType.ParenL && !CanInsertSemicolon())
+                key is AstSymbol { Name: "async" } && Type != TokenType.ParenL && Type != TokenType.Eq && !CanInsertSemicolon())
             {
                 isAsync = true;
                 isGenerator = Eat(TokenType.Star);
@@ -843,7 +843,8 @@ public sealed partial class Parser
             var isGetSet = false;
             if (!computed)
             {
-                if (!isGenerator && !isAsync && key is AstSymbol identifierNode2 && Type != TokenType.ParenL &&
+                if (!isGenerator && !isAsync && key is AstSymbol identifierNode2 &&
+                    Type != TokenType.ParenL && Type != TokenType.Eq &&
                     identifierNode2.Name is "get" or "set")
                 {
                     isGetSet = true;
@@ -865,6 +866,20 @@ public sealed partial class Parser
                 {
                     Raise(key.Start, "Classes may not have a static property named prototype");
                 }
+            }
+
+            // Class field: key is not followed by (
+            if (Type != TokenType.ParenL)
+            {
+                AstNode? fieldValue = null;
+                if (Eat(TokenType.Eq))
+                {
+                    fieldValue = ParseMaybeAssign(Start);
+                }
+
+                body.Add(new AstClassField(SourceFile, methodStart, _lastTokEnd, key, fieldValue, @static));
+                Eat(TokenType.Semi);
+                continue;
             }
 
             var methodValue = ParseMethod(isGenerator, isAsync);
