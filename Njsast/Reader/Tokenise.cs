@@ -624,12 +624,18 @@ public sealed partial class Parser : IEnumerable<Token>
 
         if (next == 'n' && Options.EcmaVersion >= 11)
         {
+            Span<char> buf = stackalloc char[_pos - start];
+            var withoutUnderscores = WithoutUnderscores(buf, _input.AsSpan(start.Index, _pos - start));
             BigInteger bigInt = 0;
             switch (radix)
             {
                 case 16:
                 {
-                    if (!BigInteger.TryParse(_input.AsSpan(start.Index, _pos - start), NumberStyles.AllowHexSpecifier,
+                    Span<char> hexBuf = stackalloc char[withoutUnderscores.Length + 2];
+                    hexBuf[0] = '0';
+                    hexBuf[1] = '0';
+                    withoutUnderscores.CopyTo(hexBuf[2..]);
+                    if (!BigInteger.TryParse(hexBuf, NumberStyles.AllowHexSpecifier,
                             null, out bigInt))
                     {
                         Raise(_pos, "Cannot parse BigInteger");
@@ -639,7 +645,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 }
                 case 2:
                 {
-                    foreach (var c in _input.AsSpan(start.Index, _pos - start))
+                    foreach (var c in withoutUnderscores)
                     {
                         bigInt <<= 1;
                         bigInt += c - '0';
@@ -649,7 +655,7 @@ public sealed partial class Parser : IEnumerable<Token>
                 }
                 case 8:
                 {
-                    foreach (var c in _input.AsSpan(start.Index, _pos - start))
+                    foreach (var c in withoutUnderscores)
                     {
                         bigInt <<= 3;
                         bigInt += c - '0';
