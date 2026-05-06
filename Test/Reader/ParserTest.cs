@@ -211,12 +211,90 @@ public class ParserTest
     }
 
     [Fact]
-    public void ParserShouldTreatHashbangAsErrorWhenDisabled()
+    public void ParserShouldSkipHashbangByDefault()
     {
         var parser = new Parser(new Options(), "#!/usr/bin/env node\nvar x = 1;");
+
+        var exception = Record.Exception(() => parser.Parse());
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void ParserShouldTreatHashbangAsErrorWhenDisabled()
+    {
+        var parser = new Parser(new Options { AllowHashBang = false }, "#!/usr/bin/env node\nvar x = 1;");
 
         var exception = Assert.Throws<SyntaxError>(() => parser.Parse());
 
         Assert.Contains("Unexpected character", exception.Message);
+    }
+
+    [Fact]
+    public void ParserShouldPreserveComputedClassFieldsWhenPrinting()
+    {
+        var testData = new ParserTestData
+        {
+            SourceName = "computed-class-fields.js",
+            Input = "class Foo { [x] = 1; static [y] = 2; }"
+        };
+
+        var (_, outMinJs, _, outNiceJs, _) = ParseTestCore(testData);
+
+        Assert.StartsWith("class Foo{[x]=1;static[y]=2;}", outMinJs);
+        Assert.Contains("[x] = 1;", outNiceJs);
+        Assert.Contains("static [y] = 2;", outNiceJs);
+    }
+
+    [Fact]
+    public void ParserShouldTreatComputedClassFieldKeysAsReads()
+    {
+        var testData = new ParserTestData
+        {
+            SourceName = "computed-class-fields.js",
+            Input = "class Foo { [x] = 1; }"
+        };
+
+        var (outAst, _, _, _, _) = ParseTestCore(testData);
+
+        Assert.Contains("SymbolRef 1:14 - 1:15 [Read]", outAst);
+    }
+
+    [Fact]
+    public void ParserShouldPreserveRegexpUnicodeSetsFlagWhenPrinting()
+    {
+        var testData = new ParserTestData
+        {
+            SourceName = "regexp-v-flag.js",
+            Input = "/[a&&b]/v;"
+        };
+
+        var (outAst, outMinJs, _, outNiceJs, _) = ParseTestCore(testData);
+
+        Assert.Contains("Flags: UnicodeSets", outAst);
+        Assert.StartsWith("/[a&&b]/v", outMinJs);
+        Assert.Contains("/[a&&b]/v;", outNiceJs);
+    }
+
+    [Fact]
+    public void ParserShouldPreserveImportAttributesWhenPrinting()
+    {
+        var testData = new ParserTestData
+        {
+            SourceName = "module-import-attributes.js",
+            Input = """
+                    import data from "./data.json" with { type: "json" };
+                    export { data } from "./data.json" with { type: "json" };
+                    import("./data.json", { with: { type: "json" } });
+                    """
+        };
+
+        var (_, outMinJs, _, outNiceJs, _) = ParseTestCore(testData);
+
+        Assert.Contains("import data from\"./data.json\"with{type:\"json\"}", outMinJs);
+        Assert.Contains("export{data}from\"./data.json\"with{type:\"json\"}", outMinJs);
+        Assert.Contains("import(\"./data.json\",{with:{type:\"json\"}})", outMinJs);
+        Assert.Contains("import data from \"./data.json\" with", outNiceJs);
+        Assert.Contains("export { data } from \"./data.json\" with", outNiceJs);
     }
 }

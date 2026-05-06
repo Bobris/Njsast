@@ -29,7 +29,7 @@ public sealed class Options
     public bool AllowImportExportEverywhere = false;
     // When enabled, hashbang directive in the beginning of file
     // is allowed and treated as a line comment.
-    public bool AllowHashBang = false;
+    public bool AllowHashBang = true;
     // It is possible to parse multiple files into a single AST by
     // passing the tree produced by parsing the first file as
     // `program` option in subsequent parses. This will add the

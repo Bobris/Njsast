@@ -17,6 +17,7 @@ public class RegExp
         if (mods.Contains('y', StringComparison.Ordinal)) res |= RegExpFlags.Sticky;
         if (mods.Contains('s', StringComparison.Ordinal)) res |= RegExpFlags.DotAll;
         if (mods.Contains('d', StringComparison.Ordinal)) res |= RegExpFlags.HasIndices;
+        if (mods.Contains('v', StringComparison.Ordinal)) res |= RegExpFlags.UnicodeSets;
         return res;
     }
 }

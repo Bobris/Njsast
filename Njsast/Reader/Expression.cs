@@ -423,12 +423,13 @@ public sealed partial class Parser
                     CheckExpressionErrors(refDestructuringErrors, true);
                     _yieldPos = oldYieldPos.Line != 0 ? oldYieldPos : _yieldPos;
                     _awaitPos = oldAwaitPos.Line != 0 ? oldAwaitPos : _awaitPos;
-                    if (expressionList.Count != 1)
+                    if (expressionList.Count is < 1 or > 2)
                     {
-                        Raise(startLoc, "dynamic import must have one parameter");
+                        Raise(startLoc, "dynamic import must have one or two parameters");
                     }
 
-                    @base = new AstImportExpression(SourceFile, startLoc, _lastTokEnd, expressionList[0]);
+                    @base = new AstImportExpression(SourceFile, startLoc, _lastTokEnd, expressionList[0],
+                        expressionList.Count == 2 ? expressionList[1] : null);
                 }
                 else
                 {

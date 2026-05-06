@@ -45,6 +45,8 @@ public class AstRegExp : AstConstant
             output.Print("s");
         if (f.HasFlag(RegExpFlags.Unicode))
             output.Print("u");
+        if (f.HasFlag(RegExpFlags.UnicodeSets))
+            output.Print("v");
         if (f.HasFlag(RegExpFlags.Sticky))
             output.Print("y");
     }

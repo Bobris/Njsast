@@ -19,4 +19,6 @@ public enum RegExpFlags
     DotAll = 32,
     /// d
     HasIndices = 64,
+    /// v
+    UnicodeSets = 128,
 }

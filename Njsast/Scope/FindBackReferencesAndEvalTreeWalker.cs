@@ -253,7 +253,7 @@ public class FindBackReferencesAndEvalTreeWalker : TreeWalker
             case AstClassField classField:
                 if (classField.Key == astSymbol)
                 {
-                    usage |= SymbolUsage.Write;
+                    usage |= classField.Computed ? SymbolUsage.Read : SymbolUsage.Write;
                 }
 
                 break;

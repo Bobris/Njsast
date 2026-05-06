@@ -887,7 +887,8 @@ public sealed partial class Parser
                     fieldValue = ParseMaybeAssign(Start);
                 }
 
-                body.Add(new AstClassField(SourceFile, methodStart, _lastTokEnd, key, fieldValue, @static));
+                body.Add(new AstClassField(SourceFile, methodStart, _lastTokEnd, key, fieldValue, @static,
+                    computed));
                 Eat(TokenType.Semi);
                 continue;
             }
@@ -981,8 +982,9 @@ public sealed partial class Parser
             if (Type != TokenType.String)
                 Raise(Start, "Unexpected token");
             var source = ParseExpressionAtom(Start) as AstString;
+            var attributes = ParseImportAttributes();
             Semicolon();
-            return new(SourceFile, nodeStart, _lastTokEnd, source, null, ref specifiers);
+            return new(SourceFile, nodeStart, _lastTokEnd, source, null, ref specifiers, attributes);
         }
 
         if (Eat(TokenType.Default))
@@ -1016,6 +1018,7 @@ public sealed partial class Parser
             AstNode? declaration;
             var specifiers = new StructList<AstNameMapping>();
             AstString? source = null;
+            AstObject? attributes = null;
             if (ShouldParseExportStatement())
             {
                 declaration = ParseStatement(true);
@@ -1041,6 +1044,7 @@ public sealed partial class Parser
                     if (Type != TokenType.String)
                         Raise(Start, "Unexpected token");
                     source = ParseExpressionAtom(Start) as AstString;
+                    attributes = ParseImportAttributes();
                     foreach (var spec in specifiers)
                     {
                         spec.Name = new AstSymbolImportForeign(spec.Name);
@@ -1058,8 +1062,17 @@ public sealed partial class Parser
                 Semicolon();
             }
 
-            return new(SourceFile, nodeStart, _lastTokEnd, source, declaration, ref specifiers);
+            return new(SourceFile, nodeStart, _lastTokEnd, source, declaration, ref specifiers, attributes);
         }
+    }
+
+    AstObject? ParseImportAttributes()
+    {
+        if (!Eat(TokenType.With))
+            return null;
+        if (Type != TokenType.BraceL)
+            Raise(Start, "Unexpected token");
+        return (AstObject)ParseExpressionAtom(Start);
     }
 
     static void CheckExport(IDictionary<string, bool>? exports, string name, Position pos)
@@ -1146,9 +1159,11 @@ public sealed partial class Parser
         var importNames = new StructList<AstNameMapping>();
         AstSymbolImport? importName = null;
         AstString? source;
+        AstObject? attributes;
         if (Type == TokenType.String)
         {
             source = (AstString)ParseExpressionAtom(Start);
+            attributes = ParseImportAttributes();
         }
         else
         {
@@ -1157,6 +1172,7 @@ public sealed partial class Parser
             if (Type == TokenType.String)
             {
                 source = (AstString)ParseExpressionAtom(Start);
+                attributes = ParseImportAttributes();
             }
             else
             {
@@ -1165,7 +1181,7 @@ public sealed partial class Parser
         }
 
         Semicolon();
-        return new AstImport(SourceFile, nodeStart, _lastTokEnd, source, importName, ref importNames);
+        return new AstImport(SourceFile, nodeStart, _lastTokEnd, source, importName, ref importNames, attributes);
     }
 
     // Parses a comma-separated list of module imports.

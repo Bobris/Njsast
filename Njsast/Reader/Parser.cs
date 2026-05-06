@@ -123,7 +123,7 @@ public sealed partial class Parser
         _allowContinue = false;
 
         // If enabled, skip leading hashbang line.
-        if (_pos.Index == 0 && options.AllowHashBang && _input.Substring(0, 2) == "#!")
+        if (_pos.Index == 0 && options.AllowHashBang && _input.Length >= 2 && _input.Substring(0, 2) == "#!")
             SkipLineComment(2);
 
         // Scope tracking for duplicate variable names (see scope.js)

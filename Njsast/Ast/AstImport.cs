@@ -15,25 +15,30 @@ public class AstImport : AstStatement
     /// [AstString] String literal describing where this module came from
     public AstString ModuleName;
 
+    public AstObject? Attributes;
+
     public AstImport(string? source, Position startLoc, Position endLoc, AstString moduleName,
-        AstSymbolImport? importName, ref StructList<AstNameMapping> specifiers) : base(source, startLoc, endLoc)
+        AstSymbolImport? importName, ref StructList<AstNameMapping> specifiers, AstObject? attributes = null) : base(source, startLoc, endLoc)
     {
         ModuleName = moduleName;
         ImportedName = importName;
+        Attributes = attributes;
         ImportedNames.TransferFrom(ref specifiers);
     }
 
     AstImport(string? source, Position startLoc, Position endLoc, AstString moduleName,
-        AstSymbolImport? importName) : base(source, startLoc, endLoc)
+        AstSymbolImport? importName, AstObject? attributes) : base(source, startLoc, endLoc)
     {
         ModuleName = moduleName;
         ImportedName = importName;
+        Attributes = attributes;
     }
 
     public override void Visit(TreeWalker w)
     {
         base.Visit(w);
         w.Walk(ModuleName);
+        w.Walk(Attributes);
         w.Walk(ImportedName);
         w.WalkList(ImportedNames);
     }
@@ -42,6 +47,8 @@ public class AstImport : AstStatement
     {
         base.Transform(tt);
         ModuleName = (AstString) tt.Transform(ModuleName);
+        if (Attributes != null)
+            Attributes = (AstObject)tt.Transform(Attributes);
         if (ImportedName != null)
             ImportedName = (AstSymbolImport)tt.Transform(ImportedName);
         tt.TransformList(ref ImportedNames);
@@ -49,7 +56,7 @@ public class AstImport : AstStatement
 
     public override AstNode ShallowClone()
     {
-        var res = new AstImport(Source, Start, End, ModuleName, ImportedName);
+        var res = new AstImport(Source, Start, End, ModuleName, ImportedName, Attributes);
         res.ImportedNames.AddRange(ImportedNames);
         return res;
     }
@@ -95,6 +102,13 @@ public class AstImport : AstStatement
         }
 
         ModuleName.Print(output);
+        if (Attributes != null)
+        {
+            output.Space();
+            output.Print("with");
+            output.Space();
+            Attributes.Print(output);
+        }
         output.Semicolon();
     }
 }

@@ -21,10 +21,13 @@ public class AstExport : AstStatement
     /// Name of the file to load exports from
     public AstString? ModuleName;
 
+    public AstObject? Attributes;
+
     public AstExport(string? source, Position startPos, Position endPos, AstString? moduleName, AstNode? declaration,
-        ref StructList<AstNameMapping> specifiers) : base(source, startPos, endPos)
+        ref StructList<AstNameMapping> specifiers, AstObject? attributes = null) : base(source, startPos, endPos)
     {
         ModuleName = moduleName;
+        Attributes = attributes;
         if (declaration is AstDefun or AstDefinitions or AstDefClass)
         {
             ExportedDefinition = declaration;
@@ -61,6 +64,7 @@ public class AstExport : AstStatement
     {
         base.Visit(w);
         w.Walk(ModuleName);
+        w.Walk(Attributes);
         w.Walk(ExportedDefinition);
         w.Walk(ExportedValue);
         w.WalkList(ExportedNames);
@@ -71,6 +75,8 @@ public class AstExport : AstStatement
         base.Transform(tt);
         if (ModuleName != null)
             ModuleName = (AstString)tt.Transform(ModuleName);
+        if (Attributes != null)
+            Attributes = (AstObject)tt.Transform(Attributes);
         if (ExportedDefinition != null)
             ExportedDefinition = tt.Transform(ExportedDefinition);
         if (ExportedValue != null)
@@ -88,6 +94,7 @@ public class AstExport : AstStatement
     {
         var res = new AstExport(Source, Start, End, ExportedDefinition ?? ExportedValue!, IsDefault);
         res.ModuleName = ModuleName;
+        res.Attributes = Attributes;
         res.ExportedNames.AddRange(ExportedNames.AsReadOnlySpan());
         return res;
     }
@@ -138,6 +145,13 @@ public class AstExport : AstStatement
             output.Print("from");
             output.Space();
             ModuleName.Print(output);
+            if (Attributes != null)
+            {
+                output.Space();
+                output.Print("with");
+                output.Space();
+                Attributes.Print(output);
+            }
         }
 
         if (ExportedValue != null

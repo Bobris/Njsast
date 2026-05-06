@@ -560,7 +560,7 @@ public sealed partial class Parser : IEnumerable<Token>
         {
             Regex validFlags = Options.EcmaVersion switch
             {
-                >= 12 => new Regex("^[dgimsuys]*$"),
+                >= 11 => new Regex("^[dgimsuvys]*$"),
                 >= 9 => new Regex("^[gimuys]*$"),
                 >= 6 => new Regex("^[gimuy]*$"),
                 _ => new Regex("^[gim]*$")
