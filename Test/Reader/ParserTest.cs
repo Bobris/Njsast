@@ -297,4 +297,65 @@ public class ParserTest
         Assert.Contains("import data from \"./data.json\" with", outNiceJs);
         Assert.Contains("export { data } from \"./data.json\" with", outNiceJs);
     }
+
+    [Fact]
+    public void ParserShouldParseAndPrintBasicJsx()
+    {
+        var testData = new ParserTestData
+        {
+            SourceName = "simple-jsx.js",
+            Input = "const x = <div id=\"a\">Hi</div>;"
+        };
+
+        var (outAst, outMinJs, _, outNiceJs, _) = ParseTestCore(testData);
+
+        Assert.Contains("JsxElement", outAst);
+        Assert.StartsWith("const x=<div id=\"a\">Hi</div>", outMinJs);
+        Assert.Contains("const x = <div id=\"a\">Hi</div>;", outNiceJs);
+    }
+
+    [Fact]
+    public void ParserShouldParseAndPrintJsxAttributesAndExpressions()
+    {
+        var testData = new ParserTestData
+        {
+            SourceName = "jsx-attributes.js",
+            Input = "const view = <Foo.Bar id=\"x\" count={n} disabled {...props}>{label}{...items}</Foo.Bar>;"
+        };
+
+        var (_, outMinJs, _, outNiceJs, _) = ParseTestCore(testData);
+
+        Assert.Contains("<Foo.Bar id=\"x\" count={n} disabled {...props}>{label}{...items}</Foo.Bar>", outMinJs);
+        Assert.Contains("<Foo.Bar id=\"x\" count={n} disabled {...props}>{label}{...items}</Foo.Bar>", outNiceJs);
+    }
+
+    [Fact]
+    public void ParserShouldParseAndPrintJsxFragmentsAndNamespacedNames()
+    {
+        var testData = new ParserTestData
+        {
+            SourceName = "jsx-fragment.js",
+            Input = "const f = <><svg:path data-id=\"1\" /></>;"
+        };
+
+        var (outAst, outMinJs, _, outNiceJs, _) = ParseTestCore(testData);
+
+        Assert.Contains("JsxFragment", outAst);
+        Assert.Contains("<><svg:path data-id=\"1\" /></>", outMinJs);
+        Assert.Contains("<><svg:path data-id=\"1\" /></>;", outNiceJs);
+    }
+
+    [Fact]
+    public void ParserShouldRejectMismatchedJsxClosingTag()
+    {
+        var testData = new ParserTestData
+        {
+            SourceName = "jsx-mismatch.js",
+            Input = "const x = <div></span>;"
+        };
+
+        var (outAst, _, _, _, _) = ParseTestCore(testData);
+
+        Assert.Contains("Expected closing JSX tag div", outAst);
+    }
 }

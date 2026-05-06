@@ -226,6 +226,9 @@ public class FindBackReferencesAndEvalTreeWalker : TreeWalker
             case AstYield _:
             case AstObject _:
             case AstAwait _:
+            case AstJsxExpression _:
+            case AstJsxSpreadChild _:
+            case AstJsxSpreadAttribute _:
             case AstObjectGetter _:
             case AstObjectSetter _:
             case AstClass _: // extends

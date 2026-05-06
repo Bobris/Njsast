@@ -505,6 +505,9 @@ public sealed partial class Parser
             return new AstSymbolRef(SourceFile, startLocation, _lastTokEnd, "!import");
         }
 
+        if (CanStartJsx())
+            return ParseJsxElementOrFragment(startLocation);
+
         var canBeArrow = _potentialArrowAt.Index == Start.Index;
         switch (Type)
         {
