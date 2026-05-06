@@ -143,6 +143,36 @@ public class CompressTest
         RunAndAssert(testData, RemoveSideEffectFreeCodeCompressOptions);
     }
 
+    [Fact]
+    public void ShouldCompressOptionalChainOnKnownNullishValues()
+    {
+        var testData = new CompressTestData
+        {
+            InputFileName = "optional-chain-nullish.js",
+            InputContent = "console.log(null?.x, undefined?.());"
+        };
+
+        var (_, outMinJs, outNiceJs) = CompressTestCore(testData, RemoveSideEffectFreeCodeCompressOptions);
+
+        Assert.Equal("console.log(undefined,undefined)", outMinJs);
+        Assert.Contains("console.log(undefined, undefined);", outNiceJs);
+    }
+
+    [Fact]
+    public void ShouldCompressOptionalChainOnKnownNonNullishValues()
+    {
+        var testData = new CompressTestData
+        {
+            InputFileName = "optional-chain-non-nullish.js",
+            InputContent = "console.log(({ x: 1 })?.x, \"abc\"?.length);"
+        };
+
+        var (_, outMinJs, outNiceJs) = CompressTestCore(testData, RemoveSideEffectFreeCodeCompressOptions);
+
+        Assert.Equal("console.log(1,\"abc\".length)", outMinJs);
+        Assert.Contains("console.log(1, \"abc\".length);", outNiceJs);
+    }
+
     void RunAndAssert(CompressTestData testData, ICompressOptions options)
     {
         var (outAst, outMinJs, outNiceJs) = CompressTestCore(testData, options);
