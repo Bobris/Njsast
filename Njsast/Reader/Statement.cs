@@ -809,7 +809,7 @@ public sealed partial class Parser
         var id = ParseClassId(isStatement);
         var superClass = ParseClassSuper();
         var hadConstructor = false;
-        var body = new StructList<AstObjectProperty>();
+        var body = new StructList<AstNode>();
         Expect(TokenType.BraceL);
         while (!Eat(TokenType.BraceR))
         {
@@ -819,6 +819,16 @@ public sealed partial class Parser
             var isAsync = false;
             var isMaybeStatic = Type == TokenType.Name && "static".Equals(Value);
             var (computed, key) = ParsePropertyName();
+            // Static initialization block: static { ... }
+            if (isMaybeStatic && Type == TokenType.BraceL)
+            {
+                var staticBlock = ParseBlock(false);
+                var staticBody = new StructList<AstNode>();
+                staticBody.TransferFrom(ref staticBlock.Body);
+                body.Add(new AstStaticBlock(SourceFile, methodStart, _lastTokEnd, ref staticBody));
+                continue;
+            }
+
             var @static = isMaybeStatic && Type != TokenType.ParenL && Type != TokenType.Eq;
             if (@static)
             {

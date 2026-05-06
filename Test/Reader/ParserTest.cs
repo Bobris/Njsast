@@ -199,4 +199,24 @@ public class ParserTest
 
         Assert.Equal("Bad escape sequence in untagged template literal (1:2)", exception.Message);
     }
+
+    [Fact]
+    public void ParserShouldSkipHashbangWhenEnabled()
+    {
+        var parser = new Parser(new Options { AllowHashBang = true }, "#!/usr/bin/env node\nvar x = 1;");
+
+        var exception = Record.Exception(() => parser.Parse());
+
+        Assert.Null(exception);
+    }
+
+    [Fact]
+    public void ParserShouldTreatHashbangAsErrorWhenDisabled()
+    {
+        var parser = new Parser(new Options(), "#!/usr/bin/env node\nvar x = 1;");
+
+        var exception = Assert.Throws<SyntaxError>(() => parser.Parse());
+
+        Assert.Contains("Unexpected character", exception.Message);
+    }
 }

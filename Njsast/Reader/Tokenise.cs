@@ -1076,10 +1076,21 @@ public sealed partial class Parser : IEnumerable<Token>
     {
         var start = _pos;
         _pos = _pos.Increment(1); // skip #
+        var next = _input.Get(_pos.Index);
+        if (start.Index == 0 && next == '!' && Options.AllowHashBang)
+        {
+            SkipLineComment(2);
+            NextToken();
+            return;
+        }
+
         var code = FullCharCodeAtPos();
         if (!IsIdentifierStart(code, Options.EcmaVersion >= 6))
         {
-            Raise(start, "Invalid private name: '#' must be followed by an identifier");
+            Raise(start,
+                start.Index == 0 && !Options.AllowHashBang
+                    ? "Unexpected character '#'"
+                    : "Invalid private name: '#' must be followed by an identifier");
         }
 
         var name = ReadWord1();
