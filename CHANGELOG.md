@@ -6,6 +6,14 @@
 
 Bug in wrong deduplication of pure functions when a property is written.
 
+Computed class fields keep their brackets when printing and their keys are treated as reads.
+
+### Added
+
+Default hashbang parsing, RegExp unicode sets `v` flag, and import attributes.
+
+Optional chain compression for known nullish and known non-nullish values.
+
 ## 2.1.0
 
 ### Changed
