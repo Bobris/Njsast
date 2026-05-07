@@ -56,6 +56,7 @@ sealed class TokenInformation
         var name = new TokenInformation(startsExpr: true);
         var privateName = new TokenInformation(startsExpr: true);
         var eof = new TokenInformation();
+        var decorator = new TokenInformation(beforeExpr: true, prefix: true, startsExpr: true);
 
         // Punctuation token types.
         var bracketL = new TokenInformation(beforeExpr: true, startsExpr: true);
@@ -233,7 +234,8 @@ sealed class TokenInformation
             {TokenType.Instanceof, instanceof},
             {TokenType.Typeof, _typeof},
             {TokenType.Void, _void},
-            {TokenType.Delete, delete}
+            {TokenType.Delete, delete},
+            {TokenType.Decorator, decorator}
         };
 
         // Token-specific context update code

@@ -394,6 +394,14 @@ public sealed partial class Parser : IEnumerable<Token>
                 ReadTokenQuestion();
                 return;
 
+            case 64: // '@'
+                if (Options.ParseTypeScript)
+                {
+                    FinishOp(TokenType.Decorator, 1);
+                    return;
+                }
+                break;
+
             case 96: // '`'
                 if (Options.EcmaVersion < 6) break;
                 _pos = _pos.Increment(1);

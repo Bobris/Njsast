@@ -17,7 +17,28 @@ public sealed partial class Parser
         _canBeDirective = true;
         while (Type != TokenType.Eof)
         {
-            var stmt = ParseStatement(true, true, exports);
+            if (IsTypeScript && TsTryParseEnumStatements(out var enumStatements))
+            {
+                foreach (var enumStatement in enumStatements)
+                    node.Body.Add(enumStatement);
+                continue;
+            }
+
+            AstStatement stmt;
+            if (IsTypeScript && Type == TokenType.Decorator)
+            {
+                var decorators = TsParseDecorators();
+                stmt = ParseStatement(true, true, exports);
+                if (stmt is AstDefClass classDecl)
+                {
+                    TsEmitDecoratedClass(node, decorators, classDecl);
+                    continue;
+                }
+            }
+            else
+            {
+                stmt = ParseStatement(true, true, exports);
+            }
 
             if (_canBeDirective)
             {
@@ -103,6 +124,16 @@ public sealed partial class Parser
             return TsParseDeclareStatement(startLocation);
         if (starttype == TokenType.Function && TsTryParseFunctionOverloadStatement(startLocation, out var typeOnlyStatement))
             return typeOnlyStatement;
+        if (TsIsNamespaceStatementStart())
+            Raise(startLocation, "TypeScript namespace lowering is not implemented");
+        if (IsTypeScript && IsContextual("abstract"))
+        {
+            if (TsIsClassFollowing())
+            {
+                Next();
+                return ParseClass(startLocation, true, false);
+            }
+        }
 
         // Most types of statements are recognized by the keyword they
         // start with. Many are trivial to parse, some require a bit of
@@ -485,6 +516,8 @@ public sealed partial class Parser
             if (Eat(TokenType.ParenL))
             {
                 param = ParseBindingAtom();
+                TsTrySkipOptionalOrDefiniteBindingMarker();
+                TsTrySkipTypeAnnotation();
                 EnterLexicalScope();
                 CheckLVal(param, true, VariableKind.Let);
                 param = ToRightDeclarationSymbolKind(param, VariableKind.Catch);
@@ -824,12 +857,35 @@ public sealed partial class Parser
 
         var id = ParseClassId(isStatement);
         var superClass = ParseClassSuper();
+        if (IsTypeScript && IsContextual("implements"))
+        {
+            Next();
+            while (Type != TokenType.BraceL && Type != TokenType.Eof)
+                Next();
+        }
         var hadConstructor = false;
         var body = new StructList<AstNode>();
         Expect(TokenType.BraceL);
         while (!Eat(TokenType.BraceR))
         {
             if (Eat(TokenType.Semi)) continue;
+
+            var hasTsModifiers = false;
+            var isAbstractMember = false;
+            while (TsIsClassMemberModifier())
+            {
+                hasTsModifiers = true;
+                if (IsContextual("abstract")) isAbstractMember = true;
+                Next();
+            }
+
+            if (isAbstractMember)
+            {
+                while (Type != TokenType.Semi && Type != TokenType.Eof) Next();
+                Eat(TokenType.Semi);
+                continue;
+            }
+
             var methodStart = Start;
             var isGenerator = Eat(TokenType.Star);
             var isAsync = false;
@@ -897,6 +953,14 @@ public sealed partial class Parser
             // Class field: key is not followed by (
             if (Type != TokenType.ParenL)
             {
+                TsTrySkipOptionalOrDefiniteBindingMarker();
+                TsTrySkipTypeAnnotation();
+                if (hasTsModifiers)
+                {
+                    Eat(TokenType.Semi);
+                    continue;
+                }
+
                 AstNode? fieldValue = null;
                 if (Eat(TokenType.Eq))
                 {
@@ -1035,7 +1099,14 @@ public sealed partial class Parser
             var specifiers = new StructList<AstNameMapping>();
             AstString? source = null;
             AstObject? attributes = null;
-            if (ShouldParseExportStatement())
+            if (IsTypeScript && IsContextual("abstract") && TsIsClassFollowing())
+            {
+                Next();
+                declaration = ParseClass(Start, true, false);
+                if (declaration is AstDefClass defClass)
+                    CheckExport(exports, defClass.Name!.Name, defClass.Name.Start);
+            }
+            else if (ShouldParseExportStatement())
             {
                 declaration = ParseStatement(true);
                 if (declaration is AstDefinitions variableDeclaration)

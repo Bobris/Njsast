@@ -12,8 +12,29 @@ public sealed partial class Parser
         if (Type != TokenType.Relational || !"<".Equals(Value))
             return false;
         var next = _input.Get(End.Index);
-        return next == '>' || next == '_' || next == '$' || next == ':' || next == '-' ||
-               next >= 'a' && next <= 'z' || next >= 'A' && next <= 'Z';
+        if (next == '>' || next == '_' || next == '$' || next == ':' || next == '-' ||
+            next >= 'a' && next <= 'z' || next >= 'A' && next <= 'Z')
+        {
+            if (Options.ParseTypeScript && TsLooksLikeGenericOrTypeAssertion())
+                return false;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool TsLooksLikeGenericOrTypeAssertion()
+    {
+        var end = TsFindMatching(Start.Index, '<', '>');
+        if (end < 0)
+            return false;
+        var next = end + 1;
+        while (next < _input.Length && char.IsWhiteSpace(_input[next]))
+            next++;
+        if (next >= _input.Length)
+            return false;
+        var ch = _input[next];
+        return ch == '(' || ch == '=' || ch == '<' || ch == '?' || ch == ',' || ch == ';';
     }
 
     AstNode ParseJsxElementOrFragment(Position startLocation)

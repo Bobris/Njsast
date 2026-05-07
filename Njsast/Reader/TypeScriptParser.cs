@@ -19,6 +19,7 @@ public static class TypeScriptParser
     {
         options ??= new Options();
         options.ParseTypeScript = true;
+        input = TypeScriptConstEnumLowering.Convert(input);
         if (!NeedsLegacySourceConversion(input, options.ParseJSX))
             return EraseTypeScriptOnly(Parser.Parse(input, options));
         var javaScript = TypeScriptToJavaScript.Convert(input);
@@ -30,6 +31,7 @@ public static class TypeScriptParser
         options ??= new Options();
         options.ParseTypeScript = true;
         options.ParseJSX = true;
+        input = TypeScriptConstEnumLowering.Convert(input);
         if (!NeedsLegacySourceConversion(input, options.ParseJSX))
             return EraseTypeScriptOnly(Parser.Parse(input, options));
         var javaScript = TypeScriptToJavaScript.Convert(input);
@@ -38,9 +40,18 @@ public static class TypeScriptParser
 
     static bool NeedsLegacySourceConversion(string input, bool parseJsx)
     {
-        if (parseJsx) return true;
-        return Regex.IsMatch(input, @"@|(?<![\w$])(?:const\s+)?enum\s+[A-Za-z_$]|\b(?:public|private|protected|readonly|override|abstract|implements)\b|\s+as\s+|\bsatisfies\b|[A-Za-z_$][\w$]*!|\b[A-Za-z_$][\w$]*\s*<[^>\r\n]+>\s*\(",
-            RegexOptions.Multiline);
+        if (Regex.IsMatch(input, @"constructor\s*\([^)]*\b(?:public|private|protected|readonly)\b"))
+            return true;
+        var decoratorPositions = Regex.Matches(input, @"@");
+        foreach (Match m in decoratorPositions)
+        {
+            var remaining = input.AsSpan(m.Index);
+            var isClassDecorator = Regex.IsMatch(remaining.ToString(),
+                @"^@[^\n]*\n[ \t]*(?:export\s+)?(?:abstract\s+)?class\b");
+            if (!isClassDecorator)
+                return true;
+        }
+        return false;
     }
 
     static AstToplevel EraseTypeScriptOnly(AstToplevel ast)
@@ -59,6 +70,110 @@ public static class TypeScriptParser
         {
             return null;
         }
+    }
+}
+
+static class TypeScriptConstEnumLowering
+{
+    sealed record EnumMember(string Name, string? Value);
+
+    static readonly Regex ConstEnum = new(@"(?<![\w$])(export\s+)?const\s+enum\s+([A-Za-z_$][\w$]*)\s*\{([^}]*)\}",
+        RegexOptions.Singleline | RegexOptions.Compiled);
+
+    public static string Convert(string input)
+    {
+        var constEnums = new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
+        var output = ConstEnum.Replace(input, match =>
+        {
+            var isExport = match.Groups[1].Success;
+            var name = match.Groups[2].Value;
+            var members = ParseMembers(match.Groups[3].Value);
+            if (TryEvaluate(members, out var values))
+            {
+                constEnums[name] = values;
+                return "";
+            }
+
+            return EmitRuntimeEnum(name, isExport, members);
+        });
+
+        foreach (var enumPair in constEnums)
+        foreach (var memberPair in enumPair.Value)
+            output = Regex.Replace(output, $@"\b{Regex.Escape(enumPair.Key)}\.{Regex.Escape(memberPair.Key)}\b", memberPair.Value);
+        return output;
+    }
+
+    static List<EnumMember> ParseMembers(string body)
+    {
+        var result = new List<EnumMember>();
+        foreach (var raw in body.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            var parts = raw.Split('=', 2, StringSplitOptions.TrimEntries);
+            if (parts[0].Length == 0) continue;
+            result.Add(new EnumMember(parts[0], parts.Length == 2 ? parts[1] : null));
+        }
+
+        return result;
+    }
+
+    static bool TryEvaluate(List<EnumMember> members, out Dictionary<string, string> values)
+    {
+        values = new Dictionary<string, string>(StringComparer.Ordinal);
+        double next = 0;
+        foreach (var member in members)
+        {
+            if (member.Value == null)
+            {
+                values[member.Name] = next.ToString(CultureInfo.InvariantCulture);
+                next++;
+                continue;
+            }
+
+            var expression = member.Value;
+            foreach (var pair in values)
+                expression = Regex.Replace(expression, $@"\b{Regex.Escape(pair.Key)}\b", pair.Value);
+            if (expression.StartsWith("\"", StringComparison.Ordinal) || expression.StartsWith("'", StringComparison.Ordinal))
+            {
+                values[member.Name] = expression;
+                continue;
+            }
+
+            if (!TryEvaluateNumericExpression(expression, out var numeric))
+                return false;
+            values[member.Name] = numeric.ToString(CultureInfo.InvariantCulture);
+            next = numeric + 1;
+        }
+
+        return true;
+    }
+
+    static bool TryEvaluateNumericExpression(string expression, out double value)
+    {
+        value = 0;
+        var parts = expression.Split('|', StringSplitOptions.TrimEntries);
+        if (parts.Length > 1)
+        {
+            var aggregate = 0;
+            foreach (var part in parts)
+            {
+                if (!int.TryParse(part, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number))
+                    return false;
+                aggregate |= number;
+            }
+
+            value = aggregate;
+            return true;
+        }
+
+        return double.TryParse(expression, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
+    }
+
+    static string EmitRuntimeEnum(string name, bool isExport, List<EnumMember> members)
+    {
+        var normalizedMembers = new List<(string Name, string? Value)>();
+        foreach (var member in members)
+            normalizedMembers.Add((member.Name, member.Value));
+        return Parser.TsEmitEnumJavaScript(name, isExport, normalizedMembers);
     }
 }
 

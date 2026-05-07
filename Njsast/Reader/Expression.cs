@@ -263,6 +263,11 @@ public sealed partial class Parser
         var expr = ParseExpressionOperators(startLocation, noIn, refDestructuringErrors);
         if (CheckExpressionErrors(refDestructuringErrors))
             return expr;
+        if (IsTypeScript && (IsContextual("as") || IsContextual("satisfies")))
+        {
+            Next();
+            TsSkipType();
+        }
         if (Eat(TokenType.Question))
         {
             var consequent = ParseMaybeAssign(Start);
@@ -318,6 +323,17 @@ public sealed partial class Parser
     AstNode ParseMaybeUnary(Position startLocation, DestructuringErrors? refDestructuringErrors, bool sawUnary)
     {
         AstNode expr;
+        if (IsTypeScript && Type == TokenType.Relational && "<".Equals(Value) && !CanStartJsx())
+        {
+            var end = TsFindMatching(Start.Index, '<', '>');
+            if (end >= 0)
+            {
+                TsTrySkipTypeParameters();
+                _potentialArrowAt = Start;
+                return ParseMaybeUnary(Start, refDestructuringErrors, sawUnary);
+            }
+        }
+
         if (_inAsync && IsContextual("await"))
         {
             expr = ParseAwait();
@@ -439,6 +455,36 @@ public sealed partial class Parser
 
             bool computed;
             var optional = !noCalls && Eat(TokenType.QuestionDot);
+
+            if (IsTypeScript && Type == TokenType.Prefix && "!".Equals(Value))
+            {
+                Next();
+                continue;
+            }
+
+            if (IsTypeScript && (IsContextual("as") || IsContextual("satisfies")))
+            {
+                Next();
+                TsSkipType();
+                continue;
+            }
+
+            if (IsTypeScript && !noCalls && Type == TokenType.Relational && "<".Equals(Value))
+            {
+                var end = TsFindMatching(Start.Index, '<', '>');
+                if (end >= 0)
+                {
+                    var next = end + 1;
+                    while (next < _input.Length && char.IsWhiteSpace(_input[next])) next++;
+                    if (next < _input.Length && _input[next] == '(')
+                    {
+                        TsTrySkipTypeParameters();
+                        Next();
+                        @base = BuildCallExpression(startLoc, @base, maybeAsyncArrow, optional);
+                        continue;
+                    }
+                }
+            }
             if ((computed = Eat(TokenType.BracketL)) || optional && Type != TokenType.ParenL || Eat(TokenType.Dot))
             {
                 var property = computed ? ParseExpression(Start)
@@ -459,27 +505,7 @@ public sealed partial class Parser
             }
             else if (!noCalls && Eat(TokenType.ParenL))
             {
-                var refDestructuringErrors = new DestructuringErrors();
-                var oldYieldPos = _yieldPos;
-                var oldAwaitPos = _awaitPos;
-                _yieldPos = default;
-                _awaitPos = default;
-                var expressionList = new StructList<AstNode>();
-                ParseExpressionList(ref expressionList, TokenType.ParenR, Options.EcmaVersion >= 8, false,
-                    refDestructuringErrors);
-                if (maybeAsyncArrow && !CanInsertSemicolon() && Eat(TokenType.Arrow))
-                {
-                    CheckPatternErrors(refDestructuringErrors, false);
-                    CheckYieldAwaitInDefaultParams();
-                    _yieldPos = oldYieldPos;
-                    _awaitPos = oldAwaitPos;
-                    return ParseArrowExpression(startLoc, ref expressionList, true);
-                }
-
-                CheckExpressionErrors(refDestructuringErrors, true);
-                _yieldPos = oldYieldPos.Line != 0 ? oldYieldPos : _yieldPos;
-                _awaitPos = oldAwaitPos.Line != 0 ? oldAwaitPos : _awaitPos;
-                @base = new AstCall(SourceFile, startLoc, _lastTokEnd, @base, ref expressionList, optional);
+                @base = BuildCallExpression(startLoc, @base, maybeAsyncArrow, optional);
             }
             else if (Type == TokenType.BackQuote)
             {
@@ -491,6 +517,31 @@ public sealed partial class Parser
                 return @base;
             }
         }
+    }
+
+    AstNode BuildCallExpression(Position startLoc, AstNode @base, bool maybeAsyncArrow, bool optional)
+    {
+        var refDestructuringErrors = new DestructuringErrors();
+        var oldYieldPos = _yieldPos;
+        var oldAwaitPos = _awaitPos;
+        _yieldPos = default;
+        _awaitPos = default;
+        var expressionList = new StructList<AstNode>();
+        ParseExpressionList(ref expressionList, TokenType.ParenR, Options.EcmaVersion >= 8, false,
+            refDestructuringErrors);
+        if (maybeAsyncArrow && !CanInsertSemicolon() && Eat(TokenType.Arrow))
+        {
+            CheckPatternErrors(refDestructuringErrors, false);
+            CheckYieldAwaitInDefaultParams();
+            _yieldPos = oldYieldPos;
+            _awaitPos = oldAwaitPos;
+            return ParseArrowExpression(startLoc, ref expressionList, true);
+        }
+
+        CheckExpressionErrors(refDestructuringErrors, true);
+        _yieldPos = oldYieldPos.Line != 0 ? oldYieldPos : _yieldPos;
+        _awaitPos = oldAwaitPos.Line != 0 ? oldAwaitPos : _awaitPos;
+        return new AstCall(SourceFile, startLoc, _lastTokEnd, @base, ref expressionList, optional);
     }
 
     // Parse an atomic expression — either a single token that is an

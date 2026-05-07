@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
 using Njsast.Ast;
 
 namespace Njsast.Reader;
@@ -20,6 +23,180 @@ public sealed partial class Parser
     bool TsIsDeclareStatementStart()
     {
         return IsTypeScript && IsContextual("declare");
+    }
+
+    bool TsIsNamespaceStatementStart()
+    {
+        return IsTypeScript && (IsContextual("namespace") || IsContextual("module"));
+    }
+
+    bool TsTryParseEnumStatements(out List<AstStatement> statements)
+    {
+        statements = null!;
+        var isExport = false;
+        if (Type == TokenType.Export)
+        {
+            var index = End.Index;
+            while (index < _input.Length && char.IsWhiteSpace(_input[index])) index++;
+            if (index + 4 > _input.Length || !_input.AsSpan(index, 4).SequenceEqual("enum".AsSpan()) ||
+                index + 4 < _input.Length && IsIdentifierChar(_input.Get(index + 4)))
+                return false;
+            isExport = true;
+            Next();
+        }
+
+        if (!IsContextual("enum"))
+        {
+            return false;
+        }
+
+        Next();
+        var name = Type == TokenType.Name ? Value?.ToString() : null;
+        if (name == null)
+            Raise(Start, "Unexpected token");
+        var enumName = name!;
+        Next();
+        Expect(TokenType.BraceL);
+        var members = new List<(string Name, string? Value)>();
+        while (Type != TokenType.BraceR && Type != TokenType.Eof)
+        {
+            var memberName = Type switch
+            {
+                TokenType.Name => Value?.ToString(),
+                TokenType.String => Value?.ToString(),
+                TokenType.Num => Value?.ToString(),
+                _ => null
+            };
+            if (memberName == null)
+                Raise(Start, "Unexpected token");
+            Next();
+            string? value = null;
+            if (Eat(TokenType.Eq))
+            {
+                var valueStart = Start.Index;
+                var braceDepth = 0;
+                var parenDepth = 0;
+                var bracketDepth = 0;
+                while (Type != TokenType.Eof)
+                {
+                    if (braceDepth == 0 && parenDepth == 0 && bracketDepth == 0 &&
+                        (Type == TokenType.Comma || Type == TokenType.BraceR))
+                        break;
+
+                    if (Type == TokenType.BraceL) braceDepth++;
+                    else if (Type == TokenType.BraceR)
+                    {
+                        if (braceDepth == 0) break;
+                        braceDepth--;
+                    }
+                    else if (Type == TokenType.ParenL) parenDepth++;
+                    else if (Type == TokenType.ParenR)
+                    {
+                        if (parenDepth == 0) break;
+                        parenDepth--;
+                    }
+                    else if (Type == TokenType.BracketL) bracketDepth++;
+                    else if (Type == TokenType.BracketR)
+                    {
+                        if (bracketDepth == 0) break;
+                        bracketDepth--;
+                    }
+
+                    Next();
+                }
+                value = _input.Substring(valueStart, Start.Index - valueStart).Trim();
+            }
+
+            members.Add((memberName!, value));
+            Eat(TokenType.Comma);
+        }
+
+        Expect(TokenType.BraceR);
+        var parsed = Parser.Parse(TsEmitEnumJavaScript(enumName, isExport, members), new Options { SourceType = SourceType.Module });
+        statements = new List<AstStatement>();
+        foreach (var statement in parsed.Body.AsReadOnlySpan())
+            statements.Add((AstStatement)statement);
+        return true;
+    }
+
+    internal static string TsEmitEnumJavaScript(string name, bool isExport, List<(string Name, string? Value)> members)
+    {
+        var builder = new StringBuilder();
+        if (isExport) builder.Append("export ");
+        builder.Append("var ").Append(name).Append(";\n");
+        builder.Append("(function (").Append(name).Append(") {\n");
+        var nextNumeric = 0d;
+        foreach (var member in members)
+        {
+            var value = member.Value;
+            if (value == null)
+            {
+                value = nextNumeric.ToString(System.Globalization.CultureInfo.InvariantCulture);
+                nextNumeric++;
+                builder.Append(name).Append('[').Append(name).Append("[\"").Append(member.Name).Append("\"] = ").Append(value).Append("] = \"").Append(member.Name).Append("\";\n");
+                continue;
+            }
+
+            if (double.TryParse(value, System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var numeric))
+            {
+                nextNumeric = numeric + 1;
+                builder.Append(name).Append('[').Append(name).Append("[\"").Append(member.Name).Append("\"] = ").Append(value).Append("] = \"").Append(member.Name).Append("\";\n");
+            }
+            else if (TsIsStringLiteral(value))
+            {
+                builder.Append(name).Append("[\"").Append(member.Name).Append("\"] = ").Append(value).Append(";\n");
+            }
+            else
+            {
+                builder.Append(name).Append('[').Append(name).Append("[\"").Append(member.Name).Append("\"] = ").Append(value).Append("] = \"").Append(member.Name).Append("\";\n");
+            }
+        }
+
+        builder.Append("})(").Append(name).Append(" || (").Append(name).Append(" = {}));");
+        return builder.ToString();
+    }
+
+    static bool TsIsStringLiteral(string value)
+    {
+        return value.StartsWith("\"", StringComparison.Ordinal) || value.StartsWith("'", StringComparison.Ordinal);
+    }
+
+    bool TsIsClassFollowing()
+    {
+        var index = End.Index;
+        while (index < _input.Length && char.IsWhiteSpace(_input[index])) index++;
+        return index + 5 <= _input.Length && _input.AsSpan(index, 5).SequenceEqual("class".AsSpan()) &&
+               (index + 5 == _input.Length || !IsIdentifierChar(_input.Get(index + 5)));
+    }
+
+    bool TsIsClassMemberModifier()
+    {
+        return IsTypeScript && Type == TokenType.Name &&
+               (IsContextual("public") || IsContextual("private") || IsContextual("protected") ||
+                IsContextual("readonly") || IsContextual("override") || IsContextual("abstract"));
+    }
+
+    bool TsTrySkipAbstractMember()
+    {
+        if (!IsTypeScript) return false;
+        var index = Start.Index;
+        while (index < _input.Length && char.IsWhiteSpace(_input[index])) index++;
+        if (index >= _input.Length) return false;
+
+        var startOfLine = index;
+        while (index < _input.Length)
+        {
+            var ch = _input[index];
+            if (ch == '{') return false;
+            if (ch == ';')
+            {
+                while (Start.Index <= index && Type != TokenType.Eof) Next();
+                Eat(TokenType.Semi);
+                return true;
+            }
+            index++;
+        }
+        return false;
     }
 
     bool TsTryParseFunctionOverloadStatement(Position startLocation, out AstStatement typeOnlyStatement)
@@ -158,14 +335,17 @@ public sealed partial class Parser
         var brace = 0;
         var paren = 0;
         var bracket = 0;
+        var startedType = false;
         while (Type != TokenType.Eof)
         {
             if (angle == 0 && brace == 0 && paren == 0 && bracket == 0 &&
-                (Type == TokenType.Comma || Type == TokenType.ParenR || Type == TokenType.BraceL ||
+                (Type == TokenType.Comma || Type == TokenType.ParenR ||
+                 (Type == TokenType.BraceL && startedType) ||
                  Type == TokenType.BraceR || Type == TokenType.Eq || Type == TokenType.Semi ||
                  Type == TokenType.Arrow))
                 return;
 
+            startedType = true;
             if (Type == TokenType.Relational && "<".Equals(Value)) angle++;
             else if (Type == TokenType.Relational && ">".Equals(Value) && angle > 0) angle--;
             else if (Type == TokenType.BraceL) brace++;

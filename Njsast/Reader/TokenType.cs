@@ -101,4 +101,5 @@ public enum TokenType
     Typeof,
     Void,
     Delete,
+    Decorator,
 }
