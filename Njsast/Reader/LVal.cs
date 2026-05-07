@@ -134,6 +134,8 @@ public sealed partial class Parser
         Next();
 
         var argument = ParseBindingAtom();
+        TsTrySkipOptionalOrDefiniteBindingMarker();
+        TsTrySkipTypeAnnotation();
         return new AstExpansion(SourceFile, startLoc, _lastTokEnd, argument);
     }
 
@@ -195,6 +197,8 @@ public sealed partial class Parser
     AstNode ParseMaybeDefault(Position startLoc, AstNode? left = null)
     {
         left ??= ParseBindingAtom();
+        TsTrySkipOptionalOrDefiniteBindingMarker();
+        TsTrySkipTypeAnnotation();
         if (!Eat(TokenType.Eq))
             return left;
         var right = ParseMaybeAssign(Start);

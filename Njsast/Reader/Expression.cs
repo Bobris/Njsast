@@ -538,6 +538,8 @@ public sealed partial class Parser
                     return ParseFunction(startLocation, false, false, false, true);
                 if (canBeArrow && !CanInsertSemicolon())
                 {
+                    TsTrySkipOptionalOrDefiniteBindingMarker();
+                    TsTrySkipTypeAnnotation();
                     if (Eat(TokenType.Arrow))
                     {
                         var arg = new StructList<AstNode>();
@@ -681,9 +683,12 @@ public sealed partial class Parser
 
                 exprList.Add(ParseMaybeAssign(Start, false, refDestructuringErrors,
                     (parser, item, position, location) => item));
+                TsTrySkipOptionalOrDefiniteBindingMarker();
+                TsTrySkipTypeAnnotation();
             }
 
             Expect(TokenType.ParenR);
+            TsTrySkipTypeAnnotation();
 
             if (canBeArrow && !CanInsertSemicolon() && Eat(TokenType.Arrow))
             {
@@ -1055,6 +1060,7 @@ public sealed partial class Parser
             Expect(TokenType.ParenL);
             var parameters = new StructList<AstNode>();
             ParseBindingList(ref parameters, TokenType.ParenR, false, Options.EcmaVersion >= 8);
+            TsTrySkipTypeAnnotation();
             MakeSymbolFunArg(ref parameters);
             CheckYieldAwaitInDefaultParams();
             var body = new StructList<AstNode>();

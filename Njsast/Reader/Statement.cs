@@ -97,6 +97,13 @@ public sealed partial class Parser
             kind = VariableKind.Let;
         }
 
+        if (TsIsTypeOnlyStatementStart())
+            return TsParseTypeOnlyStatement(startLocation);
+        if (TsIsDeclareStatementStart())
+            return TsParseDeclareStatement(startLocation);
+        if (starttype == TokenType.Function && TsTryParseFunctionOverloadStatement(startLocation, out var typeOnlyStatement))
+            return typeOnlyStatement;
+
         // Most types of statements are recognized by the keyword they
         // start with. Many are trivial to parse, some require a bit of
         // complexity.
@@ -157,6 +164,11 @@ public sealed partial class Parser
             case TokenType.Export:
             case TokenType.Import:
                 Next();
+                if (IsTypeScript && starttype == TokenType.Import && IsContextual("type"))
+                    return TsParseTypeOnlyStatement(startLocation);
+                if (IsTypeScript && starttype == TokenType.Export &&
+                    (IsContextual("type") || IsContextual("interface")))
+                    return TsParseTypeOnlyStatement(startLocation);
                 if (starttype == TokenType.Import && Type is TokenType.ParenL or TokenType.Dot)
                 {
                     _wasImportKeyword = true;
@@ -173,7 +185,7 @@ public sealed partial class Parser
 
                 return starttype == TokenType.Import
                     ? ParseImport(startLocation)
-                    : (AstStatement)ParseExport(startLocation, exports);
+                    : ParseExport(startLocation, exports);
         }
 
         if (!_wasImportKeyword && IsAsyncFunction() && declaration)
@@ -659,6 +671,8 @@ public sealed partial class Parser
         {
             var startLocation = Start;
             var id = ParseVarId(kind);
+            TsTrySkipOptionalOrDefiniteBindingMarker();
+            TsTrySkipTypeAnnotation();
             AstNode? init = null;
             if (Eat(TokenType.Eq))
             {
@@ -760,8 +774,10 @@ public sealed partial class Parser
         if (isStatement == false && isNullableId == false)
             id = Type == TokenType.Name ? ParseIdent() : null;
 
+        TsTrySkipTypeParameters();
         var parameters = new StructList<AstNode>();
         ParseFunctionParams(ref parameters);
+        TsTrySkipTypeAnnotation();
         MakeSymbolFunArg(ref parameters);
         var body = new StructList<AstNode>();
         var useStrict = false;
@@ -960,7 +976,7 @@ public sealed partial class Parser
     }
 
     // Parses module export declaration.
-    AstExport ParseExport(Position nodeStart, IDictionary<string, bool>? exports)
+    AstStatement ParseExport(Position nodeStart, IDictionary<string, bool>? exports)
     {
         // export * from '...'
         if (Eat(TokenType.Star))
@@ -984,7 +1000,7 @@ public sealed partial class Parser
             var source = ParseExpressionAtom(Start) as AstString;
             var attributes = ParseImportAttributes();
             Semicolon();
-            return new(SourceFile, nodeStart, _lastTokEnd, source, null, ref specifiers, attributes);
+            return new AstExport(SourceFile, nodeStart, _lastTokEnd, source, null, ref specifiers, attributes);
         }
 
         if (Eat(TokenType.Default))
@@ -1010,7 +1026,7 @@ public sealed partial class Parser
                 Semicolon();
             }
 
-            return new(SourceFile, nodeStart, _lastTokEnd, declaration, true);
+            return new AstExport(SourceFile, nodeStart, _lastTokEnd, declaration, true);
         }
         else
         {
@@ -1039,6 +1055,19 @@ public sealed partial class Parser
                 // export { x, y as z } [from '...']
                 declaration = null;
                 ParseExportSpecifiers(ref specifiers, exports);
+                if (specifiers.Count == 0)
+                {
+                    if (EatContextual("from"))
+                    {
+                        if (Type != TokenType.String)
+                            Raise(Start, "Unexpected token");
+                        Next();
+                        _ = ParseImportAttributes();
+                    }
+
+                    Semicolon();
+                    return new AstTypeScriptOnly(SourceFile, nodeStart, _lastTokEnd);
+                }
                 if (EatContextual("from"))
                 {
                     if (Type != TokenType.String)
@@ -1062,7 +1091,7 @@ public sealed partial class Parser
                 Semicolon();
             }
 
-            return new(SourceFile, nodeStart, _lastTokEnd, source, declaration, ref specifiers, attributes);
+            return new AstExport(SourceFile, nodeStart, _lastTokEnd, source, declaration, ref specifiers, attributes);
         }
     }
 
@@ -1144,6 +1173,14 @@ public sealed partial class Parser
             else first = false;
 
             var startLoc = Start;
+            if (IsTypeScript && IsContextual("type"))
+            {
+                Next();
+                _ = ParseIdent(true);
+                if (EatContextual("as"))
+                    _ = ParseIdent(true);
+                continue;
+            }
             var local = ParseIdent(true);
             var exported = EatContextual("as") ? ParseIdent(true) : local;
             CheckExport(exports, exported.Name, exported.Start);
@@ -1222,6 +1259,14 @@ public sealed partial class Parser
             else first = false;
 
             var startLoc = Start;
+            if (IsTypeScript && IsContextual("type"))
+            {
+                Next();
+                _ = ParseIdent(true);
+                if (EatContextual("as"))
+                    _ = ParseIdent();
+                continue;
+            }
             var imported = ParseIdent(true);
             AstSymbol local;
             if (EatContextual("as"))

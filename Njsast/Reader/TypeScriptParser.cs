@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
+using Njsast;
 using Njsast.Ast;
 
 namespace Njsast.Reader;
@@ -18,6 +19,8 @@ public static class TypeScriptParser
     {
         options ??= new Options();
         options.ParseTypeScript = true;
+        if (!NeedsLegacySourceConversion(input, options.ParseJSX))
+            return EraseTypeScriptOnly(Parser.Parse(input, options));
         var javaScript = TypeScriptToJavaScript.Convert(input);
         return Parser.Parse(javaScript, options);
     }
@@ -27,8 +30,35 @@ public static class TypeScriptParser
         options ??= new Options();
         options.ParseTypeScript = true;
         options.ParseJSX = true;
+        if (!NeedsLegacySourceConversion(input, options.ParseJSX))
+            return EraseTypeScriptOnly(Parser.Parse(input, options));
         var javaScript = TypeScriptToJavaScript.Convert(input);
         return Parser.Parse(javaScript, options);
+    }
+
+    static bool NeedsLegacySourceConversion(string input, bool parseJsx)
+    {
+        if (parseJsx) return true;
+        return Regex.IsMatch(input, @"@|(?<![\w$])(?:const\s+)?enum\s+[A-Za-z_$]|\b(?:public|private|protected|readonly|override|abstract|implements)\b|\s+as\s+|\bsatisfies\b|[A-Za-z_$][\w$]*!|\b[A-Za-z_$][\w$]*\s*<[^>\r\n]+>\s*\(",
+            RegexOptions.Multiline);
+    }
+
+    static AstToplevel EraseTypeScriptOnly(AstToplevel ast)
+    {
+        return (AstToplevel)new TypeScriptEraseTransformer().Transform(ast);
+    }
+
+    sealed class TypeScriptEraseTransformer : TreeTransformer
+    {
+        protected override AstNode? Before(AstNode node, bool inList)
+        {
+            return node is AstTypeScriptOnly ? Remove : null;
+        }
+
+        protected override AstNode? After(AstNode node, bool inList)
+        {
+            return null;
+        }
     }
 }
 
@@ -49,6 +79,7 @@ static class TypeScriptToJavaScript
         output = InlineConstEnumReferences(output, constEnums);
         output = RemoveTypeOnlyImportsAndExports(output);
         output = RemoveTypeDeclarations(output);
+        output = RemoveAmbientAndOverloadDeclarations(output);
         output = TypeAlias.Replace(output, "");
         output = Interface.Replace(output, "");
         output = LowerClassDecorators(output);
@@ -282,6 +313,17 @@ static class TypeScriptToJavaScript
         if (open < 0) return SkipTypeAliasDeclaration(input, index);
         var close = FindMatching(input, open, '{', '}');
         return close < 0 ? input.Length : close + 1;
+    }
+
+    static string RemoveAmbientAndOverloadDeclarations(string input)
+    {
+        var output = Regex.Replace(input, @"^\s*declare\s+(?:const|let|var|function)\b[^;]*;\s*", "",
+            RegexOptions.Multiline);
+        output = Regex.Replace(output, @"^\s*declare\s+class\b[^{;]*(?:\{(?:[^{}]|\{[^{}]*\})*\}|;)\s*", "",
+            RegexOptions.Multiline);
+        output = Regex.Replace(output, @"^\s*(?:export\s+)?function\s+[A-Za-z_$][\w$]*\s*(?:<[^>\r\n]+>)?\([^;{}]*\)\s*(?::[^;{}]+)?;\s*",
+            "", RegexOptions.Multiline);
+        return output;
     }
 
     static string CleanupSpecifiers(string specifiers)
