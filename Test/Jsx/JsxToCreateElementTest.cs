@@ -64,7 +64,7 @@ public class JsxToCreateElementTest
 
     static void AssertLowered(string source, string expected, JsxToCreateElementOptions options)
     {
-        var toplevel = new Parser(new Options { EcmaVersion = 2022 }, source).Parse();
+        var toplevel = new Parser(new Options { EcmaVersion = 2022, ParseJSX = true }, source).Parse();
         var transformed = (AstToplevel)new JsxToCreateElementTreeTransformer(options).Transform(toplevel);
         Assert.Equal(expected, transformed.PrintToString(new OutputOptions { Ecma = 2022 }));
     }

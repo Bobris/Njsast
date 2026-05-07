@@ -7,6 +7,8 @@ public sealed partial class Parser
 {
     bool CanStartJsx()
     {
+        if (!Options.ParseJSX)
+            return false;
         if (Type != TokenType.Relational || !"<".Equals(Value))
             return false;
         var next = _input.Get(End.Index);

@@ -41,6 +41,8 @@ public sealed class Options
     public string? SourceFile = null;
     public bool StartInFunction;
     public OnCommentAction? OnComment;
+    public bool ParseTypeScript;
+    public bool ParseJSX;
 
     public static Options GetOptions(Options? options)
     {

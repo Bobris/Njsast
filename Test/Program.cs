@@ -14,6 +14,7 @@ using Test.ConstEval;
 using Test.EsmToCjs;
 using Test.Reader;
 using Test.SourceInfo;
+using Test.TypeScript;
 
 namespace Test;
 
@@ -35,6 +36,20 @@ class Program
             CheckError(parserData.ExpectedNiceJs, outNiceJs, ref errors, "beautified js", file, "nicejs");
             CheckError(parserData.ExpectedNiceJsMap, outNiceJsMap, ref errors, "beautified js map", file,
                 "nicejs.map");
+        }
+
+        foreach (var typeScriptData in new TypeScriptParserTestDataProviderAttribute("Input/TypeScript/Parser")
+                     .GetTypeScriptParserData())
+        {
+            tests++;
+            var file = typeScriptData.Name;
+            if (match != null && !file.Contains(match)) continue;
+            var (outAst, outNiceJs, outMinJs) = TypeScriptParserTest.TypeScriptParserTestCore(typeScriptData);
+            if (typeScriptData.ExpectedAst.Length != 0)
+                CheckError(typeScriptData.ExpectedAst, outAst, ref errors, "typescript AST", file, "txt");
+            CheckError(typeScriptData.ExpectedNiceJs, outNiceJs, ref errors, "typescript beautified js", file,
+                "nicejs");
+            CheckError(typeScriptData.ExpectedMinJs, outMinJs, ref errors, "typescript minified js", file, "minjs");
         }
 
         foreach (var constEvalData in new ConstEvalDataProviderAttribute("Input/ConstEval").GetTypedData())
@@ -256,9 +271,9 @@ class Program
         }
     }
 
-    static void Main()
+    static void Main(string[] args)
     {
-        RunAllTests();
+        RunAllTests(args.Length == 0 ? null : args[0]);
         //Debug();
     }
 }

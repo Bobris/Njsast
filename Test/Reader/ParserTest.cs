@@ -56,7 +56,8 @@ public class ParserTest
                             commentListener.OnComment(block, content, location);
                             comments.Add((block, content, location));
                         },
-                    SourceType = testData.SourceName.StartsWith("module-") ? SourceType.Module : SourceType.Script
+                    SourceType = testData.SourceName.StartsWith("module-") ? SourceType.Module : SourceType.Script,
+                    ParseJSX = testData.SourceName.Contains("jsx", StringComparison.OrdinalIgnoreCase)
                 },
                 testData.Input);
             var toplevel = parser.Parse();
