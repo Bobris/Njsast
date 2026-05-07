@@ -30,7 +30,7 @@ Completed so far:
 - Basic type stripping is implemented for function parameters/returns, variables, arrows, class members, optional/definite markers, generics, `<T>expr` angle-bracket assertions, `as` expressions, `satisfies` expressions, and non-null assertions.
 - Generic call expressions `func<T>(args)` are handled natively.
 - TSX handling is parser-native: generic disambiguation in `CanStartJsx()`, type stripping inside JSX, `as` expressions in JSX containers, typed callbacks, and generic components.
-- String, numeric, exported non-const enum lowering, and conservative `const enum` inlining/lowering are implemented before the parser reaches the legacy fallback.
+- String, numeric, exported non-const enum lowering, and conservative `const enum` inlining/lowering are implemented natively in the parser.
 - Class modifiers (`public`, `private`, `protected`, `readonly`, `override`, `abstract`) are stripped natively; abstract members are removed; `implements` clauses are stripped; fields with TS modifiers are entirely removed.
 - Constructor parameter property assignment injection is implemented natively in the parser.
 - Namespace/module declarations raise a clear error: "TypeScript namespace lowering is not implemented".
@@ -41,16 +41,16 @@ Completed so far:
 
 Verification last run:
 
-- `dotnet test Test/Test.csproj --no-restore --filter FullyQualifiedName~TypeScriptParserTest` passed with 24 TypeScript fixtures.
-- `dotnet test Njsast.sln --no-restore` passed with 995 tests.
-- `dotnet run --project Test.csproj --no-restore` passed with `Total 0 differences in 936 tests`.
+- `rtk dotnet test Test/Test.csproj --no-restore --filter FullyQualifiedName~TypeScriptParserTest` passed with 28 TypeScript tests.
+- `rtk dotnet test Njsast.sln --no-restore` passed with 999 tests.
+- `rtk dotnet run --project Test.csproj --no-restore` passed with `Total 0 differences in 937 tests`.
 
 Remaining near-term gaps:
 
-- TypeScript parser tests now emit `.nicejs.map`/`.minjs.map` outputs with opt-in fixture expectations; `type-annotations` pins initial source map coverage for stripped type spans.
+- None for the parser-native migration tracked in this plan. Future hardening remains useful: real `namespace Foo {}` lowering, more TypeScript source map fixtures, and a bbcore compatibility pass.
 
 Files changed in this implementation session:
-- `Njsast/Reader/TypeScript.cs` — namespace detection, `TsIsClassFollowing()`, `TsIsClassMemberModifier()`, `TsTrySkipAbstractMember()`, fixed `TsSkipType()` for object type literals, parser-native enum emit helper
+- `Njsast/Reader/TypeScript.cs` — namespace detection, `TsIsClassFollowing()`, `TsIsClassMemberModifier()`, `TsTrySkipAbstractMember()`, fixed `TsSkipType()` for object type literals, parser-native enum emit helper, parser-native `const enum` inlining/fallback lowering
 - `Njsast/Reader/Statement.cs` — namespace rejection, `abstract class`/`export abstract class` parsing, `implements` clause skipping, class member modifier stripping, abstract member removal, TS-modifier field removal, catch binding type annotation, class field `!`/`:type` markers, decorator interception in `ParseTopLevel`, member/parameter decorator collection, top-level enum interception
 - `Njsast/Reader/Expression.cs` — `as`/`satisfies`/`!`/generic call/`<Type>expr` native handling in `ParseSubscripts()`, `ParseMaybeConditional()`, `ParseMaybeUnary()`; `BuildCallExpression()` helper
 - `Njsast/Reader/LVal.cs` — constructor parameter property modifier stripping and parameter-property collection for native assignment injection
@@ -58,7 +58,7 @@ Files changed in this implementation session:
 - `Njsast/Reader/TokenType.cs` — added `Decorator` token type
 - `Njsast/Reader/TokenInformation.cs` — added `Decorator` token info
 - `Njsast/Reader/Tokenise.cs` — added `@` (case 64) tokenizer support
-- `Njsast/Reader/TypeScriptParser.cs` — removed parser-path use of the legacy source converter fallback; added focused `const enum` pre-lowering/inlining
+- `Njsast/Reader/TypeScriptParser.cs` — removed parser-path use of the legacy source converter fallback and deleted the dead regex/source converter
 - `Njsast/Reader/TypeScriptDecorators.cs` — NEW: class/member/parameter decorator parsing and AST lowering
 - `Test/Input/TypeScript/Parser/` — added `catch-binding-types`, `destructuring-types`, `type-predicates` fixtures with expected outputs
 - `Test/Input/TypeScript/Parser/type-annotations.*.map` — added initial TypeScript source map expectations
@@ -803,7 +803,7 @@ Expected: PASS for all TSX fixtures and PASS for existing `Test/Jsx` tests.
 - Modify: `Njsast/Reader/Expression.cs`
 - Add fixtures: `decorator-class.ts`, `decorator-method.ts`, `decorator-property.ts`, `decorator-parameter.ts`
 
-- [ ] **Step 1: Add class decorator fixture**
+- [x] **Step 1: Add class decorator fixture**
 
 ```typescript
 function sealed(target: Function) {}
@@ -822,7 +822,7 @@ Service = __decorate([
 ], Service);
 ```
 
-- [ ] **Step 2: Add method decorator fixture**
+- [x] **Step 2: Add method decorator fixture**
 
 ```typescript
 function logged(target: unknown, key: string, descriptor: PropertyDescriptor) {}
@@ -844,7 +844,7 @@ __decorate([
 ], Service.prototype, "run", null);
 ```
 
-- [ ] **Step 3: Add property decorator fixture**
+- [x] **Step 3: Add property decorator fixture**
 
 ```typescript
 function field(target: unknown, key: string) {}
@@ -865,7 +865,7 @@ __decorate([
 ], Service.prototype, "name", void 0);
 ```
 
-- [ ] **Step 4: Add parameter decorator fixture**
+- [x] **Step 4: Add parameter decorator fixture**
 
 ```typescript
 function param(target: unknown, key: string, index: number) {}
@@ -886,25 +886,25 @@ __decorate([
 ], Service.prototype, "run", null);
 ```
 
-- [ ] **Step 5: Implement decorator collection**
+- [x] **Step 5: Implement decorator collection**
 
 In TypeScript mode, collect `@expression` lists before class declarations, class methods, class fields, accessors, and constructor/method parameters. Store them as parse-local runtime expressions. Do not add public AST node types for decorators. Match the `bbcore` transpiler baseline for decorator semantics: TypeScript `transpileModule` with `experimentalDecorators = true`, `noEmitHelpers = true`, and `target = Es2019` by default during current builds. Do not copy TypeScript's CommonJS module conversion; preserve ESM and let the existing ESM-to-CJS transformer handle module lowering later.
 
-- [ ] **Step 6: Emit calls to global tslib helpers**
+- [x] **Step 6: Emit calls to global tslib helpers**
 
 Assume `__decorate`, `__param`, and any later required decorator helpers already exist in global scope. The TypeScript parser must emit calls to those helpers, but must not inject helper definitions, import `tslib`, or modify `Njsast/Bundler/JsHeaders/tslib.js`. This is required because `bbcore` uses `noEmitHelpers: true`.
 
-- [ ] **Step 7: Implement legacy emit order**
+- [x] **Step 7: Implement legacy emit order**
 
 Emit class member decorator calls after the class declaration. Emit class decorator assignment after member decorators. For static members use `ClassName`; for instance members use `ClassName.prototype`. Use `null` descriptor for methods/accessors and `void 0` for fields, matching TypeScript legacy output.
 
-- [ ] **Step 8: Run decorator fixtures**
+- [x] **Step 8: Run decorator fixtures**
 
 Run: `rtk dotnet test Test/Test.csproj --filter "FullyQualifiedName~TypeScriptParserTest&DisplayName~decorator"`
 
 Expected: PASS.
 
-- [ ] **Step 9: Add explicit unsupported-decorator tests**
+- [x] **Step 9: Add explicit unsupported-decorator tests**
 
 Add fixtures that should fail with a clear syntax error for Stage 3 decorators if the source uses syntax unsupported by old TypeScript decorators. This prevents silently producing incorrect output for a different decorator proposal.
 
@@ -914,15 +914,15 @@ Add fixtures that should fail with a clear syntax error for Stage 3 decorators i
 - Modify only if namespace parsing would otherwise be blocked by earlier grammar choices.
 - Add future fixtures under `Test/Input/TypeScript/Parser/namespace-*.ts` when namespace lowering is implemented.
 
-- [ ] **Step 1: Reserve namespace grammar intentionally**
+- [x] **Step 1: Reserve namespace grammar intentionally**
 
 Do not treat `namespace` or `module Foo {}` as ordinary JavaScript identifiers in statement-start TypeScript mode. If encountered before namespace support exists, raise a clear syntax error such as `TypeScript namespace lowering is not implemented`.
 
-- [ ] **Step 2: Avoid AST design dead ends**
+- [x] **Step 2: Avoid AST design dead ends**
 
 Keep enum and decorator lowering helpers independent from declaration parsing so a future namespace implementation can reuse them for nested runtime declarations.
 
-- [ ] **Step 3: Document low priority**
+- [x] **Step 3: Document low priority**
 
 Namespaces are runtime TypeScript and should eventually lower to TypeScript-compatible IIFEs, but they are lower priority than type stripping, type imports, enums, decorators, and TSX.
 
@@ -933,15 +933,15 @@ Namespaces are runtime TypeScript and should eventually lower to TypeScript-comp
 - Modify: `Njsast/Reader/TypeScript.cs`
 - Add `.nicejs.map` and `.minjs.map` expectations
 
-- [ ] **Step 1: Extend test core to emit source maps**
+- [x] **Step 1: Extend test core to emit source maps**
 
 Mirror `ParserTest.ParseTestCore` and include `.nicejs.map` and `.minjs.map` fields in `TypeScriptParserTestData`.
 
-- [ ] **Step 2: Verify stripped spans**
+- [x] **Step 2: Verify stripped spans**
 
 Use the original TypeScript `SourceFile` and preserve node locations for runtime tokens. Type-only tokens should not appear in output mappings.
 
-- [ ] **Step 3: Run full parser tests**
+- [x] **Step 3: Run full parser tests**
 
 Run: `rtk dotnet test Test/Test.csproj --filter FullyQualifiedName~ParserTest`
 
@@ -956,19 +956,19 @@ Expected: PASS.
 **Files:**
 - Modify only files needed by failures found in this task.
 
-- [ ] **Step 1: Run all unit tests**
+- [x] **Step 1: Run all unit tests**
 
 Run: `rtk dotnet test Njsast.sln`
 
 Expected: PASS.
 
-- [ ] **Step 2: Run command-line test runner**
+- [x] **Step 2: Run command-line test runner**
 
 Run: `rtk dotnet run --project Test/Test.csproj`
 
 Expected: `Total 0 differences in ... tests`.
 
-- [ ] **Step 3: Add targeted fixtures for every fixed bug**
+- [x] **Step 3: Add targeted fixtures for every fixed bug**
 
 For every TypeScript parser bug found after this point, add a minimal `.ts` or `.tsx` fixture before changing parser code.
 

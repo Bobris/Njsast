@@ -66,6 +66,9 @@ public sealed partial class Parser
             }
         }
 
+        if (IsTypeScript && _tsConstEnums is { Count: > 0 })
+            new TypeScriptConstEnumInlineTransformer(SourceFile, _tsConstEnums).Transform(node);
+
         Next();
         node.End = _lastTokEnd;
     }

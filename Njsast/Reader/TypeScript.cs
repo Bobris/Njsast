@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
+using Njsast;
 using Njsast.Ast;
 
 namespace Njsast.Reader;
@@ -39,14 +42,20 @@ public sealed partial class Parser
     {
         statements = null!;
         var isExport = false;
+        var isConst = false;
         if (Type == TokenType.Export)
         {
-            var index = End.Index;
-            while (index < _input.Length && char.IsWhiteSpace(_input[index])) index++;
-            if (index + 4 > _input.Length || !_input.AsSpan(index, 4).SequenceEqual("enum".AsSpan()) ||
-                index + 4 < _input.Length && IsIdentifierChar(_input.Get(index + 4)))
+            if (!TsExportStartsEnum(out isConst))
                 return false;
             isExport = true;
+            Next();
+        }
+
+        if (Type == TokenType.Const)
+        {
+            if (!TsTokenFollowedByEnum())
+                return false;
+            isConst = true;
             Next();
         }
 
@@ -117,11 +126,100 @@ public sealed partial class Parser
         }
 
         Expect(TokenType.BraceR);
+        if (isConst && TsTryEvaluateConstEnumMembers(members, out var values))
+        {
+            _tsConstEnums ??= new Dictionary<string, Dictionary<string, string>>(StringComparer.Ordinal);
+            _tsConstEnums[enumName] = values;
+            statements = new List<AstStatement>();
+            return true;
+        }
+
         var parsed = Parser.Parse(TsEmitEnumJavaScript(enumName, isExport, members), new Options { SourceType = SourceType.Module });
         statements = new List<AstStatement>();
         foreach (var statement in parsed.Body.AsReadOnlySpan())
             statements.Add((AstStatement)statement);
         return true;
+    }
+
+    bool TsExportStartsEnum(out bool isConst)
+    {
+        isConst = false;
+        var index = End.Index;
+        while (index < _input.Length && char.IsWhiteSpace(_input[index])) index++;
+        if (TsTextStartsKeyword(index, "enum")) return true;
+        if (!TsTextStartsKeyword(index, "const")) return false;
+        index += "const".Length;
+        while (index < _input.Length && char.IsWhiteSpace(_input[index])) index++;
+        if (!TsTextStartsKeyword(index, "enum")) return false;
+        isConst = true;
+        return true;
+    }
+
+    bool TsTokenFollowedByEnum()
+    {
+        var index = End.Index;
+        while (index < _input.Length && char.IsWhiteSpace(_input[index])) index++;
+        return TsTextStartsKeyword(index, "enum");
+    }
+
+    bool TsTextStartsKeyword(int index, string keyword)
+    {
+        return index + keyword.Length <= _input.Length &&
+               _input.AsSpan(index, keyword.Length).SequenceEqual(keyword.AsSpan()) &&
+               (index + keyword.Length == _input.Length || !IsIdentifierChar(_input.Get(index + keyword.Length)));
+    }
+
+    static bool TsTryEvaluateConstEnumMembers(List<(string Name, string? Value)> members,
+        out Dictionary<string, string> values)
+    {
+        values = new Dictionary<string, string>(StringComparer.Ordinal);
+        double next = 0;
+        foreach (var member in members)
+        {
+            if (member.Value == null)
+            {
+                values[member.Name] = next.ToString(CultureInfo.InvariantCulture);
+                next++;
+                continue;
+            }
+
+            var expression = member.Value;
+            foreach (var pair in values)
+                expression = Regex.Replace(expression, $@"\b{Regex.Escape(pair.Key)}\b", pair.Value);
+            if (TsIsStringLiteral(expression))
+            {
+                values[member.Name] = expression;
+                continue;
+            }
+
+            if (!TsTryEvaluateNumericExpression(expression, out var numeric))
+                return false;
+            values[member.Name] = numeric.ToString(CultureInfo.InvariantCulture);
+            next = numeric + 1;
+        }
+
+        return true;
+    }
+
+    static bool TsTryEvaluateNumericExpression(string expression, out double value)
+    {
+        value = 0;
+        var parts = expression.Split('|', StringSplitOptions.TrimEntries);
+        if (parts.Length > 1)
+        {
+            var aggregate = 0;
+            foreach (var part in parts)
+            {
+                if (!int.TryParse(part, NumberStyles.Integer, CultureInfo.InvariantCulture, out var number))
+                    return false;
+                aggregate |= number;
+            }
+
+            value = aggregate;
+            return true;
+        }
+
+        return double.TryParse(expression, NumberStyles.Float, CultureInfo.InvariantCulture, out value);
     }
 
     internal static string TsEmitEnumJavaScript(string name, bool isExport, List<(string Name, string? Value)> members)
@@ -163,7 +261,40 @@ public sealed partial class Parser
 
     static bool TsIsStringLiteral(string value)
     {
+        value = value.TrimStart();
         return value.StartsWith("\"", StringComparison.Ordinal) || value.StartsWith("'", StringComparison.Ordinal);
+    }
+
+    sealed class TypeScriptConstEnumInlineTransformer : TreeTransformer
+    {
+        readonly string? _sourceFile;
+        readonly Dictionary<string, Dictionary<string, string>> _constEnums;
+
+        public TypeScriptConstEnumInlineTransformer(string? sourceFile,
+            Dictionary<string, Dictionary<string, string>> constEnums)
+        {
+            _sourceFile = sourceFile;
+            _constEnums = constEnums;
+        }
+
+        protected override AstNode? Before(AstNode node, bool inList)
+        {
+            if (node is not AstDot { Expression: AstSymbolRef enumRef, Property: string memberName } dot)
+                return null;
+            if (!_constEnums.TryGetValue(enumRef.Name, out var members) ||
+                !members.TryGetValue(memberName, out var value))
+                return null;
+            if (double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out var number))
+                return new AstNumber(_sourceFile, dot.Start, dot.End, number, value);
+            if (TsIsStringLiteral(value))
+                return new AstString(_sourceFile, dot.Start, dot.End, value.Trim()[1..^1]);
+            return null;
+        }
+
+        protected override AstNode? After(AstNode node, bool inList)
+        {
+            return null;
+        }
     }
 
     bool TsIsClassFollowing()
