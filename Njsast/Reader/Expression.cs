@@ -1086,7 +1086,8 @@ public sealed partial class Parser
     }
 
     // Parse object or class method.
-    AstFunction ParseMethod(bool isGenerator, bool isAsync = false, List<AstSymbol>? tsParameterProperties = null)
+    AstFunction ParseMethod(bool isGenerator, bool isAsync = false, List<AstSymbol>? tsParameterProperties = null,
+        List<(int Index, AstNode Decorator)>? tsParameterDecorators = null)
     {
         var startLoc = Start;
         var oldInGen = _inGenerator;
@@ -1111,7 +1112,7 @@ public sealed partial class Parser
             Expect(TokenType.ParenL);
             var parameters = new StructList<AstNode>();
             ParseBindingList(ref parameters, TokenType.ParenR, false, Options.EcmaVersion >= 8,
-                tsParameterProperties);
+                tsParameterProperties, tsParameterDecorators);
             TsTrySkipTypeAnnotation();
             MakeSymbolFunArg(ref parameters);
             CheckYieldAwaitInDefaultParams();

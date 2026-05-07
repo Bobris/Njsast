@@ -22,7 +22,7 @@ Completed so far:
 
 - TypeScript fixture harness is active in xUnit and the command-line fixture runner.
 - `Options.ParseTypeScript` and `Options.ParseJSX` exist; JSX parsing is gated by `ParseJSX`; `.tsx` fixtures set both flags.
-- Parser-native TypeScript erasure has been implemented. The legacy source converter is now only a fallback for member-level decorators.
+- Parser-native TypeScript erasure has been implemented. The TypeScript parser path no longer uses the legacy source converter fallback.
 - A temporary `AstTypeScriptOnly` marker plus erase transformer removes parser-skipped type-only statements before the public JavaScript AST is returned.
 - `FunctionalTest` has been removed from the solution because it was too slow for this iteration loop.
 - Type-only imports/exports are removed, and mixed import/export specifiers preserve runtime ESM specifiers.
@@ -35,7 +35,9 @@ Completed so far:
 - Constructor parameter property assignment injection is implemented natively in the parser.
 - Namespace/module declarations raise a clear error: "TypeScript namespace lowering is not implemented".
 - Type annotations on catch bindings, destructuring patterns, and type predicates are stripped natively.
-- Legacy TypeScript decorator lowering is implemented via the legacy fallback for class, method, property, and parameter decorators, emitting global `__decorate`/`__param` calls without helper definitions.
+- Legacy TypeScript decorator lowering is implemented natively for class, method, property, and parameter decorators, emitting global `__decorate`/`__param` calls without helper definitions.
+- Unsupported Stage 3 accessor decorators are rejected with a clear syntax error instead of being silently mis-lowered as legacy decorators.
+- Unsupported TypeScript namespace declarations are covered by negative fixtures while namespace lowering remains deferred; `module Foo {}` is rejected with the TypeScript 7.0 hard-error message.
 
 Verification last run:
 
@@ -45,22 +47,22 @@ Verification last run:
 
 Remaining near-term gaps:
 
-- Replace source-conversion fallback for member-level decorators (method/property/parameter) with parser-native lowering in `TypeScriptDecorators.cs`.
-- Add explicit unsupported/new decorator syntax fixtures.
-- Source map expectations for TypeScript fixtures are still deferred.
+- TypeScript parser tests now emit `.nicejs.map`/`.minjs.map` outputs with opt-in fixture expectations; `type-annotations` pins initial source map coverage for stripped type spans.
 
 Files changed in this implementation session:
 - `Njsast/Reader/TypeScript.cs` — namespace detection, `TsIsClassFollowing()`, `TsIsClassMemberModifier()`, `TsTrySkipAbstractMember()`, fixed `TsSkipType()` for object type literals, parser-native enum emit helper
-- `Njsast/Reader/Statement.cs` — namespace rejection, `abstract class`/`export abstract class` parsing, `implements` clause skipping, class member modifier stripping, abstract member removal, TS-modifier field removal, catch binding type annotation, class field `!`/`:type` markers, decorator interception in `ParseTopLevel`, top-level enum interception
+- `Njsast/Reader/Statement.cs` — namespace rejection, `abstract class`/`export abstract class` parsing, `implements` clause skipping, class member modifier stripping, abstract member removal, TS-modifier field removal, catch binding type annotation, class field `!`/`:type` markers, decorator interception in `ParseTopLevel`, member/parameter decorator collection, top-level enum interception
 - `Njsast/Reader/Expression.cs` — `as`/`satisfies`/`!`/generic call/`<Type>expr` native handling in `ParseSubscripts()`, `ParseMaybeConditional()`, `ParseMaybeUnary()`; `BuildCallExpression()` helper
 - `Njsast/Reader/LVal.cs` — constructor parameter property modifier stripping and parameter-property collection for native assignment injection
 - `Njsast/Reader/Jsx.cs` — `TsLooksLikeGenericOrTypeAssertion()` for TSX disambiguation
 - `Njsast/Reader/TokenType.cs` — added `Decorator` token type
 - `Njsast/Reader/TokenInformation.cs` — added `Decorator` token info
 - `Njsast/Reader/Tokenise.cs` — added `@` (case 64) tokenizer support
-- `Njsast/Reader/TypeScriptParser.cs` — narrowed `NeedsLegacySourceConversion()` to only trigger for parameter properties and member-level decorators; added focused `const enum` pre-lowering/inlining
-- `Njsast/Reader/TypeScriptDecorators.cs` — NEW: class-level decorator parsing and AST lowering
+- `Njsast/Reader/TypeScriptParser.cs` — removed parser-path use of the legacy source converter fallback; added focused `const enum` pre-lowering/inlining
+- `Njsast/Reader/TypeScriptDecorators.cs` — NEW: class/member/parameter decorator parsing and AST lowering
 - `Test/Input/TypeScript/Parser/` — added `catch-binding-types`, `destructuring-types`, `type-predicates` fixtures with expected outputs
+- `Test/Input/TypeScript/Parser/type-annotations.*.map` — added initial TypeScript source map expectations
+- `Test/Input/TypeScript/UnsupportedNamespaces/` — added negative namespace/module fixtures for deferred namespace lowering and TypeScript 7.0 `module` rejection
 
 ---
 

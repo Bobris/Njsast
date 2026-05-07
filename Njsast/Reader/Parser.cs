@@ -39,6 +39,7 @@ public sealed partial class Parser
     bool _canBeDirective;
     bool _wasImportKeyword;
     bool _invalidTemplateEscape;
+    List<AstStatement>? _tsPendingClassDecoratorStatements;
 
     public static AstToplevel Parse(string input, Options? options = null)
     {

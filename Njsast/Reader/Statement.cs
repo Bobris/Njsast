@@ -58,6 +58,12 @@ public sealed partial class Parser
             }
 
             node.Body.Add(stmt);
+            if (_tsPendingClassDecoratorStatements != null)
+            {
+                foreach (var decoratorStatement in _tsPendingClassDecoratorStatements)
+                    node.Body.Add(decoratorStatement);
+                _tsPendingClassDecoratorStatements = null;
+            }
         }
 
         Next();
@@ -124,6 +130,8 @@ public sealed partial class Parser
             return TsParseDeclareStatement(startLocation);
         if (starttype == TokenType.Function && TsTryParseFunctionOverloadStatement(startLocation, out var typeOnlyStatement))
             return typeOnlyStatement;
+        if (TsIsModuleNamespaceStatementStart())
+            Raise(startLocation, "The 'module' keyword cannot be used in namespace declarations");
         if (TsIsNamespaceStatementStart())
             Raise(startLocation, "TypeScript namespace lowering is not implemented");
         if (IsTypeScript && IsContextual("abstract"))
@@ -865,10 +873,15 @@ public sealed partial class Parser
         }
         var hadConstructor = false;
         var body = new StructList<AstNode>();
+        var memberDecoratorStatements = new List<AstStatement>();
         Expect(TokenType.BraceL);
         while (!Eat(TokenType.BraceR))
         {
             if (Eat(TokenType.Semi)) continue;
+
+            List<AstNode>? memberDecorators = null;
+            if (IsTypeScript && Type == TokenType.Decorator)
+                memberDecorators = TsParseDecorators();
 
             var hasTsModifiers = false;
             var isAbstractMember = false;
@@ -885,6 +898,9 @@ public sealed partial class Parser
                 Eat(TokenType.Semi);
                 continue;
             }
+
+            if (memberDecorators is { Count: > 0 } && IsContextual("accessor"))
+                Raise(Start, "Stage 3 decorators are not supported; use legacy TypeScript decorator syntax");
 
             var methodStart = Start;
             var isGenerator = Eat(TokenType.Star);
@@ -955,6 +971,14 @@ public sealed partial class Parser
             {
                 TsTrySkipOptionalOrDefiniteBindingMarker();
                 TsTrySkipTypeAnnotation();
+                if (memberDecorators is { Count: > 0 })
+                {
+                    memberDecoratorStatements.Add(TsBuildMemberDecorateStatement(memberDecorators, id!.Name, key,
+                        @static, true));
+                    Eat(TokenType.Semi);
+                    continue;
+                }
+
                 if (hasTsModifiers)
                 {
                     Eat(TokenType.Semi);
@@ -976,8 +1000,11 @@ public sealed partial class Parser
             List<AstSymbol>? tsParameterProperties = null;
             if (kind == PropertyKind.Constructor && IsTypeScript)
                 tsParameterProperties = new List<AstSymbol>();
+            List<(int Index, AstNode Decorator)>? tsParameterDecorators = null;
+            if (IsTypeScript)
+                tsParameterDecorators = new List<(int Index, AstNode Decorator)>();
 
-            var methodValue = ParseMethod(isGenerator, isAsync, tsParameterProperties);
+            var methodValue = ParseMethod(isGenerator, isAsync, tsParameterProperties, tsParameterDecorators);
             if (tsParameterProperties is { Count: > 0 })
             {
                 var newBody = new StructList<AstNode>();
@@ -1024,6 +1051,19 @@ public sealed partial class Parser
             {
                 throw new InvalidOperationException("parseClass unknown kind " + kind);
             }
+
+            if (memberDecorators is { Count: > 0 })
+                memberDecoratorStatements.Add(TsBuildMemberDecorateStatement(memberDecorators, id!.Name, key, @static,
+                    false));
+            if (tsParameterDecorators is { Count: > 0 })
+                memberDecoratorStatements.Add(TsBuildParameterDecorateStatement(tsParameterDecorators, id!.Name, key,
+                    @static));
+        }
+
+        if (memberDecoratorStatements.Count > 0)
+        {
+            _tsPendingClassDecoratorStatements ??= new List<AstStatement>();
+            _tsPendingClassDecoratorStatements.AddRange(memberDecoratorStatements);
         }
 
         if ((isStatement || isNullableId) && id != null)

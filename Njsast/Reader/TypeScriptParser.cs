@@ -40,15 +40,6 @@ public static class TypeScriptParser
 
     static bool NeedsLegacySourceConversion(string input, bool parseJsx)
     {
-        var decoratorPositions = Regex.Matches(input, @"@");
-        foreach (Match m in decoratorPositions)
-        {
-            var remaining = input.AsSpan(m.Index);
-            var isClassDecorator = Regex.IsMatch(remaining.ToString(),
-                @"^@[^\n]*\n[ \t]*(?:export\s+)?(?:abstract\s+)?class\b");
-            if (!isClassDecorator)
-                return true;
-        }
         return false;
     }
 

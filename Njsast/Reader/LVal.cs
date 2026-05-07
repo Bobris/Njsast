@@ -163,7 +163,8 @@ public sealed partial class Parser
     }
 
     void ParseBindingList(ref StructList<AstNode> elts, TokenType close, bool allowEmpty, bool allowTrailingComma,
-        List<AstSymbol>? tsParameterProperties = null)
+        List<AstSymbol>? tsParameterProperties = null,
+        List<(int Index, AstNode Decorator)>? tsParameterDecorators = null)
     {
         var first = true;
         while (!Eat(close))
@@ -188,6 +189,13 @@ public sealed partial class Parser
             }
             else
             {
+                if (IsTypeScript && tsParameterDecorators != null && Type == TokenType.Decorator)
+                {
+                    var parameterDecorators = TsParseDecorators();
+                    foreach (var decorator in parameterDecorators)
+                        tsParameterDecorators.Add(((int)elts.Count, decorator));
+                }
+
                 var isParameterProperty = TsTrySkipParameterPropertyModifiers();
                 var elem = ParseMaybeDefault(Start);
                 if (isParameterProperty && tsParameterProperties != null)

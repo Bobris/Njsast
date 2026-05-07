@@ -12,7 +12,9 @@ public sealed class TypeScriptParserTestDataProviderAttribute : DataAttribute
     static readonly string[] InputFileExtensions = [".ts", ".tsx"];
     const string ExpectedAstFileExtension = ".txt";
     const string ExpectedNiceJsFileExtension = ".nicejs";
+    const string ExpectedNiceJsMapFileExtension = ".nicejs.map";
     const string ExpectedMinJsFileExtension = ".minjs";
+    const string ExpectedMinJsMapFileExtension = ".minjs.map";
 
     readonly string _testFileDirectory;
     readonly string _searchPattern;
@@ -39,7 +41,9 @@ public sealed class TypeScriptParserTestDataProviderAttribute : DataAttribute
         {
             var expectedAstFile = PathUtils.ChangeExtension(inputFile, ExpectedAstFileExtension);
             var expectedNiceJsFile = PathUtils.ChangeExtension(inputFile, ExpectedNiceJsFileExtension);
+            var expectedNiceJsMapFile = PathUtils.ChangeExtension(inputFile, ExpectedNiceJsMapFileExtension);
             var expectedMinJsFile = PathUtils.ChangeExtension(inputFile, ExpectedMinJsFileExtension);
+            var expectedMinJsMapFile = PathUtils.ChangeExtension(inputFile, ExpectedMinJsMapFileExtension);
 
             return new TypeScriptParserTestData
             {
@@ -48,7 +52,9 @@ public sealed class TypeScriptParserTestDataProviderAttribute : DataAttribute
                 Input = File.ReadAllText(inputFile),
                 ExpectedAst = File.Exists(expectedAstFile) ? File.ReadAllText(expectedAstFile) : "",
                 ExpectedNiceJs = File.Exists(expectedNiceJsFile) ? File.ReadAllText(expectedNiceJsFile) : "",
-                ExpectedMinJs = File.Exists(expectedMinJsFile) ? File.ReadAllText(expectedMinJsFile) : ""
+                ExpectedNiceJsMap = File.Exists(expectedNiceJsMapFile) ? File.ReadAllText(expectedNiceJsMapFile).TrimEnd('\r', '\n') : null,
+                ExpectedMinJs = File.Exists(expectedMinJsFile) ? File.ReadAllText(expectedMinJsFile) : "",
+                ExpectedMinJsMap = File.Exists(expectedMinJsMapFile) ? File.ReadAllText(expectedMinJsMapFile).TrimEnd('\r', '\n') : null
             };
         });
     }

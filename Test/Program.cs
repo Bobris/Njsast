@@ -44,12 +44,19 @@ class Program
             tests++;
             var file = typeScriptData.Name;
             if (match != null && !file.Contains(match)) continue;
-            var (outAst, outNiceJs, outMinJs) = TypeScriptParserTest.TypeScriptParserTestCore(typeScriptData);
+            var (outAst, outNiceJs, outNiceJsMap, outMinJs, outMinJsMap) =
+                TypeScriptParserTest.TypeScriptParserTestCore(typeScriptData);
             if (typeScriptData.ExpectedAst.Length != 0)
                 CheckError(typeScriptData.ExpectedAst, outAst, ref errors, "typescript AST", file, "txt");
             CheckError(typeScriptData.ExpectedNiceJs, outNiceJs, ref errors, "typescript beautified js", file,
                 "nicejs");
+            if (typeScriptData.ExpectedNiceJsMap != null)
+                CheckError(typeScriptData.ExpectedNiceJsMap, outNiceJsMap, ref errors, "typescript beautified js map",
+                    file, "nicejs.map");
             CheckError(typeScriptData.ExpectedMinJs, outMinJs, ref errors, "typescript minified js", file, "minjs");
+            if (typeScriptData.ExpectedMinJsMap != null)
+                CheckError(typeScriptData.ExpectedMinJsMap, outMinJsMap, ref errors, "typescript minified js map", file,
+                    "minjs.map");
         }
 
         foreach (var constEvalData in new ConstEvalDataProviderAttribute("Input/ConstEval").GetTypedData())

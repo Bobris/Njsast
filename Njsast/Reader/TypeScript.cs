@@ -27,7 +27,12 @@ public sealed partial class Parser
 
     bool TsIsNamespaceStatementStart()
     {
-        return IsTypeScript && (IsContextual("namespace") || IsContextual("module"));
+        return IsTypeScript && IsContextual("namespace");
+    }
+
+    bool TsIsModuleNamespaceStatementStart()
+    {
+        return IsTypeScript && IsContextual("module");
     }
 
     bool TsTryParseEnumStatements(out List<AstStatement> statements)

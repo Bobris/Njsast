@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 using Njsast.AstDump;
 using Njsast.Bobril;
 using Njsast.Output;
@@ -15,15 +16,61 @@ public sealed class TypeScriptParserTest
     [TypeScriptParserTestDataProvider("Input/TypeScript/Parser")]
     public void TypeScriptParserShouldProduceExpectedNjsastOutput(TypeScriptParserTestData testData)
     {
-        var (outAst, outNiceJs, outMinJs) = TypeScriptParserTestCore(testData);
+        var (outAst, outNiceJs, outNiceJsMap, outMinJs, outMinJsMap) = TypeScriptParserTestCore(testData);
 
         if (testData.ExpectedAst.Length != 0)
             Assert.Equal(testData.ExpectedAst, outAst);
         Assert.Equal(testData.ExpectedNiceJs, outNiceJs);
+        if (testData.ExpectedNiceJsMap != null)
+            Assert.Equal(testData.ExpectedNiceJsMap, outNiceJsMap);
         Assert.Equal(testData.ExpectedMinJs, outMinJs);
+        if (testData.ExpectedMinJsMap != null)
+            Assert.Equal(testData.ExpectedMinJsMap, outMinJsMap);
     }
 
-    public static (string outAst, string outNiceJs, string outMinJs) TypeScriptParserTestCore(
+    [Fact]
+    public void TypeScriptParserShouldRejectUnsupportedStage3AccessorDecorators()
+    {
+        var input = File.ReadAllText("Input/TypeScript/UnsupportedDecorators/stage3-accessor.ts");
+
+        var exception = Assert.Throws<SyntaxError>(() => TypeScriptParser.Parse(input, new Options
+        {
+            SourceFile = "stage3-accessor.ts",
+            SourceType = SourceType.Module
+        }));
+
+        Assert.Contains("Stage 3 decorators are not supported", exception.Message);
+    }
+
+    [Fact]
+    public void TypeScriptParserShouldRejectNamespacesUntilLoweringExists()
+    {
+        var input = File.ReadAllText("Input/TypeScript/UnsupportedNamespaces/namespace.ts");
+
+        var exception = Assert.Throws<SyntaxError>(() => TypeScriptParser.Parse(input, new Options
+        {
+            SourceFile = "namespace.ts",
+            SourceType = SourceType.Module
+        }));
+
+        Assert.Contains("TypeScript namespace lowering is not implemented", exception.Message);
+    }
+
+    [Fact]
+    public void TypeScriptParserShouldRejectModuleNamespaceDeclarationsLikeTypeScript7()
+    {
+        var input = File.ReadAllText("Input/TypeScript/UnsupportedNamespaces/module.ts");
+
+        var exception = Assert.Throws<SyntaxError>(() => TypeScriptParser.Parse(input, new Options
+        {
+            SourceFile = "module.ts",
+            SourceType = SourceType.Module
+        }));
+
+        Assert.Contains("The 'module' keyword cannot be used in namespace declarations", exception.Message);
+    }
+
+    public static (string outAst, string outNiceJs, string outNiceJsMap, string outMinJs, string outMinJsMap) TypeScriptParserTestCore(
         TypeScriptParserTestData testData)
     {
         var comments = new List<(bool block, string content, SourceLocation location)>();
@@ -57,13 +104,15 @@ public sealed class TypeScriptParserTest
         outNiceJsBuilder.AddText(
             $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "nicejs.map")}");
         var outNiceJs = outNiceJsBuilder.Content();
+        var outNiceJsMap = outNiceJsBuilder.Build(".", ".").ToString();
 
         var outMinJsBuilder = new SourceMapBuilder();
         toplevel.PrintToBuilder(outMinJsBuilder, new OutputOptions());
         outMinJsBuilder.AddText(
             $"//# sourceMappingURL={PathUtils.ChangeExtension(testData.SourceName, "minjs.map")}");
         var outMinJs = outMinJsBuilder.Content();
+        var outMinJsMap = outMinJsBuilder.Build(".", ".").ToString();
 
-        return (outAst, outNiceJs, outMinJs);
+        return (outAst, outNiceJs, outNiceJsMap, outMinJs, outMinJsMap);
     }
 }
