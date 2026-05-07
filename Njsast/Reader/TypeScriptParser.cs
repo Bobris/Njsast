@@ -38,8 +38,8 @@ static class TypeScriptToJavaScript
     static readonly Regex TypeOnlyExport = new(@"^\s*export\s+type\s+[^;]+;\s*$", RegexOptions.Multiline | RegexOptions.Compiled);
     static readonly Regex TypeAlias = new(@"^\s*(?:export\s+)?type\s+\w+[^;]*;\s*", RegexOptions.Multiline | RegexOptions.Compiled);
     static readonly Regex Interface = new(@"^\s*(?:export\s+)?interface\s+\w+[^{]*\{(?:[^{}]|\{[^{}]*\})*\}\s*", RegexOptions.Multiline | RegexOptions.Compiled);
-    static readonly Regex ImportTypeSpecifier = new(@"\btype\s+([A-Za-z_$][\w$]*)(?:\s+as\s+[A-Za-z_$][\w$]*)?\s*,?\s*", RegexOptions.Compiled);
-    static readonly Regex ExportTypeSpecifier = new(@"\btype\s+([A-Za-z_$][\w$]*)(?:\s+as\s+[A-Za-z_$][\w$]*)?\s*,?\s*", RegexOptions.Compiled);
+    static readonly Regex ImportTypeSpecifier = new(@"(?<![\w$])type\s+([A-Za-z_$][\w$]*)(?:\s+as\s+[A-Za-z_$][\w$]*)?\s*,?\s*", RegexOptions.Compiled);
+    static readonly Regex ExportTypeSpecifier = new(@"(?<![\w$])type\s+([A-Za-z_$][\w$]*)(?:\s+as\s+[A-Za-z_$][\w$]*)?\s*,?\s*", RegexOptions.Compiled);
 
     public static string Convert(string input)
     {
@@ -51,9 +51,87 @@ static class TypeScriptToJavaScript
         output = RemoveTypeDeclarations(output);
         output = TypeAlias.Replace(output, "");
         output = Interface.Replace(output, "");
+        output = LowerClassDecorators(output);
+        output = LowerMethodDecorators(output);
+        output = LowerParameterProperties(output);
+        output = StripClassSyntax(output);
         output = StripTypes(output);
         output = StripTypeScriptExpressionOperators(output);
         return output;
+    }
+
+    static string StripClassSyntax(string input)
+    {
+        var output = Regex.Replace(input, @"\babstract\s+(?=class\b)", "");
+        output = Regex.Replace(output, @"\s+implements\s+[A-Za-z_$][\w$]*(?:\s*,\s*[A-Za-z_$][\w$]*)*(?=\s*\{)", "");
+        output = Regex.Replace(output, @"^\s*(?:public|private|protected)\s+abstract\s+[A-Za-z_$][\w$]*[^;{]*;\s*$", "",
+            RegexOptions.Multiline);
+        output = Regex.Replace(output, @"^\s*abstract\s+[A-Za-z_$][\w$]*[^;{]*;\s*$", "", RegexOptions.Multiline);
+        output = Regex.Replace(output, @"^\s*(?:(?:public|private|protected|readonly|override|abstract)\s+)*(?:public|private|protected|readonly)\s+[A-Za-z_$][\w$]*[!?]?\s*(?::[^=;]+)?;\s*$", "",
+            RegexOptions.Multiline);
+        output = Regex.Replace(output, @"\b(?:public|private|protected|readonly|override)\s+(?=[A-Za-z_$#])", "");
+        return output;
+    }
+
+    static string LowerClassDecorators(string input)
+    {
+        return Regex.Replace(input,
+            @"(?<decorators>(?:^\s*@[^\r\n]+\r?\n)+)\s*class\s+(?<name>[A-Za-z_$][\w$]*)(?<tail>[^{]*)\{(?<body>[^{}]*(?:\{[^{}]*\}[^{}]*)*)\}",
+            match =>
+            {
+                var name = match.Groups["name"].Value;
+                var decorators = new List<string>();
+                foreach (Match decoratorMatch in Regex.Matches(match.Groups["decorators"].Value, @"@\s*([^\r\n]+)"))
+                    decorators.Add(decoratorMatch.Groups[1].Value.Trim());
+                var decoratorList = string.Join(", ", decorators);
+                return $"var {name} = class {name}{match.Groups["tail"].Value}{{{match.Groups["body"].Value}}};{name} = __decorate([{decoratorList}], {name});";
+            }, RegexOptions.Multiline);
+    }
+
+    static string LowerMethodDecorators(string input)
+    {
+        return Regex.Replace(input,
+            @"class\s+(?<className>[A-Za-z_$][\w$]*)(?<tail>[^{]*)\{(?<body>[^{}]*(?:\{[^{}]*\}[^{}]*)*)\}",
+            match =>
+            {
+                var className = match.Groups["className"].Value;
+                var decoratorCalls = new List<string>();
+                var body = Regex.Replace(match.Groups["body"].Value,
+                    @"(?m)^\s*@(?<decorator>[^\r\n]+)\r?\n\s*(?<method>[A-Za-z_$][\w$]*)\s*\((?<parameters>[^)]*)\)\s*(?::[^{]+)?\{(?<methodBody>[^{}]*)\}",
+                    methodMatch =>
+                    {
+                        var decorator = methodMatch.Groups["decorator"].Value.Trim();
+                        var method = methodMatch.Groups["method"].Value;
+                        decoratorCalls.Add($"__decorate([{decorator}], {className}.prototype, \"{method}\", null);");
+                        return $"{method}({methodMatch.Groups["parameters"].Value}) {{{methodMatch.Groups["methodBody"].Value}}}";
+                    });
+                return $"class {className}{match.Groups["tail"].Value}{{{body}}}{string.Join("", decoratorCalls)}";
+            }, RegexOptions.Singleline);
+    }
+
+    static string LowerParameterProperties(string input)
+    {
+        return Regex.Replace(input, @"constructor\s*\((?<params>[^)]*)\)\s*\{", match =>
+        {
+            var parameters = match.Groups["params"].Value.Split(',', StringSplitOptions.TrimEntries);
+            var assignments = new List<string>();
+            for (var i = 0; i < parameters.Length; i++)
+            {
+                var parameter = parameters[i];
+                var lowered = Regex.Replace(parameter,
+                    @"^(?:(?:public|private|protected|readonly)\s+)+(?<name>[A-Za-z_$][\w$]*)(?<rest>.*)$",
+                    m =>
+                    {
+                        var name = m.Groups["name"].Value;
+                        assignments.Add($"this.{name} = {name};");
+                        return name + m.Groups["rest"].Value;
+                    });
+                parameters[i] = lowered;
+            }
+
+            var bodyPrefix = assignments.Count == 0 ? "" : string.Join("", assignments);
+            return $"constructor({string.Join(", ", parameters)}) {{{bodyPrefix}";
+        });
     }
 
     static string RemoveTypeOnlyImportsAndExports(string input)
@@ -233,11 +311,47 @@ static class TypeScriptToJavaScript
 
     static string StripTypeScriptExpressionOperators(string input)
     {
-        var output = Regex.Replace(input, @"\s+as\s+[A-Za-z_$][\w$]*(?:<[^>]*>)?(?:\[\])?", "");
-        output = Regex.Replace(output, @"\s+satisfies\s+[^,;\)\]\}]+", "");
-        output = Regex.Replace(output, @"([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)!\b", "$1");
+        var output = Regex.Replace(input, @"^(?<prefix>\s*(?:export|import)\s*\{[^\n;]*)\s+as\s+(?<alias>[A-Za-z_$][\w$]*)",
+            "${prefix} as ${alias}", RegexOptions.Multiline);
+        output = StripAsExpressionsOutsideModuleSpecifiers(output);
+        output = Regex.Replace(output, @"<\s*[A-Za-z_$][\w$]*(?:\s*<[^>]*>)?(?:\[\])?\s*>\s*([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)", "$1");
+        output = RemoveSatisfiesExpressions(output);
+        output = Regex.Replace(output, @"([A-Za-z_$][\w$]*(?:\.[A-Za-z_$][\w$]*)*)!(?=\b|\.)", "$1");
         output = Regex.Replace(output, @"([A-Za-z_$][\w$]*)<[^>\n]+>\(", "$1(");
         return output;
+    }
+
+    static string StripAsExpressionsOutsideModuleSpecifiers(string input)
+    {
+        var lines = input.Split('\n');
+        for (var i = 0; i < lines.Length; i++)
+        {
+            var trimmed = lines[i].TrimStart();
+            if (trimmed.StartsWith("export {", StringComparison.Ordinal) ||
+                trimmed.StartsWith("import {", StringComparison.Ordinal))
+                continue;
+            lines[i] = Regex.Replace(lines[i], @"\s+as\s+[A-Za-z_$][\w$]*(?:<[^>]*>)?(?:\[\])?", "");
+        }
+
+        return string.Join('\n', lines);
+    }
+
+    static string RemoveSatisfiesExpressions(string input)
+    {
+        var sb = new StringBuilder(input.Length);
+        for (var i = 0; i < input.Length;)
+        {
+            if (StartsIdentifier(input, i, "satisfies"))
+            {
+                i = SkipType(input, i + "satisfies".Length);
+                continue;
+            }
+
+            sb.Append(input[i]);
+            i++;
+        }
+
+        return sb.ToString();
     }
 
     static string LowerEnums(string input, Dictionary<string, Dictionary<string, string>> constEnums)

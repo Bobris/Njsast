@@ -1,0 +1,9 @@
+class Base {}
+
+class Worker extends Base {
+    run(value) {
+        console.log(value);
+    }
+}
+
+//# sourceMappingURL=classes.nicejs.map
