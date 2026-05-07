@@ -40,8 +40,6 @@ public static class TypeScriptParser
 
     static bool NeedsLegacySourceConversion(string input, bool parseJsx)
     {
-        if (Regex.IsMatch(input, @"constructor\s*\([^)]*\b(?:public|private|protected|readonly)\b"))
-            return true;
         var decoratorPositions = Regex.Matches(input, @"@");
         foreach (Match m in decoratorPositions)
         {

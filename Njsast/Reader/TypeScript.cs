@@ -176,6 +176,30 @@ public sealed partial class Parser
                 IsContextual("readonly") || IsContextual("override") || IsContextual("abstract"));
     }
 
+    bool TsTrySkipParameterPropertyModifiers()
+    {
+        if (!IsTypeScript) return false;
+        var skipped = false;
+        while (Type == TokenType.Name &&
+               (IsContextual("public") || IsContextual("private") || IsContextual("protected") ||
+                IsContextual("readonly")))
+        {
+            skipped = true;
+            Next();
+        }
+
+        return skipped;
+    }
+
+    AstSimpleStatement TsBuildParameterPropertyAssignment(AstSymbol parameter)
+    {
+        var thisNode = new AstThis(SourceFile, parameter.Start, parameter.End);
+        var left = new AstDot(SourceFile, parameter.Start, parameter.End, thisNode, parameter.Name);
+        var right = new AstSymbolRef(SourceFile, parameter.Start, parameter.End, parameter.Name);
+        var assignment = new AstAssign(SourceFile, parameter.Start, parameter.End, left, right, Operator.Assignment);
+        return new AstSimpleStatement(SourceFile, parameter.Start, parameter.End, assignment);
+    }
+
     bool TsTrySkipAbstractMember()
     {
         if (!IsTypeScript) return false;

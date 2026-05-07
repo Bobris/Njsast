@@ -973,7 +973,21 @@ public sealed partial class Parser
                 continue;
             }
 
-            var methodValue = ParseMethod(isGenerator, isAsync);
+            List<AstSymbol>? tsParameterProperties = null;
+            if (kind == PropertyKind.Constructor && IsTypeScript)
+                tsParameterProperties = new List<AstSymbol>();
+
+            var methodValue = ParseMethod(isGenerator, isAsync, tsParameterProperties);
+            if (tsParameterProperties is { Count: > 0 })
+            {
+                var newBody = new StructList<AstNode>();
+                newBody.Reserve((uint)(methodValue.Body.Count + tsParameterProperties.Count));
+                foreach (var parameterProperty in tsParameterProperties)
+                    newBody.Add(TsBuildParameterPropertyAssignment(parameterProperty));
+                foreach (var statement in methodValue.Body.AsReadOnlySpan())
+                    newBody.Add(statement);
+                methodValue.Body.TransferFrom(ref newBody);
+            }
 
             if (isGetSet)
             {

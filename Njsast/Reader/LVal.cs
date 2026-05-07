@@ -162,7 +162,8 @@ public sealed partial class Parser
         return ParseIdent();
     }
 
-    void ParseBindingList(ref StructList<AstNode> elts, TokenType close, bool allowEmpty, bool allowTrailingComma)
+    void ParseBindingList(ref StructList<AstNode> elts, TokenType close, bool allowEmpty, bool allowTrailingComma,
+        List<AstSymbol>? tsParameterProperties = null)
     {
         var first = true;
         while (!Eat(close))
@@ -187,7 +188,17 @@ public sealed partial class Parser
             }
             else
             {
+                var isParameterProperty = TsTrySkipParameterPropertyModifiers();
                 var elem = ParseMaybeDefault(Start);
+                if (isParameterProperty && tsParameterProperties != null)
+                {
+                    if (elem is AstSymbol symbol)
+                        tsParameterProperties.Add(symbol);
+                    else if (elem is AstDefaultAssign { Left: AstSymbol defaultSymbol })
+                        tsParameterProperties.Add(defaultSymbol);
+                    else
+                        Raise(elem.Start, "Parameter property must be an identifier");
+                }
                 elts.Add(elem);
             }
         }

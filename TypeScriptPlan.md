@@ -22,7 +22,7 @@ Completed so far:
 
 - TypeScript fixture harness is active in xUnit and the command-line fixture runner.
 - `Options.ParseTypeScript` and `Options.ParseJSX` exist; JSX parsing is gated by `ParseJSX`; `.tsx` fixtures set both flags.
-- Parser-native TypeScript erasure has been implemented. The legacy source converter is now only a fallback for decorators and constructor parameter properties.
+- Parser-native TypeScript erasure has been implemented. The legacy source converter is now only a fallback for member-level decorators.
 - A temporary `AstTypeScriptOnly` marker plus erase transformer removes parser-skipped type-only statements before the public JavaScript AST is returned.
 - `FunctionalTest` has been removed from the solution because it was too slow for this iteration loop.
 - Type-only imports/exports are removed, and mixed import/export specifiers preserve runtime ESM specifiers.
@@ -32,7 +32,7 @@ Completed so far:
 - TSX handling is parser-native: generic disambiguation in `CanStartJsx()`, type stripping inside JSX, `as` expressions in JSX containers, typed callbacks, and generic components.
 - String, numeric, exported non-const enum lowering, and conservative `const enum` inlining/lowering are implemented before the parser reaches the legacy fallback.
 - Class modifiers (`public`, `private`, `protected`, `readonly`, `override`, `abstract`) are stripped natively; abstract members are removed; `implements` clauses are stripped; fields with TS modifiers are entirely removed.
-- Constructor parameter property assignment injection is implemented via the legacy fallback.
+- Constructor parameter property assignment injection is implemented natively in the parser.
 - Namespace/module declarations raise a clear error: "TypeScript namespace lowering is not implemented".
 - Type annotations on catch bindings, destructuring patterns, and type predicates are stripped natively.
 - Legacy TypeScript decorator lowering is implemented via the legacy fallback for class, method, property, and parameter decorators, emitting global `__decorate`/`__param` calls without helper definitions.
@@ -46,7 +46,6 @@ Verification last run:
 Remaining near-term gaps:
 
 - Replace source-conversion fallback for member-level decorators (method/property/parameter) with parser-native lowering in `TypeScriptDecorators.cs`.
-- Replace source-conversion fallback for constructor parameter properties with parser-native injection.
 - Add explicit unsupported/new decorator syntax fixtures.
 - Source map expectations for TypeScript fixtures are still deferred.
 
@@ -54,6 +53,7 @@ Files changed in this implementation session:
 - `Njsast/Reader/TypeScript.cs` — namespace detection, `TsIsClassFollowing()`, `TsIsClassMemberModifier()`, `TsTrySkipAbstractMember()`, fixed `TsSkipType()` for object type literals, parser-native enum emit helper
 - `Njsast/Reader/Statement.cs` — namespace rejection, `abstract class`/`export abstract class` parsing, `implements` clause skipping, class member modifier stripping, abstract member removal, TS-modifier field removal, catch binding type annotation, class field `!`/`:type` markers, decorator interception in `ParseTopLevel`, top-level enum interception
 - `Njsast/Reader/Expression.cs` — `as`/`satisfies`/`!`/generic call/`<Type>expr` native handling in `ParseSubscripts()`, `ParseMaybeConditional()`, `ParseMaybeUnary()`; `BuildCallExpression()` helper
+- `Njsast/Reader/LVal.cs` — constructor parameter property modifier stripping and parameter-property collection for native assignment injection
 - `Njsast/Reader/Jsx.cs` — `TsLooksLikeGenericOrTypeAssertion()` for TSX disambiguation
 - `Njsast/Reader/TokenType.cs` — added `Decorator` token type
 - `Njsast/Reader/TokenInformation.cs` — added `Decorator` token info
