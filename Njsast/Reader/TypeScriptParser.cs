@@ -52,6 +52,8 @@ static class TypeScriptToJavaScript
         output = TypeAlias.Replace(output, "");
         output = Interface.Replace(output, "");
         output = LowerClassDecorators(output);
+        output = LowerPropertyDecorators(output);
+        output = LowerParameterDecorators(output);
         output = LowerMethodDecorators(output);
         output = LowerParameterProperties(output);
         output = StripClassSyntax(output);
@@ -104,6 +106,66 @@ static class TypeScriptToJavaScript
                         var method = methodMatch.Groups["method"].Value;
                         decoratorCalls.Add($"__decorate([{decorator}], {className}.prototype, \"{method}\", null);");
                         return $"{method}({methodMatch.Groups["parameters"].Value}) {{{methodMatch.Groups["methodBody"].Value}}}";
+                    });
+                return $"class {className}{match.Groups["tail"].Value}{{{body}}}{string.Join("", decoratorCalls)}";
+            }, RegexOptions.Singleline);
+    }
+
+    static string LowerPropertyDecorators(string input)
+    {
+        return Regex.Replace(input,
+            @"class\s+(?<className>[A-Za-z_$][\w$]*)(?<tail>[^{]*)\{(?<body>[^{}]*(?:\{[^{}]*\}[^{}]*)*)\}",
+            match =>
+            {
+                var className = match.Groups["className"].Value;
+                var decoratorCalls = new List<string>();
+                var body = Regex.Replace(match.Groups["body"].Value,
+                    @"(?m)^\s*@(?<decorator>[^\r\n]+)\r?\n\s*(?:(?:public|private|protected|readonly)\s+)*(?<property>[A-Za-z_$][\w$]*)[!?]?\s*(?::[^=;]+)?;\s*",
+                    propertyMatch =>
+                    {
+                        var decorator = propertyMatch.Groups["decorator"].Value.Trim();
+                        var property = propertyMatch.Groups["property"].Value;
+                        decoratorCalls.Add($"__decorate([{decorator}], {className}.prototype, \"{property}\", void 0);");
+                        return "";
+                    });
+                return $"class {className}{match.Groups["tail"].Value}{{{body}}}{string.Join("", decoratorCalls)}";
+            }, RegexOptions.Singleline);
+    }
+
+    static string LowerParameterDecorators(string input)
+    {
+        return Regex.Replace(input,
+            @"class\s+(?<className>[A-Za-z_$][\w$]*)(?<tail>[^{]*)\{(?<body>[^{}]*(?:\{[^{}]*\}[^{}]*)*)\}",
+            match =>
+            {
+                var className = match.Groups["className"].Value;
+                var decoratorCalls = new List<string>();
+                var body = Regex.Replace(match.Groups["body"].Value,
+                    @"(?<method>[A-Za-z_$][\w$]*)\s*\((?<parameters>[^)]*@[^)]*)\)\s*(?::[^{]+)?\{(?<methodBody>[^{}]*)\}",
+                    methodMatch =>
+                    {
+                        var method = methodMatch.Groups["method"].Value;
+                        var parameters = methodMatch.Groups["parameters"].Value
+                            .Split(',', StringSplitOptions.TrimEntries);
+                        var decorators = new List<string>();
+                        for (var i = 0; i < parameters.Length; i++)
+                        {
+                            parameters[i] = Regex.Replace(parameters[i],
+                                @"^@(?<decorator>[A-Za-z_$][\w$]*(?:\([^)]*\))?)\s+(?<parameter>.*)$",
+                                parameterMatch =>
+                                {
+                                    decorators.Add($"__param({i}, {parameterMatch.Groups["decorator"].Value})");
+                                    return parameterMatch.Groups["parameter"].Value;
+                                });
+                        }
+
+                        if (decorators.Count > 0)
+                        {
+                            decoratorCalls.Add(
+                                $"__decorate([{string.Join(", ", decorators)}], {className}.prototype, \"{method}\", null);");
+                        }
+
+                        return $"{method}({string.Join(", ", parameters)}) {{{methodMatch.Groups["methodBody"].Value}}}";
                     });
                 return $"class {className}{match.Groups["tail"].Value}{{{body}}}{string.Join("", decoratorCalls)}";
             }, RegexOptions.Singleline);
@@ -230,6 +292,8 @@ static class TypeScriptToJavaScript
 
     static string StripTypes(string input)
     {
+        input = StripObjectLiteralArrowParameterTypes(input);
+        input = StripParenthesizedArrowParameterTypes(input);
         var sb = new StringBuilder(input.Length);
         for (var i = 0; i < input.Length;)
         {
@@ -276,6 +340,32 @@ static class TypeScriptToJavaScript
         }
 
         return sb.ToString();
+    }
+
+    static string StripObjectLiteralArrowParameterTypes(string input)
+    {
+        return Regex.Replace(input,
+            @"\((?<name>[A-Za-z_$][\w$]*)\s*:\s*\{(?<type>[^{}]*)\}\)(?<space>\s*)=>",
+            "(${name})${space}=>",
+            RegexOptions.Singleline);
+    }
+
+    static string StripParenthesizedArrowParameterTypes(string input)
+    {
+        return Regex.Replace(input,
+            @"\((?<parameters>[^()]*:[^()]*)\)(?<space>\s*)=>",
+            match =>
+            {
+                var parameters = match.Groups["parameters"].Value.Split(',', StringSplitOptions.TrimEntries);
+                for (var i = 0; i < parameters.Length; i++)
+                {
+                    parameters[i] = Regex.Replace(parameters[i],
+                        @"^([A-Za-z_$][\w$]*)(?:\??)\s*:\s*.*$",
+                        "$1");
+                }
+
+                return $"({string.Join(", ", parameters)}){match.Groups["space"].Value}=>";
+            });
     }
 
     static int CopyUntilFunctionBody(string input, int i, StringBuilder sb)
@@ -531,6 +621,7 @@ static class TypeScriptToJavaScript
                     break;
                 case '}':
                     if (brace == 0 && angle == 0 && paren == 0 && bracket == 0) return i;
+                    if (brace == 1 && angle == 0 && paren == 0 && bracket == 0) return i + 1;
                     brace--;
                     break;
                 case '[': bracket++; break;
@@ -555,7 +646,7 @@ static class TypeScriptToJavaScript
         var end = FindMatching(input, index, '<', '>');
         if (end < 0) return false;
         var next = NextNonSpace(input, end + 1);
-        return next >= 0 && (input[next] == '(' || IsIdentifierStart(input[next]));
+        return next >= 0 && input[next] == '(';
     }
 
     static int SkipBalanced(string input, int index, char open, char close)
@@ -622,7 +713,7 @@ static class TypeScriptToJavaScript
     static bool StartsIdentifier(string input, int index, string identifier)
     {
         return input.AsSpan(index).StartsWith(identifier.AsSpan(), StringComparison.Ordinal) &&
-               (index == 0 || !IsIdentifierPart(input[index - 1])) &&
+               (index == 0 || (!IsIdentifierPart(input[index - 1]) && input[index - 1] != '.')) &&
                (index + identifier.Length == input.Length || !IsIdentifierPart(input[index + identifier.Length]));
     }
 
