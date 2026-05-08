@@ -17,6 +17,13 @@ public sealed partial class Parser
         _canBeDirective = true;
         while (Type != TokenType.Eof)
         {
+            if (IsTypeScript && TsTryParseNamespaceStatements(out var namespaceStatements))
+            {
+                foreach (var namespaceStatement in namespaceStatements)
+                    node.Body.Add(namespaceStatement);
+                continue;
+            }
+
             if (IsTypeScript && TsTryParseEnumStatements(out var enumStatements))
             {
                 foreach (var enumStatement in enumStatements)
@@ -136,7 +143,13 @@ public sealed partial class Parser
         if (TsIsModuleNamespaceStatementStart())
             Raise(startLocation, "The 'module' keyword cannot be used in namespace declarations");
         if (TsIsNamespaceStatementStart())
-            Raise(startLocation, "TypeScript namespace lowering is not implemented");
+        {
+            if (TsTryParseNamespaceStatements(out var namespaceStatements))
+                return namespaceStatements.Count == 0
+                    ? new AstTypeScriptOnly(SourceFile, startLocation, _lastTokEnd)
+                    : namespaceStatements[0];
+            Raise(startLocation, "Unexpected token");
+        }
         if (IsTypeScript && IsContextual("abstract"))
         {
             if (TsIsClassFollowing())

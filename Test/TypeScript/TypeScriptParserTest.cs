@@ -43,20 +43,6 @@ public sealed class TypeScriptParserTest
     }
 
     [Fact]
-    public void TypeScriptParserShouldRejectNamespacesUntilLoweringExists()
-    {
-        var input = File.ReadAllText("Input/TypeScript/UnsupportedNamespaces/namespace.ts");
-
-        var exception = Assert.Throws<SyntaxError>(() => TypeScriptParser.Parse(input, new Options
-        {
-            SourceFile = "namespace.ts",
-            SourceType = SourceType.Module
-        }));
-
-        Assert.Contains("TypeScript namespace lowering is not implemented", exception.Message);
-    }
-
-    [Fact]
     public void TypeScriptParserShouldRejectModuleNamespaceDeclarationsLikeTypeScript7()
     {
         var input = File.ReadAllText("Input/TypeScript/UnsupportedNamespaces/module.ts");

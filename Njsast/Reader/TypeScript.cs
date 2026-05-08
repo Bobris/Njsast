@@ -38,6 +38,345 @@ public sealed partial class Parser
         return IsTypeScript && IsContextual("module");
     }
 
+    bool TsTryParseNamespaceStatements(out List<AstStatement> statements)
+    {
+        statements = null!;
+        var namespaceStart = Start;
+        var isExport = false;
+        if (Type == TokenType.Export)
+        {
+            var index = End.Index;
+            while (index < _input.Length && char.IsWhiteSpace(_input[index])) index++;
+            if (!TsTextStartsKeyword(index, "namespace"))
+                return false;
+            isExport = true;
+            Next();
+        }
+
+        if (!TsIsNamespaceStatementStart())
+            return false;
+
+        Next();
+        var name = Type == TokenType.Name ? Value?.ToString() : null;
+        if (name == null)
+            Raise(Start, "Unexpected token");
+        var namespaceName = name!;
+        Next();
+        Expect(TokenType.BraceL);
+        var bodyStart = _lastTokEnd.Index;
+        var bodyEnd = bodyStart;
+        var depth = 1;
+        while (Type != TokenType.Eof && depth > 0)
+        {
+            if (Type == TokenType.BraceL)
+            {
+                depth++;
+            }
+            else if (Type == TokenType.BraceR)
+            {
+                depth--;
+                if (depth == 0)
+                {
+                    bodyEnd = Start.Index;
+                    Next();
+                    break;
+                }
+            }
+
+            if (depth > 0)
+                Next();
+        }
+
+        if (depth != 0)
+            Raise(Start, "Unexpected token");
+        Semicolon();
+
+        var body = _input.Substring(bodyStart, bodyEnd - bodyStart);
+        statements = TsLowerNamespace(namespaceName, isExport, body, namespaceStart, _lastTokEnd);
+        return true;
+    }
+
+    List<AstStatement> TsLowerNamespace(string namespaceName, bool isExport, string body, Position start, Position end)
+    {
+        var parsedBody = TypeScriptParser.Parse(body, new Options
+        {
+            SourceType = SourceType.Module,
+            ParseJSX = Options.ParseJSX,
+            SourceFile = SourceFile
+        });
+
+        var exportedNames = TsCollectNamespaceExportedNames(parsedBody);
+        var result = new List<AstStatement> { TsBuildNamespaceVariable(namespaceName, isExport, start, end) };
+        var iifeBody = new StructList<AstNode>();
+
+        for (var i = 0u; i < parsedBody.Body.Count; i++)
+        {
+            var statement = parsedBody.Body[i];
+            if (TsTryLowerNamespaceExportedEnum(parsedBody.Body, ref i, namespaceName, ref iifeBody))
+                continue;
+            TsLowerNamespaceStatement(statement, namespaceName, exportedNames, ref iifeBody);
+        }
+
+        result.Add(TsBuildNamespaceIife(namespaceName, ref iifeBody, start, end));
+        return result;
+    }
+
+    bool TsTryLowerNamespaceExportedEnum(StructList<AstNode> statements, ref uint index, string namespaceName,
+        ref StructList<AstNode> iifeBody)
+    {
+        if (index + 1 >= statements.Count)
+            return false;
+        if (statements[index] is not AstExport { ExportedDefinition: AstVar varStatement })
+            return false;
+        if (varStatement.Definitions.Count != 1)
+            return false;
+        var definition = varStatement.Definitions[0];
+        if (definition.Value != null || definition.Name is not AstSymbol enumSymbol)
+            return false;
+        if (!TsLooksLikeEnumIife(statements[index + 1], enumSymbol.Name))
+            return false;
+
+        var localDefinitions = new StructList<AstVarDef>();
+        localDefinitions.Add(new AstVarDef(definition,
+            new AstSymbolLet(new AstSymbolRef(enumSymbol.Source, enumSymbol.Start, enumSymbol.End, enumSymbol.Name)),
+            null));
+        iifeBody.Add(new AstLet(varStatement.Source, varStatement.Start, varStatement.End, ref localDefinitions));
+        iifeBody.Add(new TypeScriptNamespaceEnumIifeTransformer(SourceFile, namespaceName, enumSymbol.Name)
+            .Transform(statements[index + 1]));
+        index++;
+        return true;
+    }
+
+    static bool TsLooksLikeEnumIife(AstNode statement, string enumName)
+    {
+        return statement is AstSimpleStatement
+        {
+            Body: AstCall
+            {
+                Args.Count: 1,
+                Expression: AstFunction,
+                Args.UnsafeBackingArray: var args
+            }
+        } && args[0] is AstBinary
+        {
+            Operator: Operator.LogicalOr,
+            Left: AstSymbolRef { Name: var leftName }
+        } && leftName == enumName;
+    }
+
+    AstStatement TsBuildNamespaceVariable(string namespaceName, bool isExport, Position start, Position end)
+    {
+        var definitions = new StructList<AstVarDef>();
+        var symbol = new AstSymbolVar(SourceFile, start, end, namespaceName, null);
+        definitions.Add(new AstVarDef(SourceFile, start, end, symbol));
+        var varStatement = new AstVar(SourceFile, start, end, ref definitions);
+        if (!isExport)
+            return varStatement;
+
+        var specifiers = new StructList<AstNameMapping>();
+        return new AstExport(SourceFile, start, end, null, varStatement, ref specifiers);
+    }
+
+    AstStatement TsBuildNamespaceIife(string namespaceName, ref StructList<AstNode> body, Position start, Position end)
+    {
+        var args = new StructList<AstNode>();
+        args.Add(new AstSymbolFunarg(new AstSymbolRef(SourceFile, start, end, namespaceName), namespaceName));
+        var function = new AstFunction(SourceFile, start, end, null, ref args, false, false, ref body);
+
+        var callArgs = new StructList<AstNode>();
+        var emptyObject = new AstObject(SourceFile, start, end);
+        var namespaceRef = new AstSymbolRef(SourceFile, start, end, namespaceName);
+        var namespaceAssign = new AstAssign(SourceFile, start, end, new AstSymbolRef(SourceFile, start, end, namespaceName),
+            emptyObject, Operator.Assignment);
+        callArgs.Add(new AstBinary(SourceFile, start, end, namespaceRef, namespaceAssign, Operator.LogicalOr));
+
+        var call = new AstCall(SourceFile, start, end, function, ref callArgs);
+        return new AstSimpleStatement(SourceFile, start, end, call);
+    }
+
+    void TsLowerNamespaceStatement(AstNode statement, string namespaceName, HashSet<string> exportedNames,
+        ref StructList<AstNode> iifeBody)
+    {
+        if (statement is AstExport export)
+        {
+            TsLowerNamespaceExport(export, namespaceName, exportedNames, ref iifeBody);
+            return;
+        }
+
+        iifeBody.Add(TsRewriteNamespaceExportReferences(statement, namespaceName, exportedNames));
+    }
+
+    void TsLowerNamespaceExport(AstExport export, string namespaceName, HashSet<string> exportedNames,
+        ref StructList<AstNode> iifeBody)
+    {
+        if (export.ExportedDefinition is AstDefinitions definitions)
+        {
+            TsLowerNamespaceExportedDefinitions(definitions, namespaceName, exportedNames, ref iifeBody);
+            return;
+        }
+
+        if (export.ExportedDefinition is AstDefun or AstDefClass)
+        {
+            var declaration = TsRewriteNamespaceExportReferences(export.ExportedDefinition, namespaceName, exportedNames);
+            iifeBody.Add(declaration);
+            var name = TsDeclarationName(declaration);
+            if (name.Length != 0)
+                iifeBody.Add(TsBuildNamespaceExportAssignment(namespaceName, name, new AstSymbolRef(declaration, name), declaration));
+            return;
+        }
+
+        for (var i = 0u; i < export.ExportedNames.Count; i++)
+        {
+            var mapping = export.ExportedNames[i];
+            var exportedName = mapping.ForeignName?.Name ?? mapping.Name.Name;
+            iifeBody.Add(TsBuildNamespaceExportAssignment(namespaceName, exportedName,
+                new AstSymbolRef(mapping.Name, mapping.Name.Name), mapping));
+        }
+    }
+
+    void TsLowerNamespaceExportedDefinitions(AstDefinitions definitions, string namespaceName, HashSet<string> exportedNames,
+        ref StructList<AstNode> iifeBody)
+    {
+        for (var i = 0u; i < definitions.Definitions.Count; i++)
+        {
+            var definition = definitions.Definitions[i];
+            if (definition.Name is not AstSymbol symbol)
+            {
+                iifeBody.Add(TsRewriteNamespaceExportReferences(definitions, namespaceName, exportedNames));
+                continue;
+            }
+
+            var value = definition.Value == null
+                ? new AstUnaryPrefix(SourceFile, definition.Start, definition.End, Operator.Void,
+                    new AstNumber(SourceFile, definition.Start, definition.End, 0, "0"))
+                : TsRewriteNamespaceExportReferences(definition.Value, namespaceName, exportedNames);
+            iifeBody.Add(TsBuildNamespaceExportAssignment(namespaceName, symbol.Name, value, definition));
+        }
+    }
+
+    AstSimpleStatement TsBuildNamespaceExportAssignment(string namespaceName, string exportedName, AstNode value,
+        AstNode positionHint)
+    {
+        var left = new AstDot(SourceFile, positionHint.Start, positionHint.End,
+            new AstSymbolRef(SourceFile, positionHint.Start, positionHint.End, namespaceName), exportedName);
+        var assignment = new AstAssign(SourceFile, positionHint.Start, positionHint.End, left, value, Operator.Assignment);
+        return new AstSimpleStatement(SourceFile, positionHint.Start, positionHint.End, assignment);
+    }
+
+    AstNode TsRewriteNamespaceExportReferences(AstNode node, string namespaceName, HashSet<string> exportedNames)
+    {
+        return new TypeScriptNamespaceReferenceTransformer(SourceFile, namespaceName, exportedNames).Transform(node);
+    }
+
+    static string TsDeclarationName(AstNode declaration)
+    {
+        return declaration switch
+        {
+            AstDefun { Name: { } name } => name.Name,
+            AstDefClass { Name: { } name } => name.Name,
+            _ => string.Empty
+        };
+    }
+
+    static HashSet<string> TsCollectNamespaceExportedNames(AstToplevel body)
+    {
+        var names = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var statement in body.Body.AsReadOnlySpan())
+        {
+            if (statement is not AstExport export)
+                continue;
+
+            if (export.ExportedDefinition is AstDefinitions definitions)
+            {
+                foreach (var definition in definitions.Definitions.AsReadOnlySpan())
+                    if (definition.Name is AstSymbol symbol)
+                        names.Add(symbol.Name);
+            }
+            else
+            {
+                var declarationName = TsDeclarationName(export.ExportedDefinition ?? export.ExportedValue!);
+                if (declarationName.Length != 0)
+                    names.Add(declarationName);
+            }
+
+            foreach (var mapping in export.ExportedNames.AsReadOnlySpan())
+                names.Add(mapping.ForeignName?.Name ?? mapping.Name.Name);
+        }
+
+        return names;
+    }
+
+    sealed class TypeScriptNamespaceReferenceTransformer : TreeTransformer
+    {
+        readonly string? _sourceFile;
+        readonly string _namespaceName;
+        readonly HashSet<string> _exportedNames;
+
+        public TypeScriptNamespaceReferenceTransformer(string? sourceFile, string namespaceName,
+            HashSet<string> exportedNames)
+        {
+            _sourceFile = sourceFile;
+            _namespaceName = namespaceName;
+            _exportedNames = exportedNames;
+        }
+
+        protected override AstNode? Before(AstNode node, bool inList)
+        {
+            if (node is AstSymbolRef symbolRef && _exportedNames.Contains(symbolRef.Name))
+                return new AstDot(_sourceFile, symbolRef.Start, symbolRef.End,
+                    new AstSymbolRef(_sourceFile, symbolRef.Start, symbolRef.End, _namespaceName), symbolRef.Name);
+            return null;
+        }
+
+        protected override AstNode? After(AstNode node, bool inList)
+        {
+            return null;
+        }
+    }
+
+    sealed class TypeScriptNamespaceEnumIifeTransformer : TreeTransformer
+    {
+        readonly string? _sourceFile;
+        readonly string _namespaceName;
+        readonly string _enumName;
+
+        public TypeScriptNamespaceEnumIifeTransformer(string? sourceFile, string namespaceName, string enumName)
+        {
+            _sourceFile = sourceFile;
+            _namespaceName = namespaceName;
+            _enumName = enumName;
+        }
+
+        protected override AstNode? Before(AstNode node, bool inList)
+        {
+            return null;
+        }
+
+        protected override AstNode? After(AstNode node, bool inList)
+        {
+            if (node is AstCall { Args.Count: 1 } call &&
+                call.Args[0] is AstBinary { Operator: Operator.LogicalOr } currentArg)
+            {
+                var emptyObject = currentArg.Right is AstAssign { Right: { } assignedValue }
+                    ? assignedValue
+                    : currentArg.Right;
+                var nsEnum = new AstDot(_sourceFile, currentArg.Start, currentArg.End,
+                    new AstSymbolRef(_sourceFile, currentArg.Start, currentArg.End, _namespaceName), _enumName);
+                var nsEnumAssign = new AstAssign(_sourceFile, currentArg.Start, currentArg.End,
+                    new AstDot(_sourceFile, currentArg.Start, currentArg.End,
+                        new AstSymbolRef(_sourceFile, currentArg.Start, currentArg.End, _namespaceName), _enumName),
+                    emptyObject, Operator.Assignment);
+                var fallback = new AstBinary(_sourceFile, currentArg.Start, currentArg.End, nsEnum, nsEnumAssign,
+                    Operator.LogicalOr);
+                call.Args[0] = new AstAssign(_sourceFile, currentArg.Start, currentArg.End,
+                    new AstSymbolRef(_sourceFile, currentArg.Start, currentArg.End, _enumName), fallback,
+                    Operator.Assignment);
+            }
+
+            return null;
+        }
+    }
+
     bool TsTryParseEnumStatements(out List<AstStatement> statements)
     {
         statements = null!;
